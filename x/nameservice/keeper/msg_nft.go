@@ -4,6 +4,7 @@ import (
 	"context"
 	"regexp"
 	"strings"
+	"time"
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/x/nft"
@@ -196,16 +197,29 @@ func (k Keeper) MintNFT(ctx context.Context, msg *nameservicev1.MsgMintNFT) (*na
 		Id:      msg.NftId,
 		Uri:     msg.Uri,
 		UriHash: msg.UriHash,
-		Data:    nil,
 	}
 
-	// Mint the NFT
+	// Mint the NFT first
 	if err := k.nftKeeper.Mint(ctx, token, ownerAddr); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to mint NFT")
 	}
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	// Now set the NFT data after the NFT exists
+	nftData := nameservicev1.NFTData{
+		Listed:          false,
+		Valuation:       sdk.Coin{},
+		ValuationExpiry: sdkCtx.BlockTime().Add(time.Hour * 24 * 365),
+		CurrentBidder:   "",
+		CurrentBid:      sdk.Coin{},
+		BidTimestamp:    nil,
+		Metadata:        "",
+	}
+	if err := k.SetNFTData(ctx, token.ClassId, token.Id, nftData); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to set NFT data for class %s, id %s", token.ClassId, token.Id)
+	}
 
 	// Emit event using SDK context
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	if evErr := sdkCtx.EventManager().EmitTypedEvent(
 		&nameservicev1.EventNFTMinted{
 			ClassId: msg.ClassId,

@@ -119,13 +119,13 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     # Set new valuation higher than the current one
     new_valuation = initial_valuation + random.randint(50, 150)
     valuation_result = dysond_bin("tx", "nameservice", "set-valuation", "--class-id", "nameservice.dys", "--nft-id", name, "--valuation", f"{new_valuation}dys", "--from", alice_name)
-    assert valuation_result["code"] == 0, "Set valuation transaction failed"
+    assert valuation_result["code"] == 0, "Set valuation transaction failed" + valuation_result["raw_log"]
     print(f"Valuation updated successfully from {initial_valuation} to {new_valuation}")
     
     # Verify the updated valuation
     revalued_nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", name)
     updated_valuation = revalued_nft_info["nft"].get("data", {}).get("value", {}).get("valuation", {}).get("amount")
-    assert updated_valuation == str(new_valuation), "Valuation not updated correctly"
+    assert updated_valuation == str(new_valuation), "Valuation not updated correctly" + revalued_nft_info["raw_log"]
     print(f"Updated NFT valuation verified: {updated_valuation} dys")
     
     # Step 5: Creating NFT Classes
@@ -134,7 +134,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     collection_symbol = f"COL{random.randint(100, 999)}"
     
     main_class_result = dysond_bin("tx", "nameservice", "save-class", "--class-id", name, "--name", collection_name, "--symbol", collection_symbol, "--description", f"Test Collection {test_id}", "--uri", "https://example.com", "--from", alice_name)
-    assert main_class_result["code"] == 0, "Create main NFT class transaction failed"
+    assert main_class_result["code"] == 0, "Create main NFT class transaction failed" + main_class_result["raw_log"]
     print(f"Main NFT class {name} created successfully")
     
     # Create a sub-collection with randomized names
@@ -160,13 +160,13 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     # Generate random NFT IDs
     nft_id = f"nft-{random.randint(1000, 9999)}"
     mint_result = dysond_bin("tx", "nameservice", "mint-nft", "--class-id", name, "--nft-id", nft_id, "--uri", f"https://example.com/{nft_id}", "--from", alice_name)
-    assert mint_result["code"] == 0, "Mint NFT transaction failed"
+    assert mint_result["code"] == 0, "Mint NFT transaction failed" + mint_result["raw_log"]
     print(f"NFT {nft_id} minted successfully in class {name}")
     
     # Mint an NFT in the sub-collection
     sub_nft_id = f"subnft-{random.randint(1000, 9999)}"
     sub_mint_result = dysond_bin("tx", "nameservice", "mint-nft", "--class-id", sub_class_id, "--nft-id", sub_nft_id, "--uri", f"https://example.com/{sub_nft_id}", "--from", alice_name)
-    assert sub_mint_result["code"] == 0, "Mint sub-NFT transaction failed"
+    assert sub_mint_result["code"] == 0, "Mint sub-NFT transaction failed" + sub_mint_result["raw_log"]
     print(f"NFT {sub_nft_id} minted successfully in class {sub_class_id}")
     
     # View NFTs in the main collection
@@ -202,7 +202,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     })
     
     extra_data_result = dysond_bin("tx", "nameservice", "set-nft-class-extra-data", "--class-id", name, "--extra-data", f"'{extra_data}'", "--from", alice_name)
-    assert extra_data_result["code"] == 0, "Set NFT class extra data transaction failed"
+    assert extra_data_result["code"] == 0, "Set NFT class extra data transaction failed" + extra_data_result["raw_log"]
     print(f"Extra data set successfully for class {name}")
     
     # View the updated NFT with metadata
@@ -232,19 +232,14 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     print(f"Successfully set always_listed=false for class {name}")
     
     # Test authorization - Bob should not be able to set always_listed (should fail)
-    try:
-        unauthorized_always_listed_result = dysond_bin("tx", "nameservice", "set-nft-class-always-listed", "--class-id", name, "--always-listed", "--from", bob_name)
-        # This should fail, but if it returns a code, it should be non-zero
-        if unauthorized_always_listed_result.get("code") == 0:
-            print("WARNING: Bob was able to set always_listed (authorization check may be missing)")
-        else:
-            print("Verified authorization: Bob correctly cannot set always_listed for Alice's class")
-    except Exception as e:
-        print(f"Verified authorization: Bob correctly cannot set always_listed for Alice's class: {e}")
+    unauthorized_always_listed_result = dysond_bin("tx", "nameservice", "set-nft-class-always-listed", "--class-id", name, "--always-listed", "--from", bob_name)
+    # This should fail, but if it returns a code, it should be non-zero
+    assert unauthorized_always_listed_result["code"] != 0, "Bob was able to set always_listed for Alice's class" + unauthorized_always_listed_result["raw_log"]
+    print("Verified authorization: Bob correctly cannot set always_listed for Alice's class")
     
     # Step 7.2: Test NFT Class Annual Percentage Setting
     # Test setting various annual percentage values
-    test_annual_pcts = [5.5, 10.0, 0.0, 100.0]  # Test normal, boundary values
+    test_annual_pcts = [0.0, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0]  # Test normal, boundary values
     
     for annual_pct in test_annual_pcts:
         annual_pct_result = dysond_bin("tx", "nameservice", "set-nft-class-annual-pct", "--class-id", name, "--annual-pct", str(annual_pct), "--from", alice_name)
@@ -257,24 +252,19 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
         print(f"Verified annual_pct={annual_pct} was updated for class {name}")
     
     # Test authorization - Bob should not be able to set annual_pct (should fail)
-    try:
-        unauthorized_annual_pct_result = dysond_bin("tx", "nameservice", "set-nft-class-annual-pct", "--class-id", name, "--annual-pct", "15.5", "--from", bob_name)
-        # This should fail, but if it returns a code, it should be non-zero
-        if unauthorized_annual_pct_result.get("code") == 0:
-            print("WARNING: Bob was able to set annual_pct (authorization check may be missing)")
-        else:
-            print("Verified authorization: Bob correctly cannot set annual_pct for Alice's class")
-    except Exception as e:
-        print(f"Verified authorization: Bob correctly cannot set annual_pct for Alice's class: {e}")
+    unauthorized_annual_pct_result = dysond_bin("tx", "nameservice", "set-nft-class-annual-pct", "--class-id", name, "--annual-pct", "15.5", "--from", bob_name)
+    # This should fail, but if it returns a code, it should be non-zero
+    assert unauthorized_annual_pct_result["code"] != 0, "Bob was able to set annual_pct for Alice's class" + unauthorized_annual_pct_result["raw_log"]
+    print("Verified authorization: Bob correctly cannot set annual_pct for Alice's class")
     
     # Test the new settings on the sub-class as well
     sub_always_listed_result = dysond_bin("tx", "nameservice", "set-nft-class-always-listed", "--class-id", sub_class_id, "--always-listed", "--from", alice_name)
     assert sub_always_listed_result["code"] == 0, "Set NFT sub-class always listed transaction failed"
     print(f"Successfully set always_listed=true for sub-class {sub_class_id}")
     
-    sub_annual_pct_result = dysond_bin("tx", "nameservice", "set-nft-class-annual-pct", "--class-id", sub_class_id, "--annual-pct", "7.25", "--from", alice_name)
-    assert sub_annual_pct_result["code"] == 0, "Set NFT sub-class annual pct transaction failed"
-    print(f"Successfully set annual_pct=7.25 for sub-class {sub_class_id}")
+    sub_annual_pct_result = dysond_bin("tx", "nameservice", "set-nft-class-annual-pct", "--class-id", sub_class_id, "--annual-pct", "0.0725", "--from", alice_name)
+    assert sub_annual_pct_result["code"] == 0, "Set NFT sub-class annual pct transaction failed" + sub_annual_pct_result["raw_log"]
+    print(f"Successfully set annual_pct=0.0725 for sub-class {sub_class_id}")
     
     # Step 7.3: Test Individual NFT Listed Setting
     # Test setting listed=true for the main NFT
@@ -283,7 +273,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
                                        "--nft-id", nft_id, 
                                        "--listed", 
                                        "--from", alice_name)
-    assert set_listed_true_result["code"] == 0, "Set NFT listed (true) transaction failed"
+    assert set_listed_true_result["code"] == 0, "Set NFT listed (true) transaction failed" + set_listed_true_result["raw_log"]
     print(f"Successfully set listed=true for NFT {nft_id}")
 
     # Test setting listed=false for the sub-collection NFT (omit --listed flag)
@@ -295,18 +285,13 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     print(f"Successfully set listed=false for NFT {sub_nft_id}")
 
     # Test authorization - Bob should not be able to set listed status for Alice's NFT
-    try:
-        unauthorized_listed_result = dysond_bin("tx", "nameservice", "set-listed", 
-                                               "--nft-class-id", name, 
-                                               "--nft-id", nft_id, 
-                                               "--listed", 
-                                               "--from", bob_name)
-        if unauthorized_listed_result.get("code") == 0:
-            print("WARNING: Bob was able to set listed status (authorization check may be missing)")
-        else:
-            print("Verified authorization: Bob correctly cannot set listed status for Alice's NFT")
-    except Exception as e:
-        print(f"Verified authorization: Bob correctly cannot set listed status for Alice's NFT: {e}")
+    unauthorized_listed_result = dysond_bin("tx", "nameservice", "set-listed", 
+                                           "--nft-class-id", name, 
+                                           "--nft-id", nft_id, 
+                                           "--listed", 
+                                           "--from", bob_name)
+    assert unauthorized_listed_result["code"] != 0, "Bob was able to set listed status for Alice's NFT" + unauthorized_listed_result["raw_log"]
+    print("Verified authorization: Bob correctly cannot set listed status for Alice's NFT")
 
     # Verify the listed status through NFT queries
     nft_after_listed = dysond_bin("query", "nft", "nft", name, nft_id)
@@ -321,7 +306,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
                                        "--nft-id", name, 
                                        "--listed", 
                                        "--from", alice_name)
-    assert name_set_listed_result["code"] == 0, "Set name NFT listed transaction failed"
+    assert name_set_listed_result["code"] == 0, "Set name NFT listed transaction failed" + name_set_listed_result["raw_log"]
     print(f"Successfully set listed=true for registered name NFT {name}")
 
     # Verify the name NFT listed status
@@ -335,13 +320,13 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Mint coins with the name as denomination
     mint_coins_result = dysond_bin("tx", "nameservice", "mint-coins", "--amount", f"{main_coin_amount}{name}", "--from", alice_name)
-    assert mint_coins_result["code"] == 0, "Mint coins transaction failed"
+    assert mint_coins_result["code"] == 0, "Mint coins transaction failed" + mint_coins_result["raw_log"]
     print(f"Minted {main_coin_amount} {name} tokens successfully")
     
     # Mint coins with subdenom
     subdenom = f"{name}/token{random.randint(1, 999)}"
     mint_subdenom_result = dysond_bin("tx", "nameservice", "mint-coins", "--amount", f"{sub_coin_amount}{subdenom}", "--from", alice_name)
-    assert mint_subdenom_result["code"] == 0, "Mint subdenom coins transaction failed"
+    assert mint_subdenom_result["code"] == 0, "Mint subdenom coins transaction failed" + mint_subdenom_result["raw_log"]
     print(f"Minted {sub_coin_amount} {subdenom} tokens successfully")
     
     # Check balances
@@ -362,7 +347,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Send custom coins to Bob
     send_coins_result = dysond_bin("tx", "bank", "send", alice_address, bob_address, f"{transfer_amount}{name}")
-    assert send_coins_result["code"] == 0, "Send coins transaction failed"
+    assert send_coins_result["code"] == 0, "Send coins transaction failed" + send_coins_result["raw_log"]
     print(f"Sent {transfer_amount} {name} tokens to Bob successfully")
     
     # Check Bob's balance
@@ -393,11 +378,11 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Commit to registering the bidding test name
     bidding_commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", bidding_commitment_hash, "--valuation", f"{bidding_valuation}dys", "--from", alice_name)
-    assert bidding_commit_result["code"] == 0, "Bidding name commit transaction failed"
+    assert bidding_commit_result["code"] == 0, "Bidding name commit transaction failed" + bidding_commit_result["raw_log"]
     
     # Reveal the bidding test name
     bidding_reveal_result = dysond_bin("tx", "nameservice", "reveal", "--name", bidding_name, "--salt", bidding_salt, "--from", alice_name)
-    assert bidding_reveal_result["code"] == 0, "Bidding name reveal transaction failed"
+    assert bidding_reveal_result["code"] == 0, "Bidding name reveal transaction failed" + bidding_reveal_result["raw_log"]
     print(f"Registered bidding test name: {bidding_name}")
     
     # Verify the NFT exists with correct valuation
@@ -408,7 +393,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     # Step 9.1: Bob places a bid on the NFT
     bob_bid_amount = bidding_valuation + random.randint(10, 30)
     bob_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--bid-amount", f"{bob_bid_amount}dys", "--from", bob_name)
-    assert bob_bid_result["code"] == 0, "Bob's place bid transaction failed"
+    assert bob_bid_result["code"] == 0, "Bob's place bid transaction failed" + bob_bid_result["raw_log"]
     print(f"Bob successfully placed a bid of {bob_bid_amount}dys")
     
     # Verify the bid was recorded
@@ -420,7 +405,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Step 9.2: Alice accepts Bob's bid
     accept_bid_result = dysond_bin("tx", "nameservice", "accept-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--from", alice_name)
-    assert accept_bid_result["code"] == 0, "Accept bid transaction failed"
+    assert accept_bid_result["code"] == 0, "Accept bid transaction failed" + accept_bid_result["raw_log"]
     print("Alice successfully accepted Bob's bid")
     
     # Verify the NFT is now owned by Bob
@@ -430,31 +415,29 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Step 9.3: Charlie places a bid on Bob's NFT
     # Make sure Charlie has some funds
-    try:
-        charlie_balance = dysond_bin("query", "bank", "balances", charlie_address)
-        has_dys = False
-        for balance in charlie_balance.get("balances", []):
-            if balance.get("denom") == "dys" and int(balance.get("amount", "0")) > 200:
-                has_dys = True
-                break
-        
-        if not has_dys:
-            # Send funds to Charlie from Alice
-            fund_result = dysond_bin("tx", "bank", "send", "alice", charlie_address, "200dys")
-            assert fund_result["code"] == 0, "Failed to fund Charlie's account"
-            print("Funded Charlie's account with 200dys")
-    except Exception as e:
-        print(f"Error checking/funding Charlie's account: {e}")
+    
+    charlie_balance = dysond_bin("query", "bank", "balances", charlie_address)
+    has_dys = False
+    for balance in charlie_balance.get("balances", []):
+        if balance.get("denom") == "dys" and int(balance.get("amount", "0")) > 200:
+            has_dys = True
+            break
+    
+    if not has_dys:
+        # Send funds to Charlie from Alice
+        fund_result = dysond_bin("tx", "bank", "send", "alice", charlie_address, "200dys")
+        assert fund_result["code"] == 0, "Failed to fund Charlie's account" + fund_result["raw_log"]
+        print("Funded Charlie's account with 200dys")
     
     charlie_bid_amount = bob_bid_amount + random.randint(20, 50)
     charlie_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--bid-amount", f"{charlie_bid_amount}dys", "--from", charlie_name)
-    assert charlie_bid_result["code"] == 0, "Charlie's place bid transaction failed" 
+    assert charlie_bid_result["code"] == 0, "Charlie's place bid transaction failed" + charlie_bid_result["raw_log"]
     print(f"Charlie successfully placed a bid of {charlie_bid_amount}dys")
     
     # Step 9.4: Bob rejects Charlie's bid with a higher valuation
     new_bidding_valuation = charlie_bid_amount + random.randint(10, 30)
     reject_bid_result = dysond_bin("tx", "nameservice", "reject-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--new-valuation", f"{new_bidding_valuation}dys", "--from", bob_name)
-    assert reject_bid_result["code"] == 0, "Reject bid transaction failed"
+    assert reject_bid_result["code"] == 0, "Reject bid transaction failed" + reject_bid_result["raw_log"]
     print(f"Bob successfully rejected Charlie's bid and set new valuation to {new_bidding_valuation}dys")
     
     # Verify Charlie's bid was rejected and valuation was updated
@@ -478,17 +461,17 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Commit to registering the timeout test name
     timeout_commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", timeout_commitment_hash, "--valuation", f"{bidding_valuation}dys", "--from", alice_name)
-    assert timeout_commit_result["code"] == 0, "Timeout name commit transaction failed"
+    assert timeout_commit_result["code"] == 0, "Timeout name commit transaction failed" + timeout_commit_result["raw_log"]
     
     # Reveal the timeout test name
     timeout_reveal_result = dysond_bin("tx", "nameservice", "reveal", "--name", timeout_name, "--salt", timeout_salt, "--from", alice_name)
-    assert timeout_reveal_result["code"] == 0, "Timeout name reveal transaction failed"
+    assert timeout_reveal_result["code"] == 0, "Timeout name reveal transaction failed" + timeout_reveal_result["raw_log"]
     print(f"Registered timeout test name: {timeout_name}")
     
     # Charlie places a bid on the timeout test name
     timeout_bid_amount = bidding_valuation + random.randint(10, 30)
     timeout_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", timeout_name, "--bid-amount", f"{timeout_bid_amount}dys", "--from", charlie_name)
-    assert timeout_bid_result["code"] == 0, "Charlie's place bid on timeout name failed"
+    assert timeout_bid_result["code"] == 0, "Charlie's place bid on timeout name failed" + timeout_bid_result["raw_log"]
     print(f"Charlie successfully placed a bid of {timeout_bid_amount}dys on {timeout_name}")
     
     # Verify the bid was recorded on the timeout test name
@@ -511,7 +494,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     poll_until_condition(timeout_elapsed, timeout=10, error_message="Bid timeout did not elapse")
 
     claim_bid_result = dysond_bin("tx", "nameservice", "claim-bid", "--nft-class-id", "nameservice.dys", "--nft-id", timeout_name, "--from", charlie_name)
-    assert claim_bid_result["code"] == 0, claim_bid_result["raw_log"]
+    assert claim_bid_result["code"] == 0, "Charlie's claim bid on timeout name failed" + claim_bid_result["raw_log"]
     print("Charlie successfully claimed the NFT after timeout")
     
     # Verify Charlie now owns the NFT

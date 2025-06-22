@@ -17,6 +17,7 @@ import (
 )
 
 func NewDefaultHandler(clientCtx client.Context, ScriptAddressOrNamePattern string) http.Handler {
+	fmt.Println("ScriptAddressOrNamePattern: ", ScriptAddressOrNamePattern)
 	scriptAddressOrNameRe := regexp.MustCompile(ScriptAddressOrNamePattern)
 	return &DefaultHandler{
 		clientCtx:             clientCtx,

@@ -131,7 +131,7 @@ func (k Keeper) GetNamesClassAnnualPct(ctx context.Context) (string, error) {
 	if !k.nftKeeper.HasClass(ctx, NamesClassID) {
 		// Try to create the class if it doesn't exist
 		if err := k.EnsureNamesClassExists(ctx); err != nil {
-			return "", cosmossdkerrors.Wrap(err, "failed to create nameservice NFT class")
+			return "", cosmossdkerrors.Wrap(err, "failed to get nameservice NFT class")
 		}
 
 		// Check again after creation
@@ -148,7 +148,7 @@ func (k Keeper) GetNamesClassAnnualPct(ctx context.Context) (string, error) {
 
 	// If annual_pct is empty, return an error
 	if nftClassData.AnnualPct == "" {
-		return "", cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "nameservice NFT class has no annual percentage set")
+		return "0", nil
 	}
 
 	// Return the annual percentage from the class data

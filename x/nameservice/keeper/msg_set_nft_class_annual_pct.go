@@ -22,7 +22,7 @@ func (k Keeper) SetNFTClassAnnualPct(ctx context.Context, msg *nameservicev1.Msg
 		)
 	}
 
-	// Parse and validate annual_pct range (0.0 to 100.0)
+	// Parse and validate annual_pct range (0.0 to 1.0)
 	annualPctFloat, err := strconv.ParseFloat(msg.AnnualPct, 64)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrapf(
@@ -32,10 +32,10 @@ func (k Keeper) SetNFTClassAnnualPct(ctx context.Context, msg *nameservicev1.Msg
 		)
 	}
 
-	if annualPctFloat < 0.0 || annualPctFloat > 100.0 {
+	if annualPctFloat < 0.0 || annualPctFloat > 1.0 {
 		return nil, cosmossdkerrors.Wrapf(
 			sdkerrors.ErrInvalidRequest,
-			"annual_pct must be between 0.0 and 100.0, got: %s",
+			"annual_pct must be between 0.0 and 1.0, got: %s",
 			msg.AnnualPct,
 		)
 	}

@@ -4045,6 +4045,19 @@ paths:
                   method
 
                   signatures required by gogoproto.
+              max_annual_pct_fee:
+                type: string
+                description: >-
+                  max_annual_pct_fee (optional) is the maximum annual percentage
+                  fee the user
+
+                  is willing to pay for setting the new valuation (e.g. "2.5"
+                  for 2.5%).
+
+                  This guards against unexpected fee amounts if the name owner
+                  changes the
+
+                  annual_pct.
       tags:
         - Msg
   /dysonprotocol.nameservice.v1.Msg/UpdateParams:
@@ -35445,6 +35458,18 @@ definitions:
 
           NOTE: The amount field is an Int which implements the custom method
           signatures required by gogoproto.
+      max_annual_pct_fee:
+        type: string
+        description: >-
+          max_annual_pct_fee (optional) is the maximum annual percentage fee the
+          user
+
+          is willing to pay for setting the new valuation (e.g. "2.5" for 2.5%).
+
+          This guards against unexpected fee amounts if the name owner changes
+          the
+
+          annual_pct.
   dysonprotocol.nameservice.v1.MsgSetValuationResponse:
     type: object
   dysonprotocol.nameservice.v1.MsgUpdateParams:

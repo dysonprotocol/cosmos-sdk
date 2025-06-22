@@ -1322,6 +1322,10 @@
         },
         "valuation": {
           "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "max_annual_pct_fee": {
+          "type": "string",
+          "description": "max_annual_pct_fee (optional) is the maximum annual percentage fee the user\nis willing to pay for setting the new valuation (e.g. \"2.5\" for 2.5%).\nThis guards against unexpected fee amounts if the name owner changes the\nannual_pct."
         }
       }
     },

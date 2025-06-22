@@ -8,3 +8,7 @@ proto_vendor
 .cursorignore
 .cursorrules
 node_modules
+dysvm/cpython
+dysvm/go-embed-python
+dysvm/python-build-standalone
+ibc-go

@@ -70,8 +70,14 @@ message MsgSetValuation {
   string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   string nft_class_id = 2;
   string nft_id = 3;
+  // valuation is the new valuation of the NFT
   cosmos.base.v1beta1.Coin valuation = 4
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  // max_annual_pct_fee (optional) is the maximum annual percentage fee the user
+  // is willing to pay for setting the new valuation (e.g. "0.025" for 2.5%).
+  // This guards against unexpected fee amounts if the name owner changes the
+  // annual_pct.
+  string max_annual_pct_fee = 5;
 }
 message MsgSetValuationResponse {}
 

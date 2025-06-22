@@ -14,11 +14,6 @@ const (
 	SecondsInYear = 31536000
 )
 
-// Minimum valuation amount is dynamically computed as 1 / annual_pct for the
-// NFT class. This ties the minimum valuation to the economic parameters of the
-// class instead of a hard-coded constant.
-
-// SetValuation implements the MsgServer.SetValuation method
 func (k Keeper) SetValuation(ctx context.Context, msg *nameservicev1.MsgSetValuation) (*nameservicev1.MsgSetValuationResponse, error) {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
@@ -29,6 +24,11 @@ func (k Keeper) SetValuation(ctx context.Context, msg *nameservicev1.MsgSetValua
 	if err != nil {
 		k.Logger.Error("SetValuation: NFT not found", "class_id", msg.NftClassId, "nft_id", msg.NftId, "error", err)
 		return nil, cosmossdkerrors.Wrapf(err, "failed to get NFT data")
+	}
+
+	// If the NFT is expired, return an error
+	if nftData.ValuationExpiry.Before(sdkCtx.BlockTime()) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "NFT valuation is expired, use MsgRenew to renew the expiry before setting a new valuation")
 	}
 
 	// Get the current owner of the NFT
@@ -60,38 +60,15 @@ func (k Keeper) SetValuation(ctx context.Context, msg *nameservicev1.MsgSetValua
 			"cannot set valuation while there is an active bid, use MsgRejectBid to reject the bid with a new valuation")
 	}
 
-	// -------------------------------------------------------------------
-	// Dynamic Minimum Valuation Check
-	// -------------------------------------------------------------------
-
-	// Fetch NFT class data to obtain annual_pct
+	// Fetch NFT class data to obtain annual_pct for fee calculation
 	classData, err := k.GetNFTClassData(ctx, msg.NftClassId)
 	if err != nil {
-		return nil, cosmossdkerrors.Wrap(err, "failed to get NFT class data for minimum valuation check")
+		return nil, cosmossdkerrors.Wrap(err, "failed to get NFT class data for fee calculation")
 	}
 
-	if classData.AnnualPct == "" {
-		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "NFT class has no annual_pct set; cannot compute minimum valuation")
-	}
-
-	// Convert annual_pct to decimal. Expecting a value like "0.05" for 5%.
-	pctDec, err := math.LegacyNewDecFromStr(classData.AnnualPct)
-	if err != nil {
-		return nil, cosmossdkerrors.Wrap(err, "invalid annual_pct in NFT class data")
-	}
-
-	if pctDec.IsZero() {
-		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "annual_pct cannot be zero when computing minimum valuation")
-	}
-
-	// minVal = ceil(1 / annual_pct)
-	minValDec := math.LegacyOneDec().Quo(pctDec)
-	minValInt := minValDec.Ceil().TruncateInt()
-
-	if msg.Valuation.Amount.LT(minValInt) {
-		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-			"valuation amount must be at least %s %s (computed from 1/%s [annual_pct])",
-			minValInt.String(), msg.Valuation.Denom, classData.AnnualPct)
+	feePercentStr := "0"
+	if classData.AnnualPct != "" {
+		feePercentStr = classData.AnnualPct
 	}
 
 	// Calculate the incremental valuation (only if increasing)
@@ -121,13 +98,6 @@ func (k Keeper) SetValuation(ctx context.Context, msg *nameservicev1.MsgSetValua
 		portionRemaining := math.LegacyNewDecFromInt(math.NewInt(remainingSeconds)).
 			Quo(math.LegacyNewDecFromInt(math.NewInt(SecondsInYear)))
 
-		// Get the annual fee percentage from the NFT class metadata
-		feePercentStr, err := k.GetNamesClassAnnualPct(ctx)
-		if err != nil {
-			k.Logger.Error("SetValuation: Failed to get annual percentage from class metadata", "error", err)
-			return nil, cosmossdkerrors.Wrap(err, "failed to get annual percentage for valuation fee calculation")
-		}
-
 		// Convert the percentage string to a decimal
 		feePercent, err := math.LegacyNewDecFromStr(feePercentStr)
 		if err != nil {
@@ -149,15 +119,61 @@ func (k Keeper) SetValuation(ctx context.Context, msg *nameservicev1.MsgSetValua
 			"time_proportion", portionRemaining.String(),
 			"fee", feeCoins.String())
 
-		err = k.communityPoolKeeper.FundCommunityPool(ctx, feeCoins, msgOwnerAddr)
+		// Check if fee exceeds max_annual_pct_fee
+		if msg.MaxAnnualPctFee != "" {
+			maxAnnualPct, err := math.LegacyNewDecFromStr(msg.MaxAnnualPctFee)
+			if err != nil {
+				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+					"invalid max_annual_pct_fee format: %s", msg.MaxAnnualPctFee)
+			}
+
+			if feePercent.GT(maxAnnualPct) {
+				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
+					"calculated annual fee percentage %s exceeds maximum allowed %s",
+					feePercent.String(), maxAnnualPct.String())
+			}
+		}
+
+		// Get the owner of the NFT class using GetDenomOwner
+		classOwner, _, err := k.GetDenomOwner(sdkCtx, msg.NftClassId)
 		if err != nil {
-			return nil, cosmossdkerrors.Wrap(err, "failed to send fee to community pool")
+			k.Logger.Error("SetValuation: Failed to get NFT class owner", "class_id", msg.NftClassId, "error", err)
+			return nil, cosmossdkerrors.Wrap(err, "failed to get NFT class owner")
+		}
+
+		// Check if the owner is the authority (governance module)
+		if classOwner == k.GetAuthority() {
+			// Send fee to community pool
+			k.Logger.Info("SetValuation: Sending fee to community pool", "fee", feeCoins.String())
+			err = k.communityPoolKeeper.FundCommunityPool(ctx, feeCoins, msgOwnerAddr)
+			if err != nil {
+				return nil, cosmossdkerrors.Wrap(err, "failed to send fee to community pool")
+			}
+		} else {
+			// Send fee to the owner of the NFT class
+			k.Logger.Info("SetValuation: Sending fee to NFT class owner", "owner", classOwner, "fee", feeCoins.String())
+			classOwnerAddr, err := sdk.AccAddressFromBech32(classOwner)
+			if err != nil {
+				return nil, cosmossdkerrors.Wrap(err, "failed to parse NFT class owner address")
+			}
+			err = k.bankKeeper.SendCoins(ctx, msgOwnerAddr, classOwnerAddr, feeCoins)
+			if err != nil {
+				return nil, cosmossdkerrors.Wrap(err, "failed to send fee to NFT class owner")
+			}
 		}
 	}
 
 	// Update NFT data
 	nftData.Valuation = msg.Valuation
 	// Keep the same expiry time - we're just updating the valuation, not extending
+	// However, if expiry time is zero (unset), set it to 1 year from now
+	if nftData.ValuationExpiry.IsZero() {
+		nftData.ValuationExpiry = sdkCtx.BlockTime().AddDate(1, 0, 0) // 1 year from now
+		k.Logger.Info("SetValuation: Setting initial valuation expiry",
+			"class_id", msg.NftClassId,
+			"nft_id", msg.NftId,
+			"expiry", nftData.ValuationExpiry.String())
+	}
 
 	// Update the NFT data
 	if err := k.SetNFTData(ctx, msg.NftClassId, msg.NftId, nftData); err != nil {
