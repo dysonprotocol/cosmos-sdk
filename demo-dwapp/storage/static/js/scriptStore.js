@@ -588,6 +588,15 @@ document.addEventListener("alpine:init", () => {
       return !!this.executingTests[testId];
     },
     
+    // Check if current wallet is the script owner
+    isScriptOwner() {
+      const walletStore = Alpine.store('walletStore');
+      if (!walletStore || !walletStore.activeWalletMeta || !walletStore.activeWalletMeta.address) {
+        return false;
+      }
+      return walletStore.activeWalletMeta.address === this.scriptAddress;
+    },
+    
     // Demo coverage data and code (from demo.html)
     getDemoCoverageData() {
       return {
