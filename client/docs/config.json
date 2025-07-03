@@ -71,6 +71,24 @@
         }
       },
       {
+        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/nft/v1beta1/query.swagger.json",
+        "operationIds": {
+          "rename": {
+            "Query_Params": "Query_NftParams",
+            "Query_Balance": "Query_NftBalance"
+          }
+        }
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/nft/v1beta1/tx.swagger.json",
+        "operationIds": {
+          "rename": {
+            "Msg_UpdateParams": "Msg_UpdateNftParams",
+            "Msg_Send": "Msg_NftSend"
+          }
+        }
+      },
+      {
         "url": "./client/docs/swagger-ui/swagger-gen/cosmos/auth/v1beta1/query.swagger.json",
         "operationIds": {
           "rename": {
@@ -293,24 +311,6 @@
         "operationIds": {
           "rename": {
             "Msg_UpdateParams": "Msg_UpdateFeegrantParams"
-          }
-        }
-      },
-      {
-        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/nft/v1beta1/query.swagger.json",
-        "operationIds": {
-          "rename": {
-            "Query_Params": "Query_NftParams",
-            "Query_Balance": "Query_NftBalance"
-          }
-        }
-      },
-      {
-        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/nft/v1beta1/tx.swagger.json",
-        "operationIds": {
-          "rename": {
-            "Msg_UpdateParams": "Msg_UpdateNftParams",
-            "Msg_Send": "Msg_NftSend"
           }
         }
       },
