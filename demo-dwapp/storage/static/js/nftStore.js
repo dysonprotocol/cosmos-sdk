@@ -10,7 +10,7 @@ document.addEventListener('alpine:init', () => {
       this.loading = true;
       this.error = '';
       try {
-        const res = await fetch('/cosmos/nft/v1beta1/classes');
+        const res = await fetch('/dysonprotocol/nft/v1beta1/classes');
         if (!res.ok) throw new Error(await res.text());
         const json = await res.json();
         this.classes = (json.classes || []).map((c) => ({
@@ -62,7 +62,7 @@ document.addEventListener('alpine:init', () => {
         // If classId provided, fetch class metadata first
         if (this.classId) {
           try {
-            const clsRes = await fetch(`/cosmos/nft/v1beta1/classes/${encodeURIComponent(this.classId)}`);
+            const clsRes = await fetch(`/dysonprotocol/nft/v1beta1/classes/${encodeURIComponent(this.classId)}`);
             if (clsRes.ok) {
               const clsJson = await clsRes.json();
               this.classMeta = clsJson.class || null;
@@ -71,7 +71,7 @@ document.addEventListener('alpine:init', () => {
           } catch (_) {}
         }
 
-        let url = '/cosmos/nft/v1beta1/nfts?';
+        let url = '/dysonprotocol/nft/v1beta1/nfts?';
         if (this.classId) url += `class_id=${encodeURIComponent(this.classId)}`;
         if (this.ownerAddress) url += `${this.classId ? '&' : ''}owner=${encodeURIComponent(this.ownerAddress)}`;
         const res = await fetch(url);
@@ -115,7 +115,7 @@ document.addEventListener('alpine:init', () => {
         for (const nft of this.nfts) {
           try {
             // Owner endpoint gives authoritative owner value
-            const ownerRes = await fetch(`/cosmos/nft/v1beta1/owner/${encodeURIComponent(nft.class_id)}/${encodeURIComponent(nft.id)}`);
+            const ownerRes = await fetch(`/dysonprotocol/nft/v1beta1/owner/${encodeURIComponent(nft.class_id)}/${encodeURIComponent(nft.id)}`);
             if (ownerRes.ok) {
               const ownerJson = await ownerRes.json();
               nft.owner = ownerJson.owner || nft.owner || '';
@@ -124,7 +124,7 @@ document.addEventListener('alpine:init', () => {
 
           try {
             // NFT endpoint provides metadata such as listed flag
-            const nftRes = await fetch(`/cosmos/nft/v1beta1/nfts/${encodeURIComponent(nft.class_id)}/${encodeURIComponent(nft.id)}`);
+            const nftRes = await fetch(`/dysonprotocol/nft/v1beta1/nfts/${encodeURIComponent(nft.class_id)}/${encodeURIComponent(nft.id)}`);
             if (nftRes.ok) {
               const nftJson = await nftRes.json();
               const data = nftJson.nft?.data;

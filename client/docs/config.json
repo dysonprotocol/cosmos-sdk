@@ -297,7 +297,7 @@
         }
       },
       {
-        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/nft/v1beta1/query.swagger.json",
+        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/nft/v1beta1/query.swagger.json",
         "operationIds": {
           "rename": {
             "Query_Params": "Query_NftParams",
@@ -306,7 +306,7 @@
         }
       },
       {
-        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/nft/v1beta1/tx.swagger.json",
+        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/nft/v1beta1/tx.swagger.json",
         "operationIds": {
           "rename": {
             "Msg_UpdateParams": "Msg_UpdateNftParams",

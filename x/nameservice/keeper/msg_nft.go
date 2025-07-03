@@ -7,7 +7,7 @@ import (
 	"time"
 
 	cosmossdkerrors "cosmossdk.io/errors"
-	"cosmossdk.io/x/nft"
+	"dysonprotocol.com/x/nft"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

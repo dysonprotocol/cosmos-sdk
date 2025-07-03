@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 
 	feegrant "cosmossdk.io/x/feegrant"
-	nft "cosmossdk.io/x/nft"
+	nft "dysonprotocol.com/x/nft"
 	authz "github.com/cosmos/cosmos-sdk/x/authz"
 	grouptypes "github.com/cosmos/cosmos-sdk/x/group"
 

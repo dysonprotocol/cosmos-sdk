@@ -15,7 +15,6 @@ import (
 	genutilmodulev1 "cosmossdk.io/api/cosmos/genutil/module/v1"
 	govmodulev1 "cosmossdk.io/api/cosmos/gov/module/v1"
 	mintmodulev1 "cosmossdk.io/api/cosmos/mint/module/v1"
-	nftmodulev1 "cosmossdk.io/api/cosmos/nft/module/v1"
 	protocolpoolmodulev1 "cosmossdk.io/api/cosmos/protocolpool/module/v1"
 	slashingmodulev1 "cosmossdk.io/api/cosmos/slashing/module/v1"
 	stakingmodulev1 "cosmossdk.io/api/cosmos/staking/module/v1"
@@ -30,9 +29,7 @@ import (
 	evidencetypes "cosmossdk.io/x/evidence/types"
 	"cosmossdk.io/x/feegrant"
 	_ "cosmossdk.io/x/feegrant/module" // import for side-effects
-	"cosmossdk.io/x/nft"
-	_ "cosmossdk.io/x/nft/module" // import for side-effects
-	_ "cosmossdk.io/x/upgrade"    // import for side-effects
+	_ "cosmossdk.io/x/upgrade"         // import for side-effects
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 
 	"github.com/cosmos/cosmos-sdk/runtime"
@@ -65,7 +62,7 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/x/staking" // import for side-effects
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	// Custom modules
+	// Dyson Protocol custom modules
 	crontaskmodulev1 "dysonprotocol.com/api/crontask/module/v1"
 	crontaskv1 "dysonprotocol.com/x/crontask"
 	crontaskmodule "dysonprotocol.com/x/crontask/module"
@@ -73,6 +70,10 @@ import (
 	nameservicemodulev1 "dysonprotocol.com/api/nameservice/module/v1"
 	nameservicev1 "dysonprotocol.com/x/nameservice"
 	nameservicemodule "dysonprotocol.com/x/nameservice/module"
+
+	nftmodulev1 "dysonprotocol.com/api/nft/module/v1"
+	nftv1 "dysonprotocol.com/x/nft"
+	nftmodule "dysonprotocol.com/x/nft/module"
 
 	scriptmodulev1 "dysonprotocol.com/api/script/module/v1"
 	scriptv1 "dysonprotocol.com/x/script"
@@ -92,7 +93,7 @@ var (
 		{Account: stakingtypes.BondedPoolName, Permissions: []string{authtypes.Burner, stakingtypes.ModuleName}},
 		{Account: stakingtypes.NotBondedPoolName, Permissions: []string{authtypes.Burner, stakingtypes.ModuleName}},
 		{Account: govtypes.ModuleName, Permissions: []string{authtypes.Burner}},
-		{Account: nft.ModuleName},
+		{Account: nftv1.ModuleName},
 		{Account: protocolpooltypes.ModuleName},
 		{Account: protocolpooltypes.ProtocolPoolEscrowAccount},
 		// Custom modules
@@ -109,7 +110,7 @@ var (
 		minttypes.ModuleName,
 		stakingtypes.BondedPoolName,
 		stakingtypes.NotBondedPoolName,
-		nft.ModuleName,
+		nftv1.ModuleName,
 		// Custom modules
 		nameservicev1.ModuleName,
 		scriptv1.ModuleName,
@@ -180,7 +181,7 @@ var (
 					evidencetypes.ModuleName,
 					authz.ModuleName,
 					feegrant.ModuleName,
-					nft.ModuleName,
+					nftv1.ModuleName,
 					upgradetypes.ModuleName,
 					vestingtypes.ModuleName,
 					circuittypes.ModuleName,
@@ -208,7 +209,7 @@ var (
 					evidencetypes.ModuleName,
 					authz.ModuleName,
 					feegrant.ModuleName,
-					nft.ModuleName,
+					nftv1.ModuleName,
 					upgradetypes.ModuleName,
 					vestingtypes.ModuleName,
 					circuittypes.ModuleName,
@@ -326,7 +327,7 @@ var (
 			Config: appconfig.WrapAny(&crontaskmodulev1.Module{}),
 		},
 		{
-			Name:   nft.ModuleName,
+			Name:   nftv1.ModuleName,
 			Config: appconfig.WrapAny(&nftmodulev1.Module{}),
 		},
 		// since they don't have proto-based configs
@@ -344,10 +345,11 @@ var (
 					[]govclient.ProposalHandler{},
 				),
 				// Add explicit references to our custom modules to ensure they're registered
-				scriptv1.ModuleName:      scriptmodule.AppModuleBasic{},
-				nameservicev1.ModuleName: nameservicemodule.AppModuleBasic{},
-				storagev1.ModuleName:     storagemodule.AppModuleBasic{},
 				crontaskv1.ModuleName:    crontaskmodule.AppModuleBasic{},
+				nameservicev1.ModuleName: nameservicemodule.AppModuleBasic{},
+				nftv1.ModuleName:         nftmodule.AppModuleBasic{},
+				scriptv1.ModuleName:      scriptmodule.AppModuleBasic{},
+				storagev1.ModuleName:     storagemodule.AppModuleBasic{},
 			},
 		),
 	)

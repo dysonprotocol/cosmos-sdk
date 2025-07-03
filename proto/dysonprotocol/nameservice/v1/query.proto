@@ -9,7 +9,7 @@ import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/base/tendermint/v1beta1/query.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "cosmos_proto/cosmos.proto";
-import "cosmos/nft/v1beta1/nft.proto";
+import "dysonprotocol/nft/v1beta1/nft.proto";
 
 option go_package = "dysonprotocol.com/x/nameservice/types";
 

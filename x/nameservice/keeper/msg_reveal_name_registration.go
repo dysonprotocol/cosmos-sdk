@@ -5,7 +5,7 @@ import (
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
-	"cosmossdk.io/x/nft"
+	"dysonprotocol.com/x/nft"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"

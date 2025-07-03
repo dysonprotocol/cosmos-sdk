@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package dysonprotocol.nft.module.v1;
+
+option go_package = "dysonprotocol.com/x/nft/module/v1;module";
+
+import "cosmos/app/v1alpha1/module.proto";
+
+// Module is the config object of the nft module.
+message Module {
+  option (cosmos.app.v1alpha1.module) = {
+    go_import : "dysonprotocol.com/x/nft/module/v1"
+  };
+}

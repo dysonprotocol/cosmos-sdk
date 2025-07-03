@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-VERSION ?= $(shell git describe --tags 2>/dev/null || git describe --all)
+VERSION ?= $(shell git symbolic-ref -q --short HEAD || git describe --tags --exact-match)
 COMMIT ?= $(shell git rev-parse --short HEAD)
 BUILDDIR ?= $(CURDIR)/build
 CURRENT_DIR = $(shell pwd)
@@ -101,7 +101,7 @@ install:
 ###                                Testing                                  ###
 ###############################################################################
 
-test: 
+test: install
 	@echo "--> running pytest"
 	DEFAULT_BASE_DIR=/tmp/test-dysonchains python -m pytest -xs --showlocals --ff ./tests/$(TEST_PATTERN) $(PYTEST_ARGS)
 

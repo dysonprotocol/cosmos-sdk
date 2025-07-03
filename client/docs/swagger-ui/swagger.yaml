@@ -21873,7 +21873,7 @@ paths:
               Grantee.
       tags:
         - Msg
-  /cosmos/nft/v1beta1/balance/{owner}/{class_id}:
+  /dysonprotocol/nft/v1beta1/balance/{owner}/{class_id}:
     get:
       summary: |-
         Balance queries the number of NFTs of a given class owned by the owner,
@@ -21932,7 +21932,7 @@ paths:
           type: string
       tags:
         - Query
-  /cosmos/nft/v1beta1/classes:
+  /dysonprotocol/nft/v1beta1/classes:
     get:
       summary: Classes queries all NFT classes
       operationId: Query_Classes
@@ -22102,7 +22102,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /cosmos/nft/v1beta1/classes/{class_id}:
+  /dysonprotocol/nft/v1beta1/classes/{class_id}:
     get:
       summary: Class queries an NFT class based on its id
       operationId: Query_Class
@@ -22200,7 +22200,7 @@ paths:
           type: string
       tags:
         - Query
-  /cosmos/nft/v1beta1/nfts:
+  /dysonprotocol/nft/v1beta1/nfts:
     get:
       summary: >-
         NFTs queries all NFTs of a given class or owner,choose at least one of
@@ -22362,7 +22362,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /cosmos/nft/v1beta1/nfts/{class_id}/{id}:
+  /dysonprotocol/nft/v1beta1/nfts/{class_id}/{id}:
     get:
       summary: NFT queries an NFT based on its class and id.
       operationId: Query_NFT
@@ -22442,7 +22442,7 @@ paths:
           type: string
       tags:
         - Query
-  /cosmos/nft/v1beta1/owner/{class_id}/{id}:
+  /dysonprotocol/nft/v1beta1/owner/{class_id}/{id}:
     get:
       summary: |-
         Owner queries the owner of the NFT based on its class and id, same as
@@ -22498,7 +22498,7 @@ paths:
           type: string
       tags:
         - Query
-  /cosmos/nft/v1beta1/supply/{class_id}:
+  /dysonprotocol/nft/v1beta1/supply/{class_id}:
     get:
       summary: >-
         Supply queries the number of NFTs from the given class, same as
@@ -22552,7 +22552,7 @@ paths:
           type: string
       tags:
         - Query
-  /cosmos.nft.v1beta1.Msg/Send:
+  /dysonprotocol.nft.v1beta1.Msg/Send:
     post:
       summary: Send defines a method to send a nft from one account to another account.
       operationId: Msg_NftSend
@@ -52854,7 +52854,7 @@ definitions:
       response
 
       type.
-  cosmos.nft.v1beta1.Class:
+  dysonprotocol.nft.v1beta1.Class:
     type: object
     properties:
       id:
@@ -52898,7 +52898,7 @@ definitions:
               type.
         title: data is the app specific metadata of the NFT class. Optional
     description: Class defines the class of the nft type.
-  cosmos.nft.v1beta1.NFT:
+  dysonprotocol.nft.v1beta1.NFT:
     type: object
     properties:
       class_id:
@@ -52928,7 +52928,7 @@ definitions:
               type.
         title: data is an app specific data of the NFT. Optional
     description: NFT defines the NFT.
-  cosmos.nft.v1beta1.QueryBalanceResponse:
+  dysonprotocol.nft.v1beta1.QueryBalanceResponse:
     type: object
     properties:
       amount:
@@ -52936,7 +52936,7 @@ definitions:
         format: uint64
         title: amount is the number of all NFTs of a given class owned by the owner
     title: QueryBalanceResponse is the response type for the Query/Balance RPC method
-  cosmos.nft.v1beta1.QueryClassResponse:
+  dysonprotocol.nft.v1beta1.QueryClassResponse:
     type: object
     properties:
       class:
@@ -52984,7 +52984,7 @@ definitions:
             title: data is the app specific metadata of the NFT class. Optional
         description: Class defines the class of the nft type.
     title: QueryClassResponse is the response type for the Query/Class RPC method
-  cosmos.nft.v1beta1.QueryClassesResponse:
+  dysonprotocol.nft.v1beta1.QueryClassesResponse:
     type: object
     properties:
       classes:
@@ -53056,7 +53056,7 @@ definitions:
 
               was set, its value is undefined otherwise
     title: QueryClassesResponse is the response type for the Query/Classes RPC method
-  cosmos.nft.v1beta1.QueryNFTResponse:
+  dysonprotocol.nft.v1beta1.QueryNFTResponse:
     type: object
     properties:
       nft:
@@ -53091,7 +53091,7 @@ definitions:
         description: NFT defines the NFT.
         title: owner is the owner address of the nft
     title: QueryNFTResponse is the response type for the Query/NFT RPC method
-  cosmos.nft.v1beta1.QueryNFTsResponse:
+  dysonprotocol.nft.v1beta1.QueryNFTsResponse:
     type: object
     properties:
       nfts:
@@ -53147,14 +53147,14 @@ definitions:
 
               was set, its value is undefined otherwise
     title: QueryNFTsResponse is the response type for the Query/NFTs RPC methods
-  cosmos.nft.v1beta1.QueryOwnerResponse:
+  dysonprotocol.nft.v1beta1.QueryOwnerResponse:
     type: object
     properties:
       owner:
         type: string
         title: owner is the owner address of the nft
     title: QueryOwnerResponse is the response type for the Query/Owner RPC method
-  cosmos.nft.v1beta1.QuerySupplyResponse:
+  dysonprotocol.nft.v1beta1.QuerySupplyResponse:
     type: object
     properties:
       amount:
@@ -53162,7 +53162,7 @@ definitions:
         format: uint64
         title: amount is the number of all NFTs from the given class
     title: QuerySupplyResponse is the response type for the Query/Supply RPC method
-  cosmos.nft.v1beta1.MsgSend:
+  dysonprotocol.nft.v1beta1.MsgSend:
     type: object
     properties:
       class_id:
@@ -53184,7 +53184,7 @@ definitions:
     description: |-
       MsgSend represents a message to send a nft from one account to another
       account.
-  cosmos.nft.v1beta1.MsgSendResponse:
+  dysonprotocol.nft.v1beta1.MsgSendResponse:
     type: object
     description: MsgSendResponse defines the Msg/Send response type.
   cosmos.circuit.v1.AccountResponse:

@@ -235,7 +235,7 @@ document.addEventListener('alpine:init', () => {
       try {
         const walletStore = Alpine.store('walletStore');
         const address = walletStore.activeWalletMeta.address;
-        const url = `/cosmos/nft/v1beta1/nfts?class_id=nameservice.dys&owner=${address}`;
+        const url = `/dysonprotocol/nft/v1beta1/nfts?class_id=nameservice.dys&owner=${address}`;
         const resp = await fetch(url);
         if (!resp.ok) throw new Error(await resp.text());
         const json = await resp.json();
@@ -335,7 +335,7 @@ document.addEventListener('alpine:init', () => {
       const walletStore = Alpine.store('walletStore');
       const address = walletStore.activeWalletMeta.address;
       try {
-        const resp = await fetch(`/cosmos/nft/v1beta1/nfts?class_id=nameservice.dys&owner=${address}`);
+        const resp = await fetch(`/dysonprotocol/nft/v1beta1/nfts?class_id=nameservice.dys&owner=${address}`);
         if (!resp.ok) throw new Error(await resp.text());
         const json = await resp.json();
         this.ownedNames = (json?.nfts||[]).map((n)=>n.id);
@@ -346,7 +346,7 @@ document.addEventListener('alpine:init', () => {
       const walletStore=Alpine.store('walletStore');
       const address=walletStore.activeWalletMeta.address;
       try{
-        const resp=await fetch(`/cosmos/nft/v1beta1/classes?owner=${address}`);
+        const resp=await fetch(`/dysonprotocol/nft/v1beta1/classes?owner=${address}`);
         if(!resp.ok) throw new Error(await resp.text());
         const json=await resp.json();
         // keep only classes starting with owned name
@@ -361,7 +361,7 @@ document.addEventListener('alpine:init', () => {
         await this.loadOwnedClasses();
         const walletStore = Alpine.store('walletStore');
         const address = walletStore.activeWalletMeta.address;
-        const resp = await fetch(`/cosmos/nft/v1beta1/nfts?owner=${address}`);
+        const resp = await fetch(`/dysonprotocol/nft/v1beta1/nfts?owner=${address}`);
         if (!resp.ok) throw new Error(await resp.text());
         const json = await resp.json();
         this.nfts = (json?.nfts||[]).filter((n)=> this.ownedClasses.includes(n.class_id)).map((n)=>({id:n.id,class_id:n.class_id,uri:n.uri}));
@@ -473,7 +473,7 @@ document.addEventListener('alpine:init', () => {
     async loadDetails(item) {
       try {
         const walletStore = Alpine.store('walletStore');
-        const url = `/cosmos/nft/v1beta1/nfts/nameservice.dys/${item.id}`;
+        const url = `/dysonprotocol/nft/v1beta1/nfts/nameservice.dys/${item.id}`;
         const resp = await fetch(url);
         if (!resp.ok) throw new Error(await resp.text());
         const json = await resp.json();
@@ -495,7 +495,7 @@ document.addEventListener('alpine:init', () => {
       try {
         const walletStore = Alpine.store('walletStore');
         const address = walletStore.activeWalletMeta.address;
-        const url = `/cosmos/nft/v1beta1/nfts?class_id=nameservice.dys&owner=${address}`;
+        const url = `/dysonprotocol/nft/v1beta1/nfts?class_id=nameservice.dys&owner=${address}`;
         const resp = await fetch(url);
         if (!resp.ok) throw new Error(await resp.text());
         const json = await resp.json();
@@ -533,7 +533,7 @@ document.addEventListener('alpine:init', () => {
       this.loading=true;
       try{
         const addr=Alpine.store('walletStore').activeWalletMeta.address;
-        const res=await fetch(`/cosmos/nft/v1beta1/nfts?class_id=nameservice.dys&owner=${addr}`);
+        const res=await fetch(`/dysonprotocol/nft/v1beta1/nfts?class_id=nameservice.dys&owner=${addr}`);
         if(!res.ok) throw new Error(await res.text());
         const json=await res.json();
         this.names=(json.nfts||[]).map(n=>({
@@ -573,7 +573,7 @@ document.addEventListener('alpine:init', () => {
       // Load current destination and valuation for each name to pre-populate update forms
       for (const nameObj of this.names) {
         try {
-          const nftRes = await fetch(`/cosmos/nft/v1beta1/nfts/nameservice.dys/${nameObj.id}`);
+          const nftRes = await fetch(`/dysonprotocol/nft/v1beta1/nfts/nameservice.dys/${nameObj.id}`);
           if (nftRes.ok) {
             const nftJson = await nftRes.json();
             const nft = nftJson?.nft || {};
@@ -622,7 +622,7 @@ document.addEventListener('alpine:init', () => {
               // Load NFT classes
         try{
           // fetch all classes once (pagination limit reasonable)
-          const clsRes=await fetch(`/cosmos/nft/v1beta1/classes?pagination.limit=1000`);
+          const clsRes=await fetch(`/dysonprotocol/nft/v1beta1/classes?pagination.limit=1000`);
           if(clsRes.ok){
             const clsJson=await clsRes.json();
             const classes=(clsJson.classes||[]).filter(cl=>cl.id===obj.id || cl.id.startsWith(`${obj.id}/`));
@@ -664,7 +664,7 @@ document.addEventListener('alpine:init', () => {
         // fetch all NFTs of the classes regardless of owner
         for(const cls of obj.classes){
           try{
-            const nftRes=await fetch(`/cosmos/nft/v1beta1/nfts?class_id=${encodeURIComponent(cls.class_id)}`);
+            const nftRes=await fetch(`/dysonprotocol/nft/v1beta1/nfts?class_id=${encodeURIComponent(cls.class_id)}`);
             if(nftRes.ok){
               const nftJson=await nftRes.json();
               for(const nft of nftJson.nfts||[]){
@@ -766,7 +766,7 @@ document.addEventListener('alpine:init', () => {
       try{
         // Fetch the NFT owner from the owner endpoint
         try{
-          const ownerRes = await fetch(`/cosmos/nft/v1beta1/owner/${encodeURIComponent(classId)}/${encodeURIComponent(nft.id)}`);
+          const ownerRes = await fetch(`/dysonprotocol/nft/v1beta1/owner/${encodeURIComponent(classId)}/${encodeURIComponent(nft.id)}`);
           if(ownerRes.ok){
             const ownerJson = await ownerRes.json();
             nft.owner = ownerJson?.owner || '';
@@ -777,7 +777,7 @@ document.addEventListener('alpine:init', () => {
         }
         
         // Fetch the full NFT data to get the complete NFTData structure
-        const nftRes = await fetch(`/cosmos/nft/v1beta1/nfts/${encodeURIComponent(classId)}/${encodeURIComponent(nft.id)}`);
+        const nftRes = await fetch(`/dysonprotocol/nft/v1beta1/nfts/${encodeURIComponent(classId)}/${encodeURIComponent(nft.id)}`);
         if(nftRes.ok){
           const nftJson = await nftRes.json();
           const nftData = nftJson?.nft?.data;
@@ -815,7 +815,7 @@ document.addEventListener('alpine:init', () => {
     async loadClassData(cls){
       try{
         // Fetch the NFT class data to get extra_data, always_listed, and annual_pct
-        const classRes = await fetch(`/cosmos/nft/v1beta1/classes/${encodeURIComponent(cls.class_id)}`);
+        const classRes = await fetch(`/dysonprotocol/nft/v1beta1/classes/${encodeURIComponent(cls.class_id)}`);
         if(classRes.ok){
           const classJson = await classRes.json();
           const classData = classJson?.class?.data;

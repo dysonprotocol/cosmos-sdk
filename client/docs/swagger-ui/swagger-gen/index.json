@@ -108,12 +108,6 @@
         {"type":"file","name":"tx.swagger.json"}
       ]}
     ]},
-    {"type":"directory","name":"nft","contents":[
-      {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
-      ]}
-    ]},
     {"type":"directory","name":"params","contents":[
       {"type":"directory","name":"v1beta1","contents":[
         {"type":"file","name":"query.swagger.json"}
@@ -169,6 +163,12 @@
     ]},
     {"type":"directory","name":"nameservice","contents":[
       {"type":"directory","name":"v1","contents":[
+        {"type":"file","name":"query.swagger.json"},
+        {"type":"file","name":"tx.swagger.json"}
+      ]}
+    ]},
+    {"type":"directory","name":"nft","contents":[
+      {"type":"directory","name":"v1beta1","contents":[
         {"type":"file","name":"query.swagger.json"},
         {"type":"file","name":"tx.swagger.json"}
       ]}
