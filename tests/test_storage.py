@@ -36,24 +36,12 @@ def test_storage_set_get(chainnet, generate_account, faucet):
     # Print the result for inspection
     print(f"Storage get result: {json.dumps(get_result, indent=2)}")
     
-    # Check if result has entry, storageValue or direct fields
-    if "entry" in get_result:
-        entry = get_result["entry"]
-        assert entry["data"] == test_value, f"Retrieved value doesn't match: {entry}"
-        assert entry["owner"] == alice_addr, f"Owner doesn't match: {entry}"
-        assert entry["index"] == test_key, f"Index doesn't match: {entry}"
-    elif "storageValue" in get_result:
-        storage_value = get_result["storageValue"]
-        assert storage_value.get("value", storage_value.get("data", "")) == test_value, \
-            f"Retrieved value doesn't match: {storage_value}"
-        assert storage_value["owner"] == alice_addr, f"Owner doesn't match: {storage_value}"
-        assert storage_value["index"] == test_key, f"Index doesn't match: {storage_value}"
-    else:
-        # Direct field access
-        assert get_result.get("data") == test_value or get_result.get("value") == test_value, \
-            f"Retrieved value doesn't match: {get_result}"
-        assert get_result.get("owner") == alice_addr, f"Owner doesn't match: {get_result}"
-        assert get_result.get("index") == test_key, f"Index doesn't match: {get_result}"
+    # Check that entry exists and contains expected data
+    assert "entry" in get_result, f"Expected 'entry' field in result: {get_result}"
+    entry = get_result["entry"]
+    assert entry["data"] == test_value, f"Retrieved value doesn't match: {entry}"
+    assert entry["owner"] == alice_addr, f"Owner doesn't match: {entry}"
+    assert entry["index"] == test_key, f"Index doesn't match: {entry}"
 
 
 def test_storage_list(chainnet, generate_account, faucet):
@@ -89,32 +77,17 @@ def test_storage_list(chainnet, generate_account, faucet):
     # Print the result for inspection
     print(f"Storage list result: {json.dumps(list_result, indent=2)}")
     
-    # Check different possible structures for the list result
-    if "entries" in list_result:
-        storage_items = list_result["entries"]
-    elif "storageValues" in list_result:
-        storage_items = list_result["storageValues"]
-    elif "storage_values" in list_result:
-        storage_items = list_result["storage_values"]
-    else:
-        # Assume the result itself is the list of items
-        storage_items = list_result
+    # Check entries field exists and extract storage items
+    assert "entries" in list_result, f"Expected 'entries' field in result: {list_result}"
+    storage_items = list_result["entries"]
     
-    # Extract the values with a more flexible approach
+    # Extract the values
     found_items = {}
     for item in storage_items:
-        if isinstance(item, dict):
-            if "index" in item and ("data" in item or "value" in item):
-                # Direct structure
-                index = item.get("index", "")
-                value = item.get("data", item.get("value", ""))
-                found_items[index] = value
-            elif "entry" in item:
-                # Entry wrapper
-                entry = item["entry"]
-                index = entry.get("index", "")
-                value = entry.get("data", entry.get("value", ""))
-                found_items[index] = value
+        assert isinstance(item, dict), f"Expected dict item, got: {type(item)}"
+        assert "index" in item, f"Expected 'index' field in item: {item}"
+        assert "data" in item, f"Expected 'data' field in item: {item}"
+        found_items[item["index"]] = item["data"]
     
     # Check that all our values were found
     for key, value in values.items():
@@ -256,14 +229,9 @@ def test_storage_binary_data(chainnet, generate_account, faucet):
     # Print result for inspection
     print(f"Binary data result: {json.dumps(get_result, indent=2)}")
     
-    # Get the value with flexible structure handling
-    value = ""
-    if "entry" in get_result:
-        value = get_result["entry"].get("data", get_result["entry"].get("value", ""))
-    elif "storageValue" in get_result:
-        value = get_result["storageValue"].get("value", get_result["storageValue"].get("data", ""))
-    else:
-        value = get_result.get("value", get_result.get("data", ""))
+    # Get the value from entry
+    assert "entry" in get_result, f"Expected 'entry' field in result: {get_result}"
+    value = get_result["entry"]["data"]
     
     # Verify the data
     assert value == binary_data, "Binary data not retrieved correctly"
@@ -329,10 +297,8 @@ def test_storage_extract_and_filter(chainnet, generate_account, faucet):
     )
     # entry.data should now be the string "First Post" (with quotes)
     extracted = get_res["entry"]["data"]
-    # Remove surrounding quotes if present
-    if extracted.startswith("\"") and extracted.endswith("\""):
-        extracted = json.loads(extracted)
-    assert extracted == "First Post", f"extract failed: {extracted}"
+    # The extracted value should be "First Post" already as JSON string
+    assert extracted == '"First Post"', f"extract failed: {extracted}"
 
     # Test --filter when listing
     list_res = dysond(
@@ -367,7 +333,7 @@ def test_storage_extract_and_filter(chainnet, generate_account, faucet):
         "json",
     )
     entries_views = list_extract.get("entries", [])
-    views_values = [json.loads(e["data"]) if isinstance(e["data"], str) and e["data"].startswith("\"") else int(e["data"]) for e in entries_views]
+    views_values = [int(e["data"]) for e in entries_views]
     assert set(views_values) == {10, 20}, f"extract in list failed, got {views_values}"
 
 
@@ -407,7 +373,126 @@ def test_storage_extract_filter_too_long(chainnet, generate_account, faucet):
 
     list_res = dysond("query", "storage", "list", addr, "--index-prefix", "toolong/", "--filter", long_path, "-o", "json")
     # For list, CLI likely surfaces error string instead of json when InvalidArgument
-    if isinstance(list_res, dict):
-        assert False, "Expected error string for too long filter"
-    else:
-        assert "too long" in list_res.lower(), f"Expected length error, got {list_res}" 
+    assert isinstance(list_res, str), "Expected error string for too long filter"
+    assert "too long" in list_res.lower(), f"Expected length error, got {list_res}"
+
+
+def test_storage_delete_by_prefix_and_filter(chainnet, generate_account, faucet):
+    """Test deleting storage values by prefix and optional filter."""
+    dysond = chainnet[0]
+    
+    # Create account and fund it
+    [user_name, user_addr] = generate_account('deleter')
+    faucet(user_addr)
+    
+    # Create test data with a common prefix
+    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    prefix = f"delete_test_{suffix}/"
+    
+    # Set up test data with JSON values
+    test_data = {
+        f"{prefix}user1": {"name": "Alice", "age": 25, "active": True},
+        f"{prefix}user2": {"name": "Bob", "age": 30, "active": False},
+        f"{prefix}user3": {"name": "Charlie", "age": 35, "active": True},
+        f"{prefix}admin1": {"name": "Admin", "role": "admin", "active": True}
+    }
+    
+    # Set all the test data
+    for key, value in test_data.items():
+        dysond("tx", "storage", "set",
+            "--from", user_name,
+            "--index", key,
+            "--data", json.dumps(value))
+    
+    # Test 1: Delete all entries with prefix containing user
+    user_prefix = f"{prefix}user"
+    delete_result = dysond("tx", "storage", "delete",
+        "--from", user_name,
+        "--index-prefix", user_prefix)
+    
+    assert delete_result["code"] == 0, f"Delete by prefix failed: {delete_result['raw_log']}"
+    
+    # Verify user entries are deleted
+    for i in range(1, 4):
+        key = f"{user_prefix}{i}"
+        get_result = dysond("query", "storage", "get",
+            user_addr,
+            "--index", key)
+        assert isinstance(get_result, str), f"Entry {key} should be deleted but still exists"
+        assert "doesn't exist" in get_result, f"Entry {key} should show 'doesn't exist' error"
+    
+    # Verify admin entry still exists
+    admin_key = f"{prefix}admin1"
+    admin_result = dysond("query", "storage", "get",
+        user_addr,
+        "--index", admin_key)
+    assert admin_result["entry"]["data"] == json.dumps(test_data[admin_key]), \
+        f"Admin entry should still exist"
+    
+    # Test 2: Set up new data for filter test
+    filter_data = {
+        f"{prefix}active1": {"name": "User1", "status": "active"},
+        f"{prefix}active2": {"name": "User2", "status": "active"},
+        f"{prefix}inactive1": {"name": "User3", "status": "inactive"},
+        f"{prefix}pending1": {"name": "User4", "status": "pending"}
+    }
+    
+    for key, value in filter_data.items():
+        dysond("tx", "storage", "set",
+            "--from", user_name,
+            "--index", key,
+            "--data", json.dumps(value))
+    
+    # Test 3: Delete entries with specific filter (status == "active")
+    delete_filter_result = dysond("tx", "storage", "delete",
+        "--from", user_name,
+        "--index-prefix", prefix,
+        "--filter", 'status == "active"')
+    
+    assert delete_filter_result["code"] == 0, f"Delete by filter failed: {delete_filter_result['raw_log']}"
+    
+    # Verify only active entries are deleted
+    for key in [f"{prefix}active1", f"{prefix}active2"]:
+        get_result = dysond("query", "storage", "get",
+            user_addr,
+            "--index", key)
+        assert isinstance(get_result, str), f"Active entry {key} should be deleted"
+        assert "doesn't exist" in get_result, f"Active entry {key} should show 'doesn't exist' error"
+    
+    # Verify inactive and pending entries still exist
+    for key in [f"{prefix}inactive1", f"{prefix}pending1"]:
+        get_result = dysond("query", "storage", "get",
+            user_addr,
+            "--index", key)
+        assert "entry" in get_result, f"Entry {key} should still exist"
+        
+    # Test 4: Verify mutual exclusivity - cannot use both indexes and index-prefix
+    # This should fail at the CLI validation level
+    invalid_result = dysond("tx", "storage", "delete",
+        "--from", user_name,
+        "--indexes", f"{prefix}test",
+        "--index-prefix", prefix,
+        "--offline")  # Use offline mode to get string error instead of exception
+    # Check that it failed - CLI returns string error instead of transaction
+    assert isinstance(invalid_result, str), "Expected CLI error string for mutual exclusivity"
+    assert "cannot specify both" in invalid_result or "mutually exclusive" in invalid_result, \
+        f"Expected mutual exclusivity error, got: {invalid_result}"
+
+
+def test_storage_delete_empty_prefix(chainnet, generate_account, faucet):
+    """Test that delete with empty prefix is rejected."""
+    dysond = chainnet[0]
+    
+    [user_name, user_addr] = generate_account('empty_prefix')
+    faucet(user_addr)
+    
+    # Try to delete with empty prefix (dangerous - would delete all user's data)
+    delete_result = dysond("tx", "storage", "delete",
+        "--from", user_name,
+        "--index-prefix", "",
+        "--offline")  # Use offline mode to get string error instead of exception
+    
+    # This should fail with an error at the CLI level
+    assert isinstance(delete_result, str), "Expected CLI error string for empty prefix"
+    assert "must specify either" in delete_result or "must provide" in delete_result, \
+        f"Expected validation error, got: {delete_result}" 

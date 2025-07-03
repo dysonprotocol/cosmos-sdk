@@ -91,7 +91,15 @@
           "items": {
             "type": "string"
           },
-          "title": "List of indexes to delete"
+          "description": "OPTION 1: Delete specific indexes\nList of indexes to delete. This field is mutually exclusive with\nindex_prefix and filter fields."
+        },
+        "index_prefix": {
+          "type": "string",
+          "description": "OPTION 2: Delete by prefix and optional filter\nThe index prefix of the storage entries to delete. When specified,\nall entries with indexes starting with this prefix will be deleted\n(optionally filtered by the filter field). This field is mutually\nexclusive with the indexes field."
+        },
+        "filter": {
+          "type": "string",
+          "description": "The optional gjson filter to apply when deleting by index_prefix.\nSupports GJSON query syntax with comparison operators:\n- Equality: status == \"active\", age == 25\n- Inequality: status != \"inactive\"\n- Comparison: age > 18, price <= 100\n- Pattern matching: name % \"John*\" (like), name !% \"*test*\" (not like)\nOnly entries matching this filter will be deleted.\nThis field can only be used in conjunction with index_prefix."
         }
       },
       "description": "MsgStorageDelete is the message for deleting storage entries."

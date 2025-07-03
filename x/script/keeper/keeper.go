@@ -224,14 +224,14 @@ func (k Keeper) execScript(ctx sdk.Context, scriptCtx *ExecScriptContext) (*Exec
 
 	now := time.Now()
 	defer func() {
-		fmt.Println(fmt.Sprintf("Elapsed time %s", time.Since(now)))
+		k.Logger(sdkCtx).Info(fmt.Sprintf("Elapsed time %s", time.Since(now)))
 		k.currentDepth -= 1
 
 		if err := srv.Shutdown(context.Background()); err != nil {
 			fmt.Printf("shutdown error")
 			panic(err) // failure/timeout shutting down the server gracefully
 		}
-		fmt.Println("server stopped")
+		k.Logger(sdkCtx).Info("server stopped")
 	}()
 
 	msgJSON, err := k.cdc.MarshalInterfaceJSON(scriptCtx.Msg)
@@ -263,9 +263,10 @@ func (k Keeper) execScript(ctx sdk.Context, scriptCtx *ExecScriptContext) (*Exec
 		AppHash: sdkCtx.BlockHeader().AppHash,
 		Hash:    sdkCtx.BlockHeader().LastBlockId.Hash,
 	}
-
+	fmt.Printf("headerInfo: %+v\n", headerInfo)
 	headerInfoJSON, err := json.Marshal(headerInfo)
 	if err != nil {
+		k.Logger(sdkCtx).Error("failed to marshal headerInfo", "error", err)
 		return nil, err
 	}
 
@@ -275,8 +276,9 @@ func (k Keeper) execScript(ctx sdk.Context, scriptCtx *ExecScriptContext) (*Exec
 		string(headerInfoJSON),
 		port)
 
-	// Consume gas for script execution
-	sdkCtx.GasMeter().ConsumeGas(1, "execScript")
+	if runErr != nil {
+		k.Logger(sdkCtx).Error("failed to exec", "error", runErr)
+	}
 
 	temp := strings.Split(string(out), "\n")
 	response := string(temp[len(temp)-1])

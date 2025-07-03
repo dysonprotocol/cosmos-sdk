@@ -11,7 +11,6 @@ from collections import namedtuple as nt
 from collections.abc import MutableMapping
 from copy import copy
 from functools import partial
-
 import forge
 
 # Monkey patch the CallArguments to not shadow 'self' in kwargs
@@ -164,17 +163,17 @@ class DysRuntimeError(Exception):
     col_offset = None
     end_lineno = None
     end_col_offset = None
-    col = None
+    col = None  
+    node = None
 
     def __init__(self, msg, node=None):
-        self.__node = node
+        self.node = node
         if node:  # pragma: no branch
-            self.lineno = getattr(self.__node, "lineno", None)
-            self.col_offset = getattr(self.__node, "col_offset", None)
-            self.end_lineno = getattr(self.__node, "end_lineno", None)
-            self.end_col_offset = getattr(self.__node, "end_col_offset", None)
-            self.col = getattr(self.__node, "col_offset", None)
-
+            self.lineno = getattr(self.node, "lineno", None)
+            self.col_offset = getattr(self.node, "col_offset", None)
+            self.end_lineno = getattr(self.node, "end_lineno", None)
+            self.end_col_offset = getattr(self.node, "end_col_offset", None)
+            self.col = getattr(self.node, "col_offset", None)
         super().__init__(msg)
 
 
@@ -186,7 +185,7 @@ UNCATCHABLE_EXCEPTIONS = (DangerousValue, MemoryError)
 def safe_mod(a, b):
     """only allow modulo on numbers, not string formating"""
     if isinstance(a, str):
-        raise NotImplementedError("String formating is not supported")
+        raise NotImplementedError("String formating is not supported, use f-string instead")
     return a % b
 
 
@@ -194,16 +193,16 @@ def safe_power(a, b):  # pylint: disable=invalid-name
     """a limited exponent/to-the-power-of function, for safety reasons"""
 
     if abs(a) > MAX_POWER or abs(b) > MAX_POWER:
-        raise MemoryError("Sorry! I don't want to evaluate {0} ** {1}".format(a, b))
+        raise MemoryError("Cannot evaluate {0} ** {1}".format(a, b))
     return a**b
 
 
 def safe_mult(a, b):  # pylint: disable=invalid-name
     """limit the number of times an iterable can be repeated..."""
     if hasattr(a, "__len__") and b * len(str(a)) >= MAX_SCOPE_SIZE:
-        raise MemoryError("Sorry, I will not evalute something that long.")
+        raise MemoryError("I will not evalute something that long.")
     if hasattr(b, "__len__") and a * len(str(b)) >= MAX_SCOPE_SIZE:
-        raise MemoryError("Sorry, I will not evalute something that long.")
+        raise MemoryError("I will not evalute something that long.")
 
     return a * b
 
@@ -213,7 +212,7 @@ def safe_add(a, b):  # pylint: disable=invalid-name
     if hasattr(a, "__len__") and hasattr(b, "__len__"):
         if len(a) + len(b) > MAX_STRING_LENGTH:
             raise MemoryError(
-                "Sorry, adding those two together would make something too long."
+                "adding those two together would make something too long."
             )
     return a + b
 
@@ -504,7 +503,7 @@ class DysEval(object):
                 ast.arg,
                 ast.comprehension,
                 ast.alias,
-                ast.GeneratorExp,
+                #ast.GeneratorExp,
                 ast.ListComp,
                 ast.DictComp,
                 ast.SetComp,
@@ -520,7 +519,9 @@ class DysEval(object):
         for node in ast.walk(tree):
             if node.__class__ not in valid_nodes:
                 exc = NotImplementedError(
-                    f"Sorry, {node.__class__.__name__} is not available in this evaluator"
+                    "Creativity needs constraint. When the constraints get tighter, you will find more opportunities to be creative. This operation is not allowed: '{}'".format(
+                        node.__class__.__name__
+                    )
                 )
                 exc._dys_node = node
                 raise exc
@@ -553,17 +554,12 @@ class DysEval(object):
             )
         try:
             try:
-                lineno = getattr(node, "lineno", None)  # noqa: F841
-                col_offset = getattr(node, "col_offset", None)  # noqa: F841
-                end_lineno = getattr(node, "end_lineno", None)  # noqa: F841
-                end_col_offset = getattr(node, "end_col_offset", None)  # noqa: F841
-
-                try:
+                if type(node) in self.nodes:
                     handler = self.nodes[type(node)]
-                except KeyError:
+                else:
+                    code_snippet = ast.get_source_segment(self.expr, node, padded=False)
                     raise NotImplementedError(
-                        "Sorry, {0} is not available in this "
-                        "evaluator".format(type(node).__name__)
+                        f"{type(node).__name__} is not available in this evaluator: \n{code_snippet}"
                     )
                 node.call_stack = self.call_stack
                 self._last_eval_result = handler(node)
@@ -582,7 +578,7 @@ class DysEval(object):
                         node.end_col_offset,
                         node.__class__.__name__,
                     )
-        except (Return, Break, Continue, DysRuntimeError):
+        except (Return, Break, Continue, DysRuntimeError, *UNCATCHABLE_EXCEPTIONS):
             raise
         except Exception as e:
             exc = e
@@ -638,7 +634,7 @@ class DysEval(object):
 
     def _eval_import(self, node):
         if not self.modules:
-            raise ModuleNotFoundError(alias.name)
+            raise ModuleNotFoundError("No modules loaded")
         for alias in node.names:
             self.track(alias)
             asname = alias.asname or alias.name.split(".")[0]
@@ -651,24 +647,25 @@ class DysEval(object):
 
     def _eval_importfrom(self, node):
         if not self.modules:
-            raise ModuleNotFoundError(alias.name)
+            raise ModuleNotFoundError("No modules loaded")
             
         for alias in node.names:
             self.track(alias)
             asname = alias.asname or alias.name
-            try:
-                module = self.modules
-                for name in node.module.split("."):
+        
+            module = self.modules
+            for name in node.module.split("."):
+                if name in module.__dict__:
                     module = module.__dict__[name]
-            except KeyError:
-                raise ModuleNotFoundError(node.module)
+                else:
+                    raise ModuleNotFoundError(name)
             if alias.name == "*":
                 self.scope.update(module.__dict__)
             else:
-                try:
+                if alias.name in module.__dict__:
                     submodule = module.__dict__[alias.name]
                     self.scope[asname] = submodule
-                except KeyError:
+                else:
                     raise ImportError(alias.name)
 
     def _eval_expr(self, node):
@@ -788,6 +785,9 @@ class DysEval(object):
 
     def _eval_functiondef(self, node):
 
+        if node.name.startswith("__"):
+            raise DysRuntimeError(f"Function name '{node.name}' is forbidden")
+        
         sig_list, sig_dict = self._eval(node.args)
         _annotations = {}
         for a in node.args.args + getattr(node.args, "posonlyargs", [None]) + getattr(node.args, "kwonlyargs", [None]) + [node.args.kwarg]:
@@ -848,36 +848,50 @@ class DysEval(object):
         self.scope[node.name] = decorated_func
 
     def _eval_classdef(self, node):
+        if node.name.startswith("__"):
+            raise DysRuntimeError(f"Class name '{node.name}' is forbidden, why would you do that?")
+        
         # Evaluate base classes
         bases = [self._eval(base) for base in node.bases]
 
-        # Evaluate keywords
-        if node.keywords:
-            raise NotImplementedError(
-                "Sorry, metaclass keyword arguments are not supported"
-            )
+        # Evaluate class keywords
+        kwds = {}
 
-        # Create new local scope and evaluate the body
-        class_scope_dict = {}
-        self.scope.push(class_scope_dict)
+        for kw in node.keywords:
+            kwds[kw.arg] = self._eval(kw.value)
 
-        docstring = ast.get_docstring(node)
-        if docstring is not None:
-            class_scope_dict["__doc__"] = docstring
+       
+        def create_class_body(ns):
 
-        try:
+            self.scope.push(ns)
+
+            annotations = {}
+            # add annotations to the class
             for stmt in node.body:
-                self._eval(stmt)
-        finally:
-            self.scope.dicts.pop()
+                if isinstance(stmt, ast.AnnAssign):
+                    annotations[stmt.target.id] = self._eval(stmt.annotation)
+            ns["__annotations__"] = annotations
+
+            docstring = ast.get_docstring(node)
+            if docstring is not None:
+                ns["__doc__"] = docstring
+
+            try:
+                for stmt in node.body:
+                    self._eval(stmt)
+            finally:
+                self.scope.dicts.pop()
+
+            
+        
+
+        # Create the class
+        cls = types.new_class(node.name, tuple(bases), kwds=kwds, exec_body=create_class_body)
 
         # Evaluate decorators
         decorators = [self._eval(decorator) for decorator in node.decorator_list]
 
-        # Create the class
-        cls = type(node.name, tuple(bases), class_scope_dict)
-
-        # Apply decorators
+        # Apply decorators to the class
         for decorator in reversed(decorators):
             cls = decorator(cls)
 
@@ -885,7 +899,7 @@ class DysEval(object):
         cls.__module__ = "script"
         cls.__qualname__ = node.name
         WHITELIST_FUNCTIONS.add(f"{cls.__module__}.{cls.__qualname__}")
-        # Pop local scope
+        
 
         # Assign the class to its name
         self.scope[node.name] = cls
@@ -895,7 +909,7 @@ class DysEval(object):
             iter(values)
         except TypeError:
             raise TypeError(
-                f"cannot unpack non-iterable { type(values).__name__ } object"
+                f"Cannot unpack non-iterable { type(values).__name__ } object"
             )
         len_elts = len(node.elts)
         len_values = len(values)
@@ -948,15 +962,15 @@ class DysEval(object):
     def _delete(self, targets):
         if len(targets) > 1:
             raise NotImplementedError(
-                "Sorry, cannot delete {} targets.".format(len(targets))
+                "Cannot delete {} targets.".format(len(targets))
             )
         target = targets[0]
-        try:
+        if type(target) in self.deletions:
             handler = self.deletions[type(target)]
             handler(target)
-        except KeyError:
+        else:
             raise NotImplementedError(
-                "Sorry, cannot delete {}".format(type(target).__name__)
+                "Cannot delete {}, available deletions: {}".format(type(target), self.deletions.keys())
             )
 
     def _delete_name(self, node):
@@ -970,22 +984,23 @@ class DysEval(object):
         return self._delete(node.targets)
 
     def _eval_raise(self, node):
-        exc = self._eval(node.exc)
-        exc.node = node
+        if node.exc is not None:
+            exc = self._eval(node.exc)
+            exc.node = node
+            raise exc
         if node.cause is not None:
             cause = self._eval(node.cause)
             raise exc from cause
-        raise exc
+        raise 
 
     def _assign(self, targets, value):
         for target in targets:
-            try:
+            if type(target) in self.assignments:
                 handler = self.assignments[type(target)]
                 self.track(target)
-            except KeyError:  # pragma: no cover
-                # This is caught in validate()
+            else:
                 raise NotImplementedError(
-                    "Sorry, cannot assign to {0}".format(type(target).__name__)
+                    "Cannot assign to {}".format(type(target).__name__)
                 )
             handler(target, value)
 
@@ -996,16 +1011,16 @@ class DysEval(object):
             and node.target.id not in self.scope.dicts[-1]
         ):
             raise UnboundLocalError(
-                f"local variable '{node.target.id}' referenced before assignment"
+                f"Local variable '{node.target.id}' referenced before assignment"
             )
-        try:
+        if type(node.op) in self.operators:
             value = self.operators[type(node.op)](
                 self._eval(node.target), self._eval(node.value)
             )
-        except KeyError:  # pragma: no cover
+        else:
             # This is caught in validate()
             raise NotImplementedError(
-                "Sorry, {0} is not available in this "
+                "{0} is not available in this "
                 "evaluator".format(type(node.op).__name__)
             )
         return self._assign([node.target], value)
@@ -1020,9 +1035,6 @@ class DysEval(object):
             return self._assign([node.target], value)
 
     def _eval_namedexpr(self, node):
-        # NamedExpr(
-        #     target=Name(id='x', ctx=Store()),
-        #     value=Constant(value=4))
         value = self._eval(node.value)
         self._assign([node.target], value)
         return value
@@ -1073,14 +1085,14 @@ class DysEval(object):
         return self.operators[type(node.op)](self._eval(node.operand))
 
     def _eval_binop(self, node):
-        try:
+        if type(node.op) in self.operators:
             return self.operators[type(node.op)](
                 self._eval(node.left), self._eval(node.right)
             )
-        except KeyError:  # pragma: no cover
+        else:
             # This is caught in validate()
             raise NotImplementedError(
-                "Sorry, {0} is not available in this "
+                "{0} is not available in this "
                 "evaluator".format(type(node.op).__name__)
             )
 
@@ -1101,7 +1113,7 @@ class DysEval(object):
         else:  # pragma: no cover
             # This should never happen as there are only two bool operators And and Or
             raise NotImplementedError(
-                "Sorry, {0} is not available in this "
+                "{0} is not available in this "
                 "evaluator".format(type(node).__name__)
             )
 
@@ -1176,17 +1188,16 @@ class DysEval(object):
 
     def _eval_call(self, node):
         if len(self.call_stack) >= MAX_CALL_DEPTH:
-            raise RecursionError("Sorry, stack is to large")
+            raise RecursionError("stack is to large")
 
         func = self._eval(node.func)
         if not callable(func):
             raise TypeError(
-                "Sorry, {} type is not callable".format(type(func).__name__)
+                "{} type is not callable".format(type(func).__name__)
             )
 
         assert_func_allowed(func)
         kwarg_kwargs = [self._eval(k) for k in node.keywords]
-
         for a in node.args:
             if a.__class__ == ast.Starred:
                 args = self._eval(a.value)
@@ -1195,6 +1206,7 @@ class DysEval(object):
             func = partial(func, *args)
         for kwargs in kwarg_kwargs:
             func = partial(func, **kwargs)
+
 
         self.call_stack.append([node, self.expr])
         try:
@@ -1212,9 +1224,9 @@ class DysEval(object):
         return self._eval(node.value)
 
     def _eval_name(self, node):
-        try:
+        if node.id in self.scope:
             return self.scope[node.id]
-        except KeyError:
+        else:
             msg = "'{0}' is not defined".format(node.id)
             raise NameError(msg)
             # raise NameNotDefined(node)
@@ -1228,7 +1240,7 @@ class DysEval(object):
         for prefix in DISALLOW_PREFIXES:
             if node.attr.startswith(prefix):
                 raise NotImplementedError(
-                    "Sorry, access to this attribute "
+                    "access to this attribute "
                     "is not available. "
                     "({0})".format(node.attr)
                 )
@@ -1236,7 +1248,7 @@ class DysEval(object):
         node_evaluated = self._eval(node.value)
         if (type(node_evaluated), node.attr) in DISALLOW_METHODS:
             raise DangerousValue(
-                "Sorry, this method is not available. "
+                "this method is not available. "
                 "({0}.{1})".format(node_evaluated.__class__.__name__, node.attr)
             )
         return getattr(node_evaluated, node.attr)
@@ -1260,38 +1272,43 @@ class DysEval(object):
         for n in node.values:
             val = str(self._eval(n))
             if len(val) + length > MAX_STRING_LENGTH:
-                raise MemoryError("Sorry, I will not evaluate something this long.")
+                raise MemoryError("I will not evaluate something this long.")
             length += len(val)
             evaluated_values.append(val)
         return "".join(evaluated_values)
 
     def _eval_formattedvalue(self, node):
+
+        # from https://stackoverflow.com/a/44553570/260366
+        format_spec = ""
         if node.format_spec:
-            # from https://stackoverflow.com/a/44553570/260366
-
             format_spec = self._eval(node.format_spec)
-            r = r"(([\s\S])?([<>=\^]))?([\+\- ])?([#])?([0])?(\d*)([,])?((\.)(\d*))?([sbcdoxXneEfFgGn%])?"
-            FormatSpec = nt(
-                "FormatSpec",
-                "fill align sign alt zero_padding width comma decimal precision type",
-            )
-            match = re.fullmatch(r, format_spec)
 
-            if match:
-                parsed_spec = FormatSpec(
-                    *match.group(2, 3, 4, 5, 6, 7, 8, 10, 11, 12)
-                )  # skip groups not interested in
-                if int(parsed_spec.width or 0) > 100:
-                    raise MemoryError("Sorry, this format width is too long.")
+        r = r"(([\s\S])?([<>=\^]))?([\+\- ])?([#])?([0])?(\d*)([,])?((\.)(\d*))?([sbcdoxXneEfFgGn%])?"
+        FormatSpec = nt(
+            "FormatSpec",
+            "fill align sign alt zero_padding width comma decimal precision type",
+        )
+        match = re.fullmatch(r, format_spec)
 
-                if int(parsed_spec.precision or 0) > 100:
-                    raise MemoryError("Sorry, this format precision is too long.")
+        if match:
+            parsed_spec = FormatSpec(
+                *match.group(2, 3, 4, 5, 6, 7, 8, 10, 11, 12)
+            )  # skip groups not interested in
+            if int(parsed_spec.width or 0) > 100:
+                raise MemoryError("this format width is too long.")
 
-            conversion_dict = {-1: "", 115: "!s", 114: "!r", 97: "!a"}
+            if int(parsed_spec.precision or 0) > 100:
+                raise MemoryError("this format precision is too long.")
 
-            fmt = "{" + conversion_dict[node.conversion] + ":" + format_spec + "}"
-            return fmt.format(self._eval(node.value))
-        return self._eval(node.value)
+        if node.conversion == 114:
+            raise NotImplementedError("!r is not supported")
+        
+        conversion_dict = {-1: "", 115: "!s", 97: "!a"}
+
+        fmt = "{" + format_spec + conversion_dict[node.conversion] + "}"
+        return fmt.format(self._eval(node.value))
+
 
     def _eval_dict(self, node):
         if len(node.keys) > MAX_STRING_LENGTH:

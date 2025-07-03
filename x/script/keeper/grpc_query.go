@@ -7,20 +7,9 @@ import (
 	scripttypes "dysonprotocol.com/x/script/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	// Cosmos SDK v0.47+ style imports
-	// Changed alias to signingpb
 	"cosmossdk.io/collections"
 	cosmossdkerrors "cosmossdk.io/errors"
 	txsigning "cosmossdk.io/x/tx/signing"
-
-	// HandlerMap, SignerData, TxData
-	// Older SDK style imports (might still be needed for interfaces/client utils)
-	// For TxBuilder interface, TxConfig interface
-	// For SigVerifiableTx
-	// For SignerData, TxData
-	// For NewAnyWithValue
-	// For VerifySignature
-	// For NewTxConfig, ConfigOptions
 
 	// For Any
 	"google.golang.org/grpc/codes"
@@ -168,12 +157,21 @@ func (k Keeper) VerifyTx(ctx context.Context, req *scripttypes.QueryVerifyTxRequ
 	// Get the signature data and signers
 	sigs, err := sigTx.GetSignaturesV2()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get signatures: %s", err.Error())
+		return nil, status.Errorf(codes.InvalidArgument, "failed to get signatures: %s", err.Error())
+	}
+
+	// Check if we have any signatures
+	if len(sigs) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "transaction has no signatures")
+	}
+
+	if len(sigs) > 1 {
+		return nil, status.Error(codes.InvalidArgument, "transaction has multiple signatures")
 	}
 
 	signers, err := sigTx.GetSigners()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get signers: %s", err.Error())
+		return nil, status.Errorf(codes.InvalidArgument, "failed to get signers: %s", err.Error())
 	}
 
 	// Check that signer length and signature length are the same
@@ -190,6 +188,9 @@ func (k Keeper) VerifyTx(ctx context.Context, req *scripttypes.QueryVerifyTxRequ
 
 	// Verify each signature
 	signModeHandler := clientCtx.TxConfig.SignModeHandler()
+
+	signerAddress := ""
+
 	for i, sig := range sigs {
 		pubKey := sig.PubKey
 		if pubKey == nil {
@@ -235,8 +236,73 @@ func (k Keeper) VerifyTx(ctx context.Context, req *scripttypes.QueryVerifyTxRequ
 		if err != nil {
 			return nil, status.Errorf(codes.Unauthenticated, "signature [%d] verification failed (make sure the --chain-id=\"\", --account-number=0, and --sequence=0): %s", i, err.Error())
 		}
+
+		signerAddress = signerAddr.String()
 	}
 
 	// All signatures have been successfully verified
-	return &scripttypes.QueryVerifyTxResponse{}, nil
+	return &scripttypes.QueryVerifyTxResponse{
+		Signer: signerAddress,
+	}, nil
+}
+
+// Run executes a script function in read-only mode without modifying state.
+func (k Keeper) Run(ctx context.Context, req *scripttypes.RunScript) (*scripttypes.ResponseRunScript, error) {
+	// Validate request
+	if req.ExecutorAddress == "" {
+		return nil, status.Error(codes.InvalidArgument, "executor address is required")
+	}
+	if req.ScriptAddress == "" {
+		return nil, status.Error(codes.InvalidArgument, "script address is required")
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	// Create a cache context to ensure no state mutations
+	cacheCtx, _ := sdkCtx.CacheContext()
+
+	// Convert RunScript to MsgExec
+	msgExec := &scripttypes.MsgExec{
+		ExecutorAddress:  req.ExecutorAddress,
+		ScriptAddress:    req.ScriptAddress,
+		ExtraCode:        req.ExtraCode,
+		FunctionName:     req.FunctionName,
+		Args:             req.Args,
+		Kwargs:           req.Kwargs,
+		AttachedMessages: req.AttachedMessages,
+	}
+
+	// Call ExecScript in the cache context
+	resp, err := k.ExecScript(cacheCtx, msgExec)
+	if err != nil {
+		return nil, err
+	}
+
+	// The cached context is automatically discarded as we don't call write()
+	return &scripttypes.ResponseRunScript{
+		Result:                 resp.Result,
+		AttachedMessageResults: resp.AttachedMessageResults,
+	}, nil
+}
+
+// GetBlock returns the current block information.
+func (k Keeper) GetBlock(ctx context.Context, req *scripttypes.QueryGetBlockRequest) (*scripttypes.QueryGetBlockResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	// Get block header from context
+	header := sdkCtx.BlockHeader()
+
+	// Extract the block hash from the current block's context
+	// Note: We don't have access to the current block's hash from the context,
+	// only the previous block's hash
+	blockHash := header.AppHash
+
+	return &scripttypes.QueryGetBlockResponse{
+		BlockHeight:     header.Height,
+		BlockTime:       header.Time,
+		ChainId:         header.ChainID,
+		BlockHash:       blockHash,
+		AppHash:         header.AppHash,
+		ProposerAddress: sdk.ConsAddress(header.ProposerAddress).String(),
+	}, nil
 }

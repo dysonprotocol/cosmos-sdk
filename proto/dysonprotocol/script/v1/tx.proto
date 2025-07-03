@@ -96,7 +96,7 @@ message MsgExecResponse {
   string result = 1;
 
   // Results of the attached messages.
-  repeated google.protobuf.Any attached_message_results = 4;
+  repeated google.protobuf.Any attached_message_results = 2;
 }
 
 // MsgCreateNewScript is the Msg/CreateNewScript request type.

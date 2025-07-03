@@ -22,11 +22,10 @@ def test_max_annual_pct_fee(chainnet, generate_account, faucet, register_name):
     class_info = dysond_bin("query", "nft", "class", "nameservice.dys")
     print(f"NFT class info: {class_info}")
     
-    # Get the annual_pct if it exists
+    # Get the annual_pct - assume class_data is always a dict
     class_data = class_info.get("class", {}).get("data", {})
-    if isinstance(class_data, dict):
-        annual_pct = class_data.get("value", {}).get("annual_pct", "0")
-        print(f"Annual PCT for nameservice.dys: {annual_pct}")
+    annual_pct = class_data.get("value", {}).get("annual_pct", "0")
+    print(f"Annual PCT for nameservice.dys: {annual_pct}")
 
     # Test 1: Set valuation with sufficient max_annual_pct_fee (should succeed)
     # Increase valuation from 100 to 200 dys

@@ -22,14 +22,14 @@ def test_create_new_script(chainnet, generate_account, faucet):
         "--code", script_code,
         "--from", alice_name, "--keyring-backend", "test", "--yes"
     )
-    script_address = None
-    for event in create_result["events"]:
-        if event["type"] == "dysonprotocol.script.v1.EventCreateNewScript":
-            for attr in event["attributes"]:
-                if attr["key"] == "script_address":
-                    script_address = json.loads(attr["value"])
-                    break
-    assert script_address, "Script address not found in transaction events"
+    # Extract script address using list comprehensions
+    create_events = [e for e in create_result["events"] if e["type"] == "dysonprotocol.script.v1.EventCreateNewScript"]
+    assert create_events, "No EventCreateNewScript found in transaction events"
+    
+    script_addr_attrs = [a for a in create_events[0]["attributes"] if a["key"] == "script_address"]
+    assert script_addr_attrs, "No script_address attribute found in EventCreateNewScript"
+    
+    script_address = json.loads(script_addr_attrs[0]["value"])
     print(f"Created new script with address: {script_address}")
     script_info = dysond_bin("query", "script", "script-info", "--address", script_address)
     assert "script" in script_info, f"Script info not found: {script_info}"
@@ -39,13 +39,11 @@ def test_create_new_script(chainnet, generate_account, faucet):
     authz_info = dysond_bin("query", "authz", "grants", script_address, alice_address)
     assert "grants" in authz_info, f"No authz grants found: {authz_info}"
     assert len(authz_info["grants"]) > 0, "No authz grants found"
-    found_update_grant = False
-    for grant in authz_info["grants"]:
-        if grant["authorization"]["type"] == "/cosmos.authz.v1beta1.GenericAuthorization":
-            if grant["authorization"]["value"]["msg"] == "/dysonprotocol.script.v1.MsgUpdateScript":
-                found_update_grant = True
-                break
-    assert found_update_grant, "No authz grant found for MsgUpdateScript"
+    # Check for MsgUpdateScript authz grant using list comprehensions
+    update_grants = [g for g in authz_info["grants"] 
+                    if g["authorization"]["type"] == "/cosmos.authz.v1beta1.GenericAuthorization" 
+                    and g["authorization"]["value"]["msg"] == "/dysonprotocol.script.v1.MsgUpdateScript"]
+    assert update_grants, "No authz grant found for MsgUpdateScript"
     print("Successfully created new script with authz permissions")
 
 
@@ -63,14 +61,14 @@ def test_script_update_with_authz(chainnet, generate_account, faucet):
         "--code", script_code,
         "--from", alice_name, "--keyring-backend", "test", "--yes"
     )
-    script_address = None
-    for event in create_result["events"]:
-        if event["type"] == "dysonprotocol.script.v1.EventCreateNewScript":
-            for attr in event["attributes"]:
-                if attr["key"] == "script_address":
-                    script_address = json.loads(attr["value"])
-                    break
-    assert script_address, "Script address not found in transaction events"
+    # Extract script address using list comprehensions
+    create_events = [e for e in create_result["events"] if e["type"] == "dysonprotocol.script.v1.EventCreateNewScript"]
+    assert create_events, "No EventCreateNewScript found in transaction events"
+    
+    script_addr_attrs = [a for a in create_events[0]["attributes"] if a["key"] == "script_address"]
+    assert script_addr_attrs, "No script_address attribute found in EventCreateNewScript"
+    
+    script_address = json.loads(script_addr_attrs[0]["value"])
     print(f"Created new script with address: {script_address}")
     authz_info = dysond_bin("query", "authz", "grants", script_address, alice_address)
     print(f"Authz grants from {script_address} to {alice_address}:")

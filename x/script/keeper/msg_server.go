@@ -7,7 +7,6 @@ import (
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	scriptv1 "dysonprotocol.com/api/script/types"
-	"dysonprotocol.com/dysvm"
 	"dysonprotocol.com/x/script"
 	scripttypes "dysonprotocol.com/x/script/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -39,13 +38,13 @@ func (k Keeper) UpdateScript(ctx context.Context, msg *scripttypes.MsgUpdateScri
 	}
 
 	// Format the code with black before setting it
-	formattedCode, err := dysvm.DysFormat(msg.Code)
-	if err != nil {
-		k.Logger(sdkCtx).Error("failed to format code with dys_format", "error", err)
-		formattedCode = msg.Code
-	}
+	//formattedCode, err := dysvm.DysFormat(msg.Code)
+	//if err != nil {
+	//	k.Logger(sdkCtx).Error("failed to format code with dys_format", "error", err)
+	//	formattedCode = msg.Code
+	//}
 
-	script.Code = formattedCode
+	script.Code = msg.Code
 	script.Version = script.Version + 1
 
 	err = k.ScriptMap.Set(ctx, msg.Address, script)
@@ -77,7 +76,7 @@ func (k Keeper) ExecScript(ctx context.Context, msg *scripttypes.MsgExec) (*scri
 	// Resolve the script address using the nameservice keeper
 	addr, resolvErr := k.NameserviceKeeper.ResolveNameOrAddress(ctx, msg.ScriptAddress)
 	if resolvErr != nil {
-		return nil, cosmossdkerrors.Wrap(resolvErr, "failed to resolve script address")
+		return nil, cosmossdkerrors.Wrap(resolvErr, fmt.Sprintf("failed to resolve script address: '%s'", msg.ScriptAddress))
 	}
 
 	exists, err := k.ScriptMap.Has(ctx, addr)
@@ -113,14 +112,23 @@ func (k Keeper) ExecScript(ctx context.Context, msg *scripttypes.MsgExec) (*scri
 
 	// Execute the function
 	execErr := func() error {
+		// Add panic recovery
+		defer func() {
+			if r := recover(); r != nil {
+				err = fmt.Errorf("panic during script execution: %v", r)
+			}
+		}()
+
 		execResp, err := k.execScript(cacheCtx, &scriptContext)
 		if err != nil {
+			k.Logger(sdkCtx).Error("failed to execute script", "error", err)
 			return err
 		}
 
 		resp.Result = execResp.Result
 		err = script.SetMsgExecResult(resp, scriptContext.AttachedMessageResults)
 		if err != nil {
+			k.Logger(sdkCtx).Error("failed to set msg exec result", "error", err)
 			return err
 		}
 
@@ -132,6 +140,7 @@ func (k Keeper) ExecScript(ctx context.Context, msg *scripttypes.MsgExec) (*scri
 				Response: resp,
 			})
 		if evterr != nil {
+			k.Logger(sdkCtx).Error("failed to emit event", "error", evterr)
 			return evterr
 		}
 

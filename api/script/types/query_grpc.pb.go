@@ -27,6 +27,8 @@ const (
 	Query_VerifyTx_FullMethodName    = "/dysonprotocol.script.v1.Query/VerifyTx"
 	Query_Params_FullMethodName      = "/dysonprotocol.script.v1.Query/Params"
 	Query_Web_FullMethodName         = "/dysonprotocol.script.v1.Query/Web"
+	Query_Run_FullMethodName         = "/dysonprotocol.script.v1.Query/Run"
+	Query_GetBlock_FullMethodName    = "/dysonprotocol.script.v1.Query/GetBlock"
 )
 
 // QueryClient is the client API for Query service.
@@ -47,6 +49,11 @@ type QueryClient interface {
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 	// Queries the WSGI web application function of a script.
 	Web(ctx context.Context, in *WebRequest, opts ...grpc.CallOption) (*WebResponse, error)
+	// Run executes a script function in read-only mode without modifying
+	// state.
+	Run(ctx context.Context, in *RunScript, opts ...grpc.CallOption) (*ResponseRunScript, error)
+	// GetBlock returns the current block information.
+	GetBlock(ctx context.Context, in *QueryGetBlockRequest, opts ...grpc.CallOption) (*QueryGetBlockResponse, error)
 }
 
 type queryClient struct {
@@ -117,6 +124,26 @@ func (c *queryClient) Web(ctx context.Context, in *WebRequest, opts ...grpc.Call
 	return out, nil
 }
 
+func (c *queryClient) Run(ctx context.Context, in *RunScript, opts ...grpc.CallOption) (*ResponseRunScript, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResponseRunScript)
+	err := c.cc.Invoke(ctx, Query_Run_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) GetBlock(ctx context.Context, in *QueryGetBlockRequest, opts ...grpc.CallOption) (*QueryGetBlockResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryGetBlockResponse)
+	err := c.cc.Invoke(ctx, Query_GetBlock_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -135,6 +162,11 @@ type QueryServer interface {
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 	// Queries the WSGI web application function of a script.
 	Web(context.Context, *WebRequest) (*WebResponse, error)
+	// Run executes a script function in read-only mode without modifying
+	// state.
+	Run(context.Context, *RunScript) (*ResponseRunScript, error)
+	// GetBlock returns the current block information.
+	GetBlock(context.Context, *QueryGetBlockRequest) (*QueryGetBlockResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -162,6 +194,12 @@ func (UnimplementedQueryServer) Params(context.Context, *QueryParamsRequest) (*Q
 }
 func (UnimplementedQueryServer) Web(context.Context, *WebRequest) (*WebResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Web not implemented")
+}
+func (UnimplementedQueryServer) Run(context.Context, *RunScript) (*ResponseRunScript, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Run not implemented")
+}
+func (UnimplementedQueryServer) GetBlock(context.Context, *QueryGetBlockRequest) (*QueryGetBlockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBlock not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -292,6 +330,42 @@ func _Query_Web_Handler(srv interface{}, ctx context.Context, dec func(interface
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Run_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RunScript)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Run(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Run_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Run(ctx, req.(*RunScript))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_GetBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetBlockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).GetBlock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_GetBlock_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).GetBlock(ctx, req.(*QueryGetBlockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -322,6 +396,14 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Web",
 			Handler:    _Query_Web_Handler,
+		},
+		{
+			MethodName: "Run",
+			Handler:    _Query_Run_Handler,
+		},
+		{
+			MethodName: "GetBlock",
+			Handler:    _Query_GetBlock_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

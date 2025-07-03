@@ -92,7 +92,7 @@
           },
           {
             "name": "filter",
-            "description": "The optional gjson filter to filter the storage entry. For example, Given\ndata like {\"user\": {\"age\": 18}}, the filter \"user.age > 18\" will return\ntrue.",
+            "description": "The optional gjson filter to filter the storage entry.\nSupports GJSON query syntax with comparison operators:\n- Equality: status == \"active\", age == 18\n- Inequality: type != \"test\"\n- Comparison: age > 18, count <= 100, score >= 50\n- Pattern matching: name % \"John*\" (like), tag !% \"*beta*\" (not like)\nOnly entries matching the filter will be included in results.",
             "in": "query",
             "required": false,
             "type": "string"

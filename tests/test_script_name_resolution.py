@@ -58,10 +58,8 @@ def test_name_resolution(chainnet, generate_account, faucet, script_code, api_ad
         "--salt", salt,
         "--from", alice_name
     )
-    if reveal_result["code"] != 0:
-        print(f"Reveal transaction failed with code {reveal_result['code']}")
-        print(f"Raw log: {reveal_result.get('raw_log', 'No raw log available')}")
-    assert reveal_result["code"] == 0, "Failed to reveal name registration"
+    # Log error details if the transaction failed
+    assert reveal_result["code"] == 0, f"Failed to reveal name registration: {reveal_result.get('raw_log', 'No raw log available')}"
     
     # Set the destination to Alice's address
     set_dest_result = dysond_bin(

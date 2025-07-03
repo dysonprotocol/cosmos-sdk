@@ -49,14 +49,11 @@ def get_info():
         "--from", alice_name
     )
     
-    # Extract script address from events
-    script_address = None
-    for event in create_result["events"]:
-        if event["type"] == "dysonprotocol.script.v1.EventCreateNewScript":
-            for attr in event["attributes"]:
-                if attr["key"] == "script_address":
-                    script_address = json.loads(attr["value"])
-                    break
+    # Extract script address from events using list comprehensions
+    script_events = [e for e in create_result["events"] if e["type"] == "dysonprotocol.script.v1.EventCreateNewScript"]
+    address_attrs = [a for e in script_events for a in e["attributes"] if a["key"] == "script_address"]
+    
+    script_address = json.loads(address_attrs[0]["value"]) if address_attrs else None
     
     assert script_address, "Script address not found in transaction events"
     print(f"Created script at address: {script_address}")
@@ -83,15 +80,13 @@ def get_info():
     # Debug: print the grants structure
     print(f"Grants structure: {json.dumps(grants_result, indent=2)}")
     
-    # Find our ScriptExecAuthorization grant
-    exec_grant = None
-    for grant in grants_result["grants"]:
-        # Check if this is our ScriptExecAuthorization
-        auth = grant.get("authorization", {})
-        # The format is type/value structure
-        if auth.get("type") == "/dysonprotocol.script.v1.ScriptExecAuthorization":
-            exec_grant = grant
-            break
+    # Find our ScriptExecAuthorization grant using list comprehensions
+    script_exec_grants = [
+        grant for grant in grants_result["grants"]
+        if grant.get("authorization", {}).get("type") == "/dysonprotocol.script.v1.ScriptExecAuthorization"
+    ]
+    
+    exec_grant = script_exec_grants[0] if script_exec_grants else None
     
     assert exec_grant is not None, "ScriptExecAuthorization grant not found"
     
@@ -129,16 +124,15 @@ def get_info():
     
     assert exec_result["code"] == 0, f"Failed to execute allowed function 'add': {exec_result}"
     
-    # Extract result from events
-    add_result = None
-    for event in exec_result["events"]:
-        if event["type"] == "dysonprotocol.script.v1.EventExecScript":
-            for attr in event["attributes"]:
-                if attr["key"] == "response":
-                    response_data = json.loads(attr["value"])
-                    result_data = json.loads(response_data["result"])
-                    add_result = result_data["result"]
-                    break
+    # Extract result from events using list comprehensions
+    exec_events = [e for e in exec_result["events"] if e["type"] == "dysonprotocol.script.v1.EventExecScript"]
+    response_attrs = [a for e in exec_events for a in e["attributes"] if a["key"] == "response"]
+    
+    # Get the first result if available
+    attr = response_attrs[0] if response_attrs else None
+    response_data = json.loads(attr["value"]) if attr else {}
+    result_data = json.loads(response_data.get("result", "{}")) if response_data else {}
+    add_result = result_data.get("result") if result_data else None
     
     assert add_result == 30, f"Expected add result 30, got {add_result}"
     print("✓ Bob successfully executed allowed function 'add'")
@@ -225,14 +219,11 @@ def some_function():
         "--from", alice_name
     )
     
-    # Extract script address
-    script_address = None
-    for event in create_result["events"]:
-        if event["type"] == "dysonprotocol.script.v1.EventCreateNewScript":
-            for attr in event["attributes"]:
-                if attr["key"] == "script_address":
-                    script_address = json.loads(attr["value"])
-                    break
+    # Extract script address from events using list comprehensions
+    script_events = [e for e in create_result["events"] if e["type"] == "dysonprotocol.script.v1.EventCreateNewScript"]
+    address_attrs = [a for e in script_events for a in e["attributes"] if a["key"] == "script_address"]
+    
+    script_address = json.loads(address_attrs[0]["value"]) if address_attrs else None
     
     assert script_address, "Script address not found"
     
@@ -318,14 +309,11 @@ def test_exec_authorization_revoke(chainnet, generate_account, faucet):
         "--from", alice_name
     )
     
-    # Extract script address
-    script_address = None
-    for event in create_result["events"]:
-        if event["type"] == "dysonprotocol.script.v1.EventCreateNewScript":
-            for attr in event["attributes"]:
-                if attr["key"] == "script_address":
-                    script_address = json.loads(attr["value"])
-                    break
+    # Extract script address from events using list comprehensions
+    script_events = [e for e in create_result["events"] if e["type"] == "dysonprotocol.script.v1.EventCreateNewScript"]
+    address_attrs = [a for e in script_events for a in e["attributes"] if a["key"] == "script_address"]
+    
+    script_address = json.loads(address_attrs[0]["value"]) if address_attrs else None
     
     assert script_address, "Script address not found"
     
@@ -359,12 +347,13 @@ def test_exec_authorization_revoke(chainnet, generate_account, faucet):
     # Verify grant no longer exists
     grants_result = dysond_bin("query", "authz", "grants", alice_address, bob_address)
     
-    # Check that no ScriptExecAuthorization exists
-    exec_grant_found = False
-    for grant in grants_result.get("grants", []):
-        if grant["authorization"]["@type"] == "/dysonprotocol.script.v1.ScriptExecAuthorization":
-            exec_grant_found = True
-            break
+    # Check that no ScriptExecAuthorization exists using list comprehensions
+    script_exec_grants = [
+        grant for grant in grants_result.get("grants", [])
+        if grant["authorization"]["@type"] == "/dysonprotocol.script.v1.ScriptExecAuthorization"
+    ]
+    
+    exec_grant_found = len(script_exec_grants) > 0
     
     assert not exec_grant_found, "ScriptExecAuthorization should have been revoked"
     print("✓ Verified ScriptExecAuthorization was revoked")
@@ -423,13 +412,10 @@ def test_exec_authorization_wrong_script_address(chainnet, generate_account, fau
         "--from", alice_name
     )
     
-    script1_address = None
-    for event in create_result1["events"]:
-        if event["type"] == "dysonprotocol.script.v1.EventCreateNewScript":
-            for attr in event["attributes"]:
-                if attr["key"] == "script_address":
-                    script1_address = json.loads(attr["value"])
-                    break
+    # Extract script addresses using list comprehensions
+    script1_events = [e for e in create_result1["events"] if e["type"] == "dysonprotocol.script.v1.EventCreateNewScript"]
+    script1_attrs = [a for e in script1_events for a in e["attributes"] if a["key"] == "script_address"]
+    script1_address = json.loads(script1_attrs[0]["value"]) if script1_attrs else None
     
     # Create second script
     create_result2 = dysond_bin(
@@ -438,13 +424,9 @@ def test_exec_authorization_wrong_script_address(chainnet, generate_account, fau
         "--from", alice_name
     )
     
-    script2_address = None
-    for event in create_result2["events"]:
-        if event["type"] == "dysonprotocol.script.v1.EventCreateNewScript":
-            for attr in event["attributes"]:
-                if attr["key"] == "script_address":
-                    script2_address = json.loads(attr["value"])
-                    break
+    script2_events = [e for e in create_result2["events"] if e["type"] == "dysonprotocol.script.v1.EventCreateNewScript"]
+    script2_attrs = [a for e in script2_events for a in e["attributes"] if a["key"] == "script_address"]
+    script2_address = json.loads(script2_attrs[0]["value"]) if script2_attrs else None
     
     assert script1_address and script2_address, "Failed to create scripts"
     assert script1_address != script2_address, "Scripts should have different addresses"

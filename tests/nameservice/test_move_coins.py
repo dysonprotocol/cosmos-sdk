@@ -15,10 +15,8 @@ def _sorted_coins(coins):
 
 def _get_balance(dysond_bin, address, denom):
     bal_resp = dysond_bin("query", "bank", "balances", address)
-    for c in bal_resp.get("balances", []):
-        if c["denom"] == denom:
-            return int(c["amount"])
-    return 0
+    matching_coins = [c for c in bal_resp.get("balances", []) if c["denom"] == denom]
+    return int(matching_coins[0]["amount"]) if matching_coins else 0
 
 
 def _mint_variants(dysond_bin, owner_name, root_denom):

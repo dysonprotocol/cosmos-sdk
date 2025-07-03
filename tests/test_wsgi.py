@@ -50,20 +50,11 @@ def test_simple_wsgi_example(chainnet, generate_account, faucet, api_address):
         nonlocal attempts
         attempts += 1
         
-        try:
-            response = requests.get(api_url, timeout=1, headers={"Host": script_url})
-            if response.status_code == 200:
-                print(f"Endpoint ready after {attempts} attempts")
-                return True
-
-            print(f"Response status: {response.status_code}, text: {response.text[:100]}")
-        except requests.exceptions.ConnectionError as e:
-            if attempts % 20 == 0:  # Print less frequently
-                print(f"Connection error (attempt {attempts}): {e}")
-        except Exception as e:
-            print(f"Request error (attempt {attempts}): {e}")
+        response = requests.get(api_url, timeout=1, headers={"Host": script_url})
+        ready = response.status_code == 200
         
-        return False
+        print(f"Endpoint ready after {attempts} attempts") if ready else print(f"Response status: {response.status_code}, text: {response.text[:100]}")
+        return ready
     
     # Poll until the endpoint is ready
     poll_until_condition(

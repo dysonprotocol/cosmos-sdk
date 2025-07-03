@@ -144,9 +144,13 @@ type QueryStorageListRequest struct {
 	Owner string `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
 	// The index prefix of the storage entry to filter by.
 	IndexPrefix string `protobuf:"bytes,2,opt,name=index_prefix,json=indexPrefix,proto3" json:"index_prefix,omitempty"`
-	// The optional gjson filter to filter the storage entry. For example, Given
-	// data like {"user": {"age": 18}}, the filter "user.age > 18" will return
-	// true.
+	// The optional gjson filter to filter the storage entry.
+	// Supports GJSON query syntax with comparison operators:
+	// - Equality: status == "active", age == 18
+	// - Inequality: type != "test"
+	// - Comparison: age > 18, count <= 100, score >= 50
+	// - Pattern matching: name % "John*" (like), tag !% "*beta*" (not like)
+	// Only entries matching the filter will be included in results.
 	Filter string `protobuf:"bytes,3,opt,name=filter,proto3" json:"filter,omitempty"`
 	// The optional gjson path to extract from the storage entry. For example,
 	// Given data like {"user": {"name": "jeff"}}, the extract "user.name" will

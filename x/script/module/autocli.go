@@ -8,17 +8,10 @@ import (
 // AutoCLIOptions implements the autocli.HasAutoCLIConfig interface.
 func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 	return &autocliv1.ModuleOptions{
+		// Query commands are handled by custom implementation in GetQueryCmd()
 		Query: &autocliv1.ServiceCommandDescriptor{
 			Service:              scriptv1.Query_ServiceDesc.ServiceName,
 			EnhanceCustomCommand: true,
-			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
-
-				{
-					RpcMethod: "ScriptInfo",
-					Use:       "script-info --address <script_address>",
-					Short:     "Query for script info by address",
-				},
-			},
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{
 			Service:              scriptv1.Msg_ServiceDesc.ServiceName,

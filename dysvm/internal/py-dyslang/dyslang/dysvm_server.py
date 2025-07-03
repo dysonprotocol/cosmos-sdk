@@ -1,5 +1,6 @@
 import ast
 import base64
+import dataclasses
 import datetime
 import importlib
 import io
@@ -8,6 +9,7 @@ import sys
 from collections import defaultdict
 from contextlib import redirect_stdout
 from functools import wraps
+import time
 import typing
 
 import forge
@@ -49,11 +51,13 @@ def safe_module_import(dotted_module):
     spec.loader.exec_module(module)
     return module
 
+
 def copy_docstr(source_func, target_func):
     if source_func is None or target_func is None:
         return None
     target_func.__doc__ = source_func.__doc__
     return target_func
+
 
 def get_module_dict():
     import datetime
@@ -66,6 +70,8 @@ def get_module_dict():
     import random
     import string
     import urllib
+    import time
+    import bencoder
 
     @forge.copy(random.seed)
     def safe_random_seed(a=None, version=2):
@@ -124,7 +130,16 @@ def get_module_dict():
             "timedelta": datetime.timedelta,
             "timezone": datetime.timezone,
             "tzinfo": datetime.tzinfo,
-            
+            "UTC": datetime.UTC,
+        },
+        "dataclasses": {
+            "dataclass": dataclasses.dataclass,
+            "field": dataclasses.field,
+            "asdict": dataclasses.asdict,
+            "astuple": dataclasses.astuple,
+        },
+        "time": {
+            "time": time.time,
         },
         "pathlib": {"PurePath": pathlib.PurePath},
         "mimetypes": {"guess_type": mimetypes.guess_type},
@@ -153,13 +168,6 @@ def get_module_dict():
             "urlsafe_b64decode": base64.urlsafe_b64decode,
         },
         "decimal": {"Decimal": decimal.Decimal},
-        "simplejson": {
-            "dumps": safe_json_dumps,
-            "loads": simplejson.loads,
-        },
-        "simplejson.errors": {
-            "JSONDecodeError": simplejson.JSONDecodeError,
-        },
         "json": {
             "dumps": safe_json_dumps,
             "loads": simplejson.loads,
@@ -259,7 +267,13 @@ def get_module_dict():
             "Dict": typing.Dict,
             "List": typing.List,
             "Optional": typing.Optional,
-        }
+            "TypedDict": typing.TypedDict,
+            "Union": typing.Union,
+        },
+        "bencoder": {
+            "encode": bencoder.encode,
+            "decode": bencoder.decode,
+        },
     }
 
     def walk(node):
@@ -312,10 +326,10 @@ def build_sandbox(
                 # some rpc responses are json encoded
                 ret_json["result"] = json.loads(str(ret_json["result"]).encode())
             except json.JSONDecodeError as e:
-                #print(f"JSONDecodeError: {e} - {res.text}")
+                # print(f"JSONDecodeError: {e} - {res.text}")
                 pass
 
-            if ret_json["error"]:
+            if ret_json.get("error"):
                 return {"exception": ret_json["error"]}
 
             return ret_json
@@ -356,8 +370,8 @@ def build_sandbox(
                             n.end_lineno,
                             n.end_col_offset,
                             n.__class__.__name__,
-                            "", 
-                            #ast.get_source_segment(self.expr, n, padded=False),
+                            "",
+                            # ast.get_source_segment(self.expr, n, padded=False),
                         )
                     ] = [0, 0]
             return super(ScopedDysonEval, self).eval(expr)
@@ -370,14 +384,17 @@ def build_sandbox(
             if amount:
                 resp = _chain("ConsumeGas", amount=amount)
                 gas_state["unconsumed_size"] = 0
-                if resp["error"]:
+                if resp.get("exception"):
                     resp = _chain("GasLimit")
             else:
                 resp = _chain("GasLimit")
 
             gas_state["gas_consumed"] = resp["result"].get("GasConsumed", 0)
             gas_state["gas_limit"] = resp["result"].get("GasLimit", 0)
-            if gas_state["gas_limit"] > 0 and gas_state["gas_consumed"] > gas_state["gas_limit"]:
+            if (
+                gas_state["gas_limit"] > 0
+                and gas_state["gas_consumed"] > gas_state["gas_limit"]
+            ):
                 raise MemoryError(f"Out of Gas: {gas_state}")
 
         def track(self, node):
@@ -394,8 +411,8 @@ def build_sandbox(
                         node.end_lineno,
                         node.end_col_offset,
                         node.__class__.__name__,
-                        "", 
-                        #ast.get_source_segment(self.expr, node, padded=False),
+                        "",
+                        # ast.get_source_segment(self.expr, node, padded=False),
                     )
                 ]
                 node_info[CALLS_INDEX] += 1
@@ -415,7 +432,9 @@ def build_sandbox(
                     gas_state["unconsumed_size"] += self.size
                     if gas_state["cumsize"] > MAX_CUM_SIZE:
                         raise MemoryError("Cumsize too large")
-                if gas_state["unconsumed_size"] > 100_000 or isinstance(node, ast.Module):
+                if gas_state["unconsumed_size"] > 100_000 or isinstance(
+                    node, ast.Module
+                ):
                     sandbox.consume_gas()
 
     scope = {}
@@ -442,12 +461,19 @@ def build_sandbox(
         Returns the docstring of the given object.
         """
         if not a.__doc__:
-            print("safe_help", a, a.__name__, a.__module__, a.__qualname__, type(a), a.__doc__)
+            print(
+                "safe_help",
+                a,
+                a.__name__,
+                a.__module__,
+                a.__qualname__,
+                type(a),
+                a.__doc__,
+            )
         return a.__doc__
-    
+
     sandbox.scope.dicts[0]["help"] = safe_help
 
-    
     @allow_dys_func
     def emit_event(key, value):
         """
@@ -458,9 +484,9 @@ def build_sandbox(
         if not isinstance(key, str):
             raise ValueError("emit_event key must be a string")
         resp = _chain("EmitEvent", key=key, value=value)
-        if resp.get('exception'):
-            raise Exception(resp['exception'])
-        return resp['result']
+        if resp.get("exception"):
+            raise Exception(resp["exception"])
+        return resp["result"]
 
     @allow_dys_func
     def get_gas_consumed():
@@ -538,7 +564,12 @@ def build_sandbox(
 
     @allow_dys_func
     def dys_eval(
-        code, scope=None, max_node_calls=None, max_scope_size=None, track_func=None
+        code,
+        scope=None,
+        max_node_calls=None,
+        max_scope_size=None,
+        track_func=None,
+        module_dict=None,
     ):
         """
         Evaluate a string of Dsyon Protocol code.
@@ -546,6 +577,9 @@ def build_sandbox(
         :param code: the code to evaluate
         :param scope: the scope to evaluate the code in
         :param track_func: a function to call after each node is evaluated use to track gas or scope size
+        :param module_dict: a dictionary of modules to make available for import in the sandbox.
+                            Keys are module names, values are dicts of attributes.
+                            Example: {"json": {"loads": json.loads}, "foo": {"bar": my_custom_func}}
 
         :returns: the result of the evaluation
 
@@ -556,8 +590,8 @@ def build_sandbox(
             local_track_func=track_func,
             max_node_calls=max_node_calls,
             max_scope_size=max_scope_size,
+            modules=dyslang.make_modules(module_dict or {}),
         )
-        sandbox.modules = dyslang.make_modules({})
         result = sandbox.eval(code)
         sandbox.consume_gas()
         if not result:
@@ -591,37 +625,35 @@ def build_sandbox(
     def _msg(params):
         """
         Wrapper function for _chain("Msg") that JSON encodes the params argument.
-        
+
         :param params: A dictionary of parameters to be JSON encoded and passed to _chain
         :returns: The response from the chain
         """
         resp = _chain("Msg", json_msg=json.dumps(params))
-        if resp.get('exception'):
-            raise Exception(resp['exception'])
-        return resp['result']
-        
-    
+        if resp.get("exception"):
+            raise Exception(resp["exception"])
+        return resp["result"]
+
     @allow_dys_func
     def _query(params, query_height=None):
         """
         Wrapper function for _chain("Query") that JSON encodes the params argument.
-        
+
         :param params: A dictionary of parameters to be JSON encoded and passed to _chain
         :returns: The response from the chain
         """
         resp = _chain("Query", json_query=json.dumps(params), query_height=query_height)
-        if resp.get('exception', None):
-            raise Exception(resp['exception'])
+        if resp.get("exception", None):
+            raise Exception(resp["exception"])
 
-        return resp['result']
-        
+        return resp["result"]
 
     @allow_dys_func
     def deprecated_chain(method, **params):
         """
         DEPRECATED: Use _msg() and _query() functions instead.
         This function is maintained for backward compatibility but will be removed in a future release.
-        
+
         :raises DeprecationError: Always raises this error to encourage migration to _msg and _query
         """
         raise DeprecationError(
@@ -717,7 +749,12 @@ def eval_script(
                             assert isinstance(kwargs, dict), "kwargs must be a dict"
                             result = scope[msg["function_name"]](*args, **kwargs)
                             if msg["function_name"].startswith("test_"):
-                                result = sorted(sandbox._seen_nodes.items(), key=(lambda x: (x[0][0], x[0][1], -x[0][2], -x[0][3])))    
+                                result = sorted(
+                                    sandbox._seen_nodes.items(),
+                                    key=(
+                                        lambda x: (x[0][0], x[0][1], -x[0][2], -x[0][3])
+                                    ),
+                                )
                         else:
                             raise Exception(
                                 f"function not public: {msg['function_name']}"
@@ -728,15 +765,16 @@ def eval_script(
                 sandbox.consume_gas()
             except dyslang.DysRuntimeError as e:
                 exception = e
-                #print("========== DysRuntimeError", e.lineno, e.col_offset, e.end_lineno, e.end_col_offset, getattr(e, "__context__", None))
+                # print("========== DysRuntimeError", e.lineno, e.col_offset, e.end_lineno, e.end_col_offset, getattr(e, "__context__", None))
             except Exception as e:
                 exception = e
-                #print("========== Exception", type(e), type(type(e)), type(e).__module__)
+                # print("========== Exception", type(e), type(type(e)), type(e).__module__)
             finally:
                 stdout = buf.getvalue()[-10000:]
 
     if exception is not None:
         try:
+            source_code = script["code"] + "\n" + msg["extra_code"]
             exception_dict = {
                 "class": exception.__class__.__name__,
                 "msg": str(exception),
@@ -744,25 +782,34 @@ def eval_script(
                 "col_offset": getattr(exception, "col_offset", 0),
                 "end_lineno": getattr(exception, "end_lineno", 0),
                 "end_col_offset": getattr(exception, "end_col_offset", 0),
-                "context": "NoneType"  # Default value
+                "context": "NoneType",  # Default value
+                "source_lines": "",
+                "source_segment": "",
             }
-            
+            if hasattr(exception, "node"):
+                exception_dict["source_segment"] = ast.get_source_segment(source_code, exception.node)
+                exception_dict["source_lines"] = ("\n").join(source_code.split("\n")[exception_dict["lineno"] - 1:exception_dict["end_lineno"]])
+
             # Safely get context class name
             if hasattr(exception, "__context__") and exception.__context__ is not None:
-                if not isinstance(exception.__context__, bool) and hasattr(exception.__context__, "__class__"):
+                if not isinstance(exception.__context__, bool) and hasattr(
+                    exception.__context__, "__class__"
+                ):
                     exception_dict["context"] = exception.__context__.__class__.__name__
-            
+
             exception = exception_dict
-        except Exception:
+        except Exception as e:
             # If anything goes wrong during exception processing, use a simple fallback
             exception = {
                 "class": "Exception",
-                "msg": str(exception) if hasattr(exception, "__str__") else "Unknown error",
+                "msg": (
+                    str(exception) if hasattr(exception, "__str__") else "Unknown error"
+                ),
                 "lineno": 0,
                 "col_offset": 0,
                 "end_lineno": 0,
                 "end_col_offset": 0,
-                "context": "NoneType"
+                "context": f"dysvm_server: {e}",
             }
 
     return sandbox, {
@@ -783,30 +830,52 @@ def eval_script(
 
 dyslang.WHITELIST_FUNCTIONS.update(
     [
-        "datetime.datetime.isoformat",
-        "datetime.datetime.fromisoformat",
-        "freezegun.api.FakeDatetime.now",
-        "freezegun.api.FakeDatetime.utcnow",
-        "freezegun.api.FakeDatetime.time",
+        # Freezegun: time-generating functions
+        "freezegun.api.FakeDatetime.astimezone",
+        "freezegun.api.FakeDatetime.combine",
+        "freezegun.api.FakeDatetime.ctime",
         "freezegun.api.FakeDatetime.date",
+        "freezegun.api.FakeDatetime.dst",
+        "freezegun.api.FakeDatetime.fromisoformat",
+        "freezegun.api.FakeDatetime.fromtimestamp",
+        "freezegun.api.FakeDatetime.isoformat",
+        "freezegun.api.FakeDatetime.now",
+        "freezegun.api.FakeDatetime.replace",
+        "freezegun.api.FakeDatetime.strptime",
+        "freezegun.api.FakeDatetime.time",
         "freezegun.api.FakeDatetime.timestamp",
-        "datetime.datetime.strftime",
-        "datetime.datetime.strptime",
-        "datetime.datetime.fromtimestamp",
-        "datetime.time",
-        "datetime.date",
-        "datetime.now",
-        "datetime.strftime",
-        "Datetime.isoformat",
-        "Datetime.strftime",
-        "Datetime.strptime",
-        "Datetime.fromtimestamp",
-        "Datetime.time",
+        "freezegun.api.FakeDatetime.timetuple",
+        "freezegun.api.FakeDatetime.timetz",
+        "freezegun.api.FakeDatetime.tzname",
+        "freezegun.api.FakeDatetime.utcfromtimestamp",
+        "freezegun.api.FakeDatetime.utcnow",
+        "freezegun.api.FakeDatetime.utcoffset",
+        "freezegun.api.FakeDatetime.utctimetuple"
+        # Datetime: parsing/formatting functions
+        "Datetime.astimezone",
+        "Datetime.combine",
+        "Datetime.ctime",
         "Datetime.date",
+        "Datetime.dst",
+        "Datetime.fromisoformat",
+        "Datetime.fromtimestamp",
+        "Datetime.isoformat",
+        "Datetime.now",
+        "Datetime.replace",
+        "Datetime.strptime",
+        "Datetime.time",
+        "Datetime.timestamp",
+        "Datetime.timetuple",
+        "Datetime.timetz",
+        "Datetime.tzname",
+        "Datetime.utcfromtimestamp",
+        "Datetime.utcnow",
+        "Datetime.utcoffset",
+        "Datetime.utctimetuple",
         # re2.Match.re
         "re2._Regexp.match",
         "re2._Match.groupdict",
-        "Match.groupdict",        
+        "Match.groupdict",
         "contains",
         "count",
         "findall",
@@ -857,6 +926,16 @@ dyslang.WHITELIST_FUNCTIONS.update(
         "str.swapcase",
         "str.title",
         "str.upper",
+        # set
+        "set.update",
+        "set.intersection_update",
+        "set.difference_update",
+        "set.symmetric_difference_update",
+        "set.add",
+        "set.remove",
+        "set.discard",
+        "set.pop",
+        "set.clear",
         # list
         "list.append",
         "list.clear",
@@ -927,7 +1006,9 @@ def _allow_func(func):
     try:
         modname = getattr(func, "__module__", None)
         qualname = getattr(
-            func, "__qualname__", getattr(func, "__name__", getattr(func, "_name", None))
+            func,
+            "__qualname__",
+            getattr(func, "__name__", getattr(func, "_name", None)),
         )
 
         if modname is not None and qualname is not None:
@@ -936,7 +1017,7 @@ def _allow_func(func):
     except (AttributeError, TypeError):
         # If we can't get module or qualname, just skip adding to whitelist
         pass
-        
+
     return func
 
 
@@ -987,12 +1068,28 @@ def main(msg_json, script_json, attached_msg_results_json, block_info_json, port
 
     try:
         print(
-            json.dumps(response, sort_keys=True, default=repr, ensure_ascii=False, separators=(',', ':'), ), end=""
+            json.dumps(
+                response,
+                sort_keys=True,
+                default=repr,
+                ensure_ascii=False,
+                separators=(",", ":"),
+            ),
+            end="",
         )  # "end" is important for parsing in go
     except Exception as e:
         response["exception"] = f"Error in return value: {repr(e)}"
         response["result"] = None
-        print(json.dumps(response, sort_keys=True, default=repr, ensure_ascii=True, separators=(',', ':'), ), end="")
+        print(
+            json.dumps(
+                response,
+                sort_keys=True,
+                default=repr,
+                ensure_ascii=True,
+                separators=(",", ":"),
+            ),
+            end="",
+        )
         sys.exit(1)
     if response["exception"] is not None:
         sys.exit(1)

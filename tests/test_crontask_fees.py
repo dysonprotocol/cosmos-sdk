@@ -11,11 +11,9 @@ def get_blockchain_time(dysond_bin):
     """Get the current blockchain time from the node status."""
     status = dysond_bin("status")
     latest_block_time = status.get("SyncInfo", {}).get("latest_block_time", "")
-    if latest_block_time:
-        # Parse the time (format: 2023-10-01T12:34:56.789Z)
-        dt = datetime.datetime.strptime(latest_block_time, "%Y-%m-%dT%H:%M:%S.%fZ")
-        return int(dt.timestamp())
-    return int(time.time())  # Fallback if parsing fails
+    # Parse the time (format: 2023-10-01T12:34:56.789Z) or fallback to system time
+    dt = datetime.datetime.strptime(latest_block_time, "%Y-%m-%dT%H:%M:%S.%fZ") if latest_block_time else datetime.datetime.now()
+    return int(dt.timestamp())
 
 # Test for successful fee deduction
 def test_fee_deduction_success(chainnet, generate_account):
@@ -53,27 +51,22 @@ def test_fee_deduction_success(chainnet, generate_account):
         "--from", alice_name, 
     )
     
-    # Extract the task ID
-    task_id = None
-    for event in create_result.get("events", []):
-        if event.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "task_id":
-                    task_id = json.loads(attr.get("value"))
-                    break
+    # Extract the task ID using list comprehensions
+    task_created_events = [e for e in create_result.get("events", []) if e.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated"]
+    assert task_created_events, "No EventTaskCreated found in transaction events"
     
-    assert task_id is not None, "Failed to extract task ID"
+    task_id_attrs = [a for a in task_created_events[0].get("attributes", []) if a.get("key") == "task_id"]
+    assert task_id_attrs, "No task_id attribute found in EventTaskCreated"
+    
+    task_id = json.loads(task_id_attrs[0].get("value"))
     
     # Define a check function for polling task completion
     def check_task_executed():
         task_result = dysond_bin("query", "crontask", "task-by-id", "--task-id", str(task_id))
         task = task_result.get("task", {})
         
-        if task.get("status") == "DONE":
-            return True
-        elif task.get("status") == "FAILED":
-            assert False, f"Task failed unexpectedly: {task.get('error_log', 'no error log')}"
-        return False
+        assert task.get("status") != "FAILED", f"Task failed unexpectedly: {task.get('error_log', 'no error log')}"
+        return task.get("status") == "DONE"
     
     # Poll until task is executed
     poll_until_condition(
@@ -92,12 +85,11 @@ def test_fee_deduction_success(chainnet, generate_account):
         balance_before_int = int(dys_balance_before)
         balance_after_int = int(dys_balance_after)
         
-        # If balance has been reduced (fee deducted), return True
-        if balance_before_int > balance_after_int:
-            # Store the updated balance for later comparison
-            balance_after_int_result = balance_after_int
-            return True
-        return False
+        # Check if balance has been reduced (fee deducted)
+        balance_reduced = balance_before_int > balance_after_int
+        # Store the updated balance for later comparison
+        balance_after_int_result = balance_after_int
+        return balance_reduced
     
     # Use a nonlocal variable to store the result
     balance_after_int_result = 0
@@ -158,30 +150,31 @@ def test_fee_deduction_insufficient_funds(chainnet, generate_account):
     print(f"Task creation succeeded with result: {json.dumps(create_result, indent=2)}")
     assert create_result["code"] == 0, f"Task creation failed unexpectedly: {create_result['raw_log']}"
     
-    # Extract the task ID from the events
-    task_id = None
-    for event in create_result.get("events", []):
-        if event.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "task_id":
-                    task_id = json.loads(attr.get("value"))
-                    break
-    assert task_id is not None, "Failed to extract task ID from creation result"
+    # Extract the task ID from the events using list comprehensions
+    task_created_events = [e for e in create_result.get("events", []) if e.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated"]
+    assert task_created_events, "No EventTaskCreated found in transaction events"
+    
+    task_id_attrs = [a for a in task_created_events[0].get("attributes", []) if a.get("key") == "task_id"]
+    assert task_id_attrs, "No task_id attribute found in EventTaskCreated"
+    
+    task_id = json.loads(task_id_attrs[0].get("value"))
     print(f"Created task with ID: {task_id}")
     
     # Define a check function for polling task status
     def check_task_failed():
         task_result = dysond_bin("query", "crontask", "task-by-id", "--task-id", str(task_id))
         task = task_result.get("task", {})
-        if task.get("status") == "FAILED":
-            error_log = task.get("error_log", "")
-            assert "failed to deduct gas fee" in error_log or "insufficient funds" in error_log.lower(), \
-                f"Task failed but not due to insufficient funds: {error_log}"
-            print(f"Task {task_id} failed as expected due to insufficient funds: {error_log}")
-            return True
-        elif task.get("status") == "DONE":
-            assert False, f"Task {task_id} executed successfully when it should have failed due to insufficient funds"
-        return False
+        status = task.get("status")
+        
+        assert status != "DONE", f"Task {task_id} executed successfully when it should have failed due to insufficient funds"
+        
+        task_failed = status == "FAILED"
+        error_log = task.get("error_log", "")
+        assert not task_failed or ("failed to deduct gas fee" in error_log or "insufficient funds" in error_log.lower()), \
+            f"Task failed but not due to insufficient funds: {error_log}"
+        
+        print(f"Task {task_id} failed as expected due to insufficient funds: {error_log}") if task_failed else None
+        return task_failed
     
     # Poll until task status is updated to FAILED
     poll_until_condition(

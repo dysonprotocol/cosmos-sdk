@@ -4,6 +4,66 @@ info:
   description: A REST interface for state queries.
   version: 1.0.0
 paths:
+  /dysonprotocol/script/v1/block:
+    get:
+      summary: GetBlock returns the current block information.
+      operationId: Query_GetBlock
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              block_height:
+                type: string
+                format: int64
+                description: block_height is the height of the block.
+              block_time:
+                type: string
+                format: date-time
+                description: block_time is the time of the block.
+              chain_id:
+                type: string
+                description: chain_id is the chain ID.
+              block_hash:
+                type: string
+                format: byte
+                description: block_hash is the hash of the block.
+              app_hash:
+                type: string
+                format: byte
+                description: app_hash is the application hash.
+              proposer_address:
+                type: string
+                description: proposer_address is the address of the block proposer.
+            description: QueryGetBlockResponse is the Query/GetBlock response type.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      tags:
+        - Query
   /dysonprotocol/script/v1/decode_bytes:
     get:
       summary: DecodeBytes decodes bytes to a JSON string.
@@ -189,6 +249,126 @@ paths:
                         specified type.
       tags:
         - Query
+  /dysonprotocol/script/v1/run:
+    post:
+      summary: |-
+        Run executes a script function in read-only mode without modifying
+        state.
+      operationId: Query_Run
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              result:
+                type: string
+                description: >-
+                  result is the execution result returned by the script
+                  function.
+              attached_message_results:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                description: Results of the attached messages.
+            description: ResponseRunScript is the Query/Run response type.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              executor_address:
+                type: string
+                title: executor is the account address used to execute the script
+              script_address:
+                type: string
+                title: >-
+                  address is the script address to execute.
+
+                  This can be either a bech32 address or a nameservice name
+                  (e.g.,
+
+                  "example.dys")
+              extra_code:
+                type: string
+                title: >-
+                  Only if the executor is the owner of the script will the
+                  optional
+
+                  extra_code be temporary appended to the script for this
+                  message before
+
+                  calling the function
+              function_name:
+                type: string
+                title: The function name to run
+              args:
+                type: string
+                title: >-
+                  The positional arguments to pass to the function (*args)
+                  encoded as a json
+
+                  list
+              kwargs:
+                type: string
+                title: >-
+                  The keyword arguments to pass to the function (**kwargs)
+                  encoded as a json
+
+                  dict
+              attached_messages:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+                description: The list of messages to run before the script.
+            description: RunScript is the Query/Run request type.
+      tags:
+        - Query
   /dysonprotocol/script/v1/script_info/{address}:
     get:
       summary: ScriptInfo queries script info based on script address
@@ -253,11 +433,15 @@ paths:
           description: A successful response.
           schema:
             type: object
+            properties:
+              signer:
+                type: string
+                title: The signer address of the MsgArbitraryData
             title: >-
-              QueryVerifyTxResponse will be empty response on success, error
-              will be raised
+              QueryVerifyTxResponse will return the signer address of the
+              MsgArbitraryData
 
-              on failure
+              or error if the signature is invalid
         default:
           description: An unexpected error response.
           schema:
@@ -901,13 +1085,20 @@ paths:
           type: string
         - name: filter
           description: >-
-            The optional gjson filter to filter the storage entry. For example,
-            Given
+            The optional gjson filter to filter the storage entry.
 
-            data like {"user": {"age": 18}}, the filter "user.age > 18" will
-            return
+            Supports GJSON query syntax with comparison operators:
 
-            true.
+            - Equality: status == "active", age == 18
+
+            - Inequality: type != "test"
+
+            - Comparison: age > 18, count <= 100, score >= 50
+
+            - Pattern matching: name % "John*" (like), tag !% "*beta*" (not
+            like)
+
+            Only entries matching the filter will be included in results.
           in: query
           required: false
           type: string
@@ -1034,7 +1225,48 @@ paths:
                 type: array
                 items:
                   type: string
-                title: List of indexes to delete
+                description: >-
+                  OPTION 1: Delete specific indexes
+
+                  List of indexes to delete. This field is mutually exclusive
+                  with
+
+                  index_prefix and filter fields.
+              index_prefix:
+                type: string
+                description: >-
+                  OPTION 2: Delete by prefix and optional filter
+
+                  The index prefix of the storage entries to delete. When
+                  specified,
+
+                  all entries with indexes starting with this prefix will be
+                  deleted
+
+                  (optionally filtered by the filter field). This field is
+                  mutually
+
+                  exclusive with the indexes field.
+              filter:
+                type: string
+                description: >-
+                  The optional gjson filter to apply when deleting by
+                  index_prefix.
+
+                  Supports GJSON query syntax with comparison operators:
+
+                  - Equality: status == "active", age == 25
+
+                  - Inequality: status != "inactive"
+
+                  - Comparison: age > 18, price <= 100
+
+                  - Pattern matching: name % "John*" (like), name !% "*test*"
+                  (not like)
+
+                  Only entries matching this filter will be deleted.
+
+                  This field can only be used in conjunction with index_prefix.
             description: MsgStorageDelete is the message for deleting storage entries.
       tags:
         - Msg
@@ -4045,13 +4277,14 @@ paths:
                   method
 
                   signatures required by gogoproto.
+                title: valuation is the new valuation of the NFT
               max_annual_pct_fee:
                 type: string
                 description: >-
                   max_annual_pct_fee (optional) is the maximum annual percentage
                   fee the user
 
-                  is willing to pay for setting the new valuation (e.g. "2.5"
+                  is willing to pay for setting the new valuation (e.g. "0.025"
                   for 2.5%).
 
                   This guards against unexpected fee amounts if the name owner
@@ -33608,6 +33841,32 @@ definitions:
         format: byte
         description: bytes is the encoded bytes.
     description: QueryEncodeJsonResponse is the Query/EncodeJson response type.
+  dysonprotocol.script.v1.QueryGetBlockResponse:
+    type: object
+    properties:
+      block_height:
+        type: string
+        format: int64
+        description: block_height is the height of the block.
+      block_time:
+        type: string
+        format: date-time
+        description: block_time is the time of the block.
+      chain_id:
+        type: string
+        description: chain_id is the chain ID.
+      block_hash:
+        type: string
+        format: byte
+        description: block_hash is the hash of the block.
+      app_hash:
+        type: string
+        format: byte
+        description: app_hash is the application hash.
+      proposer_address:
+        type: string
+        description: proposer_address is the address of the block proposer.
+    description: QueryGetBlockResponse is the Query/GetBlock response type.
   dysonprotocol.script.v1.QueryParamsResponse:
     type: object
     properties:
@@ -33673,11 +33932,86 @@ definitions:
     description: QueryScriptInfoResponse is the Query/ScriptInfo response type.
   dysonprotocol.script.v1.QueryVerifyTxResponse:
     type: object
+    properties:
+      signer:
+        type: string
+        title: The signer address of the MsgArbitraryData
     title: >-
-      QueryVerifyTxResponse will be empty response on success, error will be
-      raised
+      QueryVerifyTxResponse will return the signer address of the
+      MsgArbitraryData
 
-      on failure
+      or error if the signature is invalid
+  dysonprotocol.script.v1.ResponseRunScript:
+    type: object
+    properties:
+      result:
+        type: string
+        description: result is the execution result returned by the script function.
+      attached_message_results:
+        type: array
+        items:
+          type: object
+          properties:
+            type_url:
+              type: string
+            value:
+              type: string
+              format: byte
+              description: >-
+                Must be a valid serialized protocol buffer of the above
+                specified type.
+        description: Results of the attached messages.
+    description: ResponseRunScript is the Query/Run response type.
+  dysonprotocol.script.v1.RunScript:
+    type: object
+    properties:
+      executor_address:
+        type: string
+        title: executor is the account address used to execute the script
+      script_address:
+        type: string
+        title: |-
+          address is the script address to execute.
+          This can be either a bech32 address or a nameservice name (e.g.,
+          "example.dys")
+      extra_code:
+        type: string
+        title: |-
+          Only if the executor is the owner of the script will the optional
+          extra_code be temporary appended to the script for this message before
+          calling the function
+      function_name:
+        type: string
+        title: The function name to run
+      args:
+        type: string
+        title: >-
+          The positional arguments to pass to the function (*args) encoded as a
+          json
+
+          list
+      kwargs:
+        type: string
+        title: >-
+          The keyword arguments to pass to the function (**kwargs) encoded as a
+          json
+
+          dict
+      attached_messages:
+        type: array
+        items:
+          type: object
+          properties:
+            type_url:
+              type: string
+            value:
+              type: string
+              format: byte
+              description: >-
+                Must be a valid serialized protocol buffer of the above
+                specified type.
+        description: The list of messages to run before the script.
+    description: RunScript is the Query/Run request type.
   dysonprotocol.script.v1.Script:
     type: object
     properties:
@@ -34121,7 +34455,29 @@ definitions:
         type: array
         items:
           type: string
-        title: List of indexes to delete
+        description: |-
+          OPTION 1: Delete specific indexes
+          List of indexes to delete. This field is mutually exclusive with
+          index_prefix and filter fields.
+      index_prefix:
+        type: string
+        description: |-
+          OPTION 2: Delete by prefix and optional filter
+          The index prefix of the storage entries to delete. When specified,
+          all entries with indexes starting with this prefix will be deleted
+          (optionally filtered by the filter field). This field is mutually
+          exclusive with the indexes field.
+      filter:
+        type: string
+        description: |-
+          The optional gjson filter to apply when deleting by index_prefix.
+          Supports GJSON query syntax with comparison operators:
+          - Equality: status == "active", age == 25
+          - Inequality: status != "inactive"
+          - Comparison: age > 18, price <= 100
+          - Pattern matching: name % "John*" (like), name !% "*test*" (not like)
+          Only entries matching this filter will be deleted.
+          This field can only be used in conjunction with index_prefix.
     description: MsgStorageDelete is the message for deleting storage entries.
   dysonprotocol.storage.v1.MsgStorageDeleteResponse:
     type: object
@@ -35458,13 +35814,15 @@ definitions:
 
           NOTE: The amount field is an Int which implements the custom method
           signatures required by gogoproto.
+        title: valuation is the new valuation of the NFT
       max_annual_pct_fee:
         type: string
         description: >-
           max_annual_pct_fee (optional) is the maximum annual percentage fee the
           user
 
-          is willing to pay for setting the new valuation (e.g. "2.5" for 2.5%).
+          is willing to pay for setting the new valuation (e.g. "0.025" for
+          2.5%).
 
           This guards against unexpected fee amounts if the name owner changes
           the

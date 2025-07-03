@@ -11,6 +11,29 @@
     "application/json"
   ],
   "paths": {
+    "/dysonprotocol/script/v1/block": {
+      "get": {
+        "summary": "GetBlock returns the current block information.",
+        "operationId": "Query_GetBlock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.script.v1.QueryGetBlockResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "tags": [
+          "Query"
+        ]
+      }
+    },
     "/dysonprotocol/script/v1/decode_bytes": {
       "get": {
         "summary": "DecodeBytes decodes bytes to a JSON string.",
@@ -100,6 +123,39 @@
             }
           }
         },
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/script/v1/run": {
+      "post": {
+        "summary": "Run executes a script function in read-only mode without modifying\nstate.",
+        "operationId": "Query_Run",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.script.v1.ResponseRunScript"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.script.v1.RunScript"
+            }
+          }
+        ],
         "tags": [
           "Query"
         ]
@@ -241,6 +297,40 @@
       },
       "description": "QueryEncodeJsonResponse is the Query/EncodeJson response type."
     },
+    "dysonprotocol.script.v1.QueryGetBlockResponse": {
+      "type": "object",
+      "properties": {
+        "block_height": {
+          "type": "string",
+          "format": "int64",
+          "description": "block_height is the height of the block."
+        },
+        "block_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "block_time is the time of the block."
+        },
+        "chain_id": {
+          "type": "string",
+          "description": "chain_id is the chain ID."
+        },
+        "block_hash": {
+          "type": "string",
+          "format": "byte",
+          "description": "block_hash is the hash of the block."
+        },
+        "app_hash": {
+          "type": "string",
+          "format": "byte",
+          "description": "app_hash is the application hash."
+        },
+        "proposer_address": {
+          "type": "string",
+          "description": "proposer_address is the address of the block proposer."
+        }
+      },
+      "description": "QueryGetBlockResponse is the Query/GetBlock response type."
+    },
     "dysonprotocol.script.v1.QueryParamsResponse": {
       "type": "object",
       "properties": {
@@ -263,7 +353,67 @@
     },
     "dysonprotocol.script.v1.QueryVerifyTxResponse": {
       "type": "object",
-      "title": "QueryVerifyTxResponse will be empty response on success, error will be raised\non failure"
+      "properties": {
+        "signer": {
+          "type": "string",
+          "title": "The signer address of the MsgArbitraryData"
+        }
+      },
+      "title": "QueryVerifyTxResponse will return the signer address of the MsgArbitraryData\nor error if the signature is invalid"
+    },
+    "dysonprotocol.script.v1.ResponseRunScript": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "string",
+          "description": "result is the execution result returned by the script function."
+        },
+        "attached_message_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/google.protobuf.Any"
+          },
+          "description": "Results of the attached messages."
+        }
+      },
+      "description": "ResponseRunScript is the Query/Run response type."
+    },
+    "dysonprotocol.script.v1.RunScript": {
+      "type": "object",
+      "properties": {
+        "executor_address": {
+          "type": "string",
+          "title": "executor is the account address used to execute the script"
+        },
+        "script_address": {
+          "type": "string",
+          "title": "address is the script address to execute.\nThis can be either a bech32 address or a nameservice name (e.g.,\n\"example.dys\")"
+        },
+        "extra_code": {
+          "type": "string",
+          "title": "Only if the executor is the owner of the script will the optional\nextra_code be temporary appended to the script for this message before\ncalling the function"
+        },
+        "function_name": {
+          "type": "string",
+          "title": "The function name to run"
+        },
+        "args": {
+          "type": "string",
+          "title": "The positional arguments to pass to the function (*args) encoded as a json\nlist"
+        },
+        "kwargs": {
+          "type": "string",
+          "title": "The keyword arguments to pass to the function (**kwargs) encoded as a json\ndict"
+        },
+        "attached_messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/google.protobuf.Any"
+          },
+          "description": "The list of messages to run before the script."
+        }
+      },
+      "description": "RunScript is the Query/Run request type."
     },
     "dysonprotocol.script.v1.Script": {
       "type": "object",

@@ -22206,12 +22206,13 @@ type MsgSetValuation struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Owner      string        `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
-	NftClassId string        `protobuf:"bytes,2,opt,name=nft_class_id,json=nftClassId,proto3" json:"nft_class_id,omitempty"`
-	NftId      string        `protobuf:"bytes,3,opt,name=nft_id,json=nftId,proto3" json:"nft_id,omitempty"`
-	Valuation  *v1beta1.Coin `protobuf:"bytes,4,opt,name=valuation,proto3" json:"valuation,omitempty"`
+	Owner      string `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
+	NftClassId string `protobuf:"bytes,2,opt,name=nft_class_id,json=nftClassId,proto3" json:"nft_class_id,omitempty"`
+	NftId      string `protobuf:"bytes,3,opt,name=nft_id,json=nftId,proto3" json:"nft_id,omitempty"`
+	// valuation is the new valuation of the NFT
+	Valuation *v1beta1.Coin `protobuf:"bytes,4,opt,name=valuation,proto3" json:"valuation,omitempty"`
 	// max_annual_pct_fee (optional) is the maximum annual percentage fee the user
-	// is willing to pay for setting the new valuation (e.g. "2.5" for 2.5%).
+	// is willing to pay for setting the new valuation (e.g. "0.025" for 2.5%).
 	// This guards against unexpected fee amounts if the name owner changes the
 	// annual_pct.
 	MaxAnnualPctFee string `protobuf:"bytes,5,opt,name=max_annual_pct_fee,json=maxAnnualPctFee,proto3" json:"max_annual_pct_fee,omitempty"`

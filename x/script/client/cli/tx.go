@@ -200,7 +200,7 @@ Examples:
 
 func NewExecScriptCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "exec --script-address <script_address> [--args <input_data>] [--function-name <function_name>] [--extra-code <extra_code>] [--kwargs <keyword_args>] [--attached-message <message>]",
+		Use:   "exec --script-address <script_address> [--args <input_data>] [--function-name <function_name>] [--extra-code <extra_code> | --extra-code-path <path>] [--kwargs <keyword_args>] [--attached-message <message>]",
 		Short: "Executes a script at a given address with optional input data and parameters",
 		Long: `Executes a script at a given address with optional input data and other parameters.
 
@@ -211,6 +211,7 @@ Optional Flags:
   --args: Positional arguments to pass to the function as a JSON list (e.g., '["arg1", "arg2"]')
   --function-name: The name of the function to run (defaults to a main or entry point function if not specified)
   --extra-code: Additional code to temporarily append to the script for this execution (only allowed if the executor is the owner of the script)
+  --extra-code-path: Path to a file containing additional code to temporarily append to the script (only allowed if the executor is the owner of the script)
   --kwargs: Keyword arguments to pass to the function as a JSON dictionary (e.g., '{"key1": "value1", "key2": "value2"}')
   --attached-message: Attached message to include in the transaction as JSON (can be used multiple times)
 
@@ -226,6 +227,9 @@ Examples:
 
   # Execute a script with extra code (if executor is the owner)
   $ dysond tx script exec --script-address dys123... --extra-code "def helper(): return 'temp help';"
+
+  # Execute a script with extra code from a file (if executor is the owner)
+  $ dysond tx script exec --script-address dys123... --extra-code-path ./helper_functions.py
 
   # Execute a script with attached messages
   $ dysond tx script exec --script-address dys123... --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys123...","to_address":"dys456...","amount":[{"denom":"dys","amount":"100"}]}' --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys123...","to_address":"dys789...","amount":[{"denom":"dys","amount":"200"}]}'`,
@@ -254,9 +258,32 @@ Examples:
 				return err
 			}
 
-			extraCode, err := cmd.Flags().GetString("extra-code")
-			if err != nil {
-				return err
+			// Handle extra-code and extra-code-path flags
+			extraCodeProvided := cmd.Flags().Changed("extra-code")
+			extraCodePathProvided := cmd.Flags().Changed("extra-code-path")
+
+			// Validate both are not provided
+			if extraCodeProvided && extraCodePathProvided {
+				return errors.New("cannot provide both --extra-code and --extra-code-path, use only one")
+			}
+
+			var extraCode string
+			if extraCodeProvided {
+				extraCode, err = cmd.Flags().GetString("extra-code")
+				if err != nil {
+					return err
+				}
+			} else if extraCodePathProvided {
+				extraCodePath, err := cmd.Flags().GetString("extra-code-path")
+				if err != nil {
+					return err
+				}
+				// Read file contents
+				codeBytes, err := os.ReadFile(extraCodePath)
+				if err != nil {
+					return fmt.Errorf("failed to read file %s: %w", extraCodePath, err)
+				}
+				extraCode = string(codeBytes)
 			}
 
 			kwargs, err := cmd.Flags().GetString("kwargs")
@@ -310,6 +337,7 @@ Examples:
 	cmd.Flags().String("args", "", "Input data for the script execution as positional arguments (JSON list)")
 	cmd.Flags().String("function-name", "", "Name of the function to execute")
 	cmd.Flags().String("extra-code", "", "Extra code to temporarily append to the script (only if executor is owner)")
+	cmd.Flags().String("extra-code-path", "", "Path to file containing extra code to temporarily append to the script (only if executor is owner)")
 	cmd.Flags().String("kwargs", "", "Keyword arguments for the script execution (JSON dictionary)")
 	cmd.Flags().StringArray("attached-message", []string{}, "Attached message to include in the transaction as JSON (can be used multiple times)")
 

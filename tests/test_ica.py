@@ -40,28 +40,34 @@ def test_ica_complete_e2e_workflow(ibc_setup, generate_account, faucet):
     # 3. Wait for ICA address to be established via get_ica_address
     print(f"⏳ Waiting for ICA address establishment...")
     def _ica_address_established():
-        """Check if ICA address is available using get_ica_address function"""
+        """Check if ICA address has been established"""
+        print(f"🔍 Checking if ICA address is established...")
         result = dysond_bin("tx", "script", "exec", "--script-address", alice_address, "--function-name", "get_ica_address", "--args", "[]", "--from", alice_name, "--gas", "500000")
         print(f"🔍 get_ica_address check result: {result}")
         assert result.get("code", 1) == 0, f"get_ica_address execution failed: {result}"
         
-        for event in result.get("events", []):
-            if event.get("type") == "dysonprotocol.script.v1.EventExecScript":
-                for attr in event.get("attributes", []):
-                    if attr.get("key") == "response":
-                        response_json = attr.get("value")
-                        response_data = json.loads(response_json)
-                        result_data = json.loads(response_data.get("result", "{}"))
-                        ica_result = result_data.get("result", {})
-                        print(f"🔍 ICA address check response: {ica_result}")
-                        
-                        if isinstance(ica_result, dict):
-                            if ica_result.get("status") == "success":
-                                registered_address = ica_result.get("registered_address", "")
-                                print(f"✅ Found ICA address: {registered_address}")
-                                return registered_address and registered_address.startswith("dys1")
-                            else:
-                                print(f"❌ ICA address not ready: {ica_result}")
+        # Extract response using list comprehensions
+        exec_events = [e for e in result.get("events", []) if e.get("type") == "dysonprotocol.script.v1.EventExecScript"]
+        response_attrs = [a for e in exec_events for a in e.get("attributes", []) if a.get("key") == "response"]
+        
+        for attr in response_attrs:
+            response_json = attr.get("value")
+            response_data = json.loads(response_json)
+            result_data = json.loads(response_data.get("result", "{}"))
+            ica_result = result_data.get("result", {})
+            print(f"🔍 ICA address check response: {ica_result}")
+            
+            # Check if ICA is ready
+            is_dict = isinstance(ica_result, dict)
+            is_success = is_dict and ica_result.get("status") == "success"
+            
+            print(f"❌ ICA address not ready: {ica_result}") if is_dict and not is_success else None
+            
+            # Return early if successful
+            registered_address = ica_result.get("registered_address", "") if is_success else ""
+            print(f"✅ Found ICA address: {registered_address}") if is_success else None
+            return (registered_address and registered_address.startswith("dys1")) if is_success else False
+        
         return False
     
     poll_until_condition(_ica_address_established, timeout=60, poll_interval=3, error_message="ICA address not established after registration")
@@ -72,21 +78,22 @@ def test_ica_complete_e2e_workflow(ibc_setup, generate_account, faucet):
     print(f"📍 Final ICA address result: {ica_address_result}")
     assert ica_address_result.get("code", 1) == 0, "Failed to get ICA address"
     
-    ica_address = None
-    for event in ica_address_result.get("events", []):
-        if event.get("type") == "dysonprotocol.script.v1.EventExecScript":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "response":
-                    response_json = attr.get("value")
-                    response_data = json.loads(response_json)
-                    result_data = json.loads(response_data.get("result", "{}"))
-                    ica_result = result_data.get("result", {})
-                    
-                    if isinstance(ica_result, dict) and ica_result.get("status") == "success":
-                        ica_address = ica_result.get("registered_address", "")
-                    break
-        if ica_address:
-            break
+    # Extract ICA address from first successful response
+    exec_events = [e for e in ica_address_result.get("events", []) if e.get("type") == "dysonprotocol.script.v1.EventExecScript"]
+    response_attrs = [a for e in exec_events for a in e.get("attributes", []) if a.get("key") == "response"]
+    
+    successful_results = []
+    for attr in response_attrs:
+        response_json = attr.get("value")
+        response_data = json.loads(response_json)
+        result_data = json.loads(response_data.get("result", "{}"))
+        ica_result = result_data.get("result", {})
+        
+        # Check if successful and add to results
+        is_success = isinstance(ica_result, dict) and ica_result.get("status") == "success"
+        successful_results.extend([ica_result.get("registered_address", "")] if is_success else [])
+    
+    ica_address = successful_results[0] if successful_results else None
     
     assert ica_address, "ICA address should be returned"
     assert ica_address.startswith("dys1"), "ICA address should be valid bech32 format"
@@ -105,60 +112,62 @@ def test_ica_complete_e2e_workflow(ibc_setup, generate_account, faucet):
     print(f"📊 Query request result: {query_result}")
     assert query_result.get("code", 1) == 0, f"Failed to request balance query: {query_result}"
     
-    # Extract sequence number from query result
-    query_sequence = None
-    for event in query_result.get("events", []):
-        if event.get("type") == "dysonprotocol.script.v1.EventExecScript":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "response":
-                    response_json = attr.get("value")
-                    response_data = json.loads(response_json)
-                    result_data = json.loads(response_data.get("result", "{}"))
-                    query_response = result_data.get("result", {})
-                    print(f"📊 Query response data: {query_response}")
-                    
-                    if isinstance(query_response, dict) and query_response.get("status") == "success":
-                        query_sequence = query_response.get("sequence")
-                        print(f"📊 Extracted sequence: {query_sequence}")
-                    break
-        if query_sequence is not None:
-            break
+    # Extract ref_id from query result using list comprehensions
+    exec_events = [e for e in query_result.get("events", []) if e.get("type") == "dysonprotocol.script.v1.EventExecScript"]
+    response_attrs = [a for e in exec_events for a in e.get("attributes", []) if a.get("key") == "response"]
     
-    assert query_sequence is not None, "Balance query sequence should be returned"
-    print(f"✅ Balance query sent with sequence: {query_sequence}")
+    query_ref_ids = []
+    for attr in response_attrs:
+        response_json = attr.get("value")
+        response_data = json.loads(response_json)
+        result_data = json.loads(response_data.get("result", "{}"))
+        query_response = result_data.get("result", {})
+        print(f"📊 Query response data: {query_response}")
+        
+        # Extract ref_id if successful
+        is_success = isinstance(query_response, dict) and query_response.get("status") == "success"
+        ref_id = query_response.get("ref_id") if is_success else None
+        print(f"📊 Extracted ref_id: {ref_id}") if ref_id is not None else None
+        query_ref_ids.extend([ref_id] if ref_id is not None else [])
+    
+    query_ref_id = query_ref_ids[0] if query_ref_ids else None
+    
+    assert query_ref_id is not None, "Balance query ref_id should be returned"
+    print(f"✅ Balance query sent with ref_id: {query_ref_id}")
     
     # 7. Wait for balance query callback to be stored
-    print(f"⏳ Waiting for balance query callback (sequence: {query_sequence})...")
+    print(f"⏳ Waiting for balance query callback (ref_id: {query_ref_id})...")
     def _balance_callback_received():
         """Check if balance query callback has been received"""
-        callback_args = ["balance_query", query_sequence]
+        callback_args = ["balance_query", query_ref_id]
         print(f"🔍 Checking for callback with args: {callback_args}")
         result = dysond_bin("tx", "script", "exec", "--script-address", alice_address, "--function-name", "get_callback", "--args", json.dumps(callback_args), "--from", alice_name, "--gas", "500000")
         print(f"🔍 Callback check result: {result}")
         assert result.get("code", 1) == 0, f"get_callback execution failed: {result}"
         
-        for event in result.get("events", []):
-            if event.get("type") == "dysonprotocol.script.v1.EventExecScript":
-                for attr in event.get("attributes", []):
-                    if attr.get("key") == "response":
-                        response_json = attr.get("value")
-                        response_data = json.loads(response_json)
-                        result_data = json.loads(response_data.get("result", "{}"))
-                        callback_result = result_data.get("result", {})
-                        print(f"🔍 Callback check response: {callback_result}")
-                        
-                        if isinstance(callback_result, dict):
-                            status = callback_result.get("status")
-                            print(f"🔍 Callback status: {status}")
-                            if status == "success":
-                                print(f"✅ Callback found!")
-                                return True
-                            elif status == "not_found":
-                                print(f"❌ Callback not found yet")
-                                return False
-                            else:
-                                print(f"❓ Unexpected callback status: {status}")
-                                return False
+        # Extract callback response using list comprehensions
+        exec_events = [e for e in result.get("events", []) if e.get("type") == "dysonprotocol.script.v1.EventExecScript"]
+        response_attrs = [a for e in exec_events for a in e.get("attributes", []) if a.get("key") == "response"]
+        
+        for attr in response_attrs:
+            response_json = attr.get("value")
+            response_data = json.loads(response_json)
+            result_data = json.loads(response_data.get("result", "{}"))
+            callback_result = result_data.get("result", {})
+            print(f"🔍 Callback check response: {callback_result}")
+            
+            # Check callback status
+            is_dict = isinstance(callback_result, dict)
+            status = callback_result.get("status") if is_dict else None
+            print(f"🔍 Callback status: {status}")
+            
+            # Return based on status
+            print(f"✅ Callback found!") if status == "success" else None
+            print(f"❌ Callback not found yet") if status == "not_found" else None
+            print(f"❓ Unexpected callback status: {status}") if status not in ["success", "not_found"] and status is not None else None
+            
+            return status == "success"
+        
         print(f"❌ No callback response found in events")
         return False
     
@@ -170,7 +179,7 @@ def test_ica_complete_e2e_workflow(ibc_setup, generate_account, faucet):
     poll_until_condition(_balance_callback_received, timeout=60, poll_interval=3, error_message="Balance query callback not received")
     
     # 8. Verify balance query callback data
-    callback_args = ["balance_query", query_sequence]
+    callback_args = ["balance_query", query_ref_id]
     print(f"✅ Getting callback data for verification...")
     callback_result = dysond_bin("tx", "script", "exec", "--script-address", alice_address, "--function-name", "get_callback", "--args", json.dumps(callback_args), "--from", alice_name, "--gas", "500000")
     print(f"✅ Callback verification result: {callback_result}")
@@ -183,22 +192,22 @@ def test_ica_complete_e2e_workflow(ibc_setup, generate_account, faucet):
     print(f"💸 Withdraw result: {withdraw_result}")
     assert withdraw_result.get("code", 1) == 0, f"Failed to withdraw from ICA account: {withdraw_result}"
     
-    # Extract withdrawal sequence number
-    withdrawal_sequence = None
-    for event in withdraw_result.get("events", []):
-        if event.get("type") == "dysonprotocol.script.v1.EventExecScript":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "response":
-                    response_json = attr.get("value")
-                    response_data = json.loads(response_json)
-                    result_data = json.loads(response_data.get("result", "{}"))
-                    withdraw_response = result_data.get("result", {})
-                    print(f"💸 Withdraw response data: {withdraw_response}")
-                    
-                    if isinstance(withdraw_response, dict) and withdraw_response.get("status") == "success":
-                        # For withdrawal, sequence comes from tx_result or we can derive from block
-                        # Let's get latest callback for withdrawal topic
-                        break
+    # Extract withdrawal ref_id using list comprehensions
+    exec_events = [e for e in withdraw_result.get("events", []) if e.get("type") == "dysonprotocol.script.v1.EventExecScript"]
+    response_attrs = [a for e in exec_events for a in e.get("attributes", []) if a.get("key") == "response"]
+    
+    withdrawal_ref_id = None
+    for attr in response_attrs:
+        response_json = attr.get("value")
+        response_data = json.loads(response_json)
+        result_data = json.loads(response_data.get("result", "{}"))
+        withdraw_response = result_data.get("result", {})
+        print(f"💸 Withdraw response data: {withdraw_response}")
+        
+        # Check if successful - for withdrawal, ref_id comes from tx_result or we can derive from block
+        is_success = isinstance(withdraw_response, dict) and withdraw_response.get("status") == "success"
+        # Let's get latest callback for withdrawal topic - we don't need the ref_id for this test
+        pass
     
     # 10. Wait for withdrawal callback
     print(f"⏳ Waiting for withdrawal callback...")
@@ -211,20 +220,23 @@ def test_ica_complete_e2e_workflow(ibc_setup, generate_account, faucet):
         print(f"🔍 Withdrawal callback check result: {result}")
         assert result.get("code", 1) == 0, f"get_callback execution failed: {result}"
         
-        for event in result.get("events", []):
-            if event.get("type") == "dysonprotocol.script.v1.EventExecScript":
-                for attr in event.get("attributes", []):
-                    if attr.get("key") == "response":
-                        response_json = attr.get("value")
-                        response_data = json.loads(response_json)
-                        result_data = json.loads(response_data.get("result", "{}"))
-                        callback_result = result_data.get("result", {})
-                        print(f"🔍 Withdrawal callback response: {callback_result}")
-                        
-                        if isinstance(callback_result, dict):
-                            status = callback_result.get("status")
-                            print(f"🔍 Withdrawal callback status: {status}")
-                            return status == "success"
+        # Extract callback response using list comprehensions
+        exec_events = [e for e in result.get("events", []) if e.get("type") == "dysonprotocol.script.v1.EventExecScript"]
+        response_attrs = [a for e in exec_events for a in e.get("attributes", []) if a.get("key") == "response"]
+        
+        for attr in response_attrs:
+            response_json = attr.get("value")
+            response_data = json.loads(response_json)
+            result_data = json.loads(response_data.get("result", "{}"))
+            callback_result = result_data.get("result", {})
+            print(f"🔍 Withdrawal callback response: {callback_result}")
+            
+            # Check status and return
+            is_dict = isinstance(callback_result, dict)
+            status = callback_result.get("status") if is_dict else None
+            print(f"🔍 Withdrawal callback status: {status}")
+            return status == "success"
+        
         return False
     
     poll_until_condition(_withdrawal_callback_received, timeout=60, poll_interval=3, error_message="Withdrawal callback not received")
@@ -240,5 +252,5 @@ def test_ica_complete_e2e_workflow(ibc_setup, generate_account, faucet):
     print(f"   - ICA Address: {ica_address}")
     print(f"   - Registration, funding, balance query, and withdrawal completed")
     print(f"   - All callbacks received and stored properly")
-    print(f"   - Query sequence: {query_sequence}")
+    print(f"   - Query ref_id: {query_ref_id}")
     print(f"   - Script deployment, IBC operations, and callback handling working")

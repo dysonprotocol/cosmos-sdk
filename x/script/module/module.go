@@ -33,10 +33,11 @@ var (
 	_ module.HasGenesis  = AppModule{}
 	_ module.HasServices = AppModule{}
 
-	_ appmodule.AppModule          = AppModule{}
-	_ appmodule.HasBeginBlocker    = AppModule{}
-	_ appmodule.HasEndBlocker      = AppModule{}
-	_ autocliv1.HasCustomTxCommand = AppModule{}
+	_ appmodule.AppModule             = AppModule{}
+	_ appmodule.HasBeginBlocker       = AppModule{}
+	_ appmodule.HasEndBlocker         = AppModule{}
+	_ autocliv1.HasCustomTxCommand    = AppModule{}
+	_ autocliv1.HasCustomQueryCommand = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the script module.
@@ -113,6 +114,11 @@ func (am AppModule) Name() string {
 // GetTxCmd returns the root tx command for the script module.
 func (AppModule) GetTxCmd() *cobra.Command {
 	return cli.NewTxCmd()
+}
+
+// GetQueryCmd returns the root query command for the script module.
+func (AppModule) GetQueryCmd() *cobra.Command {
+	return cli.GetQueryCmd()
 }
 
 // RegisterServices registers module services.

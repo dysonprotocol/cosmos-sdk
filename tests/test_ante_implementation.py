@@ -64,11 +64,8 @@ def wsgi(environ, start_response):
         raw=True
     )
     
-    # Convert to JSON string if it's a dict
-    if isinstance(unsigned_tx_result, dict):
-        unsigned_tx = json.dumps(unsigned_tx_result, indent=2)
-    else:
-        unsigned_tx = unsigned_tx_result
+    # Convert to JSON string - assume it's always a dict from dysond
+    unsigned_tx = json.dumps(unsigned_tx_result, indent=2)
     
     # Create temporary file for unsigned transaction
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
@@ -87,11 +84,8 @@ def wsgi(environ, start_response):
             raw=True
         )
         
-        # Convert to JSON string if it's a dict
-        if isinstance(signed_tx_result, dict):
-            signed_tx = json.dumps(signed_tx_result, indent=2)
-        else:
-            signed_tx = signed_tx_result
+        # Convert to JSON string - assume it's always a dict from dysond
+        signed_tx = json.dumps(signed_tx_result, indent=2)
         
         # Create temporary file for signed transaction
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
@@ -105,22 +99,9 @@ def wsgi(environ, start_response):
                 raw=True
             )
             
-            # Parse the broadcast result manually
-            if isinstance(broadcast_result, dict):
-                # If it's already a dict, extract from it
-                code = broadcast_result.get("code", 1)
-                txhash = broadcast_result.get("txhash")
-            else:
-                # If it's a string, parse it
-                lines = broadcast_result.strip().split('\n')
-                code = None
-                txhash = None
-                
-                for line in lines:
-                    if line.startswith('code: '):
-                        code = int(line.split('code: ')[1])
-                    elif line.startswith('txhash: '):
-                        txhash = line.split('txhash: ')[1]
+            # Parse the broadcast result - assume it's always a dict from dysond
+            code = broadcast_result.get("code", 1)
+            txhash = broadcast_result.get("txhash")
             
             # Verify transaction succeeded
             assert code == 0, f"Transaction failed with code {code}: {broadcast_result}"
@@ -146,24 +127,18 @@ def wsgi(environ, start_response):
             assert tx_data["code"] == 0, f"Transaction failed on chain: {tx_data}"
             
             # Verify script execution was successful
-            script_executed = False
-            for event in tx_data.get("events", []):
-                if event.get("type") == "dysonprotocol.script.v1.EventExecScript":
-                    script_executed = True
-                    break
-            assert script_executed, "Script execution event not found"
+            exec_events = [e for e in tx_data.get("events", []) if e.get("type") == "dysonprotocol.script.v1.EventExecScript"]
+            assert exec_events, "Script execution event not found"
             
             print(f"✅ SUCCESS: New account {test_account_address} created and transaction executed!")
             
         finally:
             # Clean up signed transaction file
-            if os.path.exists(signed_tx_path):
-                os.unlink(signed_tx_path)
+            os.unlink(signed_tx_path)
     
     finally:
         # Clean up unsigned transaction file
-        if os.path.exists(unsigned_tx_path):
-            os.unlink(unsigned_tx_path)
+        os.unlink(unsigned_tx_path)
 
 
 def test_multiple_new_accounts_sequential_manual(chainnet, generate_account):
@@ -205,11 +180,8 @@ def ping():
             raw=True
         )
         
-        # Convert to JSON string if it's a dict
-        if isinstance(unsigned_tx_result, dict):
-            unsigned_tx = json.dumps(unsigned_tx_result, indent=2)
-        else:
-            unsigned_tx = unsigned_tx_result
+        # Convert to JSON string - assume it's always a dict from dysond
+        unsigned_tx = json.dumps(unsigned_tx_result, indent=2)
         
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             f.write(unsigned_tx)
@@ -226,11 +198,8 @@ def ping():
                 raw=True
             )
             
-            # Convert to JSON string if it's a dict
-            if isinstance(signed_tx_result, dict):
-                signed_tx = json.dumps(signed_tx_result, indent=2)
-            else:
-                signed_tx = signed_tx_result
+            # Convert to JSON string - assume it's always a dict from dysond
+            signed_tx = json.dumps(signed_tx_result, indent=2)
             
             with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
                 f.write(signed_tx)
@@ -239,15 +208,8 @@ def ping():
             try:
                 broadcast_result = dysond_bin("tx", "broadcast", signed_tx_path, raw=True)
                 
-                # Parse code from broadcast result
-                if isinstance(broadcast_result, dict):
-                    code = broadcast_result.get("code", 1)
-                else:
-                    code = None
-                    for line in broadcast_result.strip().split('\n'):
-                        if line.startswith('code: '):
-                            code = int(line.split('code: ')[1])
-                            break
+                # Parse code from broadcast result - assume it's always a dict from dysond
+                code = broadcast_result.get("code", 1)
                 
                 assert code == 0, f"Transaction failed for account {i}"
                 
@@ -261,11 +223,9 @@ def ping():
                 assert int(account_data["account"]["value"]["sequence"]) == 1
                 
             finally:
-                if os.path.exists(signed_tx_path):
-                    os.unlink(signed_tx_path)
+                os.unlink(signed_tx_path)
         finally:
-            if os.path.exists(unsigned_tx_path):
-                os.unlink(unsigned_tx_path)
+            os.unlink(unsigned_tx_path)
     
     # Verify all accounts have different account numbers
     account_numbers = []
@@ -286,7 +246,7 @@ def test_existing_account_still_works(chainnet, generate_account, faucet):
     [script_owner_name, script_owner_address] = generate_account('script_owner_existing', faucet_amount=1000)
     
     test_code = """
-def test_func():
+def check_func():
     return {"test": "passed"}
 """
     
@@ -312,10 +272,10 @@ def test_func():
     tx_result = dysond_bin(
         "tx", "script", "exec",
         "--script-address", script_owner_address,
-        "--function-name", "test_func",
+        "--function-name", "check_func",
         "--from", account_name,
         "--fees", "0dys",
         "--gas", "100000"
     )
     
-    assert tx_result["code"] == 0 
+    assert tx_result["code"] == 0, f"Transaction failed with code {tx_result['code']}, raw_log: {tx_result.get('raw_log', 'No raw log available')}" 

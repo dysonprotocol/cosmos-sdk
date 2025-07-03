@@ -48,35 +48,29 @@ def execute_notebook(notebook_path, dyson_home):
     Returns:
         tuple: (success: bool, output: str, error: str)
     """
-    try:
-        # Execute the notebook using nbconvert in place
-        cmd = [
-            "jupyter", "nbconvert",
-            "--to", "notebook",
-            "--execute",
-            "--inplace",
-            "--ExecutePreprocessor.timeout=5",  # DO NOT CHANGE THIS, INSTEAD FIX YOUR TESTS!!!!
-            "--ExecutePreprocessor.kernel_name=python3",
-            str(notebook_path)
-        ]
+    # Execute the notebook using nbconvert in place
+    cmd = [
+        "jupyter", "nbconvert",
+        "--to", "notebook",
+        "--execute",
+        "--inplace",
+        "--ExecutePreprocessor.timeout=5",  # DO NOT CHANGE THIS, INSTEAD FIX YOUR TESTS!!!!
+        "--ExecutePreprocessor.kernel_name=python3",
+        str(notebook_path)
+    ]
 
-        print(f"Executing notebook: {' '.join(cmd)}")
-        
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            cwd=notebook_path.parent,
-            env=os.environ.copy()
-        )
-        
-        if result.returncode == 0:
-            return True, result.stdout, ""
-        else:
-            return False, result.stdout, result.stderr
-            
-    except Exception as e:
-        return False, "", str(e)
+    print(f"Executing notebook: {' '.join(cmd)}")
+    
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        cwd=notebook_path.parent,
+        env=os.environ.copy()
+    )
+    
+    success = result.returncode == 0
+    return success, result.stdout, result.stderr if not success else ""
 
 
 def validate_notebook_structure(notebook_path):
@@ -89,20 +83,15 @@ def validate_notebook_structure(notebook_path):
     Returns:
         bool: True if valid, False otherwise
     """
-    try:
-        with open(notebook_path, 'r', encoding='utf-8') as f:
-            notebook_data = json.load(f)
-            
-        # Basic validation - check for required fields
-        required_fields = ['cells', 'metadata', 'nbformat']
-        for field in required_fields:
-            if field not in notebook_data:
-                return False
-                
-        return True
+    # Load notebook data and check structure
+    with open(notebook_path, 'r', encoding='utf-8') as f:
+        notebook_data = json.load(f)
         
-    except (json.JSONDecodeError, FileNotFoundError, UnicodeDecodeError):
-        return False
+    # Basic validation - check for required fields
+    required_fields = ['cells', 'metadata', 'nbformat']
+    missing_fields = [field for field in required_fields if field not in notebook_data]
+    
+    return len(missing_fields) == 0
 
 
 def pytest_generate_tests(metafunc):
@@ -114,17 +103,15 @@ def pytest_generate_tests(metafunc):
     - Running specific notebook tests by name
     - Better test reporting with individual notebook names
     """
-    if "notebook_path" in metafunc.fixturenames:
-        notebook_files = get_notebook_files()
-        
-        # Create test IDs using notebook names (without .ipynb extension)
-        test_ids = [nb.stem for nb in notebook_files]
-        
-        metafunc.parametrize(
-            "notebook_path", 
-            notebook_files, 
-            ids=test_ids
-        )
+    # Only parametrize if notebook_path is in the fixture names
+    has_notebook_path = "notebook_path" in metafunc.fixturenames
+    
+    # Get notebook files and create parametrization if needed
+    notebook_files = get_notebook_files() if has_notebook_path else []
+    test_ids = [nb.stem for nb in notebook_files] if has_notebook_path else []
+    
+    # Parametrize if we have the fixture
+    metafunc.parametrize("notebook_path", notebook_files, ids=test_ids) if has_notebook_path else None
 
 
 @pytest.mark.docs

@@ -68,9 +68,10 @@ def test_query_tasks_by_status_timestamp(chainnet, generate_account):
     tasks = tasks_result["tasks"]
     for task in tasks:
         assert task["status"] == "SCHEDULED", f"Status mismatch: {task['status']} != SCHEDULED"
-    if len(tasks) > 1:
-        timestamps = [int(task["scheduled_timestamp"]) for task in tasks]
-        assert all(timestamps[i] <= timestamps[i+1] for i in range(len(timestamps)-1)), "Tasks not ordered by timestamp ascending"
+    
+    # Check timestamp ordering - assume there are multiple tasks
+    timestamps = [int(task["scheduled_timestamp"]) for task in tasks]
+    assert len(timestamps) <= 1 or all(timestamps[i] <= timestamps[i+1] for i in range(len(timestamps)-1)), "Tasks not ordered by timestamp ascending"
     print(f"Found {len(tasks)} tasks with status SCHEDULED")
 
 
@@ -84,9 +85,10 @@ def test_query_tasks_by_status_gas_price(chainnet, generate_account):
     tasks = tasks_result["tasks"]
     for task in tasks:
         assert task["status"] == "SCHEDULED", f"Status mismatch: {task['status']} != SCHEDULED"
-    if len(tasks) > 1:
-        gas_prices = [int(task["task_gas_price"]["amount"]) for task in tasks]
-        assert all(gas_prices[i] <= gas_prices[i+1] for i in range(len(gas_prices)-1)), "Tasks not ordered by gas price ascending"
+    
+    # Check gas price ordering - assume there are multiple tasks
+    gas_prices = [int(task["task_gas_price"]["amount"]) for task in tasks]
+    assert len(gas_prices) <= 1 or all(gas_prices[i] <= gas_prices[i+1] for i in range(len(gas_prices)-1)), "Tasks not ordered by gas price ascending"
     print(f"Found {len(tasks)} tasks with status SCHEDULED")
 
 
@@ -96,14 +98,17 @@ def test_delete_task(chainnet, generate_account):
     task_id = create_task_for_test(dysond_bin, alice_name, alice_address)
     delete_result = dysond_bin("tx", "crontask", "delete-task", "--task-id", str(task_id), "--from", alice_name, "--keyring-backend", "test", "--yes")
     print(f"Delete task result: {delete_result}")
-    try:
-        task_result = dysond_bin("query", "crontask", "task-by-id", "--task-id", str(task_id))
-        if "task" in task_result:
-            task = task_result["task"]
-            assert task["status"] != "SCHEDULED", f"Task status should not be SCHEDULED after deletion, got {task['status']}"
-            print(f"Task {task_id} status changed to {task['status']} after deletion")
-    except Exception:
-        print(f"Task {task_id} was completely deleted (query returned error)")
+    
+    # Query the task after deletion - expect it to be deleted (key not found error)
+    task_result = dysond_bin("query", "crontask", "task-by-id", "--task-id", str(task_id))
+    
+    # Task should be deleted - expect either "key not found" string or empty task dict
+    task_deleted = isinstance(task_result, str) and "key not found" in task_result
+    task_empty = isinstance(task_result, dict) and not task_result.get("task", {})
+    
+    # Verify the task is no longer scheduled (either deleted or has different status)
+    assert task_deleted or task_empty or (isinstance(task_result, dict) and task_result.get("task", {}).get("status") != "SCHEDULED"), f"Task should not remain SCHEDULED after deletion, got: {task_result}"
+    print(f"Task {task_id} successfully deleted or status changed")
 
 
 def test_task_execution(chainnet, generate_account, faucet):
@@ -128,22 +133,30 @@ def test_task_execution(chainnet, generate_account, faucet):
         "--msgs", json.dumps(msg_obj),
         "--from", alice_name, "--keyring-backend", "test", "--yes"
     )
-    task_id = None
-    for event in create_result.get("events", []):
-        if event.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "task_id":
-                    task_id = json.loads(attr.get("value"))
-                    break
+    # Extract task ID from events using list comprehensions
+    task_events = [e for e in create_result.get("events", []) if e.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated"]
+    task_id_attrs = [a for e in task_events for a in e.get("attributes", []) if a.get("key") == "task_id"]
+    
+    task_id = json.loads(task_id_attrs[0].get("value")) if task_id_attrs else None
     assert task_id is not None, "Failed to extract task ID"
     def check_task_executed():
         task_result = dysond_bin("query", "crontask", "task-by-id", "--task-id", str(task_id))
+        
+        # Task was deleted - not done
+        task_deleted = isinstance(task_result, str) and "key not found" in task_result
+        assert not task_deleted, f"Task {task_id} was unexpectedly deleted during execution"
+        
+        # Task should exist as dict
+        assert isinstance(task_result, dict), f"Unexpected response format: {task_result}"
+        
         task = task_result.get("task", {})
-        if task.get("status") == "DONE":
-            return True
-        elif task.get("status") == "FAILED":
-            assert False, f"Task failed unexpectedly: {task.get('error_log', 'no error log')}"
-        return False
+        status = task.get("status")
+        
+        # Assert if task failed
+        assert status != "FAILED", f"Task failed unexpectedly: {task.get('error_log', 'no error log')}"
+        
+        # Return True if done
+        return status == "DONE"
     poll_until_condition(
         check_task_executed,
         timeout=TASK_TIMEOUT,
@@ -151,6 +164,14 @@ def test_task_execution(chainnet, generate_account, faucet):
     )
     print(f"Task {task_id} executed successfully")
     task_result = dysond_bin("query", "crontask", "task-by-id", "--task-id", str(task_id))
+    
+    # Task should not be deleted after successful execution
+    task_deleted = isinstance(task_result, str) and "key not found" in task_result
+    assert not task_deleted, f"Task {task_id} was deleted unexpectedly after execution"
+    
+    # Task should exist as dict
+    assert isinstance(task_result, dict), f"Unexpected response format: {task_result}"
+    
     task = task_result.get("task", {})
     assert task.get("status") == "DONE", f"Task status is not DONE: {task.get('status')}"
     assert task.get("creator") == alice_address, f"Task creator is not Alice: {task.get('creator')}"
@@ -178,13 +199,11 @@ def create_task_for_test(dysond_bin, creator_name, creator_address) -> int:
         "--msgs", json.dumps(msg_obj),
         "--from", creator_name, "--keyring-backend", "test", "--yes"
     )
-    task_id = None
-    for event in create_result.get("events", []):
-        if event.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "task_id":
-                    task_id = json.loads(attr.get("value"))
-                    break
+    # Extract task ID from events using list comprehensions
+    task_events = [e for e in create_result.get("events", []) if e.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated"]
+    task_id_attrs = [a for e in task_events for a in e.get("attributes", []) if a.get("key") == "task_id"]
+    
+    task_id = json.loads(task_id_attrs[0].get("value")) if task_id_attrs else None
     assert task_id is not None, "Failed to extract task ID"
     return task_id
 
@@ -209,13 +228,11 @@ def create_task_for_test_with_gas_price(dysond_bin, creator_name, creator_addres
         "--msgs", json.dumps(msg_obj),
         "--from", creator_name, "--keyring-backend", "test", "--yes"
     )
-    task_id = None
-    for event in create_result.get("events", []):
-        if event.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "task_id":
-                    task_id = json.loads(attr.get("value"))
-                    break
+    # Extract task ID from events using list comprehensions
+    task_events = [e for e in create_result.get("events", []) if e.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated"]
+    task_id_attrs = [a for e in task_events for a in e.get("attributes", []) if a.get("key") == "task_id"]
+    
+    task_id = json.loads(task_id_attrs[0].get("value")) if task_id_attrs else None
     assert task_id is not None, "Failed to extract task ID"
     return task_id
 
@@ -240,13 +257,11 @@ def create_task_for_test_with_timestamp(dysond_bin, creator_name, creator_addres
         "--msgs", json.dumps(msg_obj),
         "--from", creator_name, "--keyring-backend", "test", "--yes"
     )
-    task_id = None
-    for event in create_result.get("events", []):
-        if event.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "task_id":
-                    task_id = json.loads(attr.get("value"))
-                    break
+    # Extract task ID from events using list comprehensions
+    task_events = [e for e in create_result.get("events", []) if e.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated"]
+    task_id_attrs = [a for e in task_events for a in e.get("attributes", []) if a.get("key") == "task_id"]
+    
+    task_id = json.loads(task_id_attrs[0].get("value")) if task_id_attrs else None
     assert task_id is not None, "Failed to extract task ID"
     return task_id
 
@@ -430,13 +445,11 @@ def create_task_high_gas_limit(
         "test",
         "--yes",
     )
-    task_id = None
-    for event in create_result.get("events", []):
-        if event.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "task_id":
-                    task_id = json.loads(attr.get("value"))
-                    break
+    # Extract task ID from events using list comprehensions
+    task_events = [e for e in create_result.get("events", []) if e.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated"]
+    task_id_attrs = [a for e in task_events for a in e.get("attributes", []) if a.get("key") == "task_id"]
+    
+    task_id = json.loads(task_id_attrs[0].get("value")) if task_id_attrs else None
     assert task_id is not None, "Failed to extract task ID"
     return task_id
 
@@ -537,23 +550,31 @@ def test_done_tasks_are_cleaned_up(chainnet, generate_account, faucet, update_cr
         "--from", alice_name, "--keyring-backend", "test"
     )
 
-    task_id = None
-    for event in create_result.get("events", []):
-        if event.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "task_id":
-                    task_id = json.loads(attr.get("value"))
-                    break
+    # Extract task ID from events using list comprehensions
+    task_events = [e for e in create_result.get("events", []) if e.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated"]
+    task_id_attrs = [a for e in task_events for a in e.get("attributes", []) if a.get("key") == "task_id"]
+    
+    task_id = json.loads(task_id_attrs[0].get("value")) if task_id_attrs else None
     assert task_id is not None, "Failed to extract task ID"
 
     def _task_done():
-        t = dysond_bin("query", "crontask", "task-by-id", "--task-id", str(task_id))["task"]
-        if t["status"] == "DONE":
-            print(f"Task {task_id} reached DONE: {t}")
-            return True
-        else:
-            print(f"Task {task_id} not DONE: {t}")
-            return False
+        task_result = dysond_bin("query", "crontask", "task-by-id", "--task-id", str(task_id))
+        
+        # Task deleted - not done yet
+        task_deleted = isinstance(task_result, str) and "key not found" in task_result
+        task_exists = isinstance(task_result, dict)
+        
+        # Ensure response is valid format
+        assert task_exists or task_deleted, f"Unexpected response format: {task_result}"
+        
+        # Return False if deleted, otherwise check status
+        is_done = task_exists and task_result.get("task", {}).get("status") == "DONE"
+        
+        # Print status for debugging
+        task_data = task_result.get("task", {}) and task_result or task_result
+        print(f"Task {task_id} status check: DONE={is_done}, data={task_data}")
+        
+        return is_done
             
     print("Waiting for task to reach DONE...")
     poll_until_condition(_task_done, timeout=10, poll_interval=0.2,
@@ -562,9 +583,11 @@ def test_done_tasks_are_cleaned_up(chainnet, generate_account, faucet, update_cr
     # Now poll for deletion instead of fixed sleep
     def _task_deleted():
         out = dysond_bin("query", "crontask", "task-by-id", "--task-id", str(task_id))
-        if "key not found" in out:
-            return True
-        print(f"Task {task_id} still exists: {out}")
+        is_deleted = "key not found" in out
+        
+        # Print status for debugging
+        print(f"Task {task_id} deletion check: deleted={is_deleted}, response={out}")
+        return is_deleted
             
     print("Polling until task is deleted by cleanup logic…")
     poll_until_condition(_task_deleted, timeout=10, poll_interval=0.5,

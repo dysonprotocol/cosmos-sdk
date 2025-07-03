@@ -3,6 +3,7 @@ pytest==7.4.0
 pytest-xdist  # For parallel test execution
 pytest-sugar  # For better test output
 pytest-order
+pytest-ruff
 
 # HTTP requests
 requests

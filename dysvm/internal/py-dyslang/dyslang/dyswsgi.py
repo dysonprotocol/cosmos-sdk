@@ -1,4 +1,5 @@
 import base64
+import ast
 import io
 import json
 import sys
@@ -6,7 +7,7 @@ from contextlib import redirect_stdout
 from io import BytesIO
 from freezegun import freeze_time
 from wsgiref.simple_server import ServerHandler, WSGIRequestHandler, WSGIServer
-
+from textwrap import dedent
 from .dysvm_server import build_sandbox
 
 
@@ -121,9 +122,26 @@ def main(port, script_json, block_info_json, http_request):
                     wsgiout = f"""HTTP/1.1 500\ncontent-type: text/plain\n\nLogs:\n{buf.getvalue()}""".encode()
             except Exception as e:
                 import traceback
+                lineno = getattr(e, "lineno", None)
+                col_offset = getattr(e, "col_offset", None)
+                end_lineno = getattr(e, "end_lineno", None)
+                end_col_offset   = getattr(e, "end_col_offset", None)
+                col = getattr(e, "col", None)
+                code_extract = ast.get_source_segment(script["code"], e.node)
+                wsgiout = dedent(f"""
+                        HTTP/1.1 500
+                        content-type: text/plain
+                        
+                        Exc: {e}
+                        on line: {lineno} col: {col_offset} end_lineno: {end_lineno} end_col_offset: {end_col_offset}
+                        
+                        ```python
+                        {code_extract}
+                        ```
 
+                        Logs:
+                        {buf.getvalue()}""").strip().encode()
                 print("dyswsgi Execpetion:", traceback.format_exc())
-                wsgiout = f"""HTTP/1.1 500\ncontent-type: text/plain\n\nExc: {e}\nLogs:\n{buf.getvalue()}""".encode()
             out = buf.getvalue()
 
     sys.stderr.write(out)

@@ -150,7 +150,7 @@ Examples:
 	}
 
 	cmd.Flags().String("index-prefix", "", "Filter entries by index prefix")
-	cmd.Flags().String("filter", "", "Optional GJSON path; entry included only if this path exists in data")
+	cmd.Flags().String("filter", "", "Optional GJSON query; entry included only if query matches. Supports ==, !=, <, <=, >, >=, %, !% operators")
 	cmd.Flags().String("extract", "", "Optional GJSON path to extract sub-field from each entry's data")
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "storage entries")

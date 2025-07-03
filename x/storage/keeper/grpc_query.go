@@ -72,7 +72,15 @@ func (k Keeper) StorageList(ctx context.Context, req *storagetypes.QueryStorageL
 		}
 		// Then, optional GJSON filter check
 		if req.Filter != "" {
-			return gjson.Get(val.Data, req.Filter).Exists(), nil
+			// Wrap the data in an array to use GJSON's query functionality
+			// This allows us to use all GJSON query operators: ==, !=, <, <=, >, >=, %, !%
+			wrappedData := "[" + val.Data + "]"
+
+			// Apply the filter as a GJSON array query
+			result := gjson.Get(wrappedData, "#("+req.Filter+")")
+
+			// Return true only if there's a match (non-empty result)
+			return result.Exists() && len(result.Array()) > 0, nil
 		}
 		return true, nil
 	}

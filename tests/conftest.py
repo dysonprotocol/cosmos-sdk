@@ -16,12 +16,19 @@ import atexit
 from typing import Dict
 from utils import poll_until_condition
 import secrets  # new
+import ast
+import warnings
 
 NUM_CHAINS = 2
 NUM_NODES = 1
 
 # Global constants
 CHAINNET_SCRIPT = str(Path(__file__).parent.parent / "scripts" / "chainnet.py")
+
+from _pytest.assertion import truncate
+truncate.DEFAULT_MAX_LINES = 999999
+truncate.DEFAULT_MAX_CHARS = 999999  
+
 
 # add tests utils to the path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -44,6 +51,25 @@ def make_run_command(dysond_bin, node_home):
         if "--home" not in args:
             commands += ["--home", str(node_home)]
         
+        # Check if this is a tx script update command with --code-path
+        if "--code-path" in args:
+            # Find the code path
+            code_path_index = args.index("--code-path") + 1
+            if code_path_index < len(args):
+                code_path = args[code_path_index]
+                
+                # Run ruff
+                print(f"Running ruff on {code_path}")
+                ruff_result = subprocess.run(["ruff", "check", code_path], capture_output=True, text=True)
+                if ruff_result.returncode != 0:
+                    raise Exception(f"Ruff check failed for {code_path}:\n{ruff_result.stdout}\n{ruff_result.stderr}")
+                
+                # Run pyright
+                print(f"Running pyright on {code_path}")
+                pyright_result = subprocess.run(["pyright", code_path], capture_output=True, text=True)
+                if pyright_result.returncode != 0:
+                    raise Exception(f"Pyright check failed for {code_path}:\n{pyright_result.stdout}\n{pyright_result.stderr}")
+        
         print(f"Running command: {shlex.join(commands)}")
         # if this is wait-tx and it has a "timed out waiting for transaction" error try again
         if not raw:            
@@ -52,13 +78,19 @@ def make_run_command(dysond_bin, node_home):
                 stdout = "None"
                 stderr = "None"
                 if "--timeout" not in args:
-                    commands += ["--timeout", "100ms"]
+                    commands += ["--timeout", "2s"]
                 for i in range(5,0,-1):
                     out = subprocess.run(commands, capture_output=True, text=True)
                     stdout = out.stdout
                     stderr = out.stderr
                     try:
-                        json_out = json.loads(stdout)
+                        # find the first and last curly braces in stdout
+                        first_brace = stdout.find("{")
+                        last_brace = stdout.rfind("}")
+                        if first_brace != -1 and last_brace != -1:
+                            json_out = json.loads(stdout[first_brace:last_brace+1])
+                        else:
+                            json_out = json.loads(stdout)
                         if json_out.get("code") == 0 or i == 1: # Last attempt should return the result
                             return json_out
                         continue
@@ -82,20 +114,38 @@ def make_run_command(dysond_bin, node_home):
                 try:
                     tx_response = json.loads(original_out.stdout)
                     if tx_response.get("code") == 0:
-                        wait_tx_response = run_command("query", "wait-tx", tx_response["txhash"], "--timeout", "500ms")
+                        # Use longer timeout for script update transactions as they may take more time
+                        timeout = "2s" if len(args) >= 2 and args[1] == "script" else "500ms"
+                        wait_tx_response = run_command("query", "wait-tx", tx_response["txhash"], "--timeout", timeout)
                         return wait_tx_response
                     else:
                         raise Exception(f"Error in tx command, code: {tx_response['code']}, raw_log: {tx_response['raw_log']}")
-                except json.JSONDecodeError:
+                except json.JSONDecodeError as e:
+                    combined_out = (original_out.stdout + "\n" + original_out.stderr).strip()
+                    last_line = combined_out.split("\n")[-1]
+                    first_brace = last_line.find("{")
+                    last_brace = last_line.rfind("}")
+                    
+                    if first_brace != -1 and last_brace != -1:
+                        try:
+                            json_out = json.loads(last_line[first_brace:last_brace+1])
+                            return {"code": 666, "raw_log": last_line, "data": json_out}
+                        except json.JSONDecodeError:
+                            pass
                     raise Exception(f"Error parsing tx response: \nOUT: {original_out.stdout}\nERR: {original_out.stderr}")
-                
         # Otherwise, just run the command and return the output
         out = subprocess.run(commands, capture_output=True, text=True)
+        return_out = out.stdout + "\n" + out.stderr
         try:
-            json_out = json.loads(out.stdout)
+            first_brace = return_out.find("{")
+            last_brace = return_out.rfind("}")
+            if first_brace != -1 and last_brace != -1:
+                json_out = json.loads(return_out[first_brace:last_brace+1])
+            else:
+                json_out = json.loads(return_out)
             return json_out
         except json.JSONDecodeError:
-            return out.stdout + "\n" + out.stderr
+            return return_out
     return run_command
 
 
@@ -226,7 +276,7 @@ def node_ready(chainnet):
     poll_until_condition(_ready, timeout=3, poll_interval=0.1, error_message="Node did not produce blocks")
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def generate_account(chainnet, faucet):
     """Fixture that returns a function to create new accounts."""
     created = []
@@ -252,7 +302,7 @@ def generate_account(chainnet, faucet):
     return _gen
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def faucet(chainnet):
     """Fixture that returns a function to send coins from alice to a given address."""
     default_dysond_bin = chainnet[0]
@@ -531,6 +581,59 @@ def register_name():
         return name
 
     return _register
+
+
+# -----------------------------------------------------------------------------
+# AST Checking Plugin - Enforce test code quality
+# -----------------------------------------------------------------------------
+
+def _walk_ast_forbidding_nodes(tree, filename):
+    errors = []
+    warnings_list = []
+
+    class Visitor(ast.NodeVisitor):
+        def visit_Try(self, node):
+            # Only flag try/except blocks, allow try/finally for resource cleanup
+            if node.handlers:  # node.handlers contains except clauses
+                errors.append(f"{filename}:{node.lineno} - use of 'try/except' and 'if' statements is disallowed")
+            self.generic_visit(node)
+
+        def visit_If(self, node):
+            errors.append(f"{filename}:{node.lineno} - 'if' and 'try/except' statement usage is disallowed")
+            self.generic_visit(node)
+
+    Visitor().visit(tree)
+    return errors, warnings_list
+
+
+def _check_file_for_ast_rules(path):
+    try:
+        source = path.read_text()
+        tree = ast.parse(source, filename=str(path))
+        return _walk_ast_forbidding_nodes(tree, str(path))
+    except SyntaxError as e:
+        return [f"{path}: SyntaxError: {e}"], []
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_collection_finish(session):
+    # Only consider .py test files collected by pytest
+    seen_files = {Path(item.fspath) for item in session.items if Path(item.fspath).suffix == ".py"}
+    seen_files = list(seen_files)
+
+    total_errors = []
+    total_warnings = []
+
+    for file_path in seen_files:
+        errors, warns = _check_file_for_ast_rules(file_path)
+        total_errors.extend(errors)
+        total_warnings.extend(warns)
+
+    for warn in total_warnings:
+        warnings.warn(UserWarning(warn))
+
+    if total_errors:
+        raise pytest.UsageError("Forbidden constructs found:\n" + "\n".join(total_errors))
 
 
 

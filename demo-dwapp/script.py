@@ -8,14 +8,12 @@ import ast
 import json
 import html
 import mimetypes
-from urllib.parse import parse_qs
 from string import Template
-from dys import (
+from dys import (  # type: ignore
     _query,
     _msg,
     get_script_address,
     get_executor_address,
-    dys_eval,
     get_attached_messages,
 )
 from typing import Dict, Any, Optional, List
@@ -183,7 +181,7 @@ class SafeString(str):
 
 class SafeTemplate(Template):
     delimiter = "{{"
-    pattern = r"\{\{\s*(?P<named>[a-zA-Z_][a-zA-Z_0-9-_]*)\s*\}\}"
+    pattern = r"\{\{\s*(?P<named>[a-zA-Z_][a-zA-Z_0-9-_]*)\s*\}\}"  # type: ignore
 
     def escape_substitute(self, mapping):
         safe_map = {}
@@ -446,7 +444,7 @@ def extract_functions(
         return result
 
     except Exception as e:
-        return {"error": f"Failed to parse code: {e}"}
+        return {"error": {"message": f"Failed to parse code: {e}", "args": [], "doc": None, "pretty": ""}}
 
 
 @route(r"^/demo$")

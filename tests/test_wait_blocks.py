@@ -3,6 +3,7 @@ Test demonstrating how to wait for a specific number of blocks to be produced.
 """
 import pytest
 import time
+from utils import poll_until_condition
 
 
 def test_wait_for_blocks(chainnet):
@@ -20,23 +21,22 @@ def test_wait_for_blocks(chainnet):
     # Wait for blocks to be produced by polling
     blocks_to_wait = 2
     target_height = initial_height + blocks_to_wait
-    timeout = 5  # seconds
-    start_time = time.time()
     
-    while True:
+    def check_height_reached():
         status_data = dysond("status")
-
         current_height = int(status_data.get("sync_info", {}).get("latest_block_height", 0))
-        
-        if current_height >= target_height:
-            break
-            
-        if time.time() - start_time > timeout:
-            pytest.fail(f"Timeout waiting for blocks. Current height: {current_height}, Target: {target_height}")
+        return current_height >= target_height
     
-    # Get final block data
-    final_block_data = dysond("query", "block", "--type=height", str(current_height))
-    final_height = int(final_block_data.get("header", {}).get("height", 0))
+    poll_until_condition(
+        check_height_reached,
+        timeout=5, # Do not change this!!!!
+        poll_interval=0.1, # Do not change this!!!!
+        error_message=f"Timeout waiting for blocks. Target: {target_height}"
+    )
+    
+    # Get final block data - need to get current height again after waiting
+    final_status_data = dysond("status")
+    final_height = int(final_status_data.get("sync_info", {}).get("latest_block_height", 0))
     
     # Verify the height increased by at least the number of blocks we waited for
     assert final_height >= initial_height + blocks_to_wait, \

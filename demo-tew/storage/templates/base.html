@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <style>
+      [x-cloak] { display: none !important; }
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>DysonProtocol WalletStore Demo</title>
+
+    <!--Inline import map with SRI hashes-->
+    <script type="importmap">{{ importmap_json }}</script>
+
+    <!-- 
+      Import order is important: AlpineJS plugins must be loaded BEFORE Alpine.js
+      and before walletStore.js. HTMX must be loaded AFTER everything else.
+    -->
+
+    <!-- AlpineJS plugins must be loaded BEFORE Alpine.js and before walletStore.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Wallet/Message/etc. stores - generated dynamically -->
+    {{ static_scripts }}
+
+    <!-- AlpineJS after walletStore.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- HTMX after everything else -->
+    <script src="https://unpkg.com/htmx.org@2.x.x"></script>
+    <script src="https://unpkg.com/htmx-ext-alpine-morph@2.x.x/alpine-morph.js"></script>
+
+    <!-- Tailwind CSS and DaisyUI -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    
+    <!-- Custom CSS -->
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css"{{ css_integrity }} />
+    
+    <!-- Mark.js for code coverage highlighting -->
+    <script src="https://cdn.jsdelivr.net/npm/mark.js@8.11.1/dist/mark.min.js"></script>
+
+    <script>
+      // Fix for Alpine Morph with HTMX history
+      document.addEventListener("htmx:beforeHistorySave", (evt) => {
+        document.querySelectorAll("[x-for]").forEach((item) => {
+          if (item._x_lookup) {
+            Object.values(item._x_lookup).forEach((el) => el.remove());
+          }
+        });
+        document.querySelectorAll("[x-if]").forEach((item) => {
+          if (item._x_currentIfEl) {
+            item._x_currentIfEl.remove();
+          }
+        });
+      });
+      // Log when everything is loaded
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("DOMContentLoaded");
+      });
+    </script>
+  </head>
+
+  <!-- Initialize the wallet store on page load -->
+  <body x-data hx-boost="true" hx-target="main" class="min-h-screen bg-base-100" x-cloak>
+    <div class="navbar bg-base-200 shadow-lg">
+      <div class="navbar-start">
+        <a href="/" class="btn btn-ghost normal-case text-xl">
+          <div class="flex flex-col items-start">
+            <span class="text-lg font-bold">Distributed Web App</span>
+            <span class="text-xs opacity-70">Demo DysonProtocol Dwapp</span>
+          </div>
+        </a>
+      </div>
+      <div class="navbar-center">
+        <ul class="menu menu-horizontal px-1">
+          <li><a href="/" class="btn btn-ghost btn-sm">Home</a></li>
+        </ul>
+      </div>
+      <div class="navbar-end">
+        <!-- Show loading spinner while wallet store is initializing -->
+        <div x-show="$store.walletStore.isLoading">
+          <a class="btn btn-primary btn-sm">Loading wallet...</a>
+        </div>
+        
+        <!-- Show "Manage Wallets" if there's no active wallet and store is loaded -->
+        <div x-show="!$store.walletStore.isLoading && !$store.walletStore.activeWalletMeta">
+          <a href="/wallet" class="btn btn-primary btn-sm">Manage Wallets</a>
+        </div>
+        <!-- Show wallet info if connected and store is loaded -->
+        <div x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta" class="dropdown dropdown-end">
+          <label tabindex="0" class="btn btn-ghost btn-sm normal-case">
+            <span>Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong></span>
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </label>
+          <ul tabindex="0" class="dropdown-content menu p-2 shadow-lg bg-base-100 rounded-box w-72 mt-2">
+            <li class="menu-title">
+              <span>Wallet Details</span>
+            </li>
+            <li>
+              <div class="pointer-events-none">
+                <code class="text-xs truncate" x-text="$store.walletStore.activeWalletMeta?.address"></code>
+              </div>
+            </li>
+            <li>
+              <div class="pointer-events-none">
+                <span class="text-sm">Type: <strong x-text="$store.walletStore.activeWalletMeta?.type"></strong></span>
+              </div>
+            </li>
+            <li>
+              <div class="pointer-events-none">
+                <span class="text-sm">ChainID: <strong x-text="$store.walletStore.chainId"></strong></span>
+              </div>
+            </li>
+            <li class="mt-2">
+              <a @click="$store.walletStore.disconnectWallet()" class="text-error">Disconnect</a>
+            </li>
+            <li>
+              <a href="/wallet">Manage Wallets</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div x-show="false" class="flex items-center justify-center min-h-[50vh]">
+      <div class="loading loading-spinner loading-lg"></div>
+    </div>
+    
+    <!-- HTMX will load partials into this main element -->
+    <main class="container mx-auto p-4">{{ main }}</main>
+  </body>
+</html> 

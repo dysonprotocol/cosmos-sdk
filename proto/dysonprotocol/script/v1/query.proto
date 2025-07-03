@@ -10,6 +10,8 @@ import "cosmos/base/v1beta1/coin.proto";
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "cosmos_proto/cosmos.proto";
 import "amino/amino.proto";
@@ -51,6 +53,20 @@ service Query {
       post : "/dysonprotocol/script/v1/web_request"
       body : "*"
     };
+  }
+
+  // Run executes a script function in read-only mode without modifying
+  // state.
+  rpc Run(RunScript) returns (ResponseRunScript) {
+    option (google.api.http) = {
+      post : "/dysonprotocol/script/v1/run"
+      body : "*"
+    };
+  }
+
+  // GetBlock returns the current block information.
+  rpc GetBlock(QueryGetBlockRequest) returns (QueryGetBlockResponse) {
+    option (google.api.http).get = "/dysonprotocol/script/v1/block";
   }
 }
 
@@ -110,9 +126,12 @@ message QueryVerifyTxRequest {
   string tx_json = 1;
 }
 
-// QueryVerifyTxResponse will be empty response on success, error will be raised
-// on failure
-message QueryVerifyTxResponse {}
+// QueryVerifyTxResponse will return the signer address of the MsgArbitraryData
+// or error if the signature is invalid
+message QueryVerifyTxResponse {
+  // The signer address of the MsgArbitraryData
+  string signer = 1;
+}
 
 // QueryParamsRequest is the request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -121,4 +140,69 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+// RunScript is the Query/Run request type.
+message RunScript {
+  // executor is the account address used to execute the script
+  string executor_address = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // address is the script address to execute.
+  // This can be either a bech32 address or a nameservice name (e.g.,
+  // "example.dys")
+  string script_address = 2;
+
+  // Only if the executor is the owner of the script will the optional
+  // extra_code be temporary appended to the script for this message before
+  // calling the function
+  string extra_code = 3;
+
+  // The function name to run
+  string function_name = 4;
+
+  // The positional arguments to pass to the function (*args) encoded as a json
+  // list
+  string args = 5;
+
+  // The keyword arguments to pass to the function (**kwargs) encoded as a json
+  // dict
+  string kwargs = 6;
+
+  // The list of messages to run before the script.
+  repeated google.protobuf.Any attached_messages = 7;
+}
+
+// ResponseRunScript is the Query/Run response type.
+message ResponseRunScript {
+  // result is the execution result returned by the script function.
+  string result = 1;
+
+  // Results of the attached messages.
+  repeated google.protobuf.Any attached_message_results = 2;
+}
+
+// QueryGetBlockRequest is the Query/GetBlock request type.
+message QueryGetBlockRequest {}
+
+// QueryGetBlockResponse is the Query/GetBlock response type.
+message QueryGetBlockResponse {
+  // block_height is the height of the block.
+  int64 block_height = 1;
+
+  // block_time is the time of the block.
+  google.protobuf.Timestamp block_time = 2
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+
+  // chain_id is the chain ID.
+  string chain_id = 3;
+
+  // block_hash is the hash of the block.
+  bytes block_hash = 4;
+
+  // app_hash is the application hash.
+  bytes app_hash = 5;
+
+  // proposer_address is the address of the block proposer.
+  string proposer_address = 6;
 }

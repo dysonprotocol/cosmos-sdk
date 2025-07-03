@@ -64,10 +64,8 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     print(f"Bid timeout: {bid_timeout}")
     
     # Check if the timeout is short enough for our test
-    wait_for_timeout = False
-    if bid_timeout == "5s":
-        wait_for_timeout = True
-        print("Bid timeout is set to 5 seconds, will wait for timeout in the claim-bid test")
+    wait_for_timeout = bid_timeout == "5s"
+    print("Bid timeout is set to 5 seconds, will wait for timeout in the claim-bid test") if wait_for_timeout else None
     
     # Step 2: Name Registration
     # Generate a random name and salt
@@ -414,20 +412,15 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     print(f"Verified NFT ownership transferred to Bob: {nft_owner_after_accept.get('owner')}")
     
     # Step 9.3: Charlie places a bid on Bob's NFT
-    # Make sure Charlie has some funds
+    # Check if Charlie has enough DYS balance using list comprehensions
+    balances = dysond_bin("query", "bank", "balances", charlie_address)
+    dys_balances = [b for b in balances.get("balances", []) if b.get("denom") == "dys" and int(b.get("amount", "0")) > 200]
+    has_dys = len(dys_balances) > 0
     
-    charlie_balance = dysond_bin("query", "bank", "balances", charlie_address)
-    has_dys = False
-    for balance in charlie_balance.get("balances", []):
-        if balance.get("denom") == "dys" and int(balance.get("amount", "0")) > 200:
-            has_dys = True
-            break
-    
-    if not has_dys:
-        # Send funds to Charlie from Alice
-        fund_result = dysond_bin("tx", "bank", "send", "alice", charlie_address, "200dys")
-        assert fund_result["code"] == 0, "Failed to fund Charlie's account" + fund_result["raw_log"]
-        print("Funded Charlie's account with 200dys")
+    # Send funds to Charlie from Alice if needed
+    fund_result = dysond_bin("tx", "bank", "send", "alice", charlie_address, "200dys") if not has_dys else None
+    assert not has_dys or fund_result is None or fund_result["code"] == 0, "Failed to fund Charlie's account" + (fund_result.get("raw_log", "") if fund_result else "")
+    print("Funded Charlie's account with 200dys") if not has_dys else None
     
     charlie_bid_amount = bob_bid_amount + random.randint(20, 50)
     charlie_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--bid-amount", f"{charlie_bid_amount}dys", "--from", charlie_name)
@@ -481,13 +474,11 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Wait for bid timeout by polling block time
     block = dysond_bin("query", "block")
-    json_block = json.loads(block.split("\n")[1])
-    start_block = int(json_block["header"]["height"])
+    start_block = int(block["header"]["height"])
 
     def timeout_elapsed():
         out = dysond_bin("query", "block")
-        json_block = json.loads(out.split("\n")[1])
-        current_block = int(json_block["header"]["height"])
+        current_block = int(out["header"]["height"])
         # With 100ms timeout and ~500ms block time, should pass after 1 block
         return (current_block - start_block) >= 1
 
@@ -592,14 +583,10 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
     tx_result = dysond_bin("query", "wait-tx", tx_result["txhash"])
     print(f"Proposal result: {tx_result}")
 
-    # Extract proposal ID
-    proposal_id = None
-    for event in tx_result.get("events", []):
-        if event.get("type") == "submit_proposal":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "proposal_id":
-                    proposal_id = attr.get("value")
-                    break
+    # Extract proposal ID using list comprehensions
+    submit_proposal_events = [e for e in tx_result.get("events", []) if e.get("type") == "submit_proposal"]
+    proposal_id_attrs = [a for e in submit_proposal_events for a in e.get("attributes", []) if a.get("key") == "proposal_id"]
+    proposal_id = proposal_id_attrs[0].get("value") if proposal_id_attrs else None
     assert proposal_id, "Could not extract proposal ID"
 
     # Vote with Alice (who has voting power through delegation)

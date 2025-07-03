@@ -6,7 +6,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -14,6 +16,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 
 	scriptv1 "dysonprotocol.com/x/script/types"
+)
+
+const (
+	txtRecordKey = "DYS_DWAPP"
 )
 
 func NewDefaultHandler(clientCtx client.Context, ScriptAddressOrNamePattern string) http.Handler {
@@ -31,17 +37,30 @@ type DefaultHandler struct {
 }
 
 func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	// split the host and use the first part as the address
-	match := h.scriptAddressOrNameRe.FindStringSubmatch(req.Host)
+	var addressOrName string
 
-	addressOrName := ""
+	// First, try to get address from TXT records
+	txtRecords, err := getTXTRecords(req.Host)
+	if err == nil && txtRecords != nil {
+		if txtAddressOrName, ok := txtRecords[txtRecordKey]; ok && txtAddressOrName != "" {
+			addressOrName = txtAddressOrName
+			fmt.Printf("Found address from TXT record: %s\n", addressOrName)
+		}
+	}
 
-	if len(match) <= 1 {
-		errorMsg := fmt.Sprintf("No address found for host: `%s` using ScriptAddressOrNamePattern: `%s`  match: %v", req.Host, h.scriptAddressOrNameRe.String(), match)
-		http.Error(w, errorMsg, http.StatusNotFound)
-		return
-	} else {
-		addressOrName = match[1]
+	// If no address found in TXT records, fall back to regex pattern matching
+	if addressOrName == "" {
+		// split the host and use the first part as the address
+		match := h.scriptAddressOrNameRe.FindStringSubmatch(req.Host)
+
+		if len(match) <= 1 {
+			errorMsg := fmt.Sprintf("No address found for host: `%s` using ScriptAddressOrNamePattern: `%s`  match: %v", req.Host, h.scriptAddressOrNameRe.String(), match)
+			http.Error(w, errorMsg, http.StatusNotFound)
+			return
+		} else {
+			addressOrName = match[1]
+			fmt.Printf("Found address from regex pattern: %s\n", addressOrName)
+		}
 	}
 
 	// get the raw request
@@ -193,4 +212,46 @@ func getRawRequest(r *http.Request) (string, error) {
 	}
 
 	return buf.String(), nil
+}
+
+// getTXTRecords queries DNS TXT records for a domain and looks for dyson= entries
+func getTXTRecords(host string) (map[string]string, error) {
+	// Remove port if present
+	domain, _, err := net.SplitHostPort(host)
+	if err != nil {
+		// If error, assume no port was present
+		domain = host
+	}
+
+	// Query TXT records
+	txtRecords, err := net.LookupTXT(domain)
+	if err != nil {
+		return nil, err
+	}
+
+	// Look for dyson= in TXT records
+	for _, txt := range txtRecords {
+		if strings.Contains(txt, txtRecordKey+"=") {
+			// Parse the TXT record as URL query parameters
+			values, err := url.ParseQuery(txt)
+			if err != nil {
+				continue
+			}
+
+			// Convert url.Values to map[string]string
+			result := make(map[string]string)
+			for k, v := range values {
+				if len(v) > 0 {
+					result[k] = v[0]
+				}
+			}
+
+			// If dyson key exists, return the map
+			if _, ok := result[txtRecordKey]; ok {
+				return result, nil
+			}
+		}
+	}
+
+	return nil, nil
 }

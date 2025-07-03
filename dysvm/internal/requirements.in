@@ -5,5 +5,5 @@ python-forge
 google-re2
 freezegun
 requests
-simplejson
 black==25.1.0
+orjson >= 3.10,<4

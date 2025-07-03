@@ -90,7 +90,7 @@ func (rpcservice *RpcService) ConsumeGas(_ *http.Request, msg *ConsumeGasRequest
 	defer func() {
 		if r := recover(); r != nil {
 
-			fmt.Printf("Consumegas recovered: %v\n", r)
+			fmt.Printf("Consumegas recovered: %+v\n", r)
 			// Check for ErrorOutOfGas type directly, not as error interface
 			if _, ok := r.(storetypes.ErrorOutOfGas); ok {
 				err = cosmossdkerrors.Wrapf(sdkerrors.ErrOutOfGas,
@@ -110,14 +110,14 @@ func (rpcservice *RpcService) ConsumeGas(_ *http.Request, msg *ConsumeGasRequest
 		} else {
 			if gasConsumed > gasLimit {
 				err = cosmossdkerrors.Wrapf(sdkerrors.ErrOutOfGas,
-					"Consumegas script out of gas, gasLimit: %d, gasConsumed: %d, gasRemaining: %d",
-					gasLimit, gasConsumed, gasRemaining,
+					"gasConsumed [%d] > gasLimit [%d] script out of gas, gasLimit: %d, gasConsumed: %d, gasRemaining: %d",
+					gasConsumed, gasLimit, gasLimit, gasConsumed, gasRemaining,
 				)
 				response = nil
 			}
 		}
 
-		//fmt.Printf("ConsumeGas response: %+v  err: %+v\n", response, err)
+		fmt.Printf("ConsumeGas response: %+v  err: %+v\n", response, err)
 
 	}()
 

@@ -94,16 +94,14 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
     tx_result = dysond_bin("query", "wait-tx", tx_result["txhash"])
     print(f"Proposal result: {tx_result}")
 
-    # Extract proposal ID
-    proposal_id = None
-    for event in tx_result.get("events", []):
-        if event.get("type") == "submit_proposal":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "proposal_id":
-                    proposal_id = attr.get("value")
-                    break
-
-    assert proposal_id, "Could not extract proposal ID"
+    # Extract proposal ID using list comprehensions
+    submit_events = [e for e in tx_result.get("events", []) if e.get("type") == "submit_proposal"]
+    assert submit_events, "No submit_proposal event found"
+    
+    proposal_id_attrs = [a for a in submit_events[0].get("attributes", []) if a.get("key") == "proposal_id"]
+    assert proposal_id_attrs, "No proposal_id attribute found"
+    
+    proposal_id = proposal_id_attrs[0].get("value")
 
     # Vote with Alice (who has voting power through delegation)
     vote_result = dysond_bin("tx", "gov", "vote", proposal_id, "yes", "--from", "alice", "--keyring-backend", "test", "--yes")
@@ -127,7 +125,14 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
 def test_update_nameservice_params_via_gov(chainnet, generate_account, faucet):
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="1000")
+    faucet(alice_address, denom="dys", amount="25000")
+    
+    # Get validator operator address and delegate tokens for voting power
+    validators = dysond_bin("query", "staking", "validators")
+    validator_operator = validators["validators"][0]["operator_address"]
+    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000dys", "--from", alice_name, "--yes")
+    assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result['raw_log']}"
+    
     # Get current params
     current_params = dysond_bin("query", "nameservice", "params")
     current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["dys"])
@@ -164,14 +169,14 @@ def test_update_nameservice_params_via_gov(chainnet, generate_account, faucet):
     tx_result = dysond_bin("query", "wait-tx", tx_result["txhash"])
     print(f"Proposal result: {tx_result}")
     #assert tx_result["code"] == 0, tx_result["raw_log"]
-    proposal_id = None
-    for event in tx_result.get("events", []):
-        if event.get("type") == "submit_proposal":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "proposal_id":
-                    proposal_id = attr.get("value")
-                    break
-    assert proposal_id
+    # Extract proposal ID using list comprehensions
+    submit_events = [e for e in tx_result.get("events", []) if e.get("type") == "submit_proposal"]
+    assert submit_events, "No submit_proposal event found"
+    
+    proposal_id_attrs = [a for a in submit_events[0].get("attributes", []) if a.get("key") == "proposal_id"]
+    assert proposal_id_attrs, "No proposal_id attribute found"
+    
+    proposal_id = proposal_id_attrs[0].get("value")
     # Vote
     tx_result = dysond_bin("tx", "gov", "vote", proposal_id, "yes", "--from", alice_name, "--keyring-backend", "test", "--yes")
     tx_result = dysond_bin("query", "wait-tx", tx_result["txhash"])

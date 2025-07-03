@@ -1783,54 +1783,54 @@ func (x *fastReflection_MsgExec) ProtoMethods() *protoiface.Methods {
 	}
 }
 
-var _ protoreflect.List = (*_MsgExecResponse_4_list)(nil)
+var _ protoreflect.List = (*_MsgExecResponse_2_list)(nil)
 
-type _MsgExecResponse_4_list struct {
+type _MsgExecResponse_2_list struct {
 	list *[]*anypb.Any
 }
 
-func (x *_MsgExecResponse_4_list) Len() int {
+func (x *_MsgExecResponse_2_list) Len() int {
 	if x.list == nil {
 		return 0
 	}
 	return len(*x.list)
 }
 
-func (x *_MsgExecResponse_4_list) Get(i int) protoreflect.Value {
+func (x *_MsgExecResponse_2_list) Get(i int) protoreflect.Value {
 	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
 }
 
-func (x *_MsgExecResponse_4_list) Set(i int, value protoreflect.Value) {
+func (x *_MsgExecResponse_2_list) Set(i int, value protoreflect.Value) {
 	valueUnwrapped := value.Message()
 	concreteValue := valueUnwrapped.Interface().(*anypb.Any)
 	(*x.list)[i] = concreteValue
 }
 
-func (x *_MsgExecResponse_4_list) Append(value protoreflect.Value) {
+func (x *_MsgExecResponse_2_list) Append(value protoreflect.Value) {
 	valueUnwrapped := value.Message()
 	concreteValue := valueUnwrapped.Interface().(*anypb.Any)
 	*x.list = append(*x.list, concreteValue)
 }
 
-func (x *_MsgExecResponse_4_list) AppendMutable() protoreflect.Value {
+func (x *_MsgExecResponse_2_list) AppendMutable() protoreflect.Value {
 	v := new(anypb.Any)
 	*x.list = append(*x.list, v)
 	return protoreflect.ValueOfMessage(v.ProtoReflect())
 }
 
-func (x *_MsgExecResponse_4_list) Truncate(n int) {
+func (x *_MsgExecResponse_2_list) Truncate(n int) {
 	for i := n; i < len(*x.list); i++ {
 		(*x.list)[i] = nil
 	}
 	*x.list = (*x.list)[:n]
 }
 
-func (x *_MsgExecResponse_4_list) NewElement() protoreflect.Value {
+func (x *_MsgExecResponse_2_list) NewElement() protoreflect.Value {
 	v := new(anypb.Any)
 	return protoreflect.ValueOfMessage(v.ProtoReflect())
 }
 
-func (x *_MsgExecResponse_4_list) IsValid() bool {
+func (x *_MsgExecResponse_2_list) IsValid() bool {
 	return x.list != nil
 }
 
@@ -1919,7 +1919,7 @@ func (x *fastReflection_MsgExecResponse) Range(f func(protoreflect.FieldDescript
 		}
 	}
 	if len(x.AttachedMessageResults) != 0 {
-		value := protoreflect.ValueOfList(&_MsgExecResponse_4_list{list: &x.AttachedMessageResults})
+		value := protoreflect.ValueOfList(&_MsgExecResponse_2_list{list: &x.AttachedMessageResults})
 		if !f(fd_MsgExecResponse_attached_message_results, value) {
 			return
 		}
@@ -1984,9 +1984,9 @@ func (x *fastReflection_MsgExecResponse) Get(descriptor protoreflect.FieldDescri
 		return protoreflect.ValueOfString(value)
 	case "dysonprotocol.script.v1.MsgExecResponse.attached_message_results":
 		if len(x.AttachedMessageResults) == 0 {
-			return protoreflect.ValueOfList(&_MsgExecResponse_4_list{})
+			return protoreflect.ValueOfList(&_MsgExecResponse_2_list{})
 		}
-		listValue := &_MsgExecResponse_4_list{list: &x.AttachedMessageResults}
+		listValue := &_MsgExecResponse_2_list{list: &x.AttachedMessageResults}
 		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
@@ -2012,7 +2012,7 @@ func (x *fastReflection_MsgExecResponse) Set(fd protoreflect.FieldDescriptor, va
 		x.Result = value.Interface().(string)
 	case "dysonprotocol.script.v1.MsgExecResponse.attached_message_results":
 		lv := value.List()
-		clv := lv.(*_MsgExecResponse_4_list)
+		clv := lv.(*_MsgExecResponse_2_list)
 		x.AttachedMessageResults = *clv.list
 	default:
 		if fd.IsExtension() {
@@ -2038,7 +2038,7 @@ func (x *fastReflection_MsgExecResponse) Mutable(fd protoreflect.FieldDescriptor
 		if x.AttachedMessageResults == nil {
 			x.AttachedMessageResults = []*anypb.Any{}
 		}
-		value := &_MsgExecResponse_4_list{list: &x.AttachedMessageResults}
+		value := &_MsgExecResponse_2_list{list: &x.AttachedMessageResults}
 		return protoreflect.ValueOfList(value)
 	case "dysonprotocol.script.v1.MsgExecResponse.result":
 		panic(fmt.Errorf("field result of message dysonprotocol.script.v1.MsgExecResponse is not mutable"))
@@ -2059,7 +2059,7 @@ func (x *fastReflection_MsgExecResponse) NewField(fd protoreflect.FieldDescripto
 		return protoreflect.ValueOfString("")
 	case "dysonprotocol.script.v1.MsgExecResponse.attached_message_results":
 		list := []*anypb.Any{}
-		return protoreflect.ValueOfList(&_MsgExecResponse_4_list{list: &list})
+		return protoreflect.ValueOfList(&_MsgExecResponse_2_list{list: &list})
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.MsgExecResponse"))
@@ -2181,7 +2181,7 @@ func (x *fastReflection_MsgExecResponse) ProtoMethods() *protoiface.Methods {
 				copy(dAtA[i:], encoded)
 				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
 				i--
-				dAtA[i] = 0x22
+				dAtA[i] = 0x12
 			}
 		}
 		if len(x.Result) > 0 {
@@ -2272,7 +2272,7 @@ func (x *fastReflection_MsgExecResponse) ProtoMethods() *protoiface.Methods {
 				}
 				x.Result = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
-			case 4:
+			case 2:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AttachedMessageResults", wireType)
 				}
@@ -5262,7 +5262,7 @@ type MsgExecResponse struct {
 	// result is the final result of the proposal execution.
 	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
 	// Results of the attached messages.
-	AttachedMessageResults []*anypb.Any `protobuf:"bytes,4,rep,name=attached_message_results,json=attachedMessageResults,proto3" json:"attached_message_results,omitempty"`
+	AttachedMessageResults []*anypb.Any `protobuf:"bytes,2,rep,name=attached_message_results,json=attachedMessageResults,proto3" json:"attached_message_results,omitempty"`
 }
 
 func (x *MsgExecResponse) Reset() {
@@ -5604,7 +5604,7 @@ var file_dysonprotocol_script_v1_tx_proto_rawDesc = []byte{
 	0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x4e, 0x0a, 0x18, 0x61,
 	0x74, 0x74, 0x61, 0x63, 0x68, 0x65, 0x64, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x5f,
-	0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x14, 0x2e,
+	0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x14, 0x2e,
 	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
 	0x41, 0x6e, 0x79, 0x52, 0x16, 0x61, 0x74, 0x74, 0x61, 0x63, 0x68, 0x65, 0x64, 0x4d, 0x65, 0x73,
 	0x73, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x73, 0x22, 0xa3, 0x01, 0x0a, 0x12,

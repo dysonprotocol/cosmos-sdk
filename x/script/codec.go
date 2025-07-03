@@ -64,6 +64,8 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 	registrar.RegisterImplementations((*gogoprotoany.UnpackInterfacesMessage)(nil),
 		&scripttypes.MsgExec{},
 		&scripttypes.MsgExecResponse{},
+		&scripttypes.RunScript{},
+		&scripttypes.ResponseRunScript{},
 	)
 
 	// Register SDK message implementations
@@ -79,6 +81,10 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 		&scripttypes.QueryScriptInfoRequest{}, &scripttypes.QueryScriptInfoResponse{},
 		&scripttypes.QueryEncodeJsonRequest{}, &scripttypes.QueryEncodeJsonResponse{},
 		&scripttypes.QueryDecodeBytesRequest{}, &scripttypes.QueryDecodeBytesResponse{},
+		&scripttypes.QueryVerifyTxRequest{}, &scripttypes.QueryVerifyTxResponse{},
+		&scripttypes.QueryParamsRequest{}, &scripttypes.QueryParamsResponse{},
+		&scripttypes.QueryGetBlockRequest{}, &scripttypes.QueryGetBlockResponse{},
+		&scripttypes.RunScript{}, &scripttypes.ResponseRunScript{},
 
 		// script web service
 		&scripttypes.WebRequest{}, &scripttypes.WebResponse{},

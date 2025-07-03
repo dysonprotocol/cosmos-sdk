@@ -7,15 +7,17 @@ from typing import Dict, Any, List
 
 def extract_task_id(result: Dict[str, Any]) -> int:
     """Extract task_id from transaction result."""
-    for event in result.get("events", []):
-        if event.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated":
-            for attr in event.get("attributes", []):
-                if attr.get("key") == "task_id":
-                    # Strip quotes from the value
-                    task_id_str = attr.get("value").strip('"')
-                    return int(task_id_str)
+    # Find EventTaskCreated events
+    task_created_events = [e for e in result.get("events", []) if e.get("type") == "dysonprotocol.crontask.v1.EventTaskCreated"]
+    assert task_created_events, "No EventTaskCreated found in transaction events"
     
-    raise ValueError("Failed to extract task ID from transaction result")
+    # Find task_id attributes
+    task_id_attrs = [a for a in task_created_events[0].get("attributes", []) if a.get("key") == "task_id"]
+    assert task_id_attrs, "No task_id attribute found in EventTaskCreated"
+    
+    # Strip quotes from the value and return as int
+    task_id_str = task_id_attrs[0].get("value").strip('"')
+    return int(task_id_str)
 
 
 def test_absolute_timestamp_format(chainnet, generate_account, faucet):

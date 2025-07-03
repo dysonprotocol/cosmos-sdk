@@ -127,49 +127,86 @@ Examples:
 // NewStorageDeleteCmd returns the CLI command handler for deleting storage entries.
 func NewStorageDeleteCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete --indexes <indexes>",
-		Short: "Delete one or more storage entries with the specified indexes",
-		Long: `Delete one or more storage entries with the specified indexes. Only existing entries will be deleted.
-The owner is automatically set to the transaction signer.
+		Use:   "delete [--indexes <indexes> | --index-prefix <prefix> [--filter <filter>]]",
+		Short: "Delete storage entries by specific indexes or by prefix with optional filter",
+		Long: `Delete storage entries owned by the transaction signer. You can delete either:
+1. Specific entries by providing a list of indexes (--indexes)
+2. All entries matching a prefix, optionally filtered (--index-prefix and --filter)
+
+These two modes are mutually exclusive - you must use either --indexes OR --index-prefix.
 
 Examples:
   # Delete a single entry
   $ dysond tx storage delete --indexes "config/settings" --from myaccount
 
-  # Delete multiple entries
-  $ dysond tx storage delete --indexes "user/profile,temp/data,cache/item" --from myaccount`,
+  # Delete multiple specific entries
+  $ dysond tx storage delete --indexes "user/profile,temp/data,cache/item" --from myaccount
+  
+  # Delete all entries with a specific prefix
+  $ dysond tx storage delete --index-prefix "temp/" --from myaccount
+  
+  # Delete entries with prefix and filter (using GJSON query syntax)
+  $ dysond tx storage delete --index-prefix "users/" --filter 'status == "inactive"' --from myaccount
+  
+  # Using other GJSON query operators
+  $ dysond tx storage delete --index-prefix "users/" --filter 'age > 30' --from myaccount
+  $ dysond tx storage delete --index-prefix "items/" --filter 'name % "test*"' --from myaccount`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			// Get the required indexes flag
+			// Get all the flags
 			indexes, err := cmd.Flags().GetStringSlice("indexes")
 			if err != nil {
 				return err
 			}
 
-			if len(indexes) == 0 {
-				return errors.New("at least one index must be provided via --indexes")
+			indexPrefix, err := cmd.Flags().GetString("index-prefix")
+			if err != nil {
+				return err
+			}
+
+			filter, err := cmd.Flags().GetString("filter")
+			if err != nil {
+				return err
+			}
+
+			// Validate mutual exclusivity
+			hasIndexes := len(indexes) > 0
+			hasIndexPrefix := indexPrefix != ""
+
+			if hasIndexes && hasIndexPrefix {
+				return errors.New("cannot specify both --indexes and --index-prefix, they are mutually exclusive")
+			}
+
+			if !hasIndexes && !hasIndexPrefix {
+				return errors.New("must specify either --indexes or --index-prefix")
+			}
+
+			// Validate filter is only used with index-prefix
+			if filter != "" && !hasIndexPrefix {
+				return errors.New("--filter can only be used with --index-prefix")
 			}
 
 			// Use the sender address as the owner
 			owner := clientCtx.GetFromAddress().String()
 
 			msg := &storagetypes.MsgStorageDelete{
-				Owner:   owner,
-				Indexes: indexes,
+				Owner:       owner,
+				Indexes:     indexes,
+				IndexPrefix: indexPrefix,
+				Filter:      filter,
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 
-	cmd.Flags().StringSlice("indexes", []string{}, "Comma-separated list of indexes to delete (required)")
-
-	// Mark indexes as required
-	_ = cmd.MarkFlagRequired("indexes")
+	cmd.Flags().StringSlice("indexes", []string{}, "Comma-separated list of specific indexes to delete")
+	cmd.Flags().String("index-prefix", "", "Delete all entries with indexes starting with this prefix")
+	cmd.Flags().String("filter", "", "Optional GJSON query expression to apply when using --index-prefix. Supports ==, !=, <, <=, >, >=, %, !% operators")
 
 	flags.AddTxFlagsToCmd(cmd)
 
