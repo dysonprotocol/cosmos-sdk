@@ -103,7 +103,7 @@ install:
 
 test: install
 	@echo "--> running pytest"
-	DEFAULT_BASE_DIR=/tmp/test-dysonchains python -m pytest -xs --showlocals --ff ./tests/$(TEST_PATTERN) $(PYTEST_ARGS)
+	DEFAULT_BASE_DIR=/tmp/test-dysonchains python -m pytest -xs --showlocals --nf --ff ./tests/$(TEST_PATTERN) $(PYTEST_ARGS)
 
 ###############################################################################
 ###                                Scripts                                  ###
