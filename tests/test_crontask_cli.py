@@ -122,14 +122,14 @@ def test_task_execution(chainnet, generate_account, faucet):
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": alice_address,
         "to_address": alice_address,
-        "amount": [{"denom": "dys", "amount": "1"}]
+        "amount": [{"denom": "udys", "amount": "1"}]
     }
     create_result = dysond_bin(
         "tx", "crontask", "create-task",
         "--scheduled-timestamp", str(scheduled_time),
         "--expiry-timestamp", str(expiry_time),
         "--task-gas-limit", str(GAS_LIMIT),
-        "--task-gas-fee", f"{GAS_FEE}dys",
+        "--task-gas-fee", f"{GAS_FEE}udys",
         "--msgs", json.dumps(msg_obj),
         "--from", alice_name, "--keyring-backend", "test", "--yes"
     )
@@ -188,14 +188,14 @@ def create_task_for_test(dysond_bin, creator_name, creator_address) -> int:
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": creator_address,
         "to_address": creator_address,
-        "amount": [{"denom": "dys", "amount": "1"}]
+        "amount": [{"denom": "udys", "amount": "1"}]
     }
     create_result = dysond_bin(
         "tx", "crontask", "create-task",
         "--scheduled-timestamp", str(scheduled_time),
         "--expiry-timestamp", str(expiry_time),
         "--task-gas-limit", str(gas_limit),
-        "--task-gas-fee", f"{gas_fee}dys",
+        "--task-gas-fee", f"{gas_fee}udys",
         "--msgs", json.dumps(msg_obj),
         "--from", creator_name, "--keyring-backend", "test", "--yes"
     )
@@ -217,14 +217,14 @@ def create_task_for_test_with_gas_price(dysond_bin, creator_name, creator_addres
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": creator_address,
         "to_address": creator_address,
-        "amount": [{"denom": "dys", "amount": "1"}]
+        "amount": [{"denom": "udys", "amount": "1"}]
     }
     create_result = dysond_bin(
         "tx", "crontask", "create-task",
         "--scheduled-timestamp", str(scheduled_time),
         "--expiry-timestamp", str(expiry_time),
         "--task-gas-limit", str(gas_limit),
-        "--task-gas-fee", f"{gas_fee}dys",
+        "--task-gas-fee", f"{gas_fee}udys",
         "--msgs", json.dumps(msg_obj),
         "--from", creator_name, "--keyring-backend", "test", "--yes"
     )
@@ -246,14 +246,14 @@ def create_task_for_test_with_timestamp(dysond_bin, creator_name, creator_addres
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": creator_address,
         "to_address": creator_address,
-        "amount": [{"denom": "dys", "amount": "1"}]
+        "amount": [{"denom": "udys", "amount": "1"}]
     }
     create_result = dysond_bin(
         "tx", "crontask", "create-task",
         "--scheduled-timestamp", str(scheduled_time),
         "--expiry-timestamp", str(expiry_time),
         "--task-gas-limit", str(gas_limit),
-        "--task-gas-fee", f"{gas_fee}dys",
+        "--task-gas-fee", f"{gas_fee}udys",
         "--msgs", json.dumps(msg_obj),
         "--from", creator_name, "--keyring-backend", "test", "--yes"
     )
@@ -422,7 +422,7 @@ def create_task_high_gas_limit(
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": creator_address,
         "to_address": creator_address,
-        "amount": [{"denom": "dys", "amount": "1"}],
+        "amount": [{"denom": "udys", "amount": "1"}],
     }
     gas_fee_amount = gas_price * gas_limit
     create_result = dysond_bin(
@@ -436,7 +436,7 @@ def create_task_high_gas_limit(
         "--task-gas-limit",
         str(gas_limit),
         "--task-gas-fee",
-        f"{gas_fee_amount}dys",
+        f"{gas_fee_amount}udys",
         "--msgs",
         json.dumps(msg_obj),
         "--from",
@@ -537,7 +537,7 @@ def test_done_tasks_are_cleaned_up(chainnet, generate_account, faucet, update_cr
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": alice_address,
         "to_address": alice_address,
-        "amount": [{"denom": "dys", "amount": "1"}]
+        "amount": [{"denom": "udys", "amount": "1"}]
     }
 
     create_result = dysond_bin(
@@ -545,7 +545,7 @@ def test_done_tasks_are_cleaned_up(chainnet, generate_account, faucet, update_cr
         "--scheduled-timestamp", "+1s",
         "--expiry-timestamp", "+10s",
         "--task-gas-limit", str(GAS_LIMIT),
-        "--task-gas-fee", f"{GAS_FEE}dys",
+        "--task-gas-fee", f"{GAS_FEE}udys",
         "--msgs", json.dumps(msg_obj),
         "--from", alice_name, "--keyring-backend", "test"
     )

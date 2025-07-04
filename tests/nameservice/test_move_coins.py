@@ -50,7 +50,7 @@ def test_move_coins_success(chainnet, generate_account, faucet, register_name):
     # Setup accounts
     [owner_name, owner_addr] = generate_account("owner")
     [recipient_name, recipient_addr] = generate_account("recipient")
-    faucet(owner_addr, denom="dys", amount="25000")
+    faucet(owner_addr, denom="udys", amount="25000")
 
     # Register name and mint coins under its denom
     root_name = register_name(dysond_bin, owner_name, owner_addr)
@@ -94,8 +94,8 @@ def test_move_coins_non_owner_fails(chainnet, generate_account, faucet, register
 
     [owner_name, owner_addr] = generate_account("owner")
     [attacker_name, attacker_addr] = generate_account("attacker")
-    faucet(owner_addr, denom="dys", amount="25000")
-    faucet(attacker_addr, denom="dys", amount="1000")
+    faucet(owner_addr, denom="udys", amount="25000")
+    faucet(attacker_addr, denom="udys", amount="1000")
 
     root_name = register_name(dysond_bin, owner_name, owner_addr)
     denom = root_name
@@ -124,7 +124,7 @@ def test_move_coins_module_account_fails(chainnet, generate_account, faucet, reg
     dysond_bin = chainnet[0]
 
     [owner_name, owner_addr] = generate_account("owner")
-    faucet(owner_addr, denom="dys", amount="25000")
+    faucet(owner_addr, denom="udys", amount="25000")
 
     root_name = register_name(dysond_bin, owner_name, owner_addr)
     denom = root_name
@@ -157,8 +157,8 @@ def test_move_coins_multi_inputs_single_output(chainnet, generate_account, fauce
     [owner_name, owner_addr] = generate_account("owner_multi1")
     [sender2_name, sender2_addr] = generate_account("sender2")
     [recipient_name, recipient_addr] = generate_account("recipient_multi1")
-    faucet(owner_addr, amount="30000", denom="dys")
-    faucet(sender2_addr, amount="1000", denom="dys")
+    faucet(owner_addr, amount="30000", denom="udys")
+    faucet(sender2_addr, amount="1000", denom="udys")
 
     root_name = register_name(dysond_bin, owner_name, owner_addr)
     variants = _mint_variants(dysond_bin, owner_name, root_name)
@@ -224,7 +224,7 @@ def test_move_coins_single_input_multi_outputs(chainnet, generate_account, fauce
     [owner_name, owner_addr] = generate_account("owner_multi2")
     [rec1_name, rec1_addr] = generate_account("rec1")
     [rec2_name, rec2_addr] = generate_account("rec2")
-    faucet(owner_addr, amount="20000", denom="dys")
+    faucet(owner_addr, amount="20000", denom="udys")
 
     root_name = register_name(dysond_bin, owner_name, owner_addr)
     _mint_custom_coins(dysond_bin, owner_name, root_name, amount="60")
@@ -261,7 +261,7 @@ def test_move_coins_total_mismatch_fails(chainnet, generate_account, faucet, reg
     """Validate transaction fails when total inputs ≠ total outputs."""
     dysond_bin = chainnet[0]
     [owner_name, owner_addr] = generate_account("owner_mismatch")
-    faucet(owner_addr, denom="dys", amount="15000")
+    faucet(owner_addr, denom="udys", amount="15000")
 
     root_name = register_name(dysond_bin, owner_name, owner_addr)
     _mint_custom_coins(dysond_bin, owner_name, root_name, amount="10")

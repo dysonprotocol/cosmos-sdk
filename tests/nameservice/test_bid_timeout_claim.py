@@ -28,7 +28,7 @@ def poll_until_proposal_passes(dysond_bin, proposal_id: str, timeout: int = 60):
 def register_name(chainnet, generate_account, faucet):
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="1000")
+    faucet(alice_address, denom="udys", amount="1000")
     name = f"testname{alice_address[:6]}.dys"
     salt = "testsalt"
     # Compute hash
@@ -36,7 +36,7 @@ def register_name(chainnet, generate_account, faucet):
     hex_hash = query_result["hex_hash"]
     print(f"Compute hash result: {hex_hash}")
     # Commit
-    commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", hex_hash, "--valuation", "100dys", "--from", alice_name)
+    commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", hex_hash, "--valuation", "100udys", "--from", alice_name)
     print(f"Commit result: {commit_result}")
     assert commit_result["code"] == 0, commit_result["raw_log"]
     # Reveal
@@ -48,7 +48,7 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
     """Set bid timeout via governance proposal"""
     # Get current params
     current_params = dysond_bin("query", "nameservice", "params")
-    current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["dys"])
+    current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["udys"])
     current_reject_fee_percent = current_params.get("params", {}).get("reject_bid_valuation_fee_percent", "0.03")
     current_minimum_bid_percent_increase = current_params.get("params", {}).get("minimum_bid_percent_increase", "0.01")
     
@@ -62,7 +62,7 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
     validator_operator = validators["validators"][0]["operator_address"]
     
     # Delegate tokens from Alice to validator so Alice has voting power
-    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000dys", "--from", "alice", "--yes")
+    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000udys", "--from", "alice", "--yes")
     assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result['raw_log']}"
 
     proposal = {
@@ -79,7 +79,7 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
             }
         ],
         "metadata": "ipfs://CID",
-        "deposit": "1dys",
+        "deposit": "1udys",
         "title": "Update Nameservice Parameters",
         "summary": f"Update bid_timeout to {bid_timeout_value} for testing"
     }
@@ -125,17 +125,17 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
 def test_update_nameservice_params_via_gov(chainnet, generate_account, faucet):
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="25000")
+    faucet(alice_address, denom="udys", amount="25000")
     
     # Get validator operator address and delegate tokens for voting power
     validators = dysond_bin("query", "staking", "validators")
     validator_operator = validators["validators"][0]["operator_address"]
-    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000dys", "--from", alice_name, "--yes")
+    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000udys", "--from", alice_name, "--yes")
     assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result['raw_log']}"
     
     # Get current params
     current_params = dysond_bin("query", "nameservice", "params")
-    current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["dys"])
+    current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["udys"])
     current_reject_fee_percent = current_params.get("params", {}).get("reject_bid_valuation_fee_percent", "0.03")
     current_minimum_bid_percent_increase = current_params.get("params", {}).get("minimum_bid_percent_increase", "0.01")
     # Query gov module account address
@@ -156,7 +156,7 @@ def test_update_nameservice_params_via_gov(chainnet, generate_account, faucet):
             }
         ],
         "metadata": "ipfs://CID",
-        "deposit": "1dys",
+        "deposit": "1udys",
         "title": "Update Nameservice Parameters",
         "summary": "Update bid_timeout to 4s for testing"
     }
@@ -191,18 +191,18 @@ def test_update_nameservice_params_via_gov(chainnet, generate_account, faucet):
 def test_claim_before_timeout_fails(chainnet, generate_account, faucet):
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="25000")
+    faucet(alice_address, denom="udys", amount="25000")
     
     # Set bid timeout to 10 seconds via governance proposal
     set_bid_timeout_via_gov(dysond_bin, alice_name, "10s")
     
     [bob_name, bob_address] = generate_account('bob')
-    faucet(bob_address, denom="dys", amount="1000")
+    faucet(bob_address, denom="udys", amount="1000")
     registered_name = register_name(chainnet, generate_account, faucet)
     alice_address = registered_name["alice_address"]
     
     # Place a bid from Bob
-    bid_amount = "500dys"
+    bid_amount = "500udys"
     print(f"Placing bid of {bid_amount} from Bob")
     tx_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", registered_name["name"], "--bid-amount", bid_amount, "--from", bob_name, "--keyring-backend", "test", "--yes")
     assert tx_result["code"] == 0, tx_result["raw_log"]
@@ -224,18 +224,18 @@ def test_claim_before_timeout_fails(chainnet, generate_account, faucet):
 def test_claim_after_timeout_succeeds(chainnet, generate_account, faucet):
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="25000")
+    faucet(alice_address, denom="udys", amount="25000")
     
     # Set bid timeout to 100ms via governance proposal for fast test
     set_bid_timeout_via_gov(dysond_bin, alice_name, "100ms")
     
     [bob_name, bob_address] = generate_account('bob')
-    faucet(bob_address, denom="dys", amount="1000")
+    faucet(bob_address, denom="udys", amount="1000")
     registered_name = register_name(chainnet, generate_account, faucet)
     alice_address = registered_name["alice_address"]
     
     # Place a bid from Bob
-    bid_amount = "500dys"
+    bid_amount = "500udys"
     print(f"Placing bid of {bid_amount} from Bob")
     bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", registered_name["name"], "--bid-amount", bid_amount, "--from", bob_name, "--keyring-backend", "test", "--yes")
     assert bid_result["code"] == 0, bid_result["raw_log"]

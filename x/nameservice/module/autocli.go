@@ -113,7 +113,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						},
 						"valuation": {
 							Name:         "valuation",
-							Usage:        "The new valuation (format: 100dys)",
+							Usage:        "The new valuation (format: 100udys)",
 							DefaultValue: "",
 						},
 					},
@@ -135,7 +135,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						},
 						"bid_amount": {
 							Name:         "bid-amount",
-							Usage:        "The amount to bid (format: 100dys)",
+							Usage:        "The amount to bid (format: 100udys)",
 							DefaultValue: "",
 						},
 					},

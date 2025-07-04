@@ -55,7 +55,7 @@ def test_encode_json(chainnet):
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": "dys1example",
         "to_address": "dys1example",
-        "amount": [{"denom": "dys", "amount": "100"}],
+        "amount": [{"denom": "udys", "amount": "100"}],
     }
     test_json = json.dumps(test_data)
     encode_result = dysond_bin("query", "script", "encode-json", "--json", test_json)
@@ -69,7 +69,7 @@ def test_decode_bytes(chainnet):
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": "dys1example",
         "to_address": "dys1example",
-        "amount": [{"denom": "dys", "amount": "100"}],
+        "amount": [{"denom": "udys", "amount": "100"}],
     }
     test_json = json.dumps(test_data)
     encode_result = dysond_bin("query", "script", "encode-json", "--json", test_json)
@@ -154,7 +154,7 @@ def test_verify_arbitrary_data_signature(chainnet, generate_account, faucet):
     """Test signing and verifying arbitrary data using MsgArbitraryData"""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account("alice")
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
 
     # Create temporary files for the transaction
     with tempfile.NamedTemporaryFile(
@@ -220,7 +220,7 @@ def test_verify_tx_fails_on_bad_data(chainnet, generate_account, faucet):
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account("alice")
     [bob_name, bob_address] = generate_account("bob")
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
 
     # First, create a valid signed transaction as baseline
     with tempfile.NamedTemporaryFile(
@@ -402,7 +402,7 @@ def test_script_governance_param_update_and_storage_history(
     """
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account("alice")
-    faucet(alice_address, denom="dys", amount="1000000")
+    faucet(alice_address, denom="udys", amount="1000000")
 
     # Delegate tokens to get voting power
     validators_result = dysond_bin("query", "staking", "validators")
@@ -416,7 +416,7 @@ def test_script_governance_param_update_and_storage_history(
         "staking",
         "delegate",
         validator_operator,
-        "20000dys",
+        "20000udys",
         "--from",
         alice_name,
     )
@@ -451,7 +451,7 @@ def test_script_governance_param_update_and_storage_history(
             }
         ],
         "metadata": "ipfs://CID",
-        "deposit": "100000dys",
+        "deposit": "100000udys",
         "title": "Update Script Module Parameters",
         "summary": "Update maxRelativeHistoricalBlocks parameter to 1000",
     }

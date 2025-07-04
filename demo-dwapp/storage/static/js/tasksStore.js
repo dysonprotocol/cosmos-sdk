@@ -387,7 +387,7 @@ document.addEventListener("alpine:init", () => {
           "expiry_timestamp": expiryTimestamp,
           "task_gas_limit": this.newTask.gasLimit.toString(),
           "task_gas_fee": {
-            "denom": "dys",
+            "denom": "udys",
             "amount": this.newTask.gasFee || "1"
           },
           "msgs": this.newTask.messages

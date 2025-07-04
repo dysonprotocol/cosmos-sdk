@@ -10,8 +10,8 @@ def test_address_retrieval(chainnet, generate_account, faucet):
     [bob_name, bob_address] = generate_account('bob')
     
     # Test that addresses are valid bech32 addresses
-    assert alice_address.startswith('dys')
-    assert bob_address.startswith('dys')
+    assert alice_address.startswith('dys2')
+    assert bob_address.startswith('dys2')
     
     # Test that addresses are different
     assert alice_address != bob_address 
@@ -19,8 +19,8 @@ def test_address_retrieval(chainnet, generate_account, faucet):
     assert alice_name.startswith('alice')
     assert bob_name.startswith('bob')
 
-    faucet(alice_address, denom="dys", amount="1000")
-    faucet(bob_address, denom="dys", amount="1000")
+    faucet(alice_address, denom="udys", amount="1000")
+    faucet(bob_address, denom="udys", amount="1000")
 
-    assert dysond_bin("query", "bank", "balances", alice_address)["balances"][0]["denom"] == "dys"
-    assert dysond_bin("query", "bank", "balances", bob_address)["balances"][0]["denom"] == "dys"
+    assert dysond_bin("query", "bank", "balances", alice_address)["balances"][0]["denom"] == "udys"
+    assert dysond_bin("query", "bank", "balances", bob_address)["balances"][0]["denom"] == "udys"

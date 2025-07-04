@@ -83,7 +83,7 @@ func initAppConfig() (string, interface{}) {
 	//   own app.toml to override, or use this default value.
 	//
 	// In dysapp, we set the min gas prices to 0.
-	srvCfg.MinGasPrices = "0dys"
+	srvCfg.MinGasPrices = "0udys"
 	// srvCfg.BaseConfig.IAVLDisableFastNode = true // disable fastnode by default
 
 	// Set API Swagger to be enabled by default

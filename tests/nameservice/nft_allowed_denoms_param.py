@@ -46,7 +46,7 @@ def _update_allowed_denoms_via_gov(
         "staking",
         "delegate",
         val_op,
-        "20000dys",
+        "20000udys",
         "--from",
         "alice",
         "--yes",
@@ -70,7 +70,7 @@ def _update_allowed_denoms_via_gov(
             }
         ],
         "metadata": "ipfs://CID",
-        "deposit": "1dys",
+        "deposit": "1udys",
         "title": "Update AllowedDenoms for tests",
         "summary": f"Set AllowedDenoms to {allowed_denoms}",
     }
@@ -152,7 +152,7 @@ def test_nft_allowed_denoms_param(chainnet, generate_account, faucet, register_n
     # Scenario 1 – Happy paths with default denom (dys)
     # ------------------------------------------------------------------
     owner_name, owner_addr = generate_account("owner")
-    faucet(owner_addr, denom="dys", amount=5000)
+    faucet(owner_addr, denom="udys", amount=5000)
 
     # Register a root name so owner can create NFT classes under it
     root_name = register_name(dysond, owner_name, owner_addr)
@@ -196,7 +196,7 @@ def test_nft_allowed_denoms_param(chainnet, generate_account, faucet, register_n
     )
     assert res["code"] == 0, res["raw_log"]
 
-    # Valuation 1000dys
+    # Valuation 1000udys
     res = dysond(
         "tx",
         "nameservice",
@@ -206,7 +206,7 @@ def test_nft_allowed_denoms_param(chainnet, generate_account, faucet, register_n
         "--nft-id",
         nft_id,
         "--valuation",
-        "1000dys",
+        "1000udys",
         "--from",
         owner_name,
     )
@@ -229,7 +229,7 @@ def test_nft_allowed_denoms_param(chainnet, generate_account, faucet, register_n
 
     # Bid with dys should succeed
     bidder_name, bidder_addr = generate_account("bidder")
-    faucet(bidder_addr, denom="dys", amount=2000)
+    faucet(bidder_addr, denom="udys", amount=2000)
     res = dysond(
         "tx",
         "nameservice",
@@ -239,7 +239,7 @@ def test_nft_allowed_denoms_param(chainnet, generate_account, faucet, register_n
         "--nft-id",
         nft_id,
         "--bid-amount",
-        "1000dys",
+        "1000udys",
         "--from",
         bidder_name,
     )
@@ -306,7 +306,7 @@ def test_nft_allowed_denoms_param(chainnet, generate_account, faucet, register_n
     custom_denom = custom_name  # denom is same as root name
 
     # Update params via governance to include new denom
-    _update_allowed_denoms_via_gov(dysond, owner_name, ["dys", custom_denom])
+    _update_allowed_denoms_via_gov(dysond, owner_name, ["udys", custom_denom])
 
     # Mint some custom denom coins for owner and bidder
     dysond(
@@ -403,7 +403,7 @@ def test_nft_allowed_denoms_param(chainnet, generate_account, faucet, register_n
         "--nft-id",
         nft2_id,
         "--bid-amount",
-        "100dys",
+        "100udys",
         "--from",
         bidder_name,
     )

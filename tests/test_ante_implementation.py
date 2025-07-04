@@ -56,7 +56,7 @@ def wsgi(environ, start_response):
         "--script-address", script_owner_address,
         "--function-name", "hello",
         "--from", test_account_name,
-        "--fees", "0dys",
+        "--fees", "0udys",
         "--gas", "100000",
         "--generate-only",
         "--account-number", "0",
@@ -172,7 +172,7 @@ def ping():
             "--script-address", script_owner_address,
             "--function-name", "ping",
             "--from", account_name,
-            "--fees", "0dys",
+            "--fees", "0udys",
             "--gas", "100000",
             "--generate-only",
             "--account-number", "0",
@@ -274,7 +274,7 @@ def check_func():
         "--script-address", script_owner_address,
         "--function-name", "check_func",
         "--from", account_name,
-        "--fees", "0dys",
+        "--fees", "0udys",
         "--gas", "100000"
     )
     

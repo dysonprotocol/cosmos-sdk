@@ -6,7 +6,7 @@ def test_query_function():
     query_params = {
         "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
         "address": get_script_address(),
-        "denom": "dys"
+        "denom": "udys
     }
     result = _query(query_params)
     print("Query result:", result)

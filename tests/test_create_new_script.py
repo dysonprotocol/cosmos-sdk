@@ -15,7 +15,7 @@ def test_create_new_script(chainnet, generate_account, faucet):
     """
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     script_code = "def hello(): return 'Hello from new script!'"
     create_result = dysond_bin(
         "tx", "script", "create-new-script",
@@ -54,7 +54,7 @@ def test_script_update_with_authz(chainnet, generate_account, faucet):
     """
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     script_code = "def update_test(): return 'Initial version'"
     create_result = dysond_bin(
         "tx", "script", "create-new-script",

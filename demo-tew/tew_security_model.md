@@ -125,7 +125,7 @@ def check_balance(address):
     response = _query({  # _query is provided in scope
         "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
         "address": address,
-        "denom": "dys"
+        "denom": "udys
     })
     return response["balance"]["amount"]
 

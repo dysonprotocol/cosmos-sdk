@@ -48,7 +48,7 @@ def deployed_demo_script(chainnet, api_address):
     # Fund account directly (faucet logic)
     fund_result = dysond(
         "tx", "bank", "send", 
-        "alice", address, "10000dys",
+        "alice", address, "10000udys",
         "--from", "alice", "--chain-id", chain_id
     )
     assert fund_result["code"] == 0, f"Funding failed: {fund_result}"
@@ -89,7 +89,7 @@ def deployed_demo_script(chainnet, api_address):
             "--data-path", str(local_path),
             "--gas", "auto",
             "--gas-adjustment", "1.3",
-            "--gas-prices", "0dys",
+            "--gas-prices", "0udys",
             "--from", account_name,
             "--chain-id", chain_id
         )

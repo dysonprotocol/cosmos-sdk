@@ -134,10 +134,10 @@ func (k Keeper) CreateTask(ctx context.Context, msg *crontasktypes.MsgCreateTask
 	if !msg.TaskGasFee.IsPositive() {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "gas fee must be greater than 0")
 	}
-	if msg.TaskGasFee.Denom != "dys" {
+	if msg.TaskGasFee.Denom != "udys" {
 		return nil, errorsmod.Wrapf(
 			sdkerrors.ErrInvalidRequest,
-			"invalid gas fee denom: [%s], only 'dys' is accepted",
+			"invalid gas fee denom: [%s], only 'udys' is accepted",
 			msg.TaskGasFee.Denom,
 		)
 	}

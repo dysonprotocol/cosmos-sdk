@@ -87,7 +87,7 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('sendFundsComponent', () => ({
     to: '',
     amount: '',
-    denom: 'dys',
+    denom: 'udys,
     sending: false,
     txHash: '',
     error: '',

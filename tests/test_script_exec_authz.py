@@ -22,8 +22,8 @@ def test_exec_authorization_with_function_names(chainnet, generate_account, fauc
     [bob_name, bob_address] = generate_account('bob')
     
     # Fund accounts
-    faucet(alice_address, denom="dys", amount="10000")
-    faucet(bob_address, denom="dys", amount="10000")
+    faucet(alice_address, denom="udys", amount="10000")
+    faucet(bob_address, denom="udys", amount="10000")
     
     # Create a script with multiple functions
     script_code = """
@@ -199,8 +199,8 @@ def test_exec_authorization_empty_function_list(chainnet, generate_account, fauc
     [bob_name, bob_address] = generate_account('bob')
     
     # Fund accounts
-    faucet(alice_address, denom="dys", amount="10000")
-    faucet(bob_address, denom="dys", amount="10000")
+    faucet(alice_address, denom="udys", amount="10000")
+    faucet(bob_address, denom="udys", amount="10000")
     
     # Create a simple script
     script_code = """
@@ -297,8 +297,8 @@ def test_exec_authorization_revoke(chainnet, generate_account, faucet):
     [bob_name, bob_address] = generate_account('bob')
     
     # Fund accounts
-    faucet(alice_address, denom="dys", amount="10000")
-    faucet(bob_address, denom="dys", amount="10000")
+    faucet(alice_address, denom="udys", amount="10000")
+    faucet(bob_address, denom="udys", amount="10000")
     
     # Create a simple script
     script_code = "def test(): return 'test result'"
@@ -398,8 +398,8 @@ def test_exec_authorization_wrong_script_address(chainnet, generate_account, fau
     [bob_name, bob_address] = generate_account('bob')
     
     # Fund accounts
-    faucet(alice_address, denom="dys", amount="10000")
-    faucet(bob_address, denom="dys", amount="10000")
+    faucet(alice_address, denom="udys", amount="10000")
+    faucet(bob_address, denom="udys", amount="10000")
     
     # Create two different scripts
     script1_code = "def func1(): return 'script1'"

@@ -582,7 +582,7 @@ def checkpoint_block(instance_id: str, block_height: int, signed_checkpoint: Any
     
     total_l2_balance = 0
     for member_balances in new_l2_state.get("data", {}).get("balances", {}).values():
-        total_l2_balance += member_balances.get("dys", 0)
+        total_l2_balance += member_balances.get("udys", 0)
     
     if total_l2_balance > total_l1_locked:
         raise ValueError(f"L2 balance {total_l2_balance} exceeds L1 locked funds {total_l1_locked}")
@@ -792,7 +792,7 @@ def terminate_instance(instance_id: str) -> dict:
                 {
                     "user": "dys1alice...",
                     "amount": 200000,
-                    "denom": "dys",
+                    "denom": "udys",
                     "status": "processed"  # or "insufficient_balance"
                 }
             ],
@@ -800,7 +800,7 @@ def terminate_instance(instance_id: str) -> dict:
                 {
                     "user": "dys1alice...",
                     "amount": 800000,
-                    "denom": "dys"
+                    "denom": "udys
                 }
             ],
             "total_returned": 1500000
@@ -837,7 +837,7 @@ def terminate_instance(instance_id: str) -> dict:
         for user, withdrawal in withdrawal_requests.items():
             if not withdrawal.get("executed", False):
                 amount = withdrawal["amount"]
-                denom = "dys"  # Hardcoded for minimal implementation
+                denom = "udys"  # Hardcoded for minimal implementation
                 
                 # Load L1 state
                 l1_state = load_data(script_address, get_storage_key(instance_id, "l1_state"))
@@ -947,7 +947,7 @@ def process_deposit(instance_id: str) -> dict:
             "status": "deposit_processed",
             "depositor": "dys1alice...",
             "amount": 1000000,
-            "denom": "dys",
+            "denom": "udys",
             "l1_total_locked": 1500000,  # Total locked in channel
             "l2_balance": 1000000  # User's L2 balance after deposit
         }
@@ -1086,7 +1086,7 @@ def execute_withdrawal(instance_id: str, user_address: str) -> dict:
     Returns:
         {
             "withdrawn": 200000,
-            "denom": "dys",
+            "denom": "udys",
             "to": "dys1alice..."
         }
     """
@@ -1122,7 +1122,7 @@ def execute_withdrawal(instance_id: str, user_address: str) -> dict:
         raise ValueError(f"Withdrawal for {user_address} has already been executed")
     
     amount = withdrawal["amount"]
-    denom = "dys"  # Hardcoded for minimal implementation
+    denom = "udys"  # Hardcoded for minimal implementation
     
     # Load L1 state
     l1_state = load_data(script_address, get_storage_key(instance_id, "l1_state"))
@@ -1184,8 +1184,8 @@ def process_l2_block(instance_id: str, current_state: dict, txs: dict) -> dict:
               },
               "data": {
                 "balances": {
-                  "dys1alice...": {"dys": 1000000},
-                  "dys1bob...": {"dys": 500000}
+                  "dys1alice...": {"udys": 1000000},
+                  "dys1bob...": {"udys": 500000}
                 },
                 "transfers": [],
                 "withdrawal_requests": {}
@@ -1230,7 +1230,7 @@ def process_l2_block(instance_id: str, current_state: dict, txs: dict) -> dict:
         def safe_transfer_to(recipient, amount):
             # Pre-check balance to avoid exception
             balances = new_state.get("data", {}).get("balances", {})
-            author_balance = balances.get(member, {}).get("dys", 0)
+            author_balance = balances.get(member, {}).get("udys", 0)
             if author_balance < amount:
                 return {"error": f"Insufficient balance: {author_balance} < {amount}"}
             # If check passes, do the transfer
@@ -1240,7 +1240,7 @@ def process_l2_block(instance_id: str, current_state: dict, txs: dict) -> dict:
         def safe_request_withdrawal(amount):
             # Pre-check balance to avoid exception
             balances = new_state.get("data", {}).get("balances", {})
-            author_balance = balances.get(member, {}).get("dys", 0)
+            author_balance = balances.get(member, {}).get("udys", 0)
             if author_balance < amount:
                 return {"error": f"Insufficient balance for withdrawal: {author_balance} < {amount}"}
             # If check passes, do the withdrawal request
@@ -1304,7 +1304,7 @@ def transfer_to(state: dict, author: str, recipient: str, amount: int):
     balances = state.get("data", {}).get("balances", {})
     
     # Check balance
-    author_balance = balances.get(author, {}).get("dys", 0)
+    author_balance = balances.get(author, {}).get("udys", 0)
     if author_balance < amount:
         raise ValueError(f"Insufficient balance: {author_balance} < {amount}")
     
@@ -1314,8 +1314,8 @@ def transfer_to(state: dict, author: str, recipient: str, amount: int):
     if recipient not in balances:
         balances[recipient] = {}
     
-    balances[author]["dys"] = balances[author].get("dys", 0) - amount
-    balances[recipient]["dys"] = balances[recipient].get("dys", 0) + amount
+    balances[author]["udys"] = balances[author].get("udys", 0) - amount
+    balances[recipient]["udys"] = balances[recipient].get("udys", 0) + amount
     
     # Record transfer
     state["data"]["transfers"].append({
@@ -1344,7 +1344,7 @@ def request_withdrawal(state: dict, author: str, amount: int):
     balances = state.get("data", {}).get("balances", {})
     
     # Check balance
-    author_balance = balances.get(author, {}).get("dys", 0)
+    author_balance = balances.get(author, {}).get("udys", 0)
     if author_balance < amount:
         raise ValueError(f"Insufficient balance for withdrawal: {author_balance} < {amount}")
     
@@ -1485,8 +1485,8 @@ def get_instance_info(instance_id: str) -> dict:
                 "status": "active"  # or "terminated"
             },
             "l1_state": {
-                "deposits": {"dys1alice...": {"dys": 1000000}},
-                "balances": {"dys1alice...": {"dys": 1000000}},
+                "deposits": {"dys1alice...": {"udys": 1000000}},
+                "balances": {"dys1alice...": {"udys": 1000000}},
                 "total_locked": 1500000,
                 "withdrawals": {},
                 "nonce": 42
@@ -1533,8 +1533,8 @@ def get_balance(instance_id: str, address: str) -> dict:
         
     Returns:
         {
-            "l1_balance": {"dys": 1000000},  # Deposited amount
-            "l2_balance": {"dys": 800000}    # Current L2 balance
+            "l1_balance": {"udys": 1000000},  # Deposited amount
+            "l2_balance": {"udys": 800000}    # Current L2 balance
         }
     """
     info = get_instance_info(instance_id)

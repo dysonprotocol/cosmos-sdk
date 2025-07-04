@@ -13,7 +13,7 @@ First, we'll retrieve the address associated with the 'alice' account. This addr
 print(address)
 ```
 
-    dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz
+    dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej
 
 
 ## Update Script on Chain
@@ -76,7 +76,7 @@ json.loads('\n'.join(tx))
      'timestamp': '',
      'events': [{'type': 'tx',
        'attributes': [{'key': 'acc_seq',
-         'value': 'dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz/75',
+         'value': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/75',
          'index': True}]},
       {'type': 'tx',
        'attributes': [{'key': 'signature',
@@ -87,7 +87,7 @@ json.loads('\n'.join(tx))
          'value': '/dysonprotocol.script.v1.MsgUpdateScript',
          'index': True},
         {'key': 'sender',
-         'value': 'dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz',
+         'value': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej',
          'index': True},
         {'key': 'module', 'value': 'script', 'index': True},
         {'key': 'msg_index', 'value': '0', 'index': True}]},
@@ -119,18 +119,18 @@ print(output)
 assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Protocol!' in output, got: " + output
 ```
 
-    Accessing your DWapp at 'http://dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz.localhost:2417'
+    Accessing your DWapp at 'http://dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:2417'
 
 
-    * Host dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz.localhost:2417 was resolved.
+    * Host dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:2417 was resolved.
     * IPv6: ::1
     * IPv4: 127.0.0.1
     *   Trying [::1]:2417...
     * connect to ::1 port 2417 from ::1 port 52561 failed: Connection refused
     *   Trying 127.0.0.1:2417...
-    * Connected to dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz.localhost (127.0.0.1) port 2417
+    * Connected to dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost (127.0.0.1) port 2417
     > GET /hi HTTP/1.1
-    > Host: dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz.localhost:2417
+    > Host: dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:2417
     > User-Agent: curl/8.6.0
     > Accept: */*
     > 
@@ -142,7 +142,7 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < X-Server-Time: 1750599383
     < 
     { [82 bytes data]
-    * Connection #0 to host dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz.localhost left intact
+    * Connection #0 to host dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost left intact
     
     <html>
         <body>
@@ -169,12 +169,12 @@ print(f"✓ Script query successful for address: {address}")
 
     {
       "script": {
-        "address": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz",
+        "address": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
         "version": "2",
         "code": "def add(a, b):\n    print(f\"Adding {a} and {b}\")\n    return {\"a\": a, \"b\": b, \"add_result\": a + b}\n\n\ndef wsgi(environ, start_response):\n    status = \"200 OK\"\n    headers = [(\"Content-type\", \"text/html\")]\n    start_response(status, headers)\n    return [\n        b\"\"\"\n\u003chtml\u003e\n    \u003cbody\u003e\n        \u003ch1\u003eHello from Dyson Protocol!\u003c/h1\u003e\n    \u003c/body\u003e\n\u003c/html\u003e\"\"\"\n    ]\n\n"
       }
     }
-    ✓ Script query successful for address: dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz
+    ✓ Script query successful for address: dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej
 
 
 ## Execute Script
@@ -219,7 +219,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz/76",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/76",
               "index": true
             }
           ]
@@ -244,7 +244,7 @@ and observe how the function processes these values and returns the calculated s
             },
             {
               "key": "sender",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
               "index": true
             },
             {
@@ -264,7 +264,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "request",
-              "value": "{\"executor_address\":\"dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz\",\"script_address\":\"dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz\",\"extra_code\":\"\",\"function_name\":\"add\",\"args\":\"[5, 7]\",\"kwargs\":\"\",\"attached_messages\":[]}",
+              "value": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"extra_code\":\"\",\"function_name\":\"add\",\"args\":\"[5, 7]\",\"kwargs\":\"\",\"attached_messages\":[]}",
               "index": true
             },
             {
@@ -292,7 +292,7 @@ Your project may require converting complex JSON structures into a compact binar
   "@type": "/cosmos.bank.v1beta1.MsgSend", \
   "from_address": "dys1example1", \
   "to_address": "dys1example2", \
-  "amount": [ { "denom": "dys", "amount": "100" } ] \
+  "amount": [ { "denom": "udys", "amount": "100" } ] \
 }' -o json
 ```
 
@@ -348,7 +348,7 @@ print(f"Hex Hash: {hex_hash}")
 
 
 ```python
-valuation = '100dys'
+valuation = '100udys'
 ! dysond tx nameservice commit --commitment "$hex_hash" --valuation "$valuation" --from alice -y | dysond query wait-tx -o json | jq -M
 ```
 
@@ -371,7 +371,7 @@ valuation = '100dys'
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz/77",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/77",
               "index": true
             }
           ]
@@ -396,7 +396,7 @@ valuation = '100dys'
             },
             {
               "key": "sender",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
               "index": true
             },
             {
@@ -461,7 +461,7 @@ Reveal the name to complete registration.
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz/78",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/78",
               "index": true
             }
           ]
@@ -486,7 +486,7 @@ Reveal the name to complete registration.
             },
             {
               "key": "sender",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
               "index": true
             },
             {
@@ -506,12 +506,12 @@ Reveal the name to complete registration.
           "attributes": [
             {
               "key": "spender",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
               "index": true
             },
             {
               "key": "amount",
-              "value": "1dys",
+              "value": "1udys",
               "index": true
             },
             {
@@ -531,7 +531,7 @@ Reveal the name to complete registration.
             },
             {
               "key": "amount",
-              "value": "1dys",
+              "value": "1udys",
               "index": true
             },
             {
@@ -551,12 +551,12 @@ Reveal the name to complete registration.
             },
             {
               "key": "sender",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
               "index": true
             },
             {
               "key": "amount",
-              "value": "1dys",
+              "value": "1udys",
               "index": true
             },
             {
@@ -571,7 +571,7 @@ Reveal the name to complete registration.
           "attributes": [
             {
               "key": "sender",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
               "index": true
             },
             {
@@ -596,7 +596,7 @@ Reveal the name to complete registration.
             },
             {
               "key": "owner",
-              "value": "\"dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz\"",
+              "value": "\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"",
               "index": true
             },
             {

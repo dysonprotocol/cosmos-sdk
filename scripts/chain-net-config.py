@@ -5,7 +5,7 @@ import click
 from typing import List, Dict, Any, Optional, TextIO
 
 # Default values, similar to the original script
-DEFAULT_DENOM = "dys"
+DEFAULT_DENOM = "udys"
 DEFAULT_BASE_DIR = "/tmp/dysonchains"
 DEFAULT_CHAINS = 2
 DEFAULT_NODES_PER_CHAIN = 1
@@ -15,17 +15,17 @@ DEFAULT_DYSOND_BIN = "dysond" # Assuming a default, can be overridden
 # User keys with full information from key generation
 USER_KEYS = {
     "alice": {
-        "address": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz",
+        "address": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
         "pubkey": "{\"@type\":\"/cosmos.crypto.secp256k1.PubKey\",\"key\":\"A9PnkO0Did8joszFIaC9hsfw5MDQVNaEDpzZebNyS/5k\"}",
         "mnemonic": "public feature teach face federal matrix throw legend bridge brass diary beach typical doll evoke weapon among crane regret trust enact swarm brother outside"
     },
     "bob": {
-        "address": "dys1fhhxp9xveswc4yhxekr32eqe80rkwpurya0jh0",
+        "address": "dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el",
         "pubkey": "{\"@type\":\"/cosmos.crypto.secp256k1.PubKey\",\"key\":\"A2RYJamnvkPfDDvBvwIaLL0lwqQZUiaYvH8Wydzxze4t\"}",
         "mnemonic": "aerobic creek copper rice disagree become brass elegant century elegant apology position infant saddle metal brain gain loud alpha add boy balance truth cherry"
     },
     "charlie": {
-        "address": "dys1cvqzw2968lq5wzldcglds02gnxg3d49f523ksf",
+        "address": "dys21cvqzw2968lq5wzldcglds02gnxg3d49fpmzt7e",
         "pubkey": "{\"@type\":\"/cosmos.crypto.secp256k1.PubKey\",\"key\":\"AxlX4ICR0yqikI2WoXAqFB1sk3iX/KaEQTo8cbLPUWby\"}",
         "mnemonic": "blind people aim sheriff awkward once wish above agree journey unknown uncover swap damage bamboo volume clay error weekend fiber acquire diamond vintage lake"
     }
@@ -204,7 +204,7 @@ grpc_addr = 'http://localhost:{grpc_port}'
 event_source = {{ mode = 'push', url = 'ws://localhost:{rpc_port}/websocket', batch_delay = '1000ms' }}
 rpc_timeout = '1s'
 trusted_node = true
-account_prefix = 'dys'
+account_prefix = 'dys2'
 key_name = 'charlie'
 store_prefix = 'ibc'
 gas_price = {{ price = 0.001, denom = '{denom}' }}

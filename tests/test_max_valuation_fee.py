@@ -9,10 +9,10 @@ def test_max_annual_pct_fee(chainnet, generate_account, faucet, register_name):
     
     # Setup accounts
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10000")
+    faucet(alice_address, denom="udys", amount="10000")
     
     # Register a name with initial valuation using the fixture
-    name = register_name(dysond_bin, alice_name, alice_address, valuation="100dys")
+    name = register_name(dysond_bin, alice_name, alice_address, valuation="100udys")
     
     # Verify the NFT exists
     nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", name)
@@ -33,11 +33,11 @@ def test_max_annual_pct_fee(chainnet, generate_account, faucet, register_name):
     success_result = dysond_bin("tx", "nameservice", "set-valuation", 
                                "--class-id", "nameservice.dys", 
                                "--nft-id", name, 
-                               "--valuation", "200dys",
+                               "--valuation", "200udys",
                                "--max-annual-pct-fee", "0.02",  # 2% max
                                "--from", alice_name)
     assert success_result["code"] == 0, f"Transaction should have succeeded: {success_result.get('raw_log', '')}"
-    print("Successfully set valuation to 200dys with max annual pct fee 2%")
+    print("Successfully set valuation to 200udys with max annual pct fee 2%")
     
     # Verify the valuation was updated
     updated_nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", name)
@@ -52,7 +52,7 @@ def test_max_annual_pct_fee(chainnet, generate_account, faucet, register_name):
     failed_result = dysond_bin("tx", "nameservice", "set-valuation", 
                              "--class-id", "nameservice.dys", 
                              "--nft-id", name, 
-                             "--valuation", f"{high_valuation}dys",
+                             "--valuation", f"{high_valuation}udys",
                              "--max-annual-pct-fee", insufficient_max_pct,
                              "--from", alice_name)
     
@@ -66,10 +66,10 @@ def test_max_annual_pct_fee(chainnet, generate_account, faucet, register_name):
     compat_result = dysond_bin("tx", "nameservice", "set-valuation", 
                              "--class-id", "nameservice.dys", 
                              "--nft-id", name, 
-                             "--valuation", "250dys",
+                             "--valuation", "250udys",
                              "--from", alice_name)
     assert compat_result["code"] == 0, f"Backwards compatible transaction should have succeeded: {compat_result.get('raw_log', '')}"
-    print("Successfully set valuation to 250dys without specifying max annual pct fee (backwards compatible)")
+    print("Successfully set valuation to 250udys without specifying max annual pct fee (backwards compatible)")
     
     print("All max_annual_pct_fee tests passed!")
 

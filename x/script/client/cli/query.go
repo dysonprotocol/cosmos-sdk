@@ -55,36 +55,36 @@ Optional Flags:
 
 Examples:
   # Execute a script with minimal parameters
-  $ dysond query script run --script-address dys123...
+  $ dysond query script run --script-address dys2123...
 
   # Execute a script with input data as positional arguments
-  $ dysond query script run --script-address dys123... --args '["arg1", "arg2"]'
+  $ dysond query script run --script-address dys2123... --args '["arg1", "arg2"]'
 
   # Execute a script with a specific function name and keyword arguments
-  $ dysond query script run --script-address dys123... --function-name "process_data" --kwargs '{"input_type": "json", "verbose": true}'
+  $ dysond query script run --script-address dys2123... --function-name "process_data" --kwargs '{"input_type": "json", "verbose": true}'
 
   # Execute a script with extra code (if executor is the owner)
-  $ dysond query script run --script-address dys123... --extra-code "def helper(): return 'temp help';"
+  $ dysond query script run --script-address dys2123... --extra-code "def helper(): return 'temp help';"
 
   # Execute a script with extra code from a file (if executor is the owner)
-  $ dysond query script run --script-address dys123... --extra-code-path ./helper_functions.py
+  $ dysond query script run --script-address dys2123... --extra-code-path ./helper_functions.py
 
   # Execute a script with attached messages
-  $ dysond query script run --script-address dys123... --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys123...","to_address":"dys456...","amount":[{"denom":"dys","amount":"100"}]}' --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys123...","to_address":"dys789...","amount":[{"denom":"dys","amount":"200"}]}'
+  $ dysond query script run --script-address dys2123... --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys2123...","to_address":"dys456...","amount":[{"denom":"udys","amount":"100"}]}' --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys2123...","to_address":"dys789...","amount":[{"denom":"udys","amount":"200"}]}'
 
   # Execute a script with executor address
-  $ dysond query script run --script-address dys123... --executor-address dys456... --args '["data"]'`,
+  $ dysond query script run --script-address dys2123... --executor-address dys456... --args '["data"]'`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to get client query context: %w", err)
 			}
 
 			queryClient := scripttypes.NewQueryClient(clientCtx)
 
 			scriptAddress, err := cmd.Flags().GetString("script-address")
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to get --script-address: %w", err)
 			}
 			if scriptAddress == "" {
 				return errors.New("--script-address flag is required")
@@ -92,17 +92,17 @@ Examples:
 
 			executorAddress, err := cmd.Flags().GetString("executor-address")
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to get --executor-address: %w", err)
 			}
 
 			inputArgs, err := cmd.Flags().GetString("args")
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to get --args: %w", err)
 			}
 
 			functionName, err := cmd.Flags().GetString("function-name")
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to get --function-name: %w", err)
 			}
 
 			// Handle extra-code and extra-code-path flags
@@ -118,12 +118,12 @@ Examples:
 			if extraCodeProvided {
 				extraCode, err = cmd.Flags().GetString("extra-code")
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to get --extra-code: %w", err)
 				}
 			} else if extraCodePathProvided {
 				extraCodePath, err := cmd.Flags().GetString("extra-code-path")
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to get --extra-code-path: %w", err)
 				}
 				// Read file contents
 				codeBytes, err := os.ReadFile(extraCodePath)
@@ -135,13 +135,13 @@ Examples:
 
 			kwargs, err := cmd.Flags().GetString("kwargs")
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to get --kwargs: %w", err)
 			}
 
 			// Parse attached messages
 			attachedMessageStrings, err := cmd.Flags().GetStringArray("attached-message")
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to get --attached-message: %w", err)
 			}
 
 			var attachedMessages []*types.Any
@@ -178,7 +178,7 @@ Examples:
 
 			res, err := queryClient.Run(context.Background(), req)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to run script: %w", err)
 			}
 
 			return clientCtx.PrintProto(res)

@@ -36,7 +36,7 @@ def countdown(count=10):
             "scheduled_timestamp": str(scheduled_time),
             "expiry_timestamp": str(expiry_time),
             "task_gas_limit": "200000",
-            "task_gas_fee": {"denom": "dys", "amount": "1"},
+            "task_gas_fee": {"denom": "udys", "amount": "1"},
             "msgs": [exec_script_msg],
         }
     )

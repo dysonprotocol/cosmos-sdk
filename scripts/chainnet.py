@@ -38,15 +38,15 @@ import tomlkit
 
 
 # --- Defaults & Constants ---
-DEFAULT_DENOM = "dys"
+DEFAULT_DENOM = "udys"
 DEFAULT_BASE_DIR = Path("/tmp/dysonchains")
 DEFAULT_CONFIG_PATH = DEFAULT_BASE_DIR / "chains.json"
 DEFAULT_GENTX_AMOUNT = f"1000000{DEFAULT_DENOM}"
 DEFAULT_INITIAL_BALANCE = f"10000000000{DEFAULT_DENOM}"
 USER_KEYS = {
-    "alice": {"address": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz", "mnemonic": "public feature teach face federal matrix throw legend bridge brass diary beach typical doll evoke weapon among crane regret trust enact swarm brother outside"},
-    "bob":   {"address": "dys1fhhxp9xveswc4yhxekr32eqe80rkwpurya0jh0", "mnemonic": "aerobic creek copper rice disagree become brass elegant century elegant apology position infant saddle metal brain gain loud alpha add boy balance truth cherry"},
-    "charlie": {"address": "dys1cvqzw2968lq5wzldcglds02gnxg3d49f523ksf", "mnemonic": "blind people aim sheriff awkward once wish above agree journey unknown uncover swap damage bamboo volume clay error weekend fiber acquire diamond vintage lake"}
+    "alice": {"address": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej", "mnemonic": "public feature teach face federal matrix throw legend bridge brass diary beach typical doll evoke weapon among crane regret trust enact swarm brother outside"},
+    "bob":   {"address": "dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el", "mnemonic": "aerobic creek copper rice disagree become brass elegant century elegant apology position infant saddle metal brain gain loud alpha add boy balance truth cherry"},
+    "charlie": {"address": "dys21cvqzw2968lq5wzldcglds02gnxg3d49fpmzt7e", "mnemonic": "blind people aim sheriff awkward once wish above agree journey unknown uncover swap damage bamboo volume clay error weekend fiber acquire diamond vintage lake"}
 }
 MAX_CHAINNET_OFFSET = 10
 MAX_NODES_PER_CHAIN = 10
@@ -156,7 +156,7 @@ grpc_addr = "http://localhost:{chain["nodes"][0]["ports"]["grpc"]}"
 event_source = {{ mode = "pull", interval = '100ms' }}
 rpc_timeout = "15s"
 trusted_node = true
-account_prefix = "dys"
+account_prefix = "dys2"
 key_name = "charlie"
 store_prefix = "ibc"
 gas_price = {{ price = 0.001, denom = "{denom}" }}
@@ -555,19 +555,20 @@ def ibc(config_file):
         chain_b_id = chains_ids[i+1]
         click.echo(f"Creating IBC channel between {chain_a_id} and {chain_b_id}")
         try:
-            subprocess.run([
+            command = [
                 'hermes', '--config', str(hcfg), 'create', 'channel',
                 '--a-chain', chain_a_id, '--b-chain', chain_b_id,
                 '--a-port', 'transfer', '--b-port', 'transfer',
                 '--new-client-connection', '--yes'
-            ], check=True, capture_output=True, text=True)
+            ]
+            print("Running command: " + " ".join(command))
+            subprocess.run(command, check=True, capture_output=True, text=True)
             click.echo(f"Successfully created channel between {chain_a_id} and {chain_b_id}")
         except subprocess.CalledProcessError as e:
             click.echo(f"Error creating IBC channel between {chain_a_id} and {chain_b_id}:")
             click.echo(f"Stdout: {e.stdout}")
             click.echo(f"Stderr: {e.stderr}")
-            # Optionally, re-raise or handle more gracefully
-            # raise # Re-raise the exception to halt execution if needed
+            raise e
     click.echo("IBC connection attempts complete.")
 
 if __name__ == '__main__':

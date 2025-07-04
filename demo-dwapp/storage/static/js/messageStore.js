@@ -80,7 +80,7 @@ document.addEventListener("alpine:init", () => {
             "@type": "/cosmos.bank.v1beta1.MsgSend",
             "from_address": walletStore.activeWalletMeta.address,
             "to_address": scriptAddress,
-            "amount": [{ "denom": "dys", "amount": this.sponsorAmount.toString() }]
+            "amount": [{ "denom": "udys", "amount": this.sponsorAmount.toString() }]
           };
           attachedMsg.push(bankSendMsg);
         }

@@ -29,8 +29,8 @@ print(f"Using alice address: {ALICE_ADDRESS}")
 print(f"Using bob address: {BOB_ADDRESS}")
 ```
 
-    Using alice address: dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz
-    Using bob address: dys1fhhxp9xveswc4yhxekr32eqe80rkwpurya0jh0
+    Using alice address: dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej
+    Using bob address: dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el
 
 
 ## Chain Interaction
@@ -62,7 +62,7 @@ def query_balance():
     response = _query({
         "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
         "address": script_address,
-        "denom": "dys"
+        "denom": "udys"
     })
     return response
 '''
@@ -86,7 +86,7 @@ print(json.dumps(balance_response, indent=2))
       "@type": "/cosmos.bank.v1beta1.QueryBalanceResponse",
       "balance": {
         "amount": "9999853593",
-        "denom": "dys"
+        "denom": "udys"
       }
     }
 
@@ -111,14 +111,14 @@ def query_multiple_balances():
     alice_balance = _query({{
         "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
         "address": alice_address,
-        "denom": "dys"
+        "denom": "udys"
     }})
     
     # Query Bob's balance
     bob_balance = _query({{
         "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
         "address": bob_address,
-        "denom": "dys"
+        "denom": "udys"
     }})
     
     # Return both balances
@@ -148,14 +148,14 @@ print(json.dumps(balances, indent=2))
         "@type": "/cosmos.bank.v1beta1.QueryBalanceResponse",
         "balance": {
           "amount": "9999853593",
-          "denom": "dys"
+          "denom": "udys"
         }
       },
       "bob_balance": {
         "@type": "/cosmos.bank.v1beta1.QueryBalanceResponse",
         "balance": {
           "amount": "10000000000",
-          "denom": "dys"
+          "denom": "udys"
         }
       }
     }
@@ -185,7 +185,7 @@ def benchmark_gas(iterations=5):
     balance_response = _query({
         "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
         "address": script_address,
-        "denom": "dys"
+        "denom": "udys"
     })
     
     # Check gas after query
@@ -262,7 +262,7 @@ print(f"- Average gas per iteration: {gas_metrics['per_iteration']}")
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz/70",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/70",
               "index": false
             }
           ]
@@ -287,7 +287,7 @@ print(f"- Average gas per iteration: {gas_metrics['per_iteration']}")
             },
             {
               "key": "sender",
-              "value": "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
               "index": false
             },
             {
@@ -307,7 +307,7 @@ print(f"- Average gas per iteration: {gas_metrics['per_iteration']}")
           "attributes": [
             {
               "key": "request",
-              "value": "{\"executor_address\":\"dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz\",\"script_address\":\"dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz\",\"extra_code\":\"\\nfrom dys import _query, get_gas_consumed, get_script_address, get_gas_limit\\nimport json\\n\\ndef benchmark_gas(iterations=5):\\n    # Start tracking gas\\n    initial_gas = get_gas_consumed()\\n    \\n    # Perform a query that consumes gas\\n    script_address = get_script_address()\\n    balance_response = _query({\\n        \\\"@type\\\": \\\"/cosmos.bank.v1beta1.QueryBalanceRequest\\\",\\n        \\\"address\\\": script_address,\\n        \\\"denom\\\": \\\"dys\\\"\\n    })\\n    \\n    # Check gas after query\\n    after_query_gas = get_gas_consumed()\\n    \\n    # Run some iterations to measure their gas cost\\n    for i in range(iterations):\\n        print(f\\\"Iteration {i+1} of {iterations}\\\")\\n    \\n    # Check final gas consumption\\n    final_gas = get_gas_consumed()\\n    \\n    # Calculate gas used by different operations\\n    query_gas = after_query_gas - initial_gas\\n    iterations_gas = final_gas - after_query_gas\\n    \\n    return {\\n        \\\"initial_gas\\\": initial_gas,\\n        \\\"after_query_gas\\\": after_query_gas,\\n        \\\"final_gas\\\": final_gas,\\n        \\\"query_gas\\\": query_gas,\\n        \\\"iterations_gas\\\": iterations_gas,\\n        \\\"per_iteration\\\": iterations_gas / iterations\\n    }\\n\",\"function_name\":\"benchmark_gas\",\"args\":\"\",\"kwargs\":\"\",\"attached_messages\":[]}",
+              "value": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"extra_code\":\"\\nfrom dys import _query, get_gas_consumed, get_script_address, get_gas_limit\\nimport json\\n\\ndef benchmark_gas(iterations=5):\\n    # Start tracking gas\\n    initial_gas = get_gas_consumed()\\n    \\n    # Perform a query that consumes gas\\n    script_address = get_script_address()\\n    balance_response = _query({\\n        \\\"@type\\\": \\\"/cosmos.bank.v1beta1.QueryBalanceRequest\\\",\\n        \\\"address\\\": script_address,\\n        \\\"denom\\\": \\\"dys\\\"\\n    })\\n    \\n    # Check gas after query\\n    after_query_gas = get_gas_consumed()\\n    \\n    # Run some iterations to measure their gas cost\\n    for i in range(iterations):\\n        print(f\\\"Iteration {i+1} of {iterations}\\\")\\n    \\n    # Check final gas consumption\\n    final_gas = get_gas_consumed()\\n    \\n    # Calculate gas used by different operations\\n    query_gas = after_query_gas - initial_gas\\n    iterations_gas = final_gas - after_query_gas\\n    \\n    return {\\n        \\\"initial_gas\\\": initial_gas,\\n        \\\"after_query_gas\\\": after_query_gas,\\n        \\\"final_gas\\\": final_gas,\\n        \\\"query_gas\\\": query_gas,\\n        \\\"iterations_gas\\\": iterations_gas,\\n        \\\"per_iteration\\\": iterations_gas / iterations\\n    }\\n\",\"function_name\":\"benchmark_gas\",\"args\":\"\",\"kwargs\":\"\",\"attached_messages\":[]}",
               "index": false
             },
             {
@@ -389,7 +389,7 @@ def count_nodes():
     _query({
         "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
         "address": script_address,
-        "denom": "dys"
+        "denom": "udys"
     })
     
     # Complex calculation with loop
@@ -509,8 +509,8 @@ print(f"Executor Address: {address_info['caller_address']}")
 print(f"Self-execution: {address_info['is_self_call']}")
 ```
 
-    Script Address: dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz
-    Executor Address: dys1fhhxp9xveswc4yhxekr32eqe80rkwpurya0jh0
+    Script Address: dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej
+    Executor Address: dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el
     Self-execution: False
 
 
@@ -573,7 +573,7 @@ msg1 = shlex.quote(json.dumps({
         "@type":"/cosmos.bank.v1beta1.MsgSend",
         "from_address": ALICE_ADDRESS,
         "to_address": BOB_ADDRESS,
-        "amount":[{"denom":"dys","amount":"12"}]
+        "amount":[{"denom":"udys","amount":"12"}]
     }))
 
 
@@ -581,7 +581,7 @@ msg2 = shlex.quote(json.dumps({
     "@type":"/cosmos.bank.v1beta1.MsgSend",
     "from_address": ALICE_ADDRESS   ,
     "to_address": BOB_ADDRESS,
-    "amount":[{"denom":"dys","amount":"34"}]
+    "amount":[{"denom":"udys","amount":"34"}]
 }))
 
 attached_msgs_script = '''
@@ -618,9 +618,9 @@ for m, r in zip(messages, results):
 
 ```
 
-    Message: {'@type': '/cosmos.bank.v1beta1.MsgSend', 'amount': [{'amount': '12', 'denom': 'dys'}], 'from_address': 'dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz', 'to_address': 'dys1fhhxp9xveswc4yhxekr32eqe80rkwpurya0jh0'}
+    Message: {'@type': '/cosmos.bank.v1beta1.MsgSend', 'amount': [{'amount': '12', 'denom': 'udys'}], 'from_address': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej', 'to_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el'}
     Result: {'@type': '/cosmos.bank.v1beta1.MsgSendResponse'}
-    Message: {'@type': '/cosmos.bank.v1beta1.MsgSend', 'amount': [{'amount': '34', 'denom': 'dys'}], 'from_address': 'dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz', 'to_address': 'dys1fhhxp9xveswc4yhxekr32eqe80rkwpurya0jh0'}
+    Message: {'@type': '/cosmos.bank.v1beta1.MsgSend', 'amount': [{'amount': '34', 'denom': 'udys'}], 'from_address': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej', 'to_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el'}
     Result: {'@type': '/cosmos.bank.v1beta1.MsgSendResponse'}
 
 
@@ -660,11 +660,11 @@ for event in result['events']:
 
 ```
 
-    address: "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz"
+    address: "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej"
     key: "payment_processed"
     value: "success"
     msg_index: 0
-    address: "dys1tvhkv3gqr90jpycaky02xa5ukhaxllu38wawhz"
+    address: "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej"
     key: "foo"
     value: "123123"
     msg_index: 0

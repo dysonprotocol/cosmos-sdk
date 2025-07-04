@@ -21,7 +21,7 @@ def test_fee_deduction_success(chainnet, generate_account):
     [alice_name, alice_address] = generate_account('alice')
     [bob_name, bob_address] = generate_account('bob')
     balance_before = dysond_bin("query", "bank", "balances", alice_address)
-    dys_balance_before = next((coin["amount"] for coin in balance_before["balances"] if coin["denom"] == "dys"), "0")
+    dys_balance_before = next((coin["amount"] for coin in balance_before["balances"] if coin["denom"] == "udys"), "0")
     
     print(f"Initial balance: {dys_balance_before} dys")
     
@@ -37,7 +37,7 @@ def test_fee_deduction_success(chainnet, generate_account):
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": alice_address,
         "to_address": bob_address, 
-        "amount": [{"denom": "dys", "amount": "1"}]
+        "amount": [{"denom": "udys", "amount": "1"}]
     }
     
     # Create the task using execute_tx_and_wait directly
@@ -46,7 +46,7 @@ def test_fee_deduction_success(chainnet, generate_account):
         "--scheduled-timestamp", str(scheduled_time),
         "--expiry-timestamp", str(expiry_time),
         "--task-gas-limit", str(gas_limit),
-        "--task-gas-fee", f"{gas_fee}dys",
+        "--task-gas-fee", f"{gas_fee}udys",
         "--msgs", json.dumps(msg_obj),
         "--from", alice_name, 
     )
@@ -80,7 +80,7 @@ def test_fee_deduction_success(chainnet, generate_account):
     def check_balance_updated():
         nonlocal balance_after_int_result
         balance_after = dysond_bin("query", "bank", "balances", alice_address)
-        dys_balance_after = next((coin["amount"] for coin in balance_after["balances"] if coin["denom"] == "dys"), "0")
+        dys_balance_after = next((coin["amount"] for coin in balance_after["balances"] if coin["denom"] == "udys"), "0")
         
         balance_before_int = int(dys_balance_before)
         balance_after_int = int(dys_balance_after)
@@ -134,7 +134,7 @@ def test_fee_deduction_insufficient_funds(chainnet, generate_account):
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": poor_address,
         "to_address": poor_address,
-        "amount": [{"denom": "dys", "amount": "10"}]
+        "amount": [{"denom": "udys", "amount": "10"}]
     }
     
     # Create the task using execute_tx_and_wait directly
@@ -143,7 +143,7 @@ def test_fee_deduction_insufficient_funds(chainnet, generate_account):
         "--scheduled-timestamp", str(scheduled_time),
         "--expiry-timestamp", str(expiry_time),
         "--task-gas-limit", str(gas_limit),
-        "--task-gas-fee", f"{gas_fee}dys",
+        "--task-gas-fee", f"{gas_fee}udys",
         "--msgs", json.dumps(msg_obj),
         "--from", poor_name, 
     )

@@ -30,7 +30,7 @@ def test_script_get_block(chainnet):
     assert len(response["app_hash"]) > 0
     
     # Verify proposer address is a valid bech32 address
-    assert response["proposer_address"].startswith("dys")
+    assert response["proposer_address"].startswith("dys2")
     
     print(f"Block height: {response['block_height']}")
     print(f"Block time: {response['block_time']}")

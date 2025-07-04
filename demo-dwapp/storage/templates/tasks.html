@@ -326,7 +326,7 @@
                       <div class="space-y-2 text-sm">
                         <div><strong>Gas Limit:</strong> <span x-text="formatGas(task.task_gas_limit || task.gas_limit)"></span></div>
                         <div x-show="(task.task_gas_fee?.amount && task.task_gas_fee?.amount !== '0') || (task.gas_fee && task.gas_fee !== '0')">
-                          <strong>Gas Fee:</strong> <span x-text="task.task_gas_fee?.amount || task.gas_fee"></span> <span x-text="task.task_gas_fee?.denom || 'dys'"></span>
+                          <strong>Gas Fee:</strong> <span x-text="task.task_gas_fee?.amount || task.gas_fee"></span> <span x-text="task.task_gas_fee?.denom || 'udys"></span>
                         </div>
                         <div><strong>Messages:</strong> <span x-text="task.parsedMessages?.length || 0"></span></div>
                       </div>

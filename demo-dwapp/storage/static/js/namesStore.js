@@ -78,7 +78,7 @@ document.addEventListener('alpine:init', () => {
           committer: fromAddr,
           hexhash: this.commitHash,
           valuation: {
-            denom: 'dys',
+            denom: 'udys,
             amount: String(this.valuation),
           }
         };
@@ -190,7 +190,7 @@ document.addEventListener('alpine:init', () => {
             nft_class_id: "nameservice.dys", // assuming name maps to class_id
             nft_id: this.name,       // placeholder mapping
             valuation: {
-              denom: 'dys',
+              denom: 'udys,
               amount: String(this.valuation).trim(),
             },
           });
@@ -872,7 +872,7 @@ document.addEventListener('alpine:init', () => {
           owner: addr,
           nft_class_id: 'nameservice.dys',
           nft_id: obj.id,
-          valuation:{denom:'dys', amount:String(obj.update.valuation).trim()},
+          valuation:{denom:'udys, amount:String(obj.update.valuation).trim()},
         };
         const res = await Alpine.store('walletStore').sendMsg({msg, gasLimit:null, memo:''});
         if(res.success===false) throw new Error(res.rawLog||'Tx failed');

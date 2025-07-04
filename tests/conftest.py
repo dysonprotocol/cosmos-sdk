@@ -307,7 +307,7 @@ def faucet(chainnet):
     """Fixture that returns a function to send coins from alice to a given address."""
     default_dysond_bin = chainnet[0]
 
-    def _faucet(address, denom="dys", amount=10000, dysond_bin=default_dysond_bin, **kwargs):
+    def _faucet(address, denom="udys", amount=10000, dysond_bin=default_dysond_bin, **kwargs):
         """
         Send coins from alice to a given address.
         Args:
@@ -533,7 +533,7 @@ def register_name():
             name = register_name(dysond_bin, owner_name, owner_addr)
     """
 
-    def _register(dysond_bin, owner_name: str, owner_addr: str, valuation: str = "10dys") -> str:
+    def _register(dysond_bin, owner_name: str, owner_addr: str, valuation: str = "10udys") -> str:
         name = generate_name()
         salt = secrets.token_hex(8)
 

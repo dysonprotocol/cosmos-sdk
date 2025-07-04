@@ -32,7 +32,7 @@ def query_balance(query_height=0):
         {
             "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
             "address": script_address,
-            "denom": "dys",
+            "denom": "udys",
         },
         query_height=0,
     )
@@ -50,7 +50,7 @@ def query_balance(query_height=0):
             {
                 "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
                 "address": script_address,
-                "denom": "dys",
+                "denom": "udys",
             },
             query_height=query_height,
         )
@@ -73,7 +73,7 @@ def check_gas():
             {
                 "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
                 "address": script_address,
-                "denom": "dys",
+                "denom": "udys",
             }
         ),
     )
@@ -106,7 +106,7 @@ def count_nodes():
         {
             "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
             "address": script_address,
-            "denom": "dys",
+            "denom": "udys",
         }
     )
 

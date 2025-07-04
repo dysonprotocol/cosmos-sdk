@@ -116,12 +116,12 @@ tew_thunder.py
 ```json
 {
   "deposits": {
-    "dys1...alice": {"dys": 1000000},
-    "dys1...bob": {"dys": 500000}
+    "dys1...alice": {"udys": 1000000},
+    "dys1...bob": {"udys": 500000}
   },
   "balances": {
-    "dys1...alice": {"dys": 1000000},
-    "dys1...bob": {"dys": 500000}
+    "dys1...alice": {"udys": 1000000},
+    "dys1...bob": {"udys": 500000}
   },
   "total_locked": 1500000,
   "withdrawals": {},
@@ -139,8 +139,8 @@ tew_thunder.py
   },
   "data": {
     "balances": {
-      "dys1...alice": {"dys": 800000},
-      "dys1...bob": {"dys": 700000}
+      "dys1...alice": {"udys": 800000},
+      "dys1...bob": {"udys": 700000}
     },
     "transfers": [
       {

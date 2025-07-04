@@ -24,7 +24,7 @@ def test_absolute_timestamp_format(chainnet, generate_account, faucet):
     """Test creating a task using absolute Unix timestamp format."""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     
     # Use Unix timestamps for scheduling
     current_time = int(time.time())
@@ -37,8 +37,8 @@ def test_absolute_timestamp_format(chainnet, generate_account, faucet):
         f"--scheduled-timestamp", str(scheduled_time),
         f"--expiry-timestamp", str(expiry_time),
         "--task-gas-limit", "200000",
-        "--task-gas-fee", "1dys",
-        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "dys", "amount": "1"}}]}}',
+        "--task-gas-fee", "1udys",
+        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "udys", "amount": "1"}}]}}',
         "--from", alice_name
     )
     
@@ -64,7 +64,7 @@ def test_scheduled_duration_format(chainnet, generate_account, faucet):
     """Test using duration format for scheduled_timestamp and absolute timestamp for expiry."""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     
     # Use Unix timestamp for expiry, duration for scheduled
     current_time = int(time.time())
@@ -76,8 +76,8 @@ def test_scheduled_duration_format(chainnet, generate_account, faucet):
         "--scheduled-timestamp", "+5s",  # Schedule 5 seconds from now
         f"--expiry-timestamp", str(expiry_time),
         "--task-gas-limit", "200000",
-        "--task-gas-fee", "1dys",
-        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "dys", "amount": "1"}}]}}',
+        "--task-gas-fee", "1udys",
+        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "udys", "amount": "1"}}]}}',
         "--from", alice_name
     )
     
@@ -105,7 +105,7 @@ def test_both_durations_format(chainnet, generate_account, faucet):
     """Test using duration format for both scheduled_timestamp and expiry_timestamp."""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     
     # Create the task with both scheduled and expiry as durations
     result = dysond_bin(
@@ -113,8 +113,8 @@ def test_both_durations_format(chainnet, generate_account, faucet):
         "--scheduled-timestamp", "+5s",  # Schedule 5 seconds from now
         "--expiry-timestamp", "+10s",    # Expire 10 seconds after scheduled time
         "--task-gas-limit", "200000",
-        "--task-gas-fee", "1dys",
-        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "dys", "amount": "1"}}]}}',
+        "--task-gas-fee", "1udys",
+        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "udys", "amount": "1"}}]}}',
         "--from", alice_name
     )
     
@@ -141,7 +141,7 @@ def test_invalid_expiry_time(chainnet, generate_account, faucet):
     """Test that the system properly validates task expiry time."""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     
     # Create a task with an expiry time that is before the scheduled time
     current_time = int(time.time())
@@ -154,8 +154,8 @@ def test_invalid_expiry_time(chainnet, generate_account, faucet):
         f"--scheduled-timestamp", str(scheduled_time),
         f"--expiry-timestamp", str(expiry_time),
         "--task-gas-limit", "200000",
-        "--task-gas-fee", "1dys",
-        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "dys", "amount": "1"}}]}}',
+        "--task-gas-fee", "1udys",
+        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "udys", "amount": "1"}}]}}',
         "--from", alice_name
     )
     
@@ -168,7 +168,7 @@ def test_task_execution(chainnet, generate_account, faucet):
     """Test that a task executes successfully when its scheduled time is reached."""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     
     # Create a task with immediate scheduling
     result = dysond_bin(
@@ -176,8 +176,8 @@ def test_task_execution(chainnet, generate_account, faucet):
         "--scheduled-timestamp", "+1s",  # Schedule 1 second from now
         "--expiry-timestamp", "+10s",    # Expire 10 seconds after scheduled time
         "--task-gas-limit", "200000",
-        "--task-gas-fee", "1dys",
-        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "dys", "amount": "1"}}]}}',
+        "--task-gas-fee", "1udys",
+        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "udys", "amount": "1"}}]}}',
         "--from", alice_name
     )
     
@@ -210,7 +210,7 @@ def test_task_status_change(chainnet, generate_account, faucet):
     """Test that a task changes status properly when executed or expired."""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     
     # Create a task with immediate scheduling but delay it slightly to ensure we can catch it in SCHEDULED status
     result = dysond_bin(
@@ -218,8 +218,8 @@ def test_task_status_change(chainnet, generate_account, faucet):
         "--scheduled-timestamp", "+2s",  # Schedule 2 seconds from now to give us time to check the initial status
         "--expiry-timestamp", "+10s",    # Expire 10 seconds after scheduled
         "--task-gas-limit", "200000",
-        "--task-gas-fee", "1dys",
-        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "dys", "amount": "1"}}]}}',
+        "--task-gas-fee", "1udys",
+        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{alice_address}", "amount": [{{"denom": "udys", "amount": "1"}}]}}',
         "--from", alice_name
     )
     
@@ -265,7 +265,7 @@ def test_task_failure(chainnet, generate_account, faucet):
     """Test that a task fails properly when it can't be executed successfully."""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     
     # Create a task that can't execute properly (invalid address)
     invalid_address = "dys1invalid000000000000000000000000000000000"
@@ -275,8 +275,8 @@ def test_task_failure(chainnet, generate_account, faucet):
         "--scheduled-timestamp", "+0s",  # Schedule immediately 
         "--expiry-timestamp", "+10s",    # Long expiry to ensure it attempts execution
         "--task-gas-limit", "200000",
-        "--task-gas-fee", "1dys",
-        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{invalid_address}", "amount": [{{"denom": "dys", "amount": "1"}}]}}',
+        "--task-gas-fee", "1udys",
+        "--msgs", f'{{"@type": "/cosmos.bank.v1beta1.MsgSend", "from_address": "{alice_address}", "to_address": "{invalid_address}", "amount": [{{"denom": "udys", "amount": "1"}}]}}',
         "--from", alice_name
     )
     

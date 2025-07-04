@@ -2,7 +2,7 @@ from dys import _chain, get_script_address
 import json
 
 
-def query_balance(denom="dys"):
+def query_balance(denom="udys"):
     address = get_script_address()
     query = {
         "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",

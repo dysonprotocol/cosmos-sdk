@@ -15,7 +15,7 @@ const MinBidTimeout = 0 // 0 seconds
 const MaxBidTimeout = time.Hour * 24 * 90 // 90 days
 
 // DefaultAllowedDenoms is the default list of allowed denominations
-var DefaultAllowedDenoms = []string{"dys"}
+var DefaultAllowedDenoms = []string{"udys"}
 
 // DefaultRejectBidValuationFeePercent is the default percentage of the valuation to charge as a reject bid valuation fee
 var DefaultRejectBidValuationFeePercent = "0.03" // 3%
@@ -84,10 +84,10 @@ func validateBidTimeout(timeout time.Duration) error {
 func validateAllowedDenoms(denoms []string) error {
 	// Check if the denoms list is empty
 	if len(denoms) == 0 {
-		return fmt.Errorf("allowed denoms list cannot be empty, it must contain at least 'dys'")
+		return fmt.Errorf("allowed denoms list cannot be empty, it must contain at least 'udys'")
 	}
 
-	// Check if "dys" is in the allowed denoms list
+	// Check if "udys" is in the allowed denoms list
 	dysDenomExists := false
 	for _, denom := range denoms {
 		// Check that no denom is empty
@@ -95,14 +95,14 @@ func validateAllowedDenoms(denoms []string) error {
 			return fmt.Errorf("denom cannot be empty")
 		}
 
-		if denom == "dys" {
+		if denom == "udys" {
 			dysDenomExists = true
 		}
 	}
 
-	// Ensure "dys" is in the list
+	// Ensure "udys" is in the list
 	if !dysDenomExists {
-		return fmt.Errorf("allowed denoms list must contain 'dys'")
+		return fmt.Errorf("allowed denoms list must contain 'udys'")
 	}
 
 	return nil

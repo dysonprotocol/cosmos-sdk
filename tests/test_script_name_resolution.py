@@ -17,7 +17,7 @@ def test_name_resolution(chainnet, generate_account, faucet, script_code, api_ad
     """Test name resolution in the RunWeb function"""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     
     # First, update Alice's script with a simple WSGI app
     update_result = dysond_bin(
@@ -46,7 +46,7 @@ def test_name_resolution(chainnet, generate_account, faucet, script_code, api_ad
     commit_result = dysond_bin(
         "tx", "nameservice", "commit",
         "--commitment", hex_hash,
-        "--valuation", "100dys",
+        "--valuation", "100udys",
         "--from", alice_name
     )
     assert commit_result["code"] == 0, "Failed to commit name registration"

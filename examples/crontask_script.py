@@ -7,7 +7,7 @@ def create_quick_task():
     Create a crontask scheduled to run in 3 seconds.
 
     This example demonstrates how to programmatically create a scheduled task
-    using the crontask module. The task will send 1 dys token from the executor
+    using the crontask module. The task will send 1 udys token from the executor
     address back to itself after 3 seconds.
 
     Returns:
@@ -22,13 +22,13 @@ def create_quick_task():
     # Expiry time: 1 day from now (the task will be marked as expired if not executed by this time)
     expiry_time = int((now + datetime.timedelta(days=1)).timestamp())
 
-    # Create a simple message for bank transfer (1 dys token to the same address)
+    # Create a simple message for bank transfer (1 udys token to the same address)
     # This serves as a demonstration, but you could include any valid message type
     msg_json = {
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": get_executor_address(),
         "to_address": get_executor_address(),
-        "amount": [{"denom": "dys", "amount": "1"}],  # Using dys explicitly
+        "amount": [{"denom": "udys", "amount": "1"}],  # Using udys explicitly
     }
 
     # Create crontask message
@@ -40,7 +40,7 @@ def create_quick_task():
             "scheduled_timestamp": str(scheduled_time),
             "expiry_timestamp": str(expiry_time),
             "gas_limit": "200000",  # Set an appropriate gas limit for your transaction
-            "gas_price": {"denom": "dys", "amount": "1"},  # Gas price for execution
+            "gas_price": {"denom": "udys", "amount": "1"},  # Gas price for execution
             "msgs": [msg_json],  # You can include multiple messages in a single task
         }
     )

@@ -217,22 +217,22 @@ Optional Flags:
 
 Examples:
   # Execute a script with minimal parameters
-  $ dysond tx script exec --script-address dys123...
+  $ dysond tx script exec --script-address dys2123...
 
   # Execute a script with input data as positional arguments
-  $ dysond tx script exec --script-address dys123... --args '["arg1", "arg2"]'
+  $ dysond tx script exec --script-address dys2123... --args '["arg1", "arg2"]'
 
   # Execute a script with a specific function name and keyword arguments
-  $ dysond tx script exec --script-address dys123... --function-name "process_data" --kwargs '{"input_type": "json", "verbose": true}'
+  $ dysond tx script exec --script-address dys2123... --function-name "process_data" --kwargs '{"input_type": "json", "verbose": true}'
 
   # Execute a script with extra code (if executor is the owner)
-  $ dysond tx script exec --script-address dys123... --extra-code "def helper(): return 'temp help';"
+  $ dysond tx script exec --script-address dys2123... --extra-code "def helper(): return 'temp help';"
 
   # Execute a script with extra code from a file (if executor is the owner)
-  $ dysond tx script exec --script-address dys123... --extra-code-path ./helper_functions.py
+  $ dysond tx script exec --script-address dys2123... --extra-code-path ./helper_functions.py
 
   # Execute a script with attached messages
-  $ dysond tx script exec --script-address dys123... --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys123...","to_address":"dys456...","amount":[{"denom":"dys","amount":"100"}]}' --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys123...","to_address":"dys789...","amount":[{"denom":"dys","amount":"200"}]}'`,
+  $ dysond tx script exec --script-address dys2123... --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys2123...","to_address":"dys456...","amount":[{"denom":"udys","amount":"100"}]}' --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"dys2123...","to_address":"dys789...","amount":[{"denom":"udys","amount":"200"}]}'`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

@@ -16,7 +16,7 @@ import datetime
 
 # Configuration
 DYSOND_BIN = "dysond"
-DEFAULT_DENOM = "dys"
+DEFAULT_DENOM = "udys"
 DEFAULT_BASE_DIR = "/tmp/dysonchains"
 DEFAULT_CHAINS = 2
 DEFAULT_NODES_PER_CHAIN = 1
@@ -331,7 +331,7 @@ def create_genesis(chain_id, node_homes, validator_info, base_dir):
     for i in range(len(genesis['app_state']['gov']['params']['min_deposit'])):
         if genesis['app_state']['gov']['params']['min_deposit'][i]['denom'] == DEFAULT_DENOM:
             genesis['app_state']['gov']['params']['min_deposit'][i]['amount'] = "1"
-    print("Setting minimum governance deposit to 1dys for testing")
+    print("Setting minimum governance deposit to 1udys for testing")
     
     # Set quorum and threshold to low values for testing
     genesis['app_state']['gov']['params']['quorum'] = "0.01"

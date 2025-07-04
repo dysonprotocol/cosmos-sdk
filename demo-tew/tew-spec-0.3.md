@@ -154,7 +154,7 @@ dysond tx script exec \
   --script-address <tew-protocol-address> \
   --function-name l1_call_tew_app \
   --args '["tew_000001", "process_deposit"]' \
-  --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"<user>","to_address":"<tew-protocol-address>","amount":[{"denom":"dys","amount":"1000"}]}' \
+  --attached-message '{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"<user>","to_address":"<tew-protocol-address>","amount":[{"denom":"udys","amount":"1000"}]}' \
   --from <user>
 
 # WRONG: Direct transfer (funds will be lost!)
@@ -241,7 +241,7 @@ The TEW Protocol provides built-in bank escrow functionality. **Important**: Esc
    - Returns 0 if no balance exists
 
 2. **`send_coins(transfers)`** – Sends escrowed coins to recipients
-   - `transfers`: List of dictionaries with format: `[{"amount": "1000", "denom": "dys", "to_address": "dys1..."}, ...]`
+   - `transfers`: List of dictionaries with format: `[{"amount": "1000", "denom": "udys", "to_address": "dys1..."}, ...]`
    - Validates sufficient balance exists for each denomination
    - Decrements `tew/{tew_id}/balances/{denom}` for each transfer in a single atomic transaction
    - Executes `cosmos.bank.v1beta1.MsgSend` for each transfer

@@ -16,7 +16,7 @@ import time
 # Define base variables
 DYSOND_BIN = "dysond"
 CHAIN_ID = "devnet"
-DENOM = "dys"
+DENOM = "udys"
 TIMEOUT_COMMIT = "1s"
 
 # Parse command-line arguments

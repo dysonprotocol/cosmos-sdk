@@ -15,7 +15,7 @@ def test_move_nft_success(chainnet, generate_account, faucet, register_name):
     # accounts
     owner_name, owner_addr = generate_account("nft_owner")
     recipient_name, recipient_addr = generate_account("nft_recipient")
-    faucet(owner_addr, denom="dys", amount="25000")
+    faucet(owner_addr, denom="udys", amount="25000")
 
     # register name & derive NFT class ID
     class_id = register_name(dysond_bin, owner_name, owner_addr)
@@ -80,8 +80,8 @@ def test_move_nft_non_owner_fails(chainnet, generate_account, faucet, register_n
 
     owner_name, owner_addr = generate_account("nft_owner")
     attacker_name, attacker_addr = generate_account("nft_attacker")
-    faucet(owner_addr, denom="dys", amount="25000")
-    faucet(attacker_addr, denom="dys", amount="1000")
+    faucet(owner_addr, denom="udys", amount="25000")
+    faucet(attacker_addr, denom="udys", amount="1000")
 
     class_id = register_name(dysond_bin, owner_name, owner_addr)
 
@@ -131,7 +131,7 @@ def test_move_nft_module_account_fails(chainnet, generate_account, faucet, regis
     dysond_bin = chainnet[0]
 
     owner_name, owner_addr = generate_account("nft_owner")
-    faucet(owner_addr, denom="dys", amount="25000")
+    faucet(owner_addr, denom="udys", amount="25000")
 
     # module account destination
     module_info = dysond_bin("query", "auth", "module-account", "distribution")

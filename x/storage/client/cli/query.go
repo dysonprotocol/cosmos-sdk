@@ -37,16 +37,16 @@ func NewQueryStorageGetCmd() *cobra.Command {
 
 Examples:
   # Get a storage entry
-  $ dysond query storage get dys1... --index "config/settings"
+  $ dysond query storage get dys21... --index "config/settings"
   
   # Get a storage entry with JSON output
-  $ dysond query storage get dys1... --index "user/profile" --output json
+  $ dysond query storage get dys21... --index "user/profile" --output json
   
   # Extract a specific field from the storage data
-  $ dysond query storage get dys1... --index "user/profile" --extract "email"
+  $ dysond query storage get dys21... --index "user/profile" --extract "email"
   
   # Extract a nested field
-  $ dysond query storage get dys1... --index "config/app" --extract "database.connection.host"`,
+  $ dysond query storage get dys21... --index "config/app" --extract "database.connection.host"`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -103,28 +103,28 @@ func NewQueryStorageListCmd() *cobra.Command {
 
 Examples:
   # List all storage entries for an owner
-  $ dysond query storage list dys1...
+  $ dysond query storage list dys21...
   
   # List storage entries with a specific prefix
-  $ dysond query storage list dys1... --index-prefix "config/"
+  $ dysond query storage list dys21... --index-prefix "config/"
   
   # List with pagination
-  $ dysond query storage list dys1... --limit 10 --offset 20
+  $ dysond query storage list dys21... --limit 10 --offset 20
   
   # Filter entries where data.status equals "active"
-  $ dysond query storage list dys1... --filter "status==active"
+  $ dysond query storage list dys21... --filter "status==active"
   
   # Filter entries where data.count is greater than 10
-  $ dysond query storage list dys1... --filter "count>10"
+  $ dysond query storage list dys21... --filter "count>10"
   
   # Extract only the 'name' field from each entry's data
-  $ dysond query storage list dys1... --extract "name"
+  $ dysond query storage list dys21... --extract "name"
   
   # Combine prefix, filter, and extract
-  $ dysond query storage list dys1... --index-prefix "user/" --filter "active==true" --extract "profile.username"
+  $ dysond query storage list dys21... --index-prefix "user/" --filter "active==true" --extract "profile.username"
   
   # Filter with complex conditions (e.g., name contains "test")
-  $ dysond query storage list dys1... --filter 'name%"*test*"'`,
+  $ dysond query storage list dys21... --filter 'name%"*test*"'`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)

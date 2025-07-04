@@ -186,8 +186,8 @@ The `L2 State` is the complete JSON representation of an instance's off-chain da
   "data": {
     // App-specific state data (e.g., balances, positions)
     "balances": {
-      "dys1alice...": {"dys": 800000},
-      "dys1bob...": {"dys": 700000}
+      "dys1alice...": {"udys": 800000},
+      "dys1bob...": {"udys": 700000}
     }
   },
   "tx_results": {

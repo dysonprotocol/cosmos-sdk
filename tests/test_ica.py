@@ -66,7 +66,7 @@ def test_ica_complete_e2e_workflow(ibc_setup, generate_account, faucet):
             # Return early if successful
             registered_address = ica_result.get("registered_address", "") if is_success else ""
             print(f"✅ Found ICA address: {registered_address}") if is_success else None
-            return (registered_address and registered_address.startswith("dys1")) if is_success else False
+            return (registered_address and registered_address.startswith("dys")) if is_success else False
         
         return False
     
@@ -96,11 +96,11 @@ def test_ica_complete_e2e_workflow(ibc_setup, generate_account, faucet):
     ica_address = successful_results[0] if successful_results else None
     
     assert ica_address, "ICA address should be returned"
-    assert ica_address.startswith("dys1"), "ICA address should be valid bech32 format"
+    assert ica_address.startswith("dys2"), "ICA address should be valid bech32 format"
     print(f"✅ ICA Address established: {ica_address}")
     
     # 5. Fund the ICA account via IBC transfer
-    fund_args = ["dys", "5000"]
+    fund_args = ["udys", "5000"]
     print(f"💰 Funding ICA account with {fund_args}...")
     fund_result = dysond_bin("tx", "script", "exec", "--script-address", alice_address, "--function-name", "fund", "--args", json.dumps(fund_args), "--from", alice_name, "--gas", "1000000")
     print(f"💰 Fund result: {fund_result}")

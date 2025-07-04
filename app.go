@@ -30,13 +30,13 @@ import (
 	"cosmossdk.io/x/feegrant"
 	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
 	feegrantmodule "cosmossdk.io/x/feegrant/module"
-	"dysonprotocol.com/x/nft"
-	nftkeeper "dysonprotocol.com/x/nft/keeper"
-	nftmodule "dysonprotocol.com/x/nft/module"
 	"cosmossdk.io/x/tx/signing"
 	"cosmossdk.io/x/upgrade"
 	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
+	"dysonprotocol.com/x/nft"
+	nftkeeper "dysonprotocol.com/x/nft/keeper"
+	nftmodule "dysonprotocol.com/x/nft/module"
 
 	dysondserver "dysonprotocol.com/dysond/server"
 	crontaskkeeper "dysonprotocol.com/x/crontask/keeper"
@@ -147,7 +147,7 @@ import (
 const appName = "DysApp"
 
 // Additional constants for app configuration
-const AccountAddressPrefix = "dys"
+const AccountAddressPrefix = "dys2"
 
 var DefaultNodeHome string
 
@@ -374,8 +374,8 @@ func NewDysApp(
 		runtime.NewKVStoreService(keys[authtypes.StoreKey]),
 		authtypes.ProtoBaseAccount,
 		maccPerms,
-		authcodec.NewBech32Codec("dys"),
-		"dys",
+		authcodec.NewBech32Codec("dys2"),
+		"dys2",
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		authkeeper.WithUnorderedTransactions(true),
 	)

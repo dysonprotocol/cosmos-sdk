@@ -70,7 +70,7 @@ def save_message(message="Hello, world!"):
         "@type": "/cosmos.bank.v1beta1.MsgSend",
         "from_address": "MY_ADDRESS",
         "to_address": "SCRIPT_ADDRESS",
-        "amount": [{"denom": "dys", "amount": "COINS_AMOUNT"}]
+        "amount": [{"denom": "udys", "amount": "COINS_AMOUNT"}]
     }]
     """
     caller = get_executor_address()
@@ -88,7 +88,7 @@ def save_message(message="Hello, world!"):
                 denom = coin["denom"]
                 coins[denom] = coins.get(denom, 0) + int(coin["amount"])
 
-    index = f"messages/{coins.get('dys', 0):010d}/{message_id}"
+    index = f"messages/{coins.get('udys, 0):010d}/{message_id}"
 
     message_data = {
         "greeting": message,

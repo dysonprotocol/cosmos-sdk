@@ -20,7 +20,7 @@ def test_simple_wsgi_example(chainnet, generate_account, faucet, api_address):
     
     # Create and fund Alice account
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="10")
+    faucet(alice_address, denom="udys", amount="10")
     
     # Step 1: Read the simple WSGI example script
     script_path = Path(__file__).parent.parent / "examples" / "simple_wsgi_example.py"

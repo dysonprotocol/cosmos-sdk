@@ -5,7 +5,7 @@ import { toBase64, fromBase64 } from "@cosmjs/encoding";
 
 const DEFAULT_CHAIN_INFO = {
   restUrl: window.location.origin, // Use current domain instead of hardcoded localhost
-  bech32Prefix: "dys", // same as chain prefix
+  bech32Prefix: "dys2", // same as chain prefix
 };
 
 const COSMJS_WALLET_TYPE = "cosmjs";
@@ -87,30 +87,30 @@ document.addEventListener("alpine:init", () => {
         rest: this.restUrl,
         bip44: { coinType: 118 },
         bech32Config: {
-          bech32PrefixAccAddr: "dys",
-          bech32PrefixAccPub: "dyspub",
-          bech32PrefixValAddr: "dysvaloper",
-          bech32PrefixValPub: "dysvaloperpub",
-          bech32PrefixConsAddr: "dysvalcons",
-          bech32PrefixConsPub: "dysvalconspub",
+          bech32PrefixAccAddr: "dys2",
+          bech32PrefixAccPub: "dys2pub",
+          bech32PrefixValAddr: "dys2valoper",
+          bech32PrefixValPub: "dys2valoperpub",
+          bech32PrefixConsAddr: "dys2valcons",
+          bech32PrefixConsPub: "dys2valconspub",
         },
         currencies: [
           {
             coinDenom: "DYS",
-            coinMinimalDenom: "dys",
+            coinMinimalDenom: "udys",
             coinDecimals: 0,
           },
         ],
         feeCurrencies: [
           {
             coinDenom: "DYS",
-            coinMinimalDenom: "dys",
+            coinMinimalDenom: "udys",
             coinDecimals: 0,
           },
         ],
         stakeCurrency: {
           coinDenom: "DYS",
-          coinMinimalDenom: "dys",
+          coinMinimalDenom: "udys",
           coinDecimals: 0,
         },
         gasPriceStep: {
@@ -136,7 +136,7 @@ document.addEventListener("alpine:init", () => {
       return {
         amount: [
           {
-            denom: "dys",
+            denom: "udys",
             amount: String(totalAmount),
           },
         ],

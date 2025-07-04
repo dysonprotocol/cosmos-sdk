@@ -48,23 +48,23 @@ $ dysond query crontask tasks-by-status-timestamp "SCHEDULED" -o json | jq
   "tasks": [
     {
       "task_id": "15",
-      "creator": "dys1q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
+      "creator": "dys21q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
       "scheduled_timestamp": "1741022904",
       "expiry_timestamp": "1741107504",
       "task_gas_limit": "200000",
       "task_gas_price": {
-        "denom": "dys",
+        "denom": "udys",
         "amount": "1"
       },
       "msgs": [
         {
           "type": "/cosmos.bank.v1beta1.MsgSend",
           "value": {
-            "from_address": "dys1q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
-            "to_address": "dys1q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
+            "from_address": "dys21q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
+            "to_address": "dys21q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
             "amount": [
               {
-                "denom": "dys",
+                "denom": "udys",
                 "amount": "1"
               }
             ]
@@ -87,23 +87,23 @@ $ dysond query crontask task-by-id 15 -o json | jq
 {
   "task": {
     "task_id": "15",
-    "creator": "dys1q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
+    "creator": "dys21q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
     "scheduled_timestamp": "1741022904",
     "expiry_timestamp": "1741107504",
     "task_gas_limit": "200000",
     "task_gas_price": {
-      "denom": "dys",
+      "denom": "udys",
       "amount": "1"
     },
     "msgs": [
       {
         "type": "/cosmos.bank.v1beta1.MsgSend",
         "value": {
-          "from_address": "dys1q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
-          "to_address": "dys1q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
+          "from_address": "dys21q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
+          "to_address": "dys21q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
           "amount": [
             {
-              "denom": "dys",
+              "denom": "udys",
               "amount": "1"
             }
           ]
@@ -140,7 +140,7 @@ dysond tx crontask [command]
 export ADDRESS=$(dysond keys show -a alice)
 export SCHEDULED_TIME=$(date -v+30M +%s)  # 30 minutes from now
 export EXPIRY_TIME=$(date -v+1d +%s)      # 1 day from now
-export MSG_JSON='{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"'$ADDRESS'","to_address":"'$ADDRESS'","amount":[{"denom":"dys","amount":"1"}]}'
+export MSG_JSON='{"@type":"/cosmos.bank.v1beta1.MsgSend","from_address":"'$ADDRESS'","to_address":"'$ADDRESS'","amount":[{"denom":"udys","amount":"1"}]}'
 
 # Create the task and wait for transaction to be committed
 dysond tx crontask create-task \
@@ -180,7 +180,7 @@ Output Example:
         },
         {
           "key": "fee_payer",
-          "value": "dys1q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
+          "value": "dys21q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0",
           "index": true
         }
       ]
@@ -190,7 +190,7 @@ Output Example:
       "attributes": [
         {
           "key": "acc_seq",
-          "value": "dys1q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0/0",
+          "value": "dys21q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0/0",
           "index": true
         }
       ]
@@ -210,7 +210,7 @@ Output Example:
       "attributes": [
         {
           "key": "creator",
-          "value": "\"dys1q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0\"",
+          "value": "\"dys21q845fkkj4aev36r59fzy26x2d9gej6r4uvreg0\"",
           "index": true
         },
         {

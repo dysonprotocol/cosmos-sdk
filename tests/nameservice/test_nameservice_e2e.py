@@ -31,9 +31,9 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     [alice_name, alice_address] = generate_account('alice')
     [bob_name, bob_address] = generate_account('bob')
     [charlie_name, charlie_address] = generate_account('charlie')
-    faucet(alice_address, denom="dys", amount="25000")
-    faucet(bob_address, denom="dys", amount="1000")
-    faucet(charlie_address, denom="dys", amount="1000")
+    faucet(alice_address, denom="udys", amount="25000000")
+    faucet(bob_address, denom="udys", amount="1000000")
+    faucet(charlie_address, denom="udys", amount="1000000")
     print(f"Alice address: {alice_address}")
     print(f"Bob address: {bob_address}")
     print(f"Charlie address: {charlie_address}")
@@ -49,7 +49,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Convert balances to dict for easier access
     alice_balances_dict = {b["denom"]: int(b["amount"]) for b in initial_alice_balances.get("balances", [])}
-    alice_dys_balance = alice_balances_dict.get("dys", 0)
+    alice_dys_balance = alice_balances_dict.get("udys", 0)
     print(f"Initial Alice DYS balance: {alice_dys_balance}")
     
     # Step 1: Check module parameters
@@ -57,7 +57,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     assert "params" in params, "Parameters missing from query result"
     assert "bid_timeout" in params["params"], "Parameters missing bid_timeout"
     assert "allowed_denoms" in params["params"], "Parameters missing allowed_denoms"
-    assert "dys" in params["params"]["allowed_denoms"], "DYS not in allowed denoms"
+    assert "udys" in params["params"]["allowed_denoms"], "DYS not in allowed denoms"
     print(f"Module parameters: {json.dumps(params, indent=2)}")
     
     bid_timeout = params["params"]["bid_timeout"]
@@ -80,12 +80,12 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     print(f"Commitment hash: {commitment_hash}")
     
     # Use random valuation between 10 and 100 DYS
-    initial_valuation = random.randint(10, 100)
+    initial_valuation = random.randint(1000, 2000)
     
     # Commit to registering the name
-    commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", commitment_hash, "--valuation", f"{initial_valuation}dys", "--from", alice_name)
+    commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", commitment_hash, "--valuation", f"{initial_valuation}udys", "--from", alice_name)
     assert commit_result["code"] == 0, "Commit transaction failed"
-    print(f"Name commitment successful with valuation {initial_valuation}dys")
+    print(f"Name commitment successful with valuation {initial_valuation}udys")
     
     # Reveal the name to complete registration
     reveal_result = dysond_bin("tx", "nameservice", "reveal", "--name", name, "--salt", salt, "--from", alice_name)
@@ -101,7 +101,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     # Extract NFT data to verify valuation
     nft_data = nft_info["nft"].get("data", {}).get("value", {})
     assert nft_data.get("valuation", {}).get("amount") == str(initial_valuation), "Incorrect initial valuation"
-    print(f"Initial NFT valuation: {nft_data.get('valuation', {}).get('amount')} dys")
+    print(f"Initial NFT valuation: {nft_data.get('valuation', {}).get('amount')} udys")
     
     # Step 3: Destination Setting
     destination_result = dysond_bin("tx", "nameservice", "set-destination", "--name", name, "--destination", alice_address, "--from", alice_name)
@@ -116,7 +116,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     # Step 4: Name Valuation Update
     # Set new valuation higher than the current one
     new_valuation = initial_valuation + random.randint(50, 150)
-    valuation_result = dysond_bin("tx", "nameservice", "set-valuation", "--class-id", "nameservice.dys", "--nft-id", name, "--valuation", f"{new_valuation}dys", "--from", alice_name)
+    valuation_result = dysond_bin("tx", "nameservice", "set-valuation", "--class-id", "nameservice.dys", "--nft-id", name, "--valuation", f"{new_valuation}udys", "--from", alice_name)
     assert valuation_result["code"] == 0, "Set valuation transaction failed" + valuation_result["raw_log"]
     print(f"Valuation updated successfully from {initial_valuation} to {new_valuation}")
     
@@ -124,7 +124,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     revalued_nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", name)
     updated_valuation = revalued_nft_info["nft"].get("data", {}).get("value", {}).get("valuation", {}).get("amount")
     assert updated_valuation == str(new_valuation), "Valuation not updated correctly" + revalued_nft_info["raw_log"]
-    print(f"Updated NFT valuation verified: {updated_valuation} dys")
+    print(f"Updated NFT valuation verified: {updated_valuation} udys")
     
     # Step 5: Creating NFT Classes
     # Create a main NFT class with randomized names
@@ -372,10 +372,10 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     bidding_commitment_hash = bidding_hash_result.get("hex_hash")
     
     # Set bidding name valuation
-    bidding_valuation = random.randint(50, 150)
+    bidding_valuation = random.randint(3000, 4000)
     
     # Commit to registering the bidding test name
-    bidding_commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", bidding_commitment_hash, "--valuation", f"{bidding_valuation}dys", "--from", alice_name)
+    bidding_commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", bidding_commitment_hash, "--valuation", f"{bidding_valuation}udys", "--from", alice_name)
     assert bidding_commit_result["code"] == 0, "Bidding name commit transaction failed" + bidding_commit_result["raw_log"]
     
     # Reveal the bidding test name
@@ -390,16 +390,16 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Step 9.1: Bob places a bid on the NFT
     bob_bid_amount = bidding_valuation + random.randint(10, 30)
-    bob_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--bid-amount", f"{bob_bid_amount}dys", "--from", bob_name)
+    bob_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--bid-amount", f"{bob_bid_amount}udys", "--from", bob_name)
     assert bob_bid_result["code"] == 0, "Bob's place bid transaction failed" + bob_bid_result["raw_log"]
-    print(f"Bob successfully placed a bid of {bob_bid_amount}dys")
+    print(f"Bob successfully placed a bid of {bob_bid_amount}udys")
     
     # Verify the bid was recorded
     nft_info_after_bid = dysond_bin("query", "nft", "nft", "nameservice.dys", bidding_name)
     nft_data_after_bid = nft_info_after_bid["nft"].get("data", {}).get("value", {})
     assert nft_data_after_bid.get("current_bid", {}).get("amount") == str(bob_bid_amount), "Bob's bid not recorded correctly"
     assert nft_data_after_bid.get("current_bidder") == bob_address, "Bob's address not recorded as bidder"
-    print(f"Verified current bid is now {bob_bid_amount}dys from Bob")
+    print(f"Verified current bid is now {bob_bid_amount}udys from Bob")
     
     # Step 9.2: Alice accepts Bob's bid
     accept_bid_result = dysond_bin("tx", "nameservice", "accept-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--from", alice_name)
@@ -414,24 +414,24 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     # Step 9.3: Charlie places a bid on Bob's NFT
     # Check if Charlie has enough DYS balance using list comprehensions
     balances = dysond_bin("query", "bank", "balances", charlie_address)
-    dys_balances = [b for b in balances.get("balances", []) if b.get("denom") == "dys" and int(b.get("amount", "0")) > 200]
+    dys_balances = [b for b in balances.get("balances", []) if b.get("denom") == "udys" and int(b.get("amount", "0")) > 200]
     has_dys = len(dys_balances) > 0
     
     # Send funds to Charlie from Alice if needed
-    fund_result = dysond_bin("tx", "bank", "send", "alice", charlie_address, "200dys") if not has_dys else None
+    fund_result = dysond_bin("tx", "bank", "send", "alice", charlie_address, "200udys") if not has_dys else None
     assert not has_dys or fund_result is None or fund_result["code"] == 0, "Failed to fund Charlie's account" + (fund_result.get("raw_log", "") if fund_result else "")
-    print("Funded Charlie's account with 200dys") if not has_dys else None
+    print("Funded Charlie's account with 200udys") if not has_dys else None
     
     charlie_bid_amount = bob_bid_amount + random.randint(20, 50)
-    charlie_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--bid-amount", f"{charlie_bid_amount}dys", "--from", charlie_name)
+    charlie_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--bid-amount", f"{charlie_bid_amount}udys", "--from", charlie_name)
     assert charlie_bid_result["code"] == 0, "Charlie's place bid transaction failed" + charlie_bid_result["raw_log"]
-    print(f"Charlie successfully placed a bid of {charlie_bid_amount}dys")
+    print(f"Charlie successfully placed a bid of {charlie_bid_amount}udys")
     
     # Step 9.4: Bob rejects Charlie's bid with a higher valuation
     new_bidding_valuation = charlie_bid_amount + random.randint(10, 30)
-    reject_bid_result = dysond_bin("tx", "nameservice", "reject-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--new-valuation", f"{new_bidding_valuation}dys", "--from", bob_name)
+    reject_bid_result = dysond_bin("tx", "nameservice", "reject-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--new-valuation", f"{new_bidding_valuation}udys", "--from", bob_name)
     assert reject_bid_result["code"] == 0, "Reject bid transaction failed" + reject_bid_result["raw_log"]
-    print(f"Bob successfully rejected Charlie's bid and set new valuation to {new_bidding_valuation}dys")
+    print(f"Bob successfully rejected Charlie's bid and set new valuation to {new_bidding_valuation}udys")
     
     # Verify Charlie's bid was rejected and valuation was updated
     nft_info_after_reject = dysond_bin("query", "nft", "nft", "nameservice.dys", bidding_name)
@@ -453,7 +453,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     timeout_commitment_hash = timeout_hash_result.get("hex_hash")
     
     # Commit to registering the timeout test name
-    timeout_commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", timeout_commitment_hash, "--valuation", f"{bidding_valuation}dys", "--from", alice_name)
+    timeout_commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", timeout_commitment_hash, "--valuation", f"{bidding_valuation}udys", "--from", alice_name)
     assert timeout_commit_result["code"] == 0, "Timeout name commit transaction failed" + timeout_commit_result["raw_log"]
     
     # Reveal the timeout test name
@@ -463,9 +463,9 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     
     # Charlie places a bid on the timeout test name
     timeout_bid_amount = bidding_valuation + random.randint(10, 30)
-    timeout_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", timeout_name, "--bid-amount", f"{timeout_bid_amount}dys", "--from", charlie_name)
+    timeout_bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", timeout_name, "--bid-amount", f"{timeout_bid_amount}udys", "--from", charlie_name)
     assert timeout_bid_result["code"] == 0, "Charlie's place bid on timeout name failed" + timeout_bid_result["raw_log"]
-    print(f"Charlie successfully placed a bid of {timeout_bid_amount}dys on {timeout_name}")
+    print(f"Charlie successfully placed a bid of {timeout_bid_amount}udys on {timeout_name}")
     
     # Verify the bid was recorded on the timeout test name
     timeout_nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", timeout_name)
@@ -502,13 +502,13 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
 def register_name(chainnet, generate_account, faucet):
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="dys", amount="25000")
+    faucet(alice_address, denom="udys", amount="25000")
 
     name = f"testname{alice_address[:6]}.dys"
     salt = "testsalt"
     hash_result = dysond_bin("query", "nameservice", "compute-hash", "--name", name, "--salt", salt, "--committer", alice_address)
     hex_hash = hash_result["hex_hash"]
-    commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", hex_hash, "--valuation", "100dys", "--from", alice_name)
+    commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", hex_hash, "--valuation", "100udys", "--from", alice_name)
     assert commit_result["code"] == 0
     reveal_result = dysond_bin("tx", "nameservice", "reveal", "--name", name, "--salt", salt, "--from", alice_name)
     assert reveal_result["code"] == 0
@@ -537,7 +537,7 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
     """Set bid timeout via governance proposal"""
     # Get current params
     current_params = dysond_bin("query", "nameservice", "params")
-    current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["dys"])
+    current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["udys"])
     current_reject_fee_percent = current_params.get("params", {}).get("reject_bid_valuation_fee_percent", "0.03")
     current_minimum_bid_percent_increase = current_params.get("params", {}).get("minimum_bid_percent_increase", "0.01")
     
@@ -551,7 +551,7 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
     validator_operator = validators["validators"][0]["operator_address"]
     
     # Delegate tokens from Alice to validator so Alice has voting power
-    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000dys", "--from", "alice", "--yes")
+    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000udys", "--from", "alice", "--yes")
     assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result['raw_log']}"
 
     proposal = {
@@ -568,7 +568,7 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
             }
         ],
         "metadata": "ipfs://CID",
-        "deposit": "1dys",
+        "deposit": "1udys",
         "title": "Update Nameservice Parameters",
         "summary": f"Update bid_timeout to {bid_timeout_value} for testing"
     }

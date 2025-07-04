@@ -31,9 +31,9 @@ import (
 func NewRootCmd() *cobra.Command {
 
 	cfg := sdk.GetConfig()
-	cfg.SetBech32PrefixForAccount("dys", "dyspub")                     // account addresses
-	cfg.SetBech32PrefixForValidator("dysvaloper", "dysvaloperpub")     // validator operator addresses
-	cfg.SetBech32PrefixForConsensusNode("dysvalcons", "dysvalconspub") // consensus addresses
+	cfg.SetBech32PrefixForAccount("dys2", "dys2pub")                     // account addresses
+	cfg.SetBech32PrefixForValidator("dys2valoper", "dys2valoperpub")     // validator operator addresses
+	cfg.SetBech32PrefixForConsensusNode("dys2valcons", "dys2valconspub") // consensus addresses
 
 	// we "pre"-instantiate the application for getting the injected/configured encoding configuration
 	dysApp := dysonprotocol.NewDysApp(log.NewNopLogger(), dbm.NewMemDB(), nil, true, simtestutil.NewAppOptionsWithFlagHome(dysonprotocol.DefaultNodeHome))
