@@ -210,6 +210,94 @@ def generate(base_dir, num_chains, chainnet_offset, nodes_per_chain, denom, dyso
         (hermes_dir / 'config.toml').write_text(toml)
         click.echo(f"Wrote Hermes TOML to {str(hermes_dir / 'config.toml')}")
 
+def setup_hermes_keys(cfg: dict, force: bool = False):
+    """Setup Hermes keys for all chains in the configuration.
+    
+    Args:
+        cfg: The configuration dictionary containing chain information
+        force: If True, delete existing keys before adding new ones
+    """
+    hermes_config_path = Path(cfg['base_dir']) / 'hermes' / 'config.toml'
+    
+    # Check if Hermes is available and config exists
+    if not shutil.which('hermes'):
+        click.echo("Warning: Hermes binary not found in PATH, skipping Hermes key setup.")
+        return
+    
+    if not hermes_config_path.exists():
+        click.echo("Warning: Hermes config not found, skipping Hermes key setup.")
+        return
+    
+    # Use charlie account for Hermes operations
+    hermes_key_name = "charlie"
+    hermes_mnemonic = USER_KEYS[hermes_key_name]["mnemonic"]
+    expected_address = USER_KEYS[hermes_key_name]["address"]
+    
+    # Create temporary mnemonic file
+    mnemonic_file = Path(cfg['base_dir']) / 'hermes' / f'{hermes_key_name}_mnemonic.txt'
+    mnemonic_file.parent.mkdir(parents=True, exist_ok=True)
+    
+    try:
+        # Write mnemonic to temporary file
+        mnemonic_file.write_text(hermes_mnemonic)
+        
+        for chain in cfg['chains']:
+            chain_id = chain['chain_id']
+            
+            if force:
+                # Delete all existing keys for this chain
+                click.echo(f"Removing all Hermes keys for chain {chain_id}...")
+                try:
+                    subprocess.run([
+                        'hermes', '--config', str(hermes_config_path),
+                        'keys', 'delete', '--chain', chain_id, '--all'
+                    ], check=True, capture_output=True, text=True)
+                    click.echo(f"Successfully removed all keys for chain {chain_id}")
+                except subprocess.CalledProcessError as e:
+                    # It's okay if this fails (e.g., no keys exist)
+                    pass
+            
+            # Add the key
+            click.echo(f"Adding {hermes_key_name} key to Hermes for chain {chain_id}...")
+            try:
+                subprocess.run([
+                    'hermes', '--config', str(hermes_config_path),
+                    'keys', 'add', '--chain', chain_id,
+                    '--mnemonic-file', str(mnemonic_file),
+                    '--key-name', hermes_key_name,
+                    '--overwrite'
+                ], check=True, capture_output=True, text=True)
+                click.echo(f"Successfully added {hermes_key_name} key for chain {chain_id}")
+                
+                # Verify the key was imported with the correct prefix
+                try:
+                    list_result = subprocess.run([
+                        'hermes', '--config', str(hermes_config_path),
+                        'keys', 'list', '--chain', chain_id
+                    ], check=True, capture_output=True, text=True)
+                    
+                    # Check if the output contains the expected address with correct prefix
+                    if expected_address in list_result.stdout:
+                        click.echo(f"✓ Verified: {hermes_key_name} key has correct address {expected_address}")
+                    elif "dys1" in list_result.stdout:
+                        click.echo(f"⚠️  WARNING: Found old 'dys1' prefix in Hermes keys for chain {chain_id}!", err=True)
+                        click.echo(f"  Expected: {expected_address}", err=True)
+                        click.echo(f"  Output: {list_result.stdout.strip()}", err=True)
+                    else:
+                        click.echo(f"⚠️  WARNING: Could not verify key address for chain {chain_id}", err=True)
+                        click.echo(f"  Output: {list_result.stdout.strip()}", err=True)
+                        
+                except subprocess.CalledProcessError as e:
+                    click.echo(f"Warning: Could not verify key for chain {chain_id}: {e.stderr}", err=True)
+                    
+            except subprocess.CalledProcessError as e:
+                click.echo(f"Error adding {hermes_key_name} key for chain {chain_id}: {e.stderr}", err=True)
+    
+    finally:
+        # Clean up mnemonic file
+        if mnemonic_file.exists():
+            mnemonic_file.unlink()
+
 @chainnet.command()
 @click.option('--config-file', default=DEFAULT_CONFIG_PATH, type=click.Path(exists=True))
 @click.option('--force', is_flag=True)
@@ -382,6 +470,10 @@ def setup(config_file, force):
         for i in range(1, len(chain['nodes'])): # Distribute to other nodes
             other_node_home = Path(chain['nodes'][i]['home'])
             (other_node_home / 'config' / 'genesis.json').write_text(final_genesis_content)
+    
+    # Setup Hermes keys after all chains are initialized
+    click.echo("\nSetting up Hermes keys...")
+    setup_hermes_keys(cfg, force=force)
             
     click.echo("Setup complete")
 
@@ -535,6 +627,10 @@ def ibc(config_file):
     if not shutil.which('hermes'):
         click.echo("Hermes binary not found in PATH, skipping IBC setup.")
         return
+    
+    # Ensure Hermes keys are set up before attempting to create channels
+    click.echo("Ensuring Hermes keys are properly configured...")
+    setup_hermes_keys(cfg, force=False)
     
     # verify both chains are making blocks within the timeout
     some_node_not_ready = True

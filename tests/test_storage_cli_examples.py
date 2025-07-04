@@ -106,12 +106,12 @@ def test_storage_list_examples(chainnet, generate_account, faucet):
     test_entries = {
         f"test_{suffix}_1": {"status": "active", "count": 5, "name": "First test item"},
         f"test_{suffix}_2": {"status": "inactive", "count": 15, "name": "Second test item"},
-        f"test_{suffix}_3": {"status": "active", "count": 20, "name": "Third test entry"},
-        f"config/app": {"version": "1.0", "active": True},
-        f"config/db": {"host": "localhost", "active": False},
-        f"user/alice": {"active": True, "profile": {"username": "alice123"}},
-        f"user/bob": {"active": False, "profile": {"username": "bob456"}},
-        f"user/charlie": {"active": True, "profile": {"username": "charlie789"}}
+        f"test_{suffix}_3": {"status": "active", "count": 20, "name": "Third entry"},  # No "test" in name
+        f"config_{suffix}/app": {"version": "1.0", "active": True},
+        f"config_{suffix}/db": {"host": "localhost", "active": False},
+        f"user_{suffix}/alice": {"active": True, "profile": {"username": "alice123"}},
+        f"user_{suffix}/bob": {"active": False, "profile": {"username": "bob456"}},
+        f"user_{suffix}/charlie": {"active": True, "profile": {"username": "charlie789"}}
     }
     
     # Set all test entries
@@ -131,13 +131,17 @@ def test_storage_list_examples(chainnet, generate_account, faucet):
     # Test: $ dysond query storage list dys1... --index-prefix "config/"
     result = dysond("query", "storage", "list",
         user_addr,
-        "--index-prefix", "config/",
+        "--index-prefix", f"config_{suffix}/",
         "-o", "json")
     
     entries = result["entries"]
-    assert len(entries) == 2
+    # Verify all entries match the prefix
     for entry in entries:
-        assert entry["index"].startswith("config/")
+        assert entry["index"].startswith(f"config_{suffix}/"), f"Entry {entry['index']} doesn't match prefix config_{suffix}/"
+    # Should have found both config entries
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {f"config_{suffix}/app", f"config_{suffix}/db"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
     
     # Example 3: List with pagination
     # Test: $ dysond query storage list dys1... --limit 10 --offset 20
@@ -160,10 +164,14 @@ def test_storage_list_examples(chainnet, generate_account, faucet):
         "-o", "json")
     
     entries = result["entries"]
-    assert len(entries) == 2  # Only test_1 and test_3 have status=active
+    # Verify all returned entries have status=active
     for entry in entries:
         data = json.loads(entry["data"])
-        assert data["status"] == "active"
+        assert data["status"] == "active", f"Entry {entry['index']} has status={data['status']}, expected active"
+    # Should have found test_1 and test_3
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {f"test_{suffix}_1", f"test_{suffix}_3"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
     
     # Example 5: Filter where count > 10
     # Test: $ dysond query storage list dys1... --filter "count>10"
@@ -174,10 +182,14 @@ def test_storage_list_examples(chainnet, generate_account, faucet):
         "-o", "json")
     
     entries = result["entries"]
-    assert len(entries) == 2  # test_2 (15) and test_3 (20)
+    # Verify all returned entries have count > 10
     for entry in entries:
         data = json.loads(entry["data"])
-        assert data["count"] > 10
+        assert data["count"] > 10, f"Entry {entry['index']} has count={data['count']}, expected > 10"
+    # Should have found test_2 (15) and test_3 (20)
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {f"test_{suffix}_2", f"test_{suffix}_3"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
     
     # Example 6: Extract only the 'name' field
     # Test: $ dysond query storage list dys1... --extract "name"
@@ -188,26 +200,41 @@ def test_storage_list_examples(chainnet, generate_account, faucet):
         "-o", "json")
     
     entries = result["entries"]
-    assert len(entries) == 3
+    # Verify we got all test entries
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {f"test_{suffix}_1", f"test_{suffix}_2", f"test_{suffix}_3"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
+    
+    # Verify extracted data is just the name field
+    expected_names = {
+        f"test_{suffix}_1": "First test item",
+        f"test_{suffix}_2": "Second test item",
+        f"test_{suffix}_3": "Third entry"
+    }
     for entry in entries:
         # The data should now be just the extracted name as a JSON string
-        assert entry["data"].startswith('"') and entry["data"].endswith('"')
+        assert entry["data"].startswith('"') and entry["data"].endswith('"'), f"Entry {entry['index']} data not a JSON string: {entry['data']}"
         name = json.loads(entry["data"])
-        assert "test" in name.lower()
+        assert name == expected_names[entry["index"]], f"Entry {entry['index']} has name={name}, expected {expected_names[entry['index']]}"
     
     # Example 7: Combine prefix, filter, and extract
     # Test: $ dysond query storage list dys1... --index-prefix "user/" --filter "active==true" --extract "profile.username"
     result = dysond("query", "storage", "list",
         user_addr,
-        "--index-prefix", "user/",
+        "--index-prefix", f"user_{suffix}/",
         "--filter", "active==true",
         "--extract", "profile.username",
         "-o", "json")
     
     entries = result["entries"]
-    assert len(entries) == 2  # alice and charlie are active
-    usernames = [json.loads(entry["data"]) for entry in entries]
-    assert set(usernames) == {"alice123", "charlie789"}
+    # Verify all entries are active users
+    for entry in entries:
+        assert entry["index"].startswith(f"user_{suffix}/"), f"Entry {entry['index']} doesn't match prefix"
+    
+    # Should have found alice and charlie (active users)
+    usernames = {json.loads(entry["data"]) for entry in entries}
+    expected_usernames = {"alice123", "charlie789"}
+    assert usernames == expected_usernames, f"Expected usernames {expected_usernames}, got {usernames}"
     
     # Example 8: Filter with pattern matching (contains)
     # Test: $ dysond query storage list dys1... --filter 'name%"*test*"'
@@ -218,10 +245,15 @@ def test_storage_list_examples(chainnet, generate_account, faucet):
         "-o", "json")
     
     entries = result["entries"]
-    assert len(entries) == 2  # "First test item" and "Second test item" contain "test"
+    # Verify all returned entries have "test" in their name
     for entry in entries:
         data = json.loads(entry["data"])
-        assert "test" in data["name"]
+        assert "test" in data["name"], f"Entry {entry['index']} name '{data['name']}' doesn't contain 'test'"
+    
+    # Should have found only test_1 and test_2 (both have "test" in name)
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {f"test_{suffix}_1", f"test_{suffix}_2"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
 
 
 def test_storage_list_complex_filters(chainnet, generate_account, faucet):
@@ -255,10 +287,15 @@ def test_storage_list_complex_filters(chainnet, generate_account, faucet):
         "-o", "json")
     
     entries = result["entries"]
-    assert len(entries) == 3  # Mouse, Desk, Chair
+    # Verify all returned entries have price <= 200
     for entry in entries:
         data = json.loads(entry["data"])
-        assert data["price"] <= 200
+        assert data["price"] <= 200, f"Entry {entry['index']} has price={data['price']}, expected <= 200"
+    
+    # Should have found Mouse (29.99), Desk (199.99), Chair (149.99)
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {"product/2", "product/3", "product/4"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
     
     # Test >= operator
     result = dysond("query", "storage", "list",
@@ -268,10 +305,15 @@ def test_storage_list_complex_filters(chainnet, generate_account, faucet):
         "-o", "json")
     
     entries = result["entries"]
-    assert len(entries) == 3  # Mouse, Desk, Monitor
+    # Verify all returned entries have stock >= 10
     for entry in entries:
         data = json.loads(entry["data"])
-        assert data["stock"] >= 10
+        assert data["stock"] >= 10, f"Entry {entry['index']} has stock={data['stock']}, expected >= 10"
+    
+    # Should have found Mouse (50), Desk (10), Monitor (15)
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {"product/2", "product/3", "product/5"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
     
     # Test != operator
     result = dysond("query", "storage", "list",
@@ -281,10 +323,15 @@ def test_storage_list_complex_filters(chainnet, generate_account, faucet):
         "-o", "json")
     
     entries = result["entries"]
-    assert len(entries) == 3  # All electronics
+    # Verify all returned entries have category != furniture
     for entry in entries:
         data = json.loads(entry["data"])
-        assert data["category"] != "furniture"
+        assert data["category"] != "furniture", f"Entry {entry['index']} has category={data['category']}, expected != furniture"
+    
+    # Should have found all electronics: Laptop, Mouse, Monitor
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {"product/1", "product/2", "product/5"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
     
     # Test % operator (contains)
     result = dysond("query", "storage", "list",
@@ -294,10 +341,15 @@ def test_storage_list_complex_filters(chainnet, generate_account, faucet):
         "-o", "json")
     
     entries = result["entries"]
-    # Verify all returned entries match the filter
+    # Verify all returned entries have "tron" in category (electronics)
     for entry in entries:
         data = json.loads(entry["data"])
-        assert "tron" in data["category"], f"Filter 'category%\"*tron*\"' returned entry with category '{data['category']}' which doesn't contain 'tron'"
+        assert "tron" in data["category"], f"Entry {entry['index']} category '{data['category']}' doesn't contain 'tron'"
+    
+    # Should have found all electronics items
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {"product/1", "product/2", "product/5"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
     
     # Test combining multiple conditions
     result = dysond("query", "storage", "list",
@@ -308,15 +360,21 @@ def test_storage_list_complex_filters(chainnet, generate_account, faucet):
         "-o", "json")
     
     entries = result["entries"]
-    # Verify the filter worked by checking the original data
+    # Should have found all products with stock > 0 (all except Chair with stock=0)
+    found_indices = {entry["index"] for entry in entries}
+    expected_indices = {"product/1", "product/2", "product/3", "product/5"}
+    assert found_indices == expected_indices, f"Expected {expected_indices}, got {found_indices}"
+    
+    # Verify extracted names match expectations
+    expected_names = {
+        "product/1": "Laptop",
+        "product/2": "Mouse", 
+        "product/3": "Desk",
+        "product/5": "Monitor"
+    }
     for entry in entries:
-        # Need to get the full entry to verify stock
-        full_result = dysond("query", "storage", "get",
-            user_addr,
-            "--index", entry["index"],
-            "-o", "json")
-        full_data = json.loads(full_result["entry"]["data"])
-        assert full_data["stock"] > 0, f"Filter 'stock>0' returned entry '{entry['index']}' with stock={full_data['stock']}"
+        name = json.loads(entry["data"])
+        assert name == expected_names[entry["index"]], f"Entry {entry['index']} has name={name}, expected {expected_names[entry['index']]}"
 
 
 def test_storage_extract_arrays_and_edge_cases(chainnet, generate_account, faucet):
@@ -348,16 +406,18 @@ def test_storage_extract_arrays_and_edge_cases(chainnet, generate_account, fauce
     result = dysond("query", "storage", "get",
         user_addr,
         "--index", "complex/1",
-        "--extract", "tags.1")
+        "--extract", "user_data.tags.1")
     
+    assert "entry" in result, f"Failed to extract array element. Full result: {json.dumps(result, indent=2)}"
     assert result["entry"]["data"] == '"golang"'
     
     # Extract entire array
     result = dysond("query", "storage", "get",
         user_addr,
         "--index", "complex/1",
-        "--extract", "tags")
+        "--extract", "user_data.tags")
     
+    assert "entry" in result, f"Failed to extract array. Full result: {json.dumps(result, indent=2)}"
     tags = json.loads(result["entry"]["data"])
     assert tags == ["python", "golang", "rust"]
     
@@ -367,5 +427,6 @@ def test_storage_extract_arrays_and_edge_cases(chainnet, generate_account, fauce
         "--index", "complex/1",
         "--extract", "nonexistent.path")
     
-    assert isinstance(result, str)
-    assert "not found" in result.lower() 
+    # For missing paths, the result should be a string error message
+    assert isinstance(result, str), f"Expected error string, got: {result}"
+    assert "not found" in result.lower(), f"Expected 'not found' in error message, got: {result}" 

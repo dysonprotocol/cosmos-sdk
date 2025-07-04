@@ -122,7 +122,7 @@ def main():
     for i in range(len(genesis['app_state']['gov']['params']['min_deposit'])):
         if genesis['app_state']['gov']['params']['min_deposit'][i]['denom'] == DENOM:
             genesis['app_state']['gov']['params']['min_deposit'][i]['amount'] = "1"
-    print("Setting minimum governance deposit to 1dys for testing")
+    print(f"Setting minimum governance deposit to {genesis['app_state']['gov']['params']['min_deposit'][0]['amount']}{DENOM} for testing")
     
     # Set quorum and threshold to low values for testing
     genesis['app_state']['gov']['params']['quorum'] = "0.01"
