@@ -786,7 +786,7 @@ class DysEval(object):
     def _eval_functiondef(self, node):
 
         if node.name.startswith("__"):
-            raise DysRuntimeError(f"Function name '{node.name}' is forbidden")
+            raise DysRuntimeError(f"Defining function with the name '{node.name}' is forbidden.")
         
         sig_list, sig_dict = self._eval(node.args)
         _annotations = {}
@@ -849,7 +849,7 @@ class DysEval(object):
 
     def _eval_classdef(self, node):
         if node.name.startswith("__"):
-            raise DysRuntimeError(f"Class name '{node.name}' is forbidden, why would you do that?")
+            raise DysRuntimeError(f"Defining class with the name '{node.name}' is forbidden.")
         
         # Evaluate base classes
         bases = [self._eval(base) for base in node.bases]
@@ -948,6 +948,8 @@ class DysEval(object):
                 handler(target, value)
 
     def _assign_name(self, node, value):
+        if node.id.startswith("__"):
+            raise DysRuntimeError(f"Assigning to variable '{node.id}' is forbidden.")
         self.scope[node.id] = value
         return value
 
@@ -1187,6 +1189,12 @@ class DysEval(object):
         return False
 
     def _eval_call(self, node):
+        # Check if calling a dunder-named function
+        if isinstance(node.func, ast.Name) and node.func.id.startswith("__"):
+            raise DysRuntimeError(f"Calling function '{node.func.id}' is forbidden.")
+        elif isinstance(node.func, ast.Attribute) and node.func.attr.startswith("__"):
+            raise DysRuntimeError(f"Calling method '{node.func.attr}' is forbidden.")
+        
         if len(self.call_stack) >= MAX_CALL_DEPTH:
             raise RecursionError("stack is to large")
 

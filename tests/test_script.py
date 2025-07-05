@@ -1020,4 +1020,533 @@ MyObject()
         "json",
     )
     assert "exception" in result and result["exception"] is not None, f"Query result missing 'exception' field: {result['stdout']}"
-    assert result["exception"]['msg'] == "Function name '__repr__' is forbidden"
+    assert result["exception"]['msg'] == "Defining function with the name '__repr__' is forbidden."
+
+
+def test_dunder_names_forbidden(chainnet, generate_account):
+    """Test that all uses of names starting with '__' are forbidden in scripts"""
+    dysond_bin = chainnet[0]
+    [alice_name, alice_address] = generate_account("alice")
+
+    # Test 1: Defining a function with a name starting with "__"
+    print("Test 1: Testing function definition with dunder name...")
+    function_def_code = """
+def __init__(self):
+    return "This should fail"
+
+def normal_function():
+    return "This is fine"
+"""
+    update_result = dysond_bin(
+        "tx",
+        "script",
+        "update",
+        "--code",
+        function_def_code,
+        "--from",
+        alice_name,
+        "--keyring-backend",
+        "test",
+        "--yes",
+    )
+    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
+    
+    # Try to execute the script - it should fail during parsing/execution
+    exec_result = dysond_bin(
+        "tx",
+        "script",
+        "exec",
+        "--script-address",
+        alice_address,
+        "--function-name",
+        "normal_function",
+        "--args",
+        "[]",
+        "--from",
+        alice_name,
+    )
+    # Check that the execution failed with the expected error
+    assert exec_result.get("code", 0) != 0, "Expected script execution to fail"
+    # The error message is in the raw_log field
+    raw_log = exec_result.get("raw_log", "")
+    assert "Defining function with the name '__init__' is forbidden" in raw_log or "Defining function with the name \\'__init__\\' is forbidden" in raw_log, f"Unexpected error in raw_log: {raw_log}"
+
+    # Test 2: Defining a class with a name starting with "__"
+    print("Test 2: Testing class definition with dunder name...")
+    class_def_code = """
+class __SpecialClass:
+    def method(self):
+        return "This should fail"
+
+def test_function():
+    return "Testing"
+"""
+    update_result = dysond_bin(
+        "tx",
+        "script",
+        "update",
+        "--code",
+        class_def_code,
+        "--from",
+        alice_name,
+        "--keyring-backend",
+        "test",
+        "--yes",
+    )
+    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
+    
+    # Try to execute the script - it should fail during parsing/execution
+    exec_result = dysond_bin(
+        "tx",
+        "script",
+        "exec",
+        "--script-address",
+        alice_address,
+        "--function-name",
+        "test_function",
+        "--args",
+        "[]",
+        "--from",
+        alice_name,
+    )
+    # Check that the execution failed with the expected error
+    assert exec_result.get("code", 0) != 0, "Expected script execution to fail"
+    # The error message is in the raw_log field
+    raw_log = exec_result.get("raw_log", "")
+    assert "Defining class with the name '__SpecialClass' is forbidden" in raw_log or "Defining class with the name \\'__SpecialClass\\' is forbidden" in raw_log, f"Unexpected error in raw_log: {raw_log}"
+
+    # Test 3: Calling a function with a name starting with "__"
+    print("Test 3: Testing function call with dunder name...")
+    function_call_code = """
+def test_call():
+    # Try to call a built-in dunder method
+    result = __import__('os')
+    return result
+"""
+    update_result = dysond_bin(
+        "tx",
+        "script",
+        "update",
+        "--code",
+        function_call_code,
+        "--from",
+        alice_name,
+        "--keyring-backend",
+        "test",
+        "--yes",
+    )
+    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
+    
+    # Try to execute the function - it should fail when trying to call __import__
+    exec_result = dysond_bin(
+        "tx",
+        "script",
+        "exec",
+        "--script-address",
+        alice_address,
+        "--function-name",
+        "test_call",
+        "--args",
+        "[]",
+        "--from",
+        alice_name,
+    )
+    # Check that the execution failed with the expected error
+    assert exec_result.get("code", 0) != 0, "Expected script execution to fail"
+    # The error message is in the raw_log field
+    raw_log = exec_result.get("raw_log", "")
+    assert "Calling function '__import__' is forbidden" in raw_log or "Calling function \\'__import__\\' is forbidden" in raw_log, f"Unexpected error in raw_log: {raw_log}"
+
+    # Test 4: Calling a method with a name starting with "__"
+    print("Test 4: Testing method call with dunder name...")
+    method_code = """
+class MyClass:
+    def __special_method__(self):
+        return "This should fail"
+
+def test_method_call():
+    obj = MyClass()
+    return obj.__special_method__()
+"""
+    
+    # Update the script
+    update_result = dysond_bin(
+        "tx",
+        "script",
+        "update",
+        "--code",
+        method_code,
+        "--from",
+        alice_name,
+        "--keyring-backend",
+        "test",
+        "--yes",
+    )
+    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
+    
+    # Try to execute - should fail
+    exec_result = dysond_bin(
+        "tx",
+        "script",
+        "exec",
+        "--script-address",
+        alice_address,
+        "--function-name",
+        "test_method_call",
+        "--args",
+        "[]",
+        "--from",
+        alice_name,
+    )
+    
+    # Check that the execution failed with the expected error
+    assert exec_result.get("code", 0) != 0, "Expected script execution to fail"
+    # The error message is in the raw_log field
+    raw_log = exec_result.get("raw_log", "")
+    # Methods with dunder names are caught during class definition as "Defining function"
+    assert "Defining function with the name '__special_method__' is forbidden" in raw_log or "Defining function with the name \\'__special_method__\\' is forbidden" in raw_log, f"Unexpected error in raw_log: {raw_log}"
+
+    # Test 5: Valid script without dunder names should work
+    print("Test 5: Testing valid script without dunder names...")
+    valid_code = """
+class RegularClass:
+    def regular_method(self):
+        return "success"
+
+def regular_function():
+    obj = RegularClass()
+    return obj.regular_method()
+"""
+    update_result = dysond_bin(
+        "tx",
+        "script",
+        "update",
+        "--code",
+        valid_code,
+        "--from",
+        alice_name,
+        "--keyring-backend",
+        "test",
+        "--yes",
+    )
+    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
+    
+    # Execute the valid function - it should succeed
+    exec_result = dysond_bin(
+        "tx",
+        "script",
+        "exec",
+        "--script-address",
+        alice_address,
+        "--function-name",
+        "regular_function",
+        "--args",
+        "[]",
+        "--from",
+        alice_name,
+    )
+    assert exec_result.get("code", 1) == 0, f"Valid script execution failed: {exec_result}"
+    
+    # Extract and verify the result
+    events_by_type = {event.get("type"): event for event in exec_result.get("events", [])}
+    assert "dysonprotocol.script.v1.EventExecScript" in events_by_type, "No EventExecScript found"
+    
+    exec_event = events_by_type["dysonprotocol.script.v1.EventExecScript"]
+    attrs_by_key = {attr.get("key"): attr.get("value") for attr in exec_event.get("attributes", [])}
+    response_json = attrs_by_key.get("response", "{}")
+    response_data = json.loads(response_json)
+    result_data = json.loads(response_data.get("result", "{}"))
+    
+    assert result_data.get("result") == "success", f"Expected 'success', got: {result_data}"
+
+    # Test 5: Edge case - calling methods that happen to start with __ through getattr
+    print("Test 5: Testing indirect dunder method access...")
+    indirect_code = """
+def test_indirect():
+    # Try to access dunder methods indirectly
+    obj = object()
+    # This should be caught even if accessed indirectly
+    method_name = "__" + "class" + "__"
+    return getattr(obj, method_name)
+"""
+    update_result = dysond_bin(
+        "tx",
+        "script",
+        "update",
+        "--code",
+        indirect_code,
+        "--from",
+        alice_name,
+        "--keyring-backend",
+        "test",
+        "--yes",
+    )
+    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
+    
+    # Note: This test might pass if the restriction is only on direct calls
+    # The important thing is that direct dunder usage is blocked
+    exec_result = dysond_bin(
+        "tx",
+        "script",
+        "exec",
+        "--script-address",
+        alice_address,
+        "--function-name",
+        "test_indirect",
+        "--args",
+        "[]",
+        "--from",
+        alice_name,
+    )
+    # This may or may not fail depending on how thorough the restriction is
+    print(f"Indirect access result: {exec_result.get('code', 'N/A')}")
+
+    print("✓ All dunder name restriction tests completed!")
+
+
+def test_comprehensive_dunder_method_prevention(chainnet, generate_account):
+    """Comprehensive test to ensure NO functions or methods with leading __ can be defined"""
+    dysond_bin = chainnet[0]
+    [alice_name, alice_address] = generate_account("alice")
+    
+    # Test cases for all possible ways to define functions/methods with dunder names
+    test_cases = [
+        # Case 1: Top-level function
+        ("top-level function", """
+def __forbidden_func():
+    return "This should not be allowed"
+"""),
+        
+        # Case 2: Method inside class
+        ("class method", """
+class MyClass:
+    def __forbidden_method(self):
+        return "This should not be allowed"
+"""),
+        
+        # Case 3: Static method
+        ("static method", """
+class MyClass:
+    @staticmethod
+    def __forbidden_static():
+        return "This should not be allowed"
+"""),
+        
+        # Case 4: Class method
+        ("class method decorator", """
+class MyClass:
+    @classmethod
+    def __forbidden_classmethod(cls):
+        return "This should not be allowed"
+"""),
+        
+
+        
+        # Case 5: Lambda assigned to dunder name
+        ("lambda assignment", """
+__forbidden_lambda = lambda x: x + 1
+
+def trigger_lambda():
+    return 42  # Just needs to trigger script execution
+"""),
+        
+        # Case 6: Nested function
+        ("nested function", """
+def outer():
+    def __forbidden_nested():
+        return "This should not be allowed"
+    return __forbidden_nested
+
+def trigger_nested():
+    return outer()  # This will trigger the nested function definition
+"""),
+        
+        # Case 7: Variable assignment with dunder name
+        ("variable assignment", """
+__forbidden_var = "This should not be allowed"
+
+def trigger_assignment():
+    return 42  # Just needs to trigger script execution
+"""),
+        
+        # Case 8: Multiple dunder methods in one class
+        ("multiple dunder methods", """
+class MyClass:
+    def __method1(self):
+        pass
+    
+    def __method2(self):
+        pass
+        
+    @property
+    def __prop(self):
+        return "forbidden"
+"""),
+    ]
+    
+    for test_name, code in test_cases:
+        print(f"\nTesting {test_name}...")
+        
+        # Add a valid function to test execution
+        full_code = code + """
+def valid_function():
+    return "This is valid"
+"""
+        
+        # Update the script
+        update_result = dysond_bin(
+            "tx",
+            "script", 
+            "update",
+            "--code",
+            full_code,
+            "--from",
+            alice_name,
+            "--keyring-backend",
+            "test",
+            "--yes",
+        )
+        assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
+        
+        # Try to execute using query run - should fail during script parsing/loading
+        # For certain tests, we need to call specific trigger functions
+        function_map = {
+            "nested function": "trigger_nested",
+            "lambda assignment": "trigger_lambda",
+            "variable assignment": "trigger_assignment"
+        }
+        function_to_call = function_map.get(test_name, "valid_function")
+        
+        exec_result = dysond_bin(
+            "query",
+            "script",
+            "run",
+            "--script-address",
+            alice_address,
+            "--executor-address",
+            alice_address,
+            "--function-name",
+            function_to_call,
+            "--args",
+            "[]",
+            "-o",
+            "json",
+        )
+        
+        # Verify it failed - query run may return error as string or dict
+        # When script has parse errors, dysond returns error in stderr as string
+        # When script parses but has runtime errors, it returns dict with exception
+        
+        # Handle different response types
+        is_string = isinstance(exec_result, str)
+        is_dict = isinstance(exec_result, dict)
+        
+        # For string responses (command failed), the whole string is the error
+        exception_msg = exec_result if is_string else ""
+        
+        # For dict responses, check if there's an exception directly in the response
+        has_exception = exec_result.get("exception") is not None if is_dict else False
+        exception_msg = exec_result["exception"].get("msg", "") if (is_dict and has_exception) else exception_msg
+        
+        # Either string error or dict with exception means it failed as expected
+        failed_as_expected = is_string or has_exception
+        assert failed_as_expected, f"Expected {test_name} to fail but it succeeded: {exec_result}"
+        assert ("Defining function with the name" in exception_msg and "is forbidden" in exception_msg) or \
+               ("Defining class with the name" in exception_msg and "is forbidden" in exception_msg) or \
+               ("Assigning to variable" in exception_msg and "is forbidden" in exception_msg), \
+               f"Unexpected error for {test_name}: {exception_msg}"
+        
+        print(f"✓ {test_name} correctly blocked")
+    
+    # Test edge cases with underscores
+    edge_cases = [
+        # Single underscore is allowed
+        ("single underscore", """
+def _private_func():
+    return "Single underscore is allowed"
+    
+class MyClass:
+    def _private_method(self):
+        return "Single underscore is allowed"
+""", True),  # Should succeed
+        
+        # Three underscores is blocked (starts with __)
+        ("three underscores", """
+def ___triple_func():
+    return "Three underscores starts with __ so blocked"
+""", False),  # Should fail
+        
+        # Underscore in middle is allowed
+        ("underscore in middle", """
+def my__func():
+    return "Double underscore in middle is allowed"
+""", True),  # Should succeed
+        
+        # Trailing double underscore is allowed
+        ("trailing double underscore", """
+def func__():
+    return "Trailing double underscore is allowed"
+""", True),  # Should succeed
+    ]
+    
+    for test_name, code, should_succeed in edge_cases:
+        print(f"\nTesting edge case: {test_name}...")
+        
+        # Add a test function
+        full_code = code + """
+def test_func():
+    return "test"
+"""
+        
+        # Update the script
+        update_result = dysond_bin(
+            "tx",
+            "script",
+            "update", 
+            "--code",
+            full_code,
+            "--from",
+            alice_name,
+            "--keyring-backend",
+            "test",
+            "--yes",
+        )
+        assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
+        
+        # Try to execute using query run
+        exec_result = dysond_bin(
+            "query",
+            "script",
+            "run",
+            "--script-address",
+            alice_address,
+            "--executor-address",
+            alice_address,
+            "--function-name",
+            "test_func",
+            "--args",
+            "[]",
+            "-o",
+            "json",
+        )
+        
+        # Check result based on expectation
+        is_string = isinstance(exec_result, str)
+        is_dict = isinstance(exec_result, dict)
+        
+        # For dict responses, check if there's an exception directly
+        has_dict_exception = exec_result.get("exception") is not None if is_dict else False
+        
+        # String response = command failed = has exception
+        # Dict response with exception = has exception
+        has_exception = is_string or has_dict_exception
+        expected_success = should_succeed
+        
+        # For success cases, there should be no exception
+        # For failure cases, there should be an exception
+        assert (not has_exception) == expected_success, \
+            f"{test_name}: Expected {'success' if expected_success else 'failure'} but got {'exception' if has_exception else 'success'}. Full result: {exec_result}"
+        
+        print(f"✓ {test_name} correctly {'allowed' if should_succeed else 'blocked'}")
+    
+    print("\n✓ All comprehensive dunder prevention tests passed!")

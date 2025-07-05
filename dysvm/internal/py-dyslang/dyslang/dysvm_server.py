@@ -786,7 +786,7 @@ def eval_script(
                 "source_lines": "",
                 "source_segment": "",
             }
-            if hasattr(exception, "node"):
+            if hasattr(exception, "node") and exception.node is not None:
                 exception_dict["source_segment"] = ast.get_source_segment(source_code, exception.node)
                 exception_dict["source_lines"] = ("\n").join(source_code.split("\n")[exception_dict["lineno"] - 1:exception_dict["end_lineno"]])
 
