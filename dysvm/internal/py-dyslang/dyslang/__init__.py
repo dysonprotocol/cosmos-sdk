@@ -523,7 +523,7 @@ class DysEval(object):
                         node.__class__.__name__
                     )
                 )
-                exc._dys_node = node
+                exc.node = node
                 raise exc
         compile(expr, "<string>", "exec", dont_inherit=True)
 
@@ -538,8 +538,8 @@ class DysEval(object):
         except (Exception,) as e:
             exc = e
             node = None
-            if hasattr(exc, "_dys_node"):  # pragma: no branch
-                node = exc._dys_node
+            if hasattr(exc, "node"):  # pragma: no branch
+                node = exc.node
             raise DysRuntimeError(repr(exc), node=node) from exc
 
         # and evaluate:
@@ -582,8 +582,8 @@ class DysEval(object):
             raise
         except Exception as e:
             exc = e
-            if not hasattr(exc, "_dys_node"):  # pragma: no branch
-                exc._dys_node = node
+            if not hasattr(exc, "node"):  # pragma: no branch
+                exc.node = node
             #raise e
             raise DysRuntimeError(repr(exc), node=node) from exc
 

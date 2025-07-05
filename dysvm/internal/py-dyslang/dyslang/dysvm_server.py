@@ -15,8 +15,7 @@ import typing
 import forge
 import re as re_module
 import requests
-import simplejson
-import simplejson as json
+import json
 from freezegun import freeze_time
 from freezegun.api import FakeDatetime, FakeDate
 
@@ -104,7 +103,7 @@ def get_module_dict():
         return json.dumps(**kwargs)
 
     safe_json_dumps.__doc__ = json.dumps.__doc__
-    safe_json_dumps.__module__ = "simplejson"
+    safe_json_dumps.__module__ = "json"
     safe_json_dumps.__qualname__ = "dumps"
     allow_func(safe_json_dumps)
 
@@ -170,8 +169,8 @@ def get_module_dict():
         "decimal": {"Decimal": decimal.Decimal},
         "json": {
             "dumps": safe_json_dumps,
-            "loads": simplejson.loads,
-            "JSONDecodeError": simplejson.JSONDecodeError,
+            "loads": json.loads,
+            "JSONDecodeError": json.JSONDecodeError,
         },
         "html": {"escape": html.escape, "unescape": html.unescape},
         "io": {"StringIO": io.StringIO, "BytesIO": io.BytesIO},
@@ -329,7 +328,7 @@ def build_sandbox(
                 # print(f"JSONDecodeError: {e} - {res.text}")
                 pass
 
-            if ret_json.get("error"):
+            if ret_json.get("error", None):
                 return {"exception": ret_json["error"]}
 
             return ret_json
