@@ -1284,38 +1284,45 @@ class DysEval(object):
             length += len(val)
             evaluated_values.append(val)
         return "".join(evaluated_values)
-
+    
     def _eval_formattedvalue(self, node):
+        val = self._eval(node.value)
 
-        # from https://stackoverflow.com/a/44553570/260366
-        format_spec = ""
-        if node.format_spec:
-            format_spec = self._eval(node.format_spec)
-
-        r = r"(([\s\S])?([<>=\^]))?([\+\- ])?([#])?([0])?(\d*)([,])?((\.)(\d*))?([sbcdoxXneEfFgGn%])?"
-        FormatSpec = nt(
-            "FormatSpec",
-            "fill align sign alt zero_padding width comma decimal precision type",
-        )
-        match = re.fullmatch(r, format_spec)
-
-        if match:
-            parsed_spec = FormatSpec(
-                *match.group(2, 3, 4, 5, 6, 7, 8, 10, 11, 12)
-            )  # skip groups not interested in
-            if int(parsed_spec.width or 0) > 100:
-                raise MemoryError("this format width is too long.")
-
-            if int(parsed_spec.precision or 0) > 100:
-                raise MemoryError("this format precision is too long.")
-
-        if node.conversion == 114:
+        if node.conversion == 114:          # !r
             raise NotImplementedError("!r is not supported")
-        
-        conversion_dict = {-1: "", 115: "!s", 97: "!a"}
+        if node.conversion == 115:          # !s
+            val = str(val)
+        elif node.conversion == 97:         # !a
+            val = ascii(val)
 
-        fmt = "{" + format_spec + conversion_dict[node.conversion] + "}"
-        return fmt.format(self._eval(node.value))
+        spec = self._eval(node.format_spec) if node.format_spec else ""
+
+        # tight but accurate regex for Python’s mini-language (PEP 3101)
+        _FMT_RE = re.compile(
+            r"""
+            (?P<fill>.)?(?P<align>[<>=\^])?
+            (?P<sign>[+\- ])?
+            (?P<alt>\#)?
+            (?P<zero>0)?
+            (?P<width>\d*)           # <- cap this
+            (?P<comma>,)?
+            (?:\.(?P<prec>\d*))?     # <- cap this
+            (?P<type>[a-zA-Z%])?
+            $""",
+            re.X,
+        )
+
+        if spec:
+            m = _FMT_RE.fullmatch(spec)
+            if not m:
+                raise ValueError(f"Invalid format specifier {spec!r}")
+
+            width      = int(m.group("width") or 0)
+            precision  = int(m.group("prec")  or 0)
+            if width > 100 or precision > 100:
+                raise MemoryError("format width / precision too long.")
+
+        return format(val, spec)
 
 
     def _eval_dict(self, node):
