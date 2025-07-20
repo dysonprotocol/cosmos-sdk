@@ -551,7 +551,7 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
     validator_operator = validators["validators"][0]["operator_address"]
     
     # Delegate tokens from Alice to validator so Alice has voting power
-    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000udys", "--from", "alice", "--yes")
+    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "50000000udys", "--from", "alice", "--yes")
     assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result['raw_log']}"
 
     proposal = {

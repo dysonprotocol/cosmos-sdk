@@ -46,7 +46,7 @@ def _update_allowed_denoms_via_gov(
         "staking",
         "delegate",
         val_op,
-        "20000udys",
+        "50000000udys",
         "--from",
         "alice",
         "--yes",

@@ -62,8 +62,8 @@ json.loads('\n'.join(tx))
 
 
 
-    {'height': '34',
-     'txhash': '2D9796BAE5ABFFF99950772C280B99C75B0BAC12A3F586D7BFDF74440EE78A29',
+    {'height': '565',
+     'txhash': 'D997B70746FBF4D96FDDC965BB848CE65A1C7762E123F07480636F704DC60C40',
      'codespace': '',
      'code': 0,
      'data': '12360A302F6479736F6E70726F746F636F6C2E7363726970742E76312E4D7367557064617465536372697074526573706F6E736512020802',
@@ -76,11 +76,11 @@ json.loads('\n'.join(tx))
      'timestamp': '',
      'events': [{'type': 'tx',
        'attributes': [{'key': 'acc_seq',
-         'value': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/6',
+         'value': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/96',
          'index': True}]},
       {'type': 'tx',
        'attributes': [{'key': 'signature',
-         'value': 'NsFBWeoOMF5025g9tZwcnRlQDElQw68nrQ+NrLnmFTlMQaj0kHW4L1bQshVgR1ykX2RBbnkAiME71YygFMMVSw==',
+         'value': '6+rmm88SoTCrKLqLeumaymo01DC72UEGC+VLQufheRlt3bA7TkEib806ynATuiDrSWd7S3qM6zUm7dWeDdU0BA==',
          'index': True}]},
       {'type': 'message',
        'attributes': [{'key': 'action',
@@ -126,7 +126,7 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     * IPv6: ::1
     * IPv4: 127.0.0.1
     *   Trying [::1]:2417...
-    * connect to ::1 port 2417 from ::1 port 55123 failed: Connection refused
+    * connect to ::1 port 2417 from ::1 port 53629 failed: Connection refused
     *   Trying 127.0.0.1:2417...
     * Connected to dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost (127.0.0.1) port 2417
     > GET /hi HTTP/1.1
@@ -138,9 +138,9 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Sun, 20 Jul 2025 11:41:22 GMT
+    < Date: Sun, 20 Jul 2025 14:50:11 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1753011683
+    < X-Server-Time: 1753023011
     < 
     { [82 bytes data]
     * Connection #0 to host dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost left intact
@@ -214,7 +214,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/7",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/97",
               "index": true
             }
           ]
@@ -224,7 +224,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "signature",
-              "value": "z4FRT6NqFPsikgk4g/xlecf+quUUN7ztw7JOZvq2FaVYW9hF2XJwKbWomxjeLDKSZ3b6oyfx7XVJTncsZdxtnw==",
+              "value": "ASPSlQ0WxePpfWTFAnH7zQ1EzidUwlMwpagF0x7mCu0tIfHS98siJIz8pv2bh+++OU0QKR8i86QxBw33yVANuQ==",
               "index": true
             }
           ]
@@ -336,9 +336,9 @@ print(f"Salt: {salt}")
 print(f"Hex Hash: {hex_hash}")
 ```
 
-    Name: alice-7boyo.dys
-    Salt: l4ny5ku2mr
-    Hex Hash: 27d5a0d36c1602b36201738b8b4f1b33c45066327a6f6e0c251d73f469f10a43
+    Name: alice-9qlju.dys
+    Salt: k11mak0xbx
+    Hex Hash: 377c52490b1f0bcb0968cef45ac30c8f27cc8e4daa50b1e1271b3cc2a9b0826f
 
 
 
@@ -348,8 +348,8 @@ valuation = '100udys'
 ```
 
     {
-      "height": "41",
-      "txhash": "42FC53436920A27DCD3A96D73CB2277B664CD900253D9167209D0A0D313CE606",
+      "height": "570",
+      "txhash": "40D42D1E9CE54F8E6006CCD734429CDF13255D2AC338DE7EA3E294A742AF9872",
       "codespace": "",
       "code": 0,
       "data": "12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D7367436F6D6D6974526573706F6E7365",
@@ -357,7 +357,7 @@ valuation = '100udys'
       "logs": [],
       "info": "",
       "gas_wanted": "200000",
-      "gas_used": "39920",
+      "gas_used": "39899",
       "tx": null,
       "timestamp": "",
       "events": [
@@ -366,7 +366,7 @@ valuation = '100udys'
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/8",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/98",
               "index": true
             }
           ]
@@ -376,7 +376,7 @@ valuation = '100udys'
           "attributes": [
             {
               "key": "signature",
-              "value": "WzC1vzokVWdt08UO0s4wi/lNzbGeswuFZzINMxfOM2FipL7Bh8au/n5EFpvkUC16I6Lt6Mhxn0VzP8Fd+5WdbQ==",
+              "value": "AyAsBZvS+TaM1E+ZNJmbG5RY/dBGnxk/MGUSREIE4FdC9qsfo9s1LjPjxbGZ5hZHs3zR+LdWhfhiIGFwz7jLUQ==",
               "index": true
             }
           ]
@@ -411,7 +411,7 @@ valuation = '100udys'
           "attributes": [
             {
               "key": "hexhash",
-              "value": "\"27d5a0d36c1602b36201738b8b4f1b33c45066327a6f6e0c251d73f469f10a43\"",
+              "value": "\"377c52490b1f0bcb0968cef45ac30c8f27cc8e4daa50b1e1271b3cc2a9b0826f\"",
               "index": true
             },
             {
@@ -438,8 +438,8 @@ Reveal the name to complete registration.
 ```
 
     {
-      "height": "43",
-      "txhash": "135420B4194D44C20F2AA7761105CA5153E6877189C13374C7FD33DC39BB1AF1",
+      "height": "572",
+      "txhash": "99C68A114220D4E9123FC8B1D9983A90A652BF746AF879943F68C2D9B469D05D",
       "codespace": "",
       "code": 0,
       "data": "12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D736752657665616C526573706F6E7365",
@@ -447,7 +447,7 @@ Reveal the name to complete registration.
       "logs": [],
       "info": "",
       "gas_wanted": "200000",
-      "gas_used": "120985",
+      "gas_used": "80651",
       "tx": null,
       "timestamp": "",
       "events": [
@@ -456,7 +456,7 @@ Reveal the name to complete registration.
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/9",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/99",
               "index": true
             }
           ]
@@ -466,7 +466,7 @@ Reveal the name to complete registration.
           "attributes": [
             {
               "key": "signature",
-              "value": "2ddBLbxSuwCZM6cpr8MVCA6yixpb4GM1Akw2c7I7TikHb5D9ZTMXAzPmr+QR58hnuJt0ECHuc/9w8ANIyP6GaQ==",
+              "value": "ok46Vi2ZqPfJEWJWePyF8A5S8tHKr007ttZgFWkBUBJQK6KPQl8+lkLTeSV2BScutsg5Uv+Hn5/4o2uPL150NQ==",
               "index": true
             }
           ]
@@ -487,31 +487,6 @@ Reveal the name to complete registration.
             {
               "key": "module",
               "value": "nameservice",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "dysonprotocol.nft.v1beta1.EventMint",
-          "attributes": [
-            {
-              "key": "class_id",
-              "value": "\"nameservice.dys\"",
-              "index": true
-            },
-            {
-              "key": "id",
-              "value": "\"nameservice.dys\"",
-              "index": true
-            },
-            {
-              "key": "owner",
-              "value": "\"dys210d07y265gmmuvt4z0w9aw880jnsr700jsjgnxq\"",
               "index": true
             },
             {
@@ -611,7 +586,7 @@ Reveal the name to complete registration.
             },
             {
               "key": "id",
-              "value": "\"alice-7boyo.dys\"",
+              "value": "\"alice-9qlju.dys\"",
               "index": true
             },
             {
@@ -636,7 +611,7 @@ Reveal the name to complete registration.
             },
             {
               "key": "name",
-              "value": "\"alice-7boyo.dys\"",
+              "value": "\"alice-9qlju.dys\"",
               "index": true
             },
             {
@@ -665,7 +640,7 @@ Set the destination of the registered name to Alice's address.
 
     {
       "height": "0",
-      "txhash": "31040EEB53B53CF6E3D9515B3ADEE5C1EBE6E16D455213B07758785B160ABBE7",
+      "txhash": "361C657929263BB7792316554FC21AAF10206F676DCAA6E319625F80DB58A2EF",
       "codespace": "",
       "code": 0,
       "data": "",
@@ -697,18 +672,18 @@ print(output)
 assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Protocol!' in output, got: " + output
 ```
 
-    Accessing your DWapp at 'http://alice-7boyo.dys.localhost:2417'
+    Accessing your DWapp at 'http://alice-9qlju.dys.localhost:2417'
 
 
-    * Host alice-7boyo.dys.localhost:2417 was resolved.
+    * Host alice-9qlju.dys.localhost:2417 was resolved.
     * IPv6: ::1
     * IPv4: 127.0.0.1
     *   Trying [::1]:2417...
-    * connect to ::1 port 2417 from ::1 port 57621 failed: Connection refused
+    * connect to ::1 port 2417 from ::1 port 56154 failed: Connection refused
     *   Trying 127.0.0.1:2417...
-    * Connected to alice-7boyo.dys.localhost (127.0.0.1) port 2417
+    * Connected to alice-9qlju.dys.localhost (127.0.0.1) port 2417
     > GET /hi HTTP/1.1
-    > Host: alice-7boyo.dys.localhost:2417
+    > Host: alice-9qlju.dys.localhost:2417
     > User-Agent: curl/8.7.1
     > Accept: */*
     > 
@@ -716,12 +691,12 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Sun, 20 Jul 2025 11:41:27 GMT
+    < Date: Sun, 20 Jul 2025 14:50:14 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1753011687
+    < X-Server-Time: 1753023014
     < 
     { [82 bytes data]
-    * Connection #0 to host alice-7boyo.dys.localhost left intact
+    * Connection #0 to host alice-9qlju.dys.localhost left intact
     
     <html>
         <body>

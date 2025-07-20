@@ -22,7 +22,7 @@ def poll_until_proposal_passes(dysond_bin, proposal_id: str, timeout: int = 60):
         error_message="Timeout waiting for proposal to reach final state"
     )
     proposal_result = dysond_bin("query", "gov", "proposal", proposal_id)
-    final_status = proposal_result.get("status", "")
+    final_status = proposal_result["proposal"]["status"]  # Fixed: get status from proposal object
     return final_status
 
 def register_name(chainnet, generate_account, faucet):
@@ -62,7 +62,7 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
     validator_operator = validators["validators"][0]["operator_address"]
     
     # Delegate tokens from Alice to validator so Alice has voting power
-    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000udys", "--from", "alice", "--yes")
+    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "50000000udys", "--from", "alice", "--yes")
     assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result['raw_log']}"
 
     proposal = {
@@ -130,7 +130,7 @@ def test_update_nameservice_params_via_gov(chainnet, generate_account, faucet):
     # Get validator operator address and delegate tokens for voting power
     validators = dysond_bin("query", "staking", "validators")
     validator_operator = validators["validators"][0]["operator_address"]
-    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "20000udys", "--from", alice_name, "--yes")
+    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "50000000udys", "--from", alice_name, "--yes")
     assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result['raw_log']}"
     
     # Get current params

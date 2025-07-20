@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -151,6 +152,14 @@ Examples:
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
 				return err
+			}
+
+			// Decode base64 page key if provided (CLI sends base64, keeper expects raw bytes)
+			if len(pageReq.Key) > 0 {
+				// Try to decode as base64, if it fails, assume it's already raw bytes
+				if decoded, decodeErr := base64.StdEncoding.DecodeString(string(pageReq.Key)); decodeErr == nil {
+					pageReq.Key = decoded
+				}
 			}
 
 			req := &storagetypes.QueryStorageListRequest{
