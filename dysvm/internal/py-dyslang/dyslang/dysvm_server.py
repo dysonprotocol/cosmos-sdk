@@ -257,6 +257,7 @@ def get_module_dict():
             "floor": math.floor,
             "fmod": math.fmod,
             "fsum": math.fsum,
+            "frexp": math.frexp,
             "gcd": math.gcd,
             "isclose": math.isclose,
             "isfinite": math.isfinite,
@@ -927,6 +928,8 @@ dyslang.WHITELIST_FUNCTIONS.update(
         "BytesIO.read",
         "bytes.decode",
         "bytes.join",
+        "bytes.hex",
+
         # str
         "str.capitalize",
         "str.casefold",
