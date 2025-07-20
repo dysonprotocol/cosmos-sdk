@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/static/css/style.css" integrity="{{css_integrity}}">
+    <script type="importmap">{{importmap_json}}</script>
+    {{static_scripts}}
+</head>
+<body class="latex-dark-auto">
+    <header>
+        <div>
+            <h1><a href="/">Nuance</a></h1>
+        </div>
+        <div>
+            <a href="/recent">Recent Posts</a> | 
+            <a href="/active">Active Posts</a> | 
+            <a href="/topics">Topics</a> | 
+            <a href="/blog">Blog</a> | 
+            <a href="/publish">Publish</a>
+        </div>
+        <div id="wallet-controls">
+            <!-- Wallet controls will be handled by JavaScript -->
+        </div>
+    </header>
+    <main>
+        {{main}}
+    </main>
+</body>
+</html> 

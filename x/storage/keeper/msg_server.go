@@ -5,15 +5,10 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"strings"
 	"time"
 
-	"cosmossdk.io/collections"
-	errorsmod "cosmossdk.io/errors"
 	storagetypes "dysonprotocol.com/x/storage/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/tidwall/gjson"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -21,14 +16,27 @@ import (
 // We assume your keeper implements storagetypes.MsgServer
 var _ storagetypes.MsgServer = Keeper{}
 
+func isPrintableASCII(s string) bool {
+	for _, r := range s {
+		if r < 32 || r > 126 {
+			return false
+		}
+	}
+	return true
+}
+
 func (k Keeper) StorageSet(ctx context.Context, msg *storagetypes.MsgStorageSet) (*storagetypes.MsgStorageSetResponse, error) {
 	// Validate the owner address is properly formatted
 	if _, err := sdk.AccAddressFromBech32(msg.Owner); err != nil {
 		return nil, err
 	}
 
-	// Create the key directly using strings
-	key := collections.Join(msg.Owner, msg.Index)
+	if !isPrintableASCII(msg.Index) {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid index, must be printable ASCII")
+	}
+
+	// Create the combined key
+	key := msg.Owner + "/" + msg.Index
 
 	blockHeight := uint64(sdk.UnwrapSDKContext(ctx).BlockHeight())
 	blockTime := sdk.UnwrapSDKContext(ctx).BlockTime()
@@ -66,101 +74,48 @@ func (k Keeper) StorageDelete(ctx context.Context, msg *storagetypes.MsgStorageD
 		return nil, err
 	}
 
-	// Validate mutual exclusivity - either indexes OR (index_prefix with optional filter)
-	hasIndexes := len(msg.Indexes) > 0
-	hasIndexPrefix := msg.IndexPrefix != ""
-	hasFilter := msg.Filter != ""
-
-	// Check mutual exclusivity
-	if hasIndexes && hasIndexPrefix {
-		return nil, status.Errorf(codes.InvalidArgument, "cannot specify both indexes and index_prefix")
-	}
-	if !hasIndexes && !hasIndexPrefix {
-		return nil, status.Errorf(codes.InvalidArgument, "must specify either indexes or index_prefix")
-	}
-	if hasFilter && !hasIndexPrefix {
-		return nil, status.Errorf(codes.InvalidArgument, "filter can only be used with index_prefix")
+	// Validate that indexes are provided
+	if len(msg.Indexes) == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "must specify at least one index to delete")
 	}
 
 	// Track the indexes that were deleted
 	var deletedIndexes []string
 
-	if hasIndexes {
-		// OPTION 1: Delete specific indexes
-		for _, index := range msg.Indexes {
-			// Create the key for this index
-			key := collections.Join(msg.Owner, index)
+	// Delete specific indexes
+	for _, index := range msg.Indexes {
+		// Create the key for this index
+		key := msg.Owner + "/" + index
 
-			// Check if the entry exists first
-			exists, err := k.StorageMap.Has(ctx, key)
-			if err != nil {
-				return nil, err
-			}
-
-			// Only try to delete if it exists
-			if exists {
-				if err := k.StorageMap.Remove(ctx, key); err != nil {
-					return nil, err
-				}
-				deletedIndexes = append(deletedIndexes, index)
-			}
-		}
-	} else {
-		// OPTION 2: Delete by prefix with optional filter
-		// We need to iterate through all entries for this owner and match by prefix
-		iterator, err := k.StorageMap.Iterate(ctx, collections.NewPrefixedPairRange[string, string](msg.Owner))
+		// Check if the entry exists first
+		exists, err := k.StorageMap.Has(ctx, key)
 		if err != nil {
 			return nil, err
 		}
-		defer iterator.Close()
 
-		// Collect keys to delete (we collect first to avoid iterator invalidation)
-		var keysToDelete []collections.Pair[string, string]
-
-		for ; iterator.Valid(); iterator.Next() {
-			kv, err := iterator.KeyValue()
+		// Only try to delete if it exists AND belongs to the requesting user
+		if exists {
+			// Double-check ownership by reading the entry
+			entry, err := k.StorageMap.Get(ctx, key)
 			if err != nil {
 				return nil, err
 			}
-			key := kv.Key
-			value := kv.Value
 
-			// Check if index starts with the prefix
-			if !strings.HasPrefix(value.Index, msg.IndexPrefix) {
-				continue
+			// Verify the entry owner matches the message sender
+			if entry.Owner != msg.Owner {
+				return nil, status.Errorf(codes.PermissionDenied, "cannot delete index [%s] owned by [%s]", index, entry.Owner)
 			}
 
-			// Apply optional filter if provided
-			if hasFilter {
-				// Wrap the data in an array to use GJSON's query functionality
-				// This allows us to use all GJSON query operators: ==, !=, <, <=, >, >=, %, !%
-				wrappedData := "[" + value.Data + "]"
-
-				// Apply the filter as a GJSON array query
-				// If the filter matches, it returns the item; if not, it returns empty array
-				result := gjson.Get(wrappedData, "#("+msg.Filter+")")
-
-				// Skip if no match (empty result)
-				if !result.Exists() || len(result.Array()) == 0 {
-					continue
-				}
-			}
-
-			// Mark for deletion
-			keysToDelete = append(keysToDelete, key)
-			deletedIndexes = append(deletedIndexes, value.Index)
-		}
-
-		// Now delete all marked entries
-		for _, key := range keysToDelete {
 			if err := k.StorageMap.Remove(ctx, key); err != nil {
 				return nil, err
 			}
+			deletedIndexes = append(deletedIndexes, index)
 		}
 	}
 
+	// Check if any entries were actually deleted
 	if len(deletedIndexes) == 0 {
-		return nil, errorsmod.Wrap(sdkerrors.ErrNotFound, "no entries were deleted")
+		return nil, status.Errorf(codes.NotFound, "no entries were deleted")
 	}
 
 	// Emit the StorageDelete event

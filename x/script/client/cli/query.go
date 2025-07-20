@@ -13,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"dysonprotocol.com/dysvm"
 	scripttypes "dysonprotocol.com/x/script/types"
 )
 
@@ -29,6 +30,7 @@ func GetQueryCmd() *cobra.Command {
 	queryCmd.AddCommand(
 		GetCmdQueryRun(),
 		GetCmdQueryScriptInfo(),
+		GetCmdQueryBenchmark(),
 	)
 
 	return queryCmd
@@ -234,6 +236,54 @@ func GetCmdQueryScriptInfo() *cobra.Command {
 	}
 
 	cmd.Flags().String("address", "", "Address of the script (required)")
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryBenchmark returns the command to run a benchmark
+func GetCmdQueryBenchmark() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "benchmark [--iterations <number>] [--details]",
+		Short: "Run a benchmark test",
+		Long: `Runs a benchmark test using the dyslang virtual machine.
+
+This command executes a performance benchmark to test the dyslang execution environment.
+
+Optional Flags:
+  --iterations: Number of iterations for transcendental function tests (default: 100)
+  --details: Show detailed benchmark results (default: only total_hash)
+
+Examples:
+  $ dysond query script benchmark
+  $ dysond query script benchmark --iterations 1000
+  $ dysond query script benchmark --details`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			iterations, err := cmd.Flags().GetInt("iterations")
+			if err != nil {
+				return fmt.Errorf("failed to get --iterations: %w", err)
+			}
+
+			details, err := cmd.Flags().GetBool("details")
+			if err != nil {
+				return fmt.Errorf("failed to get --details: %w", err)
+			}
+
+			// Call the benchmark function with iterations and details parameters
+			output, err := dysvm.Benchmark(iterations, details)
+			if err != nil {
+				return fmt.Errorf("benchmark failed: %w", err)
+			}
+
+			// Print the benchmark results
+			fmt.Print(output)
+			return nil
+		},
+	}
+
+	cmd.Flags().Int("iterations", 100, "Number of iterations for transcendental function tests")
+	cmd.Flags().Bool("details", false, "Show detailed benchmark results (default: only total_hash)")
 
 	flags.AddQueryFlagsToCmd(cmd)
 

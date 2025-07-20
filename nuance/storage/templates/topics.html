@@ -1,0 +1,97 @@
+<div x-data="topicsData()" x-init="loadTopics()">
+  <h2>Featured Topics</h2>
+  <ol>
+    <template x-for="tag in featuredTags" :key="tag.tag_name">
+      <li>
+        <a :href="`/topics/${tag.tag_name}`" x-text="tag.tag_name"></a>
+        <span x-text="`(Available: ${tag.normalizedAmount || 'Loading...'} DYS)`"></span>
+      </li>
+    </template>
+    <li x-show="featuredTags.length === 0 && !loadingFeatured">No featured topics available</li>
+    <li x-show="loadingFeatured">Loading featured topics...</li>
+  </ol>
+
+  <h2>All Topics</h2>
+  <ul>
+    <template x-for="tag in allTags" :key="tag.tag_name">
+      <li>
+        <a :href="`/topics/${tag.tag_name}`" x-text="tag.tag_name"></a>
+      </li>
+    </template>
+    <li x-show="allTags.length === 0 && !loadingAll">No topics found</li>
+    <li x-show="loadingAll">Loading topics...</li>
+  </ul>
+</div>
+
+<script>
+function topicsData() {
+  return {
+    featuredTags: [],
+    allTags: [],
+    loadingFeatured: true,
+    loadingAll: true,
+    
+    async loadTopics() {
+      await Promise.all([
+        this.loadFeaturedTags(),
+        this.loadAllTags()
+      ]);
+    },
+    
+    async loadFeaturedTags() {
+      try {
+        const { dataList } = await listData('available_rewards/tags/udys/');
+        this.featuredTags = dataList;
+        
+        // Normalize amounts for all featured tags
+        await this.normalizeTagAmounts();
+      } catch (error) {
+        console.error('Error loading featured tags:', error);
+        this.featuredTags = [];
+      } finally {
+        this.loadingFeatured = false;
+      }
+    },
+    
+    async loadAllTags() {
+      try {
+        const { dataList } = await listData('tag/tags/');
+        this.allTags = dataList;
+      } catch (error) {
+        console.error('Error loading all tags:', error);
+        this.allTags = [];
+      } finally {
+        this.loadingAll = false;
+      }
+    },
+    
+    async normalizeTagAmounts() {
+      try {
+        // Load denom metadata first
+        await Alpine.store('walletStore').loadDenomMetadata();
+        
+        // Normalize each featured tag amount
+        for (let tag of this.featuredTags) {
+          try {
+            const normalizedAmount = Alpine.store('walletStore').normalizeCoin({
+              amount: String(tag.amount),
+              denom: 'udys'
+            });
+            tag.normalizedAmount = parseFloat(normalizedAmount.display.amount);
+          } catch (error) {
+            console.error('Error normalizing amount for tag:', tag.tag_name, error);
+            // Fallback to manual conversion
+            tag.normalizedAmount = tag.amount / 1000000;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading denom metadata:', error);
+        // Fallback to manual conversion for all tags
+        for (let tag of this.featuredTags) {
+          tag.normalizedAmount = tag.amount / 1000000;
+        }
+      }
+    }
+  }
+}
+</script> 

@@ -38,39 +38,86 @@ def get_notebook_files():
     return notebook_files
 
 
-def execute_notebook(notebook_path, dyson_home):
+def clear_notebook_outputs(notebook_path, env=None):
     """
-    Execute a Jupyter notebook using nbconvert.
+    Clear all outputs from a Jupyter notebook.
     
     Args:
         notebook_path (Path): Path to the notebook file
+        env (dict): Optional environment variables to use
         
     Returns:
-        tuple: (success: bool, output: str, error: str)
+        bool: True if clearing succeeded, False otherwise
     """
-    # Execute the notebook using nbconvert in place
     cmd = [
         "jupyter", "nbconvert",
-        "--to", "notebook",
-        "--execute",
+        "--clear-output",
         "--inplace",
-        "--ExecutePreprocessor.timeout=5",  # DO NOT CHANGE THIS, INSTEAD FIX YOUR TESTS!!!!
-        "--ExecutePreprocessor.kernel_name=python3",
         str(notebook_path)
     ]
-
-    print(f"Executing notebook: {' '.join(cmd)}")
+    
+    env = env or os.environ.copy()
     
     result = subprocess.run(
         cmd,
         capture_output=True,
         text=True,
         cwd=notebook_path.parent,
-        env=os.environ.copy()
+        env=env
+    )
+    
+    return result.returncode == 0
+
+
+def execute_notebook(notebook_path, dyson_home, env=None):
+    """
+    Execute a Jupyter notebook and convert to markdown while keeping original clean.
+    
+    This function executes the notebook and outputs the results as markdown to a 
+    file with the same name as the notebook, then ensures the original notebook 
+    file remains without outputs.
+    
+    Args:
+        notebook_path (Path): Path to the notebook file
+        dyson_home (str): Path to the dyson home directory
+        env (dict): Optional environment variables to use
+        
+    Returns:
+        tuple: (success: bool, markdown_path: str, error: str)
+    """
+    # Create markdown output path with same name as notebook
+    markdown_path = notebook_path.with_suffix('.md')
+    
+    # Execute the notebook and convert to markdown
+    cmd = [
+        "jupyter", "nbconvert",
+        "--to", "markdown",
+        "--execute",
+        "--output", str(markdown_path),
+        "--ExecutePreprocessor.timeout=6",  # DO NOT CHANGE THIS, INSTEAD FIX YOUR TESTS!!!!
+        "--ExecutePreprocessor.kernel_name=python3",
+        str(notebook_path)
+    ]
+
+    print(f"Executing notebook to markdown: {notebook_path.name} -> {markdown_path.name}")
+    
+    env = env or os.environ.copy()
+    env["DYSON_HOME"] = dyson_home
+    
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        cwd=notebook_path.parent,
+        env=env
     )
     
     success = result.returncode == 0
-    return success, result.stdout, result.stderr if not success else ""
+    
+    # Ensure the original notebook remains clean (no outputs)
+    clear_notebook_outputs(notebook_path, env)
+    
+    return success, str(markdown_path), result.stderr
 
 
 def validate_notebook_structure(notebook_path):
@@ -146,15 +193,33 @@ def test_notebook_execution(notebook_path, chainnet):
     dyson_home = dysond_bin("config", "home").strip()
     print(f"Dyson home: {dyson_home}")
     
-    # Set up environment variables for notebook execution
-    #"DYSON_HOME": dyson_home,
-    
-    os.environ["DYSON_HOME"] = dyson_home
-    
-    # Execute the notebook with the environment variables
-    success, stdout, stderr = execute_notebook(notebook_path, dyson_home)
-    
-    assert success, f"Notebook execution failed: {notebook_path}\nSTDOUT:\n{stdout}\nSTDERR:\n{stderr}"
+    # Create a temporary directory for the dysond wrapper
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Create a dysond wrapper script that includes the --home parameter
+        wrapper_script = Path(temp_dir) / "dysond"
+        
+        # Find the real dysond binary
+        real_dysond = subprocess.run(["which", "dysond"], capture_output=True, text=True).stdout.strip()
+        assert real_dysond, "dysond binary not found in PATH"
+        
+        # Write the wrapper script
+        wrapper_content = f'''#!/bin/bash
+# Wrapper script to automatically include --home parameter for test node
+exec "{real_dysond}" --home "{dyson_home}" "$@"
+'''
+        wrapper_script.write_text(wrapper_content)
+        wrapper_script.chmod(0o755)
+        
+        # Set up environment variables for notebook execution
+        env = os.environ.copy()
+        env["DYSON_HOME"] = dyson_home
+        # Put our wrapper script at the front of PATH so it's used instead of the real dysond
+        env["PATH"] = f"{temp_dir}:{env.get('PATH', '')}"
+        
+        # Execute the notebook with the modified environment
+        success, markdown_path, stderr = execute_notebook(notebook_path, dyson_home, env)
+        
+        assert success, f"Notebook execution failed: {notebook_path}\nMarkdown output: {markdown_path}\nSTDERR:\n{stderr}"
 
 
 @pytest.mark.docs

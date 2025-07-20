@@ -32,7 +32,8 @@ def _get_next_id(key):
         )
         # Get current counter value, default to 0 if not found
         current_id = int(result["entry"]["data"])
-    except Exception:
+    except Exception as e:
+        print(f"Error getting current ID: {e}")
         # Storage entry doesn't exist yet (first message), start from 0
         current_id = 0
 
@@ -88,7 +89,7 @@ def save_message(message="Hello, world!"):
                 denom = coin["denom"]
                 coins[denom] = coins.get(denom, 0) + int(coin["amount"])
 
-    index = f"messages/{coins.get('udys, 0):010d}/{message_id}"
+    index = f"messages/{coins.get('udys', 0):010d}/{message_id}"
 
     message_data = {
         "greeting": message,
@@ -131,8 +132,9 @@ def delete_message(message_id):
     try:
         message_data = json.loads(result["entry"]["data"])
         message_sender = message_data.get("sender")
-    except (json.JSONDecodeError, KeyError):
-        return {"error": "Invalid message data", "message_id": message_id}
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"Error parsing message data: {e}")
+        return {"error": f"Invalid message data: {e}", "message_id": message_id}
 
     # Authenticate: only the sender can delete their message
     if message_sender != caller:
@@ -646,17 +648,12 @@ def render_script_tags() -> SafeString:
 
 def get_css_integrity() -> SafeString:
     """Get integrity attribute for style.css file."""
-    try:
-        css_res = _query(
-            {
-                "@type": "/dysonprotocol.storage.v1.QueryStorageGetRequest",
-                "owner": get_script_address(),
-                "index": "static/css/style.css",
-            }
-        )
-        hash_value = css_res["entry"]["hash"]
-        if isinstance(hash_value, str) and hash_value.startswith("sha256-"):
-            return SafeString(f' integrity="{hash_value}"')
-    except Exception:
-        pass  # No hash available, return empty
-    return SafeString("")
+    css_res = _query(
+        {
+            "@type": "/dysonprotocol.storage.v1.QueryStorageGetRequest",
+            "owner": get_script_address(),
+            "index": "static/css/style.css",
+        }
+    )
+    hash_value = css_res["entry"]["hash"]
+    return SafeString(f' integrity="{hash_value}"')

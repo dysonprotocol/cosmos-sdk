@@ -237,6 +237,7 @@ DEFAULT_SCOPE = {
     "divmod": divmod,
     "enumerate": enumerate,
     "filter": filter,
+    "float": float,
     "frozenset": frozenset,
     "hex": hex,
     "int": int,
@@ -503,7 +504,7 @@ class DysEval(object):
                 ast.arg,
                 ast.comprehension,
                 ast.alias,
-                #ast.GeneratorExp,
+                ast.GeneratorExp,
                 ast.ListComp,
                 ast.DictComp,
                 ast.SetComp,
@@ -1371,6 +1372,8 @@ class DysEval(object):
             to_return = dict()
         elif isinstance(node, ast.SetComp):
             to_return = set()
+        elif isinstance(node, ast.GeneratorExp):
+            raise NotImplementedError("Generator expressions are not supported, use a list comprehension instead")
         else:  # pragma: no cover
             raise Exception("should never happen")
 

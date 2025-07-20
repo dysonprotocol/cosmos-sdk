@@ -1,0 +1,70 @@
+
+<div>
+  <h3>
+    <a href="/{{id}}">Post #{{id}}</a> <a href="/{{id}}/topics">tags</a>: <a href="/topics/{{tag_name}}">{{tag_name}}</a>
+  </h3>
+
+  <form x-data="createPostTagDetailData({{id}}, '{{tag_name}}', {{earliest_claim_time}}, {{up}}, {{down}}, {{earned}}, {{best_rating}})"
+    >
+    <!-- Error display -->
+    <div x-show="error" class="error" style="color: red; background: #ffebee; padding: 10px; margin: 10px 0; border-radius: 4px; border: 1px solid #ffcdd2;">
+      <strong>Error:</strong> <span x-text="error"></span>
+    </div>
+    
+    <meter value="{{best_rating}}" min="0" max="1" low=".33" high=".66" optimum=".9">
+      {{up}} up and {{down}} down
+    </meter>
+    <ul class="stats">
+      <li>Topic: <a href="/topics/{{tag_name}}">{{tag_name}}</a></li>
+      <li>Up: <strong>{{up}}</strong></li>
+      <li>Down: <strong>{{down}}</strong></li>
+      <li>Earned: <strong x-text="earnedRewards + ' DYS'">Loading...</strong></li>
+      <li>
+        Claimable: <strong class="claimable" x-text="availableRewards + ' DYS'">Loading...</strong>
+
+        <button
+          class="claim-btn"
+          :disabled="!canClaim || isClaiming"
+          @click="claim($event)"
+          x-text="isClaiming ? 'Claiming...' : claimButtonText"
+        >
+          Claim
+        </button>
+      </li>
+
+      <li>
+        <button
+          class="up-btn"
+          @click="rateTag('up', $event)"
+          :disabled="!hasAccount || isSubmitting"
+          x-text="isSubmitting ? 'Submitting...' : '#{{id}} is stronger {{tag_name}}'"
+        >
+          #{{id}} is <strong>more</strong> {{tag_name}}
+        </button>
+        <button
+          class="down-btn"
+          @click="rateTag('down', $event)"
+          :disabled="!hasAccount || isSubmitting"
+          x-text="isSubmitting ? 'Submitting...' : '#{{id}} is weaker {{tag_name}}'"
+        >
+          #{{id}} is <strong>less</strong> {{tag_name}}
+        </button>
+        <input
+          name="amount"
+          type="number"
+          min="0"
+          placeholder="Amount in DYS"
+          class="auto-save"
+          x-model="amount"
+        />
+        <input
+          name="name"
+          placeholder="(Optional) Your Dys Name"
+          size="30"
+          class="auto-save"
+          x-model="contributor"
+        />
+      </li>
+    </ul>
+  </form>
+</div> 

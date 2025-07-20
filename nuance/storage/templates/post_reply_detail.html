@@ -1,0 +1,54 @@
+<h3>
+  <a href="/{{post_id}}">Post #{{post_id}}</a> <a href="/{{post_id}}/replies">replies</a>: <a href="/{{post_id}}/replies/{{reply_post_id}}">#{{reply_post_id}}</a>
+</h3>
+
+<form x-data="createPostReplyDetailData({{post_id}}, {{reply_post_id}}, {{earliest_claim_time}}, {{up}}, {{down}}, {{earned}}, {{best_rating}})">
+  <!-- Error display -->
+  <div x-show="error" class="error" style="color: red; background: #ffebee; padding: 10px; margin: 10px 0; border-radius: 4px; border: 1px solid #ffcdd2;">
+    <strong>Error:</strong> <span x-text="error"></span>
+  </div>
+
+  <details>
+    <summary>
+      <meter value="{{best_rating}}" min="0" max="1" low=".33" high=".66" optimum=".9">
+        {{up}} up and {{down}} down
+      </meter>
+    </summary>
+    <ul class="stats">
+      <li>Up: <strong>{{up}}</strong></li>
+      <li>Down: <strong>{{down}}</strong></li>
+      <li>Earned: <strong x-text="earnedRewards + ' DYS'">Loading...</strong></li>
+      <li>
+        Claimable: <strong class="claimable" x-text="availableRewards + ' DYS'">Loading...</strong>
+
+        <button
+          class="claim-btn"
+          :disabled="!canClaim || isClaiming"
+          @click="claimReply($event)"
+          x-text="isClaiming ? 'Claiming...' : claimButtonText"
+        >
+          Claim
+        </button>
+      </li>
+      <li>
+        <input name="amount" type="number" min="0" placeholder="Amount in DYS" x-model="amount" />
+        <button
+          class="up-btn"
+          @click="rateReply('up', $event)"
+          :disabled="!hasAccount || isSubmitting"
+          x-text="isSubmitting ? 'Submitting...' : '#{{reply_post_id}} is more relevant'"
+        >
+          #{{reply_post_id}} is <strong>more relevant</strong>
+        </button>
+        <button
+          class="down-btn"
+          @click="rateReply('down', $event)"
+          :disabled="!hasAccount || isSubmitting"
+          x-text="isSubmitting ? 'Submitting...' : '#{{reply_post_id}} is less relevant'"
+        >
+          #{{reply_post_id}} is <strong>less relevant</strong>
+        </button>
+      </li>
+    </ul>
+  </details>
+</form> 

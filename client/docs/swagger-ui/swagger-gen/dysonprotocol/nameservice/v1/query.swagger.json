@@ -79,6 +79,38 @@
           "Query"
         ]
       }
+    },
+    "/dysonprotocol/nameservice/v1/resolve_name/{name_or_address}": {
+      "get": {
+        "summary": "ResolveName resolves a name to address or returns the address if already\nvalid",
+        "operationId": "Query_ResolveName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.QueryResolveNameResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name_or_address",
+            "description": "name_or_address is either a nameservice name or a valid address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
     }
   },
   "definitions": {
@@ -126,6 +158,16 @@
         }
       },
       "description": "QueryParamsResponse is response type for the Query/Params RPC method."
+    },
+    "dysonprotocol.nameservice.v1.QueryResolveNameResponse": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "title": "address is the resolved address"
+        }
+      },
+      "description": "QueryResolveNameResponse is response type for the Query/ResolveName RPC\nmethod."
     },
     "google.protobuf.Any": {
       "type": "object",

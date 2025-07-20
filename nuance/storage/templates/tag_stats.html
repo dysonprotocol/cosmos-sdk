@@ -1,0 +1,269 @@
+<div>
+  <h1 style="text-transform: capitalize">{{tag_name}}</h1>
+  <a href="/topics/{{tag_name}}/hot">Hot</a> |
+  <a href="/topics/{{tag_name}}/best">Best</a> | Statistics
+
+  <h3>Hot Rankings chart</h3>
+  <div id="hot-chart"></div>
+  <h3>Cumulative Rewards chart</h3>
+  <div id="cumulative-chart"></div>
+
+  <h2>Top Supporters</h2>
+
+  <table style="width: 100%" class="col-1-r">
+    <tbody id="table-body">
+      <!-- Rows will be dynamically added here -->
+    </tbody>
+  </table>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+
+  <script>
+    function renderSupporters() {
+      listData("top_tag_contributor/tags/{{tag_name}}", {
+          pagination: { limit: 100, reverse: true },
+      })
+        .then((response) => {
+          const dataList = response.dataList;
+
+          // Get the table body (assumes it has an id of 'table-body')
+          const tableBody = document.getElementById("table-body");
+
+          // Clear any existing rows
+          tableBody.innerHTML = "";
+
+          // Populate the table with data
+          dataList.forEach((data) => {
+            const row = document.createElement("tr"); // Create a table row
+
+
+            // Create and populate the 'Amount DYS' cell
+            const amountCell = document.createElement("td");
+            amountCell.textContent = data.amount.toLocaleString() + " DYS"; // Format with commas
+            row.appendChild(amountCell);
+
+            // Create and populate the 'Supporter' cell
+            const supporterCell = document.createElement("th");
+            supporterCell.textContent = data.contributor;
+            row.appendChild(supporterCell);
+
+            // Append the row to the table body
+            tableBody.appendChild(row);
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }
+    try {
+      DYSON_PROTOCOL;
+      renderSupporters();
+    } catch (e) {
+      if (e instanceof ReferenceError) {
+        document.addEventListener("dysonLoadedEvent", () => renderSupporters());
+      }
+    }
+  </script>
+
+  <script>
+    // Fetch additional metadata for each post to get claimed data
+    const fetchMetadata = (() => {
+      const cache = new Map();
+
+      return async (tag, postId) => {
+        const key = `${tag}:${postId}`;
+
+        // If there's already a promise or result in the cache, return it
+        if (cache.has(key)) {
+          return cache.get(key);
+        }
+
+        // Create a new promise and store it in the cache
+        const promise = getData(getRateIndex("tags", tag, postId))
+          .then((metadata) => {
+            cache.set(key, metadata); // Cache the resolved result
+            return metadata;
+          })
+          .catch((error) => {
+            cache.delete(key); // Remove the promise if it fails
+            throw error;
+          });
+
+        cache.set(key, promise); // Cache the pending promise
+        return promise;
+      };
+    })();
+
+    async function renderCharts() {
+      // Fetch data using the existing listData function
+      const { dataList } = await listData(
+        "historical_rewards/tags/{{tag_name}}/",
+        {
+          pagination: { limit: 99, reverse: true },
+        },
+      );
+
+      // Prepare data by parsing the index and extracting necessary fields
+      const parsedData = await Promise.all(
+        dataList.map(async (item) => {
+          const parts = item._index.split("/");
+          const tag = parts[3];
+          const postId = parseInt(parts[4]);
+          const blockTime = Date.parse(parts[5]);
+
+          // Fetch additional metadata
+          const metadata = await fetchMetadata(tag, postId);
+
+          return {
+            hotIndex: item.hot_index,
+            dysReward: item.author_rewards.dys,
+            tag,
+            postId,
+            blockTime,
+            claimedDys: metadata.metadata.claimed.dys,
+            lastClaimed: metadata.metadata.last_claimed,
+          };
+        }),
+      );
+
+      // Group data by `tag`
+      const groupedData = {};
+      parsedData.forEach((point) => {
+        if (!groupedData[point.tag]) groupedData[point.tag] = {};
+        if (!groupedData[point.tag][point.postId])
+          groupedData[point.tag][point.postId] = [];
+
+        groupedData[point.tag][point.postId].push(point);
+      });
+
+      // Render charts for each tag in rows with cumulative rewards and hot index side-by-side
+      Object.entries(groupedData).forEach(([tag, posts]) => {
+        // Create two canvas elements for each tag
+        const rewardCanvas = document.createElement("canvas");
+        rewardCanvas.id = `rewardsChart-${tag}`;
+
+        const hotIndexCanvas = document.createElement("canvas");
+        hotIndexCanvas.id = `hotIndexChart-${tag}`;
+
+        document.querySelector("#hot-chart").appendChild(hotIndexCanvas);
+        document.querySelector("#cumulative-chart").appendChild(rewardCanvas);
+
+        // Prepare datasets for cumulative rewards and hot index charts
+        const rewardDatasets = [];
+        const hotIndexDatasets = [];
+
+        Object.entries(posts).forEach(([postId, points]) => {
+          // Sort points by blockTime in reverse order for reverse calculation
+          points.sort((a, b) => a.blockTime - b.blockTime);
+
+          // Reverse calculate cumulative dysReward
+          let cumulativeReward = 0; // Start from claimed dys
+          let cumulativeData = points.map((point) => {
+            cumulativeReward += point.dysReward;
+            const dataPoint = { x: point.blockTime, y: cumulativeReward };
+            return dataPoint;
+          });
+          const diff =
+            points[0].claimedDys - cumulativeData[cumulativeData.length - 1].y;
+          if (diff > 0) {
+            cumulativeData = cumulativeData.map((p) => {
+              p.y += diff;
+              return p;
+            });
+          }
+
+          // Prepare hotIndex data
+          const hotIndexData = points.map((point) => ({
+            x: point.blockTime,
+            y: point.hotIndex + 1,
+          }));
+
+          rewardDatasets.push({
+            label: `Post #${postId}`,
+            data: cumulativeData, // Reverse back for chronological display
+            fill: false,
+            tension: 0.1,
+          });
+
+          hotIndexDatasets.push({
+            label: `Post #${postId}`,
+            data: hotIndexData,
+            fill: false,
+            tension: 0.1,
+          });
+        });
+
+        // Render the cumulative rewards chart for the current tag
+        new Chart(rewardCanvas.getContext("2d"), {
+          type: "line",
+          data: { datasets: rewardDatasets },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: `Topic: ${tag} - Cumulative Rewards`,
+              },
+              legend: { display: false },
+            },
+            scales: {
+              x: {
+                type: "time",
+                time: {
+                  unit: "day",
+                },
+                title: { display: true, text: "Date" },
+              },
+              y: {
+                title: { display: true, text: "Cumulative Rewards (DYS)" },
+                position: "right",
+              },
+            },
+          },
+        });
+
+        // Render the hot index chart for the current tag
+        new Chart(hotIndexCanvas.getContext("2d"), {
+          type: "line",
+          data: { datasets: hotIndexDatasets },
+          options: {
+            responsive: true,
+            plugins: {
+              title: { display: true, text: `Topic: ${tag} - Hot Ranking` },
+              legend: { display: false },
+            },
+            scales: {
+              x: {
+                type: "time",
+                time: {
+                  unit: "day",
+                },
+                title: { display: true, text: "Date" },
+                position: "right",
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Hot Ranking",
+                },
+                position: "right",
+                reverse: true,
+              },
+            },
+          },
+        });
+      });
+    }
+
+    try {
+      DYSON_PROTOCOL;
+      renderCharts();
+    } catch (e) {
+      if (e instanceof ReferenceError) {
+        document.addEventListener("dysonLoadedEvent", () => renderCharts());
+      }
+    }
+  </script>
+</div> 

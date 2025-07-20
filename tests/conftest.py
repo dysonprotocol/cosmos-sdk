@@ -18,9 +18,11 @@ from utils import poll_until_condition
 import secrets  # new
 import ast
 import warnings
+from typing import List, Tuple, Iterable
+from textwrap import dedent
 
 NUM_CHAINS = 2
-NUM_NODES = 1
+NUM_NODES = 2
 
 # Global constants
 CHAINNET_SCRIPT = str(Path(__file__).parent.parent / "scripts" / "chainnet.py")
@@ -32,6 +34,78 @@ truncate.DEFAULT_MAX_CHARS = 999999
 
 # add tests utils to the path
 sys.path.append(str(Path(__file__).parent.parent))
+
+
+@pytest.fixture(scope="session")
+def browser_type_launch_args(browser_type_launch_args):
+    # Append the --disable-quic flag to any existing launch args
+    print(f"========== Browser type launch args: {browser_type_launch_args}")
+    return {
+        **browser_type_launch_args,
+        "args": browser_type_launch_args.get("args", []) + ["--disable-quic"],
+    }
+
+# -----------------------------------------------------------------------------
+# AST Checking Plugin - Enforce test code quality
+# -----------------------------------------------------------------------------
+
+
+
+def enforce_except_has_name(
+    src_path: str | Path
+) -> str:
+    """
+    Scan *src_path* and locate all ``except SomeError:`` clauses that
+    fail to bind the caught exception (missing ``as exc``).
+
+    Returns
+    -------
+    List[Tuple[int, str]]
+        Every tuple is (lineno, stripped_source_line).
+
+    Raises
+    ------
+    ValueError
+        If *fail_fast* is True and a violation is found.
+    SyntaxError
+        Propagated if *src_path* contains invalid Python.
+    """
+    path = Path(src_path)
+    source = path.read_text(encoding="utf-8")
+    tree = ast.parse(source, filename=str(path))
+
+    lines = source.splitlines()
+    violations = ""
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ExceptHandler):
+            if node.type is not None and node.name is None and node.name != "_" and node.name != "__":
+                src = ast.get_source_segment(source, node)
+                violations += dedent(f"""
+# ----- Exception without `as <var>` violation.
+You MUST use a variable name and you MUST print the exception or use the exception in the error message -----
+Bad:
+{path}:{node.lineno}:
+```python
+{src}
+```
+Good:
+```python
+except SomeException as e:
+    print(f"A helpful error message: {{e}}")
+    # or
+    return "A helpful error message: " + str(e)
+    ...
+```
+
+""")
+
+    return violations
+
+# -----------------------------------------------------------------------------
+# Chainnet Fixture
+# -----------------------------------------------------------------------------
+
 
 def make_run_command(dysond_bin, node_home):
     """
@@ -58,6 +132,11 @@ def make_run_command(dysond_bin, node_home):
             if code_path_index < len(args):
                 code_path = args[code_path_index]
                 
+                # Check for forbidden code
+                violations = enforce_except_has_name(code_path)
+                if violations:
+                    raise Exception(f"Forbidden code found in {code_path}:\n{violations}")
+
                 # Run ruff
                 print(f"Running ruff on {code_path}")
                 ruff_result = subprocess.run(["ruff", "check", code_path], capture_output=True, text=True)
@@ -209,7 +288,8 @@ def chainnet(worker_id, test_base_dir, test_config_path):
         "python3", CHAINNET_SCRIPT, "start",
         "--config-file", str(config_path),
         "--block-speed", "100ms",
-        "--no-blocks-timeout", "3",
+        "--no-blocks-timeout", "3", 
+        "--logs"
     ], preexec_fn=os.setsid)
 
     # Track processes for cleanup
@@ -281,7 +361,7 @@ def generate_account(chainnet, faucet):
     """Fixture that returns a function to create new accounts."""
     created = []
     default_dysond_bin = chainnet[0]
-    def _gen(name_prefix, faucet_amount=1000, dysond_bin=default_dysond_bin):
+    def _gen(name_prefix, faucet_amount=100_000_000, dysond_bin=default_dysond_bin):
         """
         Create a new account.
         Args:
@@ -322,9 +402,6 @@ def faucet(chainnet):
         for attempt in range(3):
             tx_out = dysond_bin("tx", "bank", "send", "alice", address, str(amount) + denom,
                 "--from", "alice", "--yes", **kwargs)
-            print("=" * 100)
-            print(f"===== Faucet tx: {tx_out}")
-            print("=" * 100)
             txhash = tx_out["txhash"]
             wait_result = dysond_bin("query", "wait-tx", txhash)
             if wait_result.get("code") == 0:
@@ -511,6 +588,10 @@ def update_crontask_params(chainnet):
 
 
 def generate_name() -> str:
+    """
+    Generate a random `.dys` root name (6-char prefix).
+    If base_name is provided, it will be used as the prefix.
+    """
     """Return a random `.dys` root name (6-char prefix)."""
     rand_suffix = ''.join(random.choices(string.ascii_lowercase, k=6))
     return f"{rand_suffix}.dys"
@@ -529,11 +610,11 @@ def register_name():
 
         def test_something(chainnet, generate_account, register_name):
             dysond_bin = chainnet[0]
-            owner_name, owner_addr = generate_account("owner")
-            name = register_name(dysond_bin, owner_name, owner_addr)
+            owner_keychain_name, owner_addr = generate_account("owner")
+            name = register_name(dysond_bin, owner_keychain_name, owner_addr)
     """
 
-    def _register(dysond_bin, owner_name: str, owner_addr: str, valuation: str = "10udys") -> str:
+    def _register(dysond_bin, owner_keychain_name: str, owner_addr: str, valuation: str = "10udys") -> str:
         name = generate_name()
         salt = secrets.token_hex(8)
 
@@ -560,7 +641,7 @@ def register_name():
             "--valuation",
             valuation,
             "--from",
-            owner_name,
+            owner_keychain_name,
         )
         assert commit_resp["code"] == 0, commit_resp.get("raw_log")
 
@@ -574,7 +655,7 @@ def register_name():
             "--salt",
             salt,
             "--from",
-            owner_name,
+            owner_keychain_name,
         )
         assert reveal_resp["code"] == 0, reveal_resp.get("raw_log")
 

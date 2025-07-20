@@ -1,0 +1,16 @@
+{
+  "imports": {
+    "@cosmjs/proto-signing": "https://esm.sh/@cosmjs/proto-signing@0.33.0",
+    "@cosmjs/encoding": "https://esm.sh/@cosmjs/encoding@0.28.0/es2022/encoding.mjs",
+    "cosmjs-types/cosmos/tx/v1beta1/tx.js": "https://esm.sh/cosmjs-types@0.9.0/cosmos/tx/v1beta1/tx.js",
+    "cosmjs-types/google/protobuf/any.js": "https://esm.sh/cosmjs-types@0.9.0/google/protobuf/any.js",
+    "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js": "https://esm.sh/cosmjs-types@0.9.0/cosmos/tx/signing/v1beta1/signing.js"
+  },
+  "integrity": {
+    "https://esm.sh/@cosmjs/proto-signing@0.33.0": "sha384-kH5cTgrrLZEnuDXwudrLGCLtoU41NPOYfdthnMUYTh2jaoe9ys5VxFDlfgCK+mYA",
+    "https://esm.sh/@cosmjs/encoding@0.28.0/es2022/encoding.mjs": "sha384-AvdvLuZGaIX0aHGlggL5+V2fbBGyAL/DKuxFhfMODNze9ySTAhIK5M0by+I5uTS4",
+    "https://esm.sh/cosmjs-types@0.9.0/cosmos/tx/v1beta1/tx.js": "sha384-APDjDlHft/+PGpqkVnNR5O9i8LqcIDYF3CufWQ3wzKw/Wt0Gz1YjIYiC509PoNRo",
+    "https://esm.sh/cosmjs-types@0.9.0/google/protobuf/any.js": "sha384-95FOvwJ5HMsm66L+WA8PVB6GgNWIs4uC0abcIA1JsI6u1BdzIniizitFmKO8UZbB",
+    "https://esm.sh/cosmjs-types@0.9.0/cosmos/tx/signing/v1beta1/signing.js": "sha384-ZWcZr6BAoiOXdvEMvh1o2QiN6FQTdHx0bO4r4y3zHhOHidHMY08ePjn9S35o8Jo7"
+  }
+}

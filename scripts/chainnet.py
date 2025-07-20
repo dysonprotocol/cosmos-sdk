@@ -31,18 +31,19 @@ import atexit
 from pathlib import Path
 import time
 from typing import cast
-
+from textwrap import dedent
 import click
 import requests
 import tomlkit
+from datetime import datetime, timezone
 
 
 # --- Defaults & Constants ---
 DEFAULT_DENOM = "udys"
 DEFAULT_BASE_DIR = Path("/tmp/dysonchains")
 DEFAULT_CONFIG_PATH = DEFAULT_BASE_DIR / "chains.json"
-DEFAULT_GENTX_AMOUNT = f"1000000{DEFAULT_DENOM}"
-DEFAULT_INITIAL_BALANCE = f"10000000000{DEFAULT_DENOM}"
+DEFAULT_GENTX_AMOUNT = f"1000000000000{DEFAULT_DENOM}"
+DEFAULT_INITIAL_BALANCE = f"1000000000000{DEFAULT_DENOM}"
 USER_KEYS = {
     "alice": {"address": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej", "mnemonic": "public feature teach face federal matrix throw legend bridge brass diary beach typical doll evoke weapon among crane regret trust enact swarm brother outside"},
     "bob":   {"address": "dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el", "mnemonic": "aerobic creek copper rice disagree become brass elegant century elegant apology position infant saddle metal brain gain loud alpha add boy balance truth cherry"},
@@ -86,12 +87,12 @@ def generate_chain_structure(chainnet_offset: int, idx: int, num_chains: int, no
     chain_id = f"chain-{chr(ord('a')+idx)}"
     genesis = {
         "governance_params": {
-            "voting_period": "1s",
-            "expedited_voting_period": "500ms",
-            "expedited_threshold": "0.667",
+            "voting_period": "3s",
+            "expedited_voting_period": "1s",
+            "expedited_threshold": "0.0001",
             "min_deposit": 1,
-            "quorum": "0.01",
-            "threshold": "0.1"
+            "quorum": "0.00001",
+            "threshold": "0.00001"
         },
         "nameservice_params": {
             "reject_bid_valuation_fee_percent": "0.03",
@@ -481,13 +482,15 @@ def setup(config_file, force):
 @click.option('--config-file', default=DEFAULT_CONFIG_PATH, type=click.Path(exists=True))
 @click.option('--block-speed', default=None, help='Override block production speed (timeout_commit) for all nodes, e.g. "500ms" or "1s".')
 @click.option('--no-blocks-timeout', default=None, type=float, help='Timeout in seconds to stop if no new blocks are produced by any node.')
+@click.option('--logs', is_flag=True, help='Output all node and hermes logs to stdout instead of log files')
 @click.argument('extra_args', nargs=-1)
-def start(config_file, block_speed, extra_args, no_blocks_timeout):
+def start(config_file, block_speed, extra_args, no_blocks_timeout, logs):
     """Start all dysond nodes and Hermes relayer."""
     import threading, time, requests
     cfg = json.loads(Path(config_file).read_text())
     bin_path = cfg['dysond_bin']
     procs = []
+    log_files = []  # Track log files for cleanup
     hermes_started = False
     stop_event = threading.Event()
 
@@ -503,6 +506,12 @@ def start(config_file, block_speed, extra_args, no_blocks_timeout):
                         os.killpg(os.getpgid(p.pid), signal.SIGKILL)
                     except (ProcessLookupError, OSError):
                         pass
+        # Close log files if we opened any
+        for log_file in log_files:
+            try:
+                log_file.close()
+            except:
+                pass
 
     atexit.register(cleanup_processes)
 
@@ -518,9 +527,16 @@ def start(config_file, block_speed, extra_args, no_blocks_timeout):
 
     for chain in cfg['chains']:
         for node in chain['nodes']:
-            log_path = os.path.join(node['home'], 'node.log')
-            log_file = open(log_path, 'w')
-            p = subprocess.Popen([bin_path, 'start', '--home', node['home'], *extra_args], preexec_fn=os.setsid, stdout=log_file, stderr=log_file)
+            if logs:
+                # Output logs to stdout/stderr
+                click.echo(f"Starting {chain['chain_id']}/{node['moniker']} (logs will appear below)")
+                p = subprocess.Popen([bin_path, 'start', '--home', node['home'], *extra_args], preexec_fn=os.setsid)
+            else:
+                # Output logs to files (current behavior)
+                log_path = os.path.join(node['home'], 'node.log')
+                log_file = open(log_path, 'w')
+                log_files.append(log_file)
+                p = subprocess.Popen([bin_path, 'start', '--home', node['home'], *extra_args], preexec_fn=os.setsid, stdout=log_file, stderr=log_file)
             procs.append(p)
 
 
@@ -528,15 +544,25 @@ def start(config_file, block_speed, extra_args, no_blocks_timeout):
     if hcfg.exists() and shutil.which('hermes'):
         time.sleep(1)
         click.echo(f"Starting Hermes relayer with config: {hcfg}")
-        hermes_log_path = Path(cfg['base_dir']) / 'hermes' / 'hermes.log'
-        hermes_log_file = open(hermes_log_path, 'w')
-        hermes_proc = subprocess.Popen(['hermes', '--config', str(hcfg), 'start'], preexec_fn=os.setsid, stdout=hermes_log_file, stderr=hermes_log_file)
+        if logs:
+            # Output logs to stdout/stderr
+            click.echo("Hermes logs will appear below")
+            hermes_proc = subprocess.Popen(['hermes', '--config', str(hcfg), 'start'], preexec_fn=os.setsid)
+        else:
+            # Output logs to files (current behavior)
+            hermes_log_path = Path(cfg['base_dir']) / 'hermes' / 'hermes.log'
+            hermes_log_file = open(hermes_log_path, 'w')
+            log_files.append(hermes_log_file)
+            hermes_proc = subprocess.Popen(['hermes', '--config', str(hcfg), 'start'], preexec_fn=os.setsid, stdout=hermes_log_file, stderr=hermes_log_file)
         procs.append(hermes_proc)
         hermes_started = True
     elif hcfg.exists():
         click.echo("Warning: Hermes binary not found in PATH, skipping Hermes start.")
     
-    click.echo(f"Nodes {'and Hermes ' if hermes_started else ''}started. Ctrl+C to stop.")
+    if logs:
+        click.echo(f"Nodes {'and Hermes ' if hermes_started else ''}started with logs output to terminal. Ctrl+C to stop.")
+    else:
+        click.echo(f"Nodes {'and Hermes ' if hermes_started else ''}started. Ctrl+C to stop.")
 
     def get_rpc_url(node):
         config_path = Path(node['home']) / 'config' / 'config.toml'
@@ -546,36 +572,61 @@ def start(config_file, block_speed, extra_args, no_blocks_timeout):
             rpc_addr = 'http://' + rpc_addr[6:]
         return rpc_addr
 
-    def get_block_height(rpc_url):
+    def get_block_info(rpc_url):
+        """Get latest block height and timestamp from RPC endpoint"""
         try:
             resp = requests.get(f"{rpc_url}/status", timeout=3)
             if resp.status_code == 200:
-                return int(resp.json()['result']['sync_info']['latest_block_height'])
-        except Exception:
-            return None
-        return None
+                data = resp.json()
+                sync_info = data['result']['sync_info']
+                height = int(sync_info['latest_block_height'])
+                # Parse the timestamp (format: "2025-01-20T15:17:07.770381Z")
+                block_time_str = sync_info['latest_block_time']
+                block_time = datetime.fromisoformat(block_time_str.replace('Z', '+00:00'))
+                return height, block_time
+        except Exception as e:
+            click.echo(f"Error getting block info for {rpc_url}: {e}", err=True)
+        return None, None
 
     def monitor_blocks(timeout):
         node_infos = []
         for chain in cfg['chains']:
             for node in chain['nodes']:
                 node_infos.append({'moniker': node['moniker'], 'chain_id': chain['chain_id'], 'rpc': get_rpc_url(node)})
-        prev_heights = {}
-        last_change = time.time()
+        
+        # Give nodes time to start up and begin producing blocks
+        startup_grace_period = max(10, timeout)
+        click.echo(f"Giving nodes {startup_grace_period}s to start up before monitoring...")
+        time.sleep(startup_grace_period)
+        
         try:
             while not stop_event.is_set():
                 time.sleep(timeout / 2)
-                changed = False
+                current_time = datetime.now(timezone.utc)
+                stale_nodes = []
+                
                 for info in node_infos:
-                    h = get_block_height(info['rpc'])
+                    height, block_time = get_block_info(info['rpc'])
                     key = f"{info['chain_id']}-{info['moniker']}"
-                    if h is not None:
-                        if key in prev_heights and h > prev_heights[key]:
-                            changed = True
-                            last_change = time.time()
-                        prev_heights[key] = h
-                if time.time() - last_change > timeout:
-                    click.echo(f"No new blocks produced by any node in {timeout} seconds. Stopping all nodes.")
+                    
+                    if height is not None and block_time is not None:
+                        # Check if the latest block is older than our timeout
+                        time_since_block = (current_time - block_time).total_seconds()
+                        if time_since_block > timeout:
+                            stale_nodes.append(f"Node: {key} Height: {height} Block Age: {time_since_block:.1f}s")
+                    else:
+                        # Node is unreachable
+                        stale_nodes.append(f"Node: {key} Height: unreachable Block Age: N/A")
+                
+                if stale_nodes:
+                    stale_nodes_str = "\n".join(stale_nodes)
+                    click.echo(f"""
+------------------------------------------------------------------------------------------------
+Not all nodes produced new blocks in the last {timeout} seconds. 
+{stale_nodes_str}
+
+Stopping all nodes!
+------------------------------------------------------------------------------------------------""")
                     stop_event.set()
                     return
         except Exception as e:

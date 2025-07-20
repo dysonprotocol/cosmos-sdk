@@ -38,27 +38,8 @@ message MsgStorageDelete {
   // The owner of the storage entries to delete.
   string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
-  // OPTION 1: Delete specific indexes
-  // List of indexes to delete. This field is mutually exclusive with
-  // index_prefix and filter fields.
+  // List of specific indexes to delete.
   repeated string indexes = 2;
-
-  // OPTION 2: Delete by prefix and optional filter
-  // The index prefix of the storage entries to delete. When specified,
-  // all entries with indexes starting with this prefix will be deleted
-  // (optionally filtered by the filter field). This field is mutually
-  // exclusive with the indexes field.
-  string index_prefix = 3;
-
-  // The optional gjson filter to apply when deleting by index_prefix.
-  // Supports GJSON query syntax with comparison operators:
-  // - Equality: status == "active", age == 25
-  // - Inequality: status != "inactive"
-  // - Comparison: age > 18, price <= 100
-  // - Pattern matching: name % "John*" (like), name !% "*test*" (not like)
-  // Only entries matching this filter will be deleted.
-  // This field can only be used in conjunction with index_prefix.
-  string filter = 4;
 }
 
 // MsgStorageDeleteResponse is the response for deleting storage entries.

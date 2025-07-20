@@ -1,0 +1,425 @@
+<div>
+  <h1 style="text-transform: capitalize">{{tag_name}}</h1>
+  <a href="/topics/{{tag_name}}/hot">Hot</a> |
+  <a href="/topics/{{tag_name}}/best">Best</a> | Statistics
+
+  <h3>Hot Rankings chart</h3>
+  <div id="hot-chart"></div>
+  <h3>Cumulative Rewards chart</h3>
+  <div id="cumulative-chart"></div>
+
+  <h2>Top Supporters</h2>
+
+  <table style="width: 100%" class="col-1-r">
+    <tbody id="table-body">
+      <!-- Rows will be dynamically added here -->
+    </tbody>
+  </table>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+
+  <script>
+    async function renderSupporters() {
+      try {
+        const { dataList } = await listData("top_tag_contributor/tags/{{tag_name}}/udys/", {
+          pagination: { limit: 100, reverse: true },
+        });
+
+        // Get the table body (assumes it has an id of 'table-body')
+        const tableBody = document.getElementById("table-body");
+
+        // Clear any existing rows
+        tableBody.innerHTML = "";
+
+        // Populate the table with data
+        dataList.forEach((data) => {
+          const row = document.createElement("tr"); // Create a table row
+
+          // Create and populate the 'Amount DYS' cell
+          const amountCell = document.createElement("td");
+          amountCell.textContent = data.amount.toLocaleString() + " DYS"; // Format with commas
+          row.appendChild(amountCell);
+
+          // Create and populate the 'Supporter' cell
+          const supporterCell = document.createElement("th");
+          supporterCell.textContent = data.contributor;
+          row.appendChild(supporterCell);
+
+          // Append the row to the table body
+          tableBody.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+    
+    // Wait for DOM to be ready
+    document.addEventListener("DOMContentLoaded", () => {
+      renderSupporters();
+    });
+  </script>
+
+  <script>
+    // Fetch additional metadata for each post to get claimed data
+    const fetchMetadata = (() => {
+      const cache = new Map();
+
+      return async (tag, postId) => {
+        const key = `${tag}:${postId}`;
+        console.log(`fetchMetadata called with tag="${tag}", postId=${postId}, key="${key}"`);
+
+        // If there's already a promise or result in the cache, return it
+        if (cache.has(key)) {
+          console.log(`fetchMetadata: Using cached result for ${key}`);
+          return cache.get(key);
+        }
+
+        // Create a new promise and store it in the cache
+        const metadataIndex = `rate_tags/tags/${tag}/${String(postId).padStart(15, '0')}`;
+        console.log(`fetchMetadata: Requesting metadata with index="${metadataIndex}"`);
+        
+        const promise = getData(metadataIndex)
+          .then((metadata) => {
+            console.log(`fetchMetadata: Successfully got metadata for ${key}:`, metadata);
+            cache.set(key, metadata); // Cache the resolved result
+            return metadata;
+          })
+          .catch((error) => {
+            console.error(`fetchMetadata: Error fetching metadata for ${key}:`, error);
+            console.log(`fetchMetadata: Removing failed promise from cache for ${key}`);
+            cache.delete(key); // Remove the promise if it fails
+            // Return null instead of throwing to prevent Promise.all from failing
+            return null;
+          });
+
+        cache.set(key, promise); // Cache the pending promise
+        return promise;
+      };
+    })();
+
+    async function showCurrentPostRatings() {
+      try {
+        // Load current posts tagged with this tag
+        const { dataList: hotPosts } = await listData(
+          "rate/tags/{{tag_name}}/hot/",
+          {
+            pagination: { limit: 10, reverse: true },
+          }
+        );
+        
+        const { dataList: bestPosts } = await listData(
+          "rate/tags/{{tag_name}}/best/",
+          {
+            pagination: { limit: 10, reverse: true },
+          }
+        );
+        
+        // Get tag rewards info
+        let tagRewards = { available: {}, claimed: {} };
+        try {
+          tagRewards = await getData("tag/tags/{{tag_name}}");
+        } catch (e) {
+          console.log("No reward data found for tag");
+        }
+        
+        // Normalize reward amounts
+        let availableAmount = "0";
+        let claimedAmount = "0";
+        
+        try {
+          if (window.Alpine && Alpine.store('walletStore') && tagRewards.available?.udys) {
+            await Alpine.store('walletStore').loadDenomMetadata();
+            const normalizedAvailable = Alpine.store('walletStore').normalizeCoin({
+              amount: String(tagRewards.available.udys),
+              denom: 'udys'
+            });
+            availableAmount = parseFloat(normalizedAvailable.display.amount);
+          }
+          if (window.Alpine && Alpine.store('walletStore') && tagRewards.claimed?.udys) {
+            const normalizedClaimed = Alpine.store('walletStore').normalizeCoin({
+              amount: String(tagRewards.claimed.udys),
+              denom: 'udys'
+            });
+            claimedAmount = parseFloat(normalizedClaimed.display.amount);
+          }
+        } catch (error) {
+          console.log("Using fallback denomination conversion");
+          availableAmount = (tagRewards.available?.udys || 0) / 1000000;
+          claimedAmount = (tagRewards.claimed?.udys || 0) / 1000000;
+        }
+        
+        // Show current state information
+        document.getElementById("hot-chart").innerHTML = `
+          <div>
+            <h4>Current Hot Posts (No historical claim data yet)</h4>
+            <p><strong>Available Rewards:</strong> ${availableAmount} DYS</p>
+            <p><strong>Claimed Rewards:</strong> ${claimedAmount} DYS</p>
+            <ol>
+              ${hotPosts.map((post, index) => `
+                <li>
+                  <a href="/${post.id}">Post #${post.id}</a> 
+                  (Hot Score: ${post.hot_rating.toFixed(3)}, Position: ${index + 1})
+                </li>
+              `).join('')}
+              ${hotPosts.length === 0 ? '<li>No posts tagged yet</li>' : ''}
+            </ol>
+          </div>
+        `;
+        
+        document.getElementById("cumulative-chart").innerHTML = `
+          <div>
+            <h4>Current Best Posts (No historical claim data yet)</h4>
+            <p><em>Charts will appear here once rewards are claimed from posts tagged with "{{tag_name}}"</em></p>
+            <ol>
+              ${bestPosts.map((post, index) => `
+                <li>
+                  <a href="/${post.id}">Post #${post.id}</a> 
+                  (Best Score: ${(post.hot_rating * 100).toFixed(1)}%, Position: ${index + 1})
+                </li>
+              `).join('')}
+              ${bestPosts.length === 0 ? '<li>No posts tagged yet</li>' : ''}
+            </ol>
+          </div>
+        `;
+        
+      } catch (error) {
+        console.error("Error showing current post ratings:", error);
+        document.getElementById("hot-chart").innerHTML = `<p style="color: red;">Error loading current data: ${error.message}</p>`;
+        document.getElementById("cumulative-chart").innerHTML = `<p style="color: red;">Error loading current data: ${error.message}</p>`;
+      }
+    }
+
+    async function renderCharts() {
+      try {
+        console.log("Starting chart rendering for tag: {{tag_name}}");
+        
+        // Fetch data using the existing listData function
+        const { dataList } = await listData(
+          "historical_rewards/tags/{{tag_name}}/",
+          {
+            pagination: { limit: 99, reverse: true },
+          },
+        );
+        
+        console.log("Historical rewards data:", dataList);
+        
+        if (!dataList || dataList.length === 0) {
+          console.log("No historical rewards data found for tag: {{tag_name}}");
+          console.log("Showing current post ratings instead...");
+          await showCurrentPostRatings();
+          return;
+        }
+
+      // Prepare data by parsing the index and extracting necessary fields
+      console.log("Raw historical rewards dataList:", dataList);
+      
+      const parsedData = await Promise.all(
+        dataList.map(async (item, index) => {
+          console.log(`Processing historical reward item ${index}:`, item);
+          
+          const parts = item._index.split("/");
+          console.log(`Index parts for item ${index}:`, parts);
+          
+          // Correct parsing: historical_rewards/tags/{tag_name}/{post_id}/{timestamp}
+          const tag = parts[2];  // The actual tag name (e.g., "aaa")
+          const postId = parseInt(parts[3]);  // The post ID (e.g., "000000000000006")
+          const blockTime = Date.parse(parts[4]);  // The timestamp
+          
+          console.log(`Parsed data for item ${index}: tag="${tag}", postId=${postId}, blockTime=${blockTime}`);
+
+          // Fetch additional metadata
+          console.log(`Fetching metadata for tag="${tag}", postId=${postId}`);
+          const metadata = await fetchMetadata(tag, postId);
+          console.log(`Metadata result for tag="${tag}", postId=${postId}:`, metadata);
+
+          // Handle null metadata gracefully
+          if (!metadata) {
+            console.warn(`Skipping item ${index} due to missing metadata for tag="${tag}", postId=${postId}`);
+            return null; // Will be filtered out below
+          }
+          
+          // Safely access metadata properties with defaults
+          const claimedDys = metadata?.metadata?.claimed?.dys || 0;
+          const lastClaimed = metadata?.metadata?.last_claimed || 0;
+          const dysReward = item?.author_rewards?.dys || 0;
+          
+          console.log(`Successfully processed item ${index}: hotIndex=${item.hot_index}, dysReward=${dysReward}, claimedDys=${claimedDys}`);
+
+          return {
+            hotIndex: item.hot_index,
+            dysReward: dysReward,
+            tag,
+            postId,
+            blockTime,
+            claimedDys: claimedDys,
+            lastClaimed: lastClaimed,
+          };
+        }),
+      );
+      
+      // Filter out null entries (items with missing metadata)
+      const validParsedData = parsedData.filter(item => item !== null);
+      console.log(`Filtered data: ${parsedData.length} total items, ${validParsedData.length} valid items with metadata`);
+      
+      if (validParsedData.length === 0) {
+        console.warn("No valid data after filtering - all items had missing metadata");
+        document.getElementById("hot-chart").innerHTML = "<p>No chart data available - metadata missing for all historical rewards.</p>";
+        document.getElementById("cumulative-chart").innerHTML = "<p>No chart data available - metadata missing for all historical rewards.</p>";
+        return;
+      }
+
+      // Group data by `tag`
+      const groupedData = {};
+      validParsedData.forEach((point) => {
+        if (!groupedData[point.tag]) groupedData[point.tag] = {};
+        if (!groupedData[point.tag][point.postId])
+          groupedData[point.tag][point.postId] = [];
+
+        groupedData[point.tag][point.postId].push(point);
+      });
+
+      // Render charts for each tag in rows with cumulative rewards and hot index side-by-side
+      Object.entries(groupedData).forEach(([tag, posts]) => {
+        // Create two canvas elements for each tag
+        const rewardCanvas = document.createElement("canvas");
+        rewardCanvas.id = `rewardsChart-${tag}`;
+
+        const hotIndexCanvas = document.createElement("canvas");
+        hotIndexCanvas.id = `hotIndexChart-${tag}`;
+
+        document.querySelector("#hot-chart").appendChild(hotIndexCanvas);
+        document.querySelector("#cumulative-chart").appendChild(rewardCanvas);
+
+        // Prepare datasets for cumulative rewards and hot index charts
+        const rewardDatasets = [];
+        const hotIndexDatasets = [];
+
+        Object.entries(posts).forEach(([postId, points]) => {
+          // Sort points by blockTime in reverse order for reverse calculation
+          points.sort((a, b) => a.blockTime - b.blockTime);
+
+          // Reverse calculate cumulative dysReward
+          let cumulativeReward = 0; // Start from claimed dys
+          let cumulativeData = points.map((point) => {
+            cumulativeReward += point.dysReward;
+            const dataPoint = { x: point.blockTime, y: cumulativeReward };
+    return dataPoint;
+          });
+          const diff =
+            points[0].claimedDys - cumulativeData[cumulativeData.length - 1].y;
+          if (diff > 0) {
+            cumulativeData = cumulativeData.map((p) => {
+              p.y += diff;
+              return p;
+            });
+          }
+
+          // Prepare hotIndex data
+          const hotIndexData = points.map((point) => ({
+            x: point.blockTime,
+            y: point.hotIndex + 1,
+          }));
+
+          rewardDatasets.push({
+            label: `Post #${postId}`,
+            data: cumulativeData, // Reverse back for chronological display
+            fill: false,
+            tension: 0.1,
+          });
+
+          hotIndexDatasets.push({
+            label: `Post #${postId}`,
+            data: hotIndexData,
+            fill: false,
+            tension: 0.1,
+          });
+        });
+
+        // Render the cumulative rewards chart for the current tag
+        new Chart(rewardCanvas.getContext("2d"), {
+          type: "line",
+          data: { datasets: rewardDatasets },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: `Topic: ${tag} - Cumulative Rewards`,
+              },
+              legend: { display: false },
+            },
+            scales: {
+              x: {
+                type: "time",
+                time: {
+                  unit: "day",
+                },
+                title: { display: true, text: "Date" },
+              },
+              y: {
+                title: { display: true, text: "Cumulative Rewards (DYS)" },
+                position: "right",
+              },
+            },
+          },
+        });
+
+        // Render the hot index chart for the current tag
+        new Chart(hotIndexCanvas.getContext("2d"), {
+          type: "line",
+          data: { datasets: hotIndexDatasets },
+          options: {
+            responsive: true,
+            plugins: {
+              title: { display: true, text: `Topic: ${tag} - Hot Ranking` },
+              legend: { display: false },
+            },
+            scales: {
+              x: {
+                type: "time",
+                time: {
+                  unit: "day",
+                },
+                title: { display: true, text: "Date" },
+                position: "right",
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Hot Ranking",
+                },
+                position: "right",
+                reverse: true,
+              },
+            },
+          },
+        });
+      });
+      
+      console.log("Charts rendered successfully");
+    } catch (error) {
+      console.error("Error rendering charts:", error);
+      document.getElementById("hot-chart").innerHTML = `<p style="color: red;">Error loading charts: ${error.message}</p>`;
+      document.getElementById("cumulative-chart").innerHTML = `<p style="color: red;">Error loading charts: ${error.message}</p>`;
+    }
+    }
+
+    // Wait for DOM to be ready
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOM loaded, checking Chart.js availability...");
+      
+      // Check if Chart.js is loaded
+      if (typeof Chart === 'undefined') {
+        console.error("Chart.js is not loaded!");
+        document.getElementById("hot-chart").innerHTML = "<p style='color: red;'>Chart.js library failed to load. Please check your internet connection.</p>";
+        document.getElementById("cumulative-chart").innerHTML = "<p style='color: red;'>Chart.js library failed to load. Please check your internet connection.</p>";
+        return;
+      }
+      
+      console.log("Chart.js is available, starting chart rendering...");
+      renderCharts();
+    });
+  </script>
+</div> 

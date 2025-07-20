@@ -111,12 +111,14 @@ test: install
 
 init:
 	@echo "--> Running reset_dev script (Python version)"
-	python ./scripts/reset_dev.py
-
+	./scripts/chainnet.py generate --chains 1 --nodes 2 
+	./scripts/chainnet.py setup --config-file /tmp/dysonchains/chains.json --force
+	
 
 start: install
 	@echo "--> Starting dyson"
-	dysond start
+	./scripts/chainnet.py start --config-file /tmp/dysonchains/chains.json --block-speed 500ms --logs --no-blocks-timeout 3
+
 
 # The 'watch' target monitors .go files and restarts the application on changes.
 watch:
@@ -199,5 +201,6 @@ dysvm-embed:
 dysvm-clean:
 	@echo "Running DYSVM clean operation..."
 	@$(DYSVM_SCRIPTS_DIR)/dysvm-clean.sh
+
 
 .PHONY:  build install test init localnet start watch proto-all proto-gen proto-format proto-lint proto-update proto-build-image proto-clean-image dysvm dysvm-patch dysvm-build dysvm-embed dysvm-clean

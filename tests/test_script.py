@@ -388,7 +388,7 @@ def test_verify_tx_fails_on_bad_data(chainnet, generate_account, faucet):
 
 
 def test_script_governance_param_update_and_storage_history(
-    chainnet, generate_account, faucet
+    chainnet
 ):
     """
     Test script parameter updates via governance proposal and storage history functionality.
@@ -401,8 +401,16 @@ def test_script_governance_param_update_and_storage_history(
     5. Verifies that the return data is correct
     """
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account("alice")
-    faucet(alice_address, denom="udys", amount="1000000")
+    
+    # Use the built-in alice account which has more balance
+    alice_name = "alice"
+    alice_info = dysond_bin("keys", "show", alice_name)
+    alice_address = alice_info["address"]
+    print(f"Using built-in alice account: {alice_address}")
+    
+    # Check alice's balance
+    alice_balance = dysond_bin("query", "bank", "balances", alice_address)
+    print(f"Alice's initial balance: {alice_balance}")
 
     # Delegate tokens to get voting power
     validators_result = dysond_bin("query", "staking", "validators")
@@ -411,18 +419,25 @@ def test_script_governance_param_update_and_storage_history(
     ), f"Failed to query validators: {validators_result}"
     validator_operator = validators_result["validators"][0]["operator_address"]
 
+    # Delegate much more tokens to ensure voting power exceeds quorum
     delegate_result = dysond_bin(
         "tx",
         "staking",
         "delegate",
         validator_operator,
-        "20000udys",
+        "500000000udys",  # 500M tokens should be plenty for quorum
         "--from",
         alice_name,
     )
     assert isinstance(delegate_result, dict), f"Failed to delegate: {delegate_result}"
     assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result}"
-    print("Delegated tokens to get voting power")
+    print("Delegated 500M tokens to get voting power")
+    
+    # Check total bonded tokens and alice's voting power percentage
+    pool_info = dysond_bin("query", "staking", "pool")
+    total_bonded = int(pool_info["pool"]["bonded_tokens"])
+    alice_power_pct = (500000000 / total_bonded) * 100
+    print(f"Total bonded tokens: {total_bonded}, Alice's voting power: {alice_power_pct:.2f}%")
 
     # Step 1: Create and submit governance proposal to update script params
     print("Creating governance proposal to update script parameters...")
@@ -484,23 +499,60 @@ def test_script_governance_param_update_and_storage_history(
     assert proposal_id, f"Could not find proposal ID in attributes: {attrs_by_key}"
     print(f"Submitted proposal ID: {proposal_id}")
 
+    # Check proposal status before voting
+    pre_vote_proposal = dysond_bin("query", "gov", "proposal", proposal_id)
+    print(f"Proposal status before voting: {pre_vote_proposal.get('proposal', {}).get('status', 'UNKNOWN')}")
+    print(f"Voting end time: {pre_vote_proposal.get('proposal', {}).get('voting_end_time', 'UNKNOWN')}")
+    
     # Vote on the proposal
     vote_result = dysond_bin(
         "tx", "gov", "vote", proposal_id, "yes", "--from", alice_name
     )
     assert isinstance(vote_result, dict), f"Failed to vote on proposal: {vote_result}"
     assert vote_result["code"] == 0, f"Failed to vote on proposal: {vote_result}"
+    
+    # Verify vote was recorded
+    votes_after_voting = dysond_bin("query", "gov", "votes", proposal_id)
+    print(f"Votes recorded after voting: {len(votes_after_voting.get('votes', []))}")
 
-    # Wait for proposal to pass
+    # Wait for proposal to reach final state with better debugging
     def check_proposal_status():
         result = dysond_bin("query", "gov", "proposal", proposal_id)
-        # Return True only when result is dict and status is PASSED
-        return (
-            isinstance(result, dict)
-            and result.get("proposal", {}).get("status") == "PROPOSAL_STATUS_PASSED"
-        )
+        status = result.get("proposal", {}).get("status", "UNKNOWN")
+        print(f"Current proposal status: {status}")
+        
+        # Check if proposal reached a final state
+        final_states = ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_FAILED"]
+        return status in final_states
 
     poll_until_condition(check_proposal_status, timeout=60, poll_interval=2)
+    
+    # Get final status and check if it passed
+    final_result = dysond_bin("query", "gov", "proposal", proposal_id)
+    final_status = final_result.get("proposal", {}).get("status", "UNKNOWN")
+    
+    # If it didn't pass, provide detailed debugging information
+    votes_result = dysond_bin("query", "gov", "votes", proposal_id)
+    tally_result = dysond_bin("query", "gov", "tally", proposal_id)
+    
+    assert final_status == "PROPOSAL_STATUS_PASSED", f"""
+Governance proposal failed with status: {final_status}
+
+DEBUGGING INFORMATION:
+======================
+Final Proposal Details:
+{json.dumps(final_result, indent=2)}
+
+Vote Details:
+{json.dumps(votes_result, indent=2)}
+
+Tally Results:
+{json.dumps(tally_result, indent=2)}
+
+Alice's voting power and delegation info was shown above.
+Check if voting period was too short or quorum not met.
+"""
+
     print("Governance proposal passed!")
 
     # Step 2: Create a script that stores block height data in storage

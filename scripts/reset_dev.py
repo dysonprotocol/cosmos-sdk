@@ -98,9 +98,9 @@ def main():
     
     # Update genesis with account balances
     print(f"Adding genesis accounts with funds")
-    run_command(f"{DYSOND_BIN} genesis add-genesis-account {alice_address} 10000000{DENOM}")
-    run_command(f"{DYSOND_BIN} genesis add-genesis-account {bob_address} 10000000{DENOM}")
-    run_command(f"{DYSOND_BIN} genesis add-genesis-account {charlie_address} 10000000{DENOM}")
+    run_command(f"{DYSOND_BIN} genesis add-genesis-account {alice_address} 10000000000000{DENOM}")
+    run_command(f"{DYSOND_BIN} genesis add-genesis-account {bob_address} 10000000000000{DENOM}")
+    run_command(f"{DYSOND_BIN} genesis add-genesis-account {charlie_address} 10000000000000{DENOM}")
     
     # Modify the genesis.json to set shorter timeouts for testing
     genesis_file = f"{DYSON_HOME}/config/genesis.json"
@@ -136,6 +136,31 @@ def main():
     # Set nameservice BidTimeout to 5 seconds
     genesis['app_state']['nameservice']['params']['bid_timeout'] = "1s"
     print("Setting nameservice bid timeout to 1 seconds for testing")
+    
+    # Set bank denom metadata for dys/udys with 6 exponent
+    genesis['app_state']['bank']['denom_metadata'] = [
+        {
+            "description": "The native staking and governance token of the Dyson Protocol",
+            "denom_units": [
+                {
+                    "denom": "udys",
+                    "exponent": 0,
+                    "aliases": []
+                },
+                {
+                    "denom": "dys",
+                    "exponent": 6,
+                    "aliases": []
+                }
+            ],
+            "base": "udys",
+            "display": "dys",
+            "name": "Dys",
+            "symbol": "DYS"
+        }
+    ]
+    print("Setting bank denom metadata for dys/udys with 6 exponent")
+    
     
     # Write the modified genesis back to file
     with open(genesis_file, 'w') as f:

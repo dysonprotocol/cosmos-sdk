@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    [x-cloak] { display: none !important; }
+  </style>
+    <script type="importmap">{{ importmap_json }}</script>
+
+
+    
+    <!-- AlpineJS plugins must be loaded BEFORE Alpine.js and before walletStore.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
+   
+    <!-- Wallet/Message/etc. stores - generated dynamically -->
+   {{ static_scripts }}
+   
+    <!-- AlpineJS after walletStore.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <script
+    src="https://unpkg.com/htmx.org@2.0.6"
+    integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css"
+  />
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
+  <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
+
+
+  <script>
+    // Fix for Alpine Morph with HTMX history
+    document.addEventListener("htmx:beforeHistorySave", (evt) => {
+      document.querySelectorAll("[x-for]").forEach((item) => {
+        if (item._x_lookup) {
+          Object.values(item._x_lookup).forEach((el) => el.remove());
+        }
+      });
+      document.querySelectorAll("[x-if]").forEach((item) => {
+        if (item._x_currentIfEl) {
+          item._x_currentIfEl.remove();
+        }
+      });
+    });
+    // Log when everything is loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOMContentLoaded");
+    });
+  </script>
+</head>
+
+  {{head_extra}}
+  <script>
+    async function setupTorrentLinks(inputString) {
+      //var magnetRegex = /magnet:\?xt=urn:btih:([a-zA-Z0-9]+)/g;
+      var magnetRegex = /magnet:\?xt=urn:btih:([a-zA-Z0-9&=+%;._-]+)/g;
+
+      // Replace each magnet link with the button
+      var replacedString = inputString.replace(magnetRegex, function (match) {
+        match = decodeHtml(match);
+        const u = URL.parse(match);
+        console.log(match, u);
+        return `
+        <div>
+            <a href="${match}">${u.searchParams.get("dn") || u.searchParams.get("xt")}</a>
+            <button data-magnet="${match}" onclick="handleDownload(this)">Load metadata</button>
+            <label>
+            <input type="checkbox" class="auto-save" name="autoDownloadMeta" onclick="if (this.checked) this.parentElement.previousElementSibling.click()" />
+                Auto
+            </label>
+            <div class="filelist"></div>
+        </div>
+
+            `;
+      });
+
+      return replacedString;
+    }
+  </script>
+
+  <script>
+    const clientOpts = {
+      announce: ["wss://tracker.openwebtorrent.com"],
+      deselect: true,
+      destroyStoreOnDestroy: false,
+      alwaysChokeSeeders: false,
+      addUID: true,
+      skipVerify: false,
+      maxWebConns: 4,
+    };
+
+    async function getClient() {
+      if (!window.WebTorrent) {
+        console.log("Loading WebTorrent...");
+        window.WebTorrent = (
+          await import(
+            "https://cdn.jsdelivr.net/gh/webtorrent/webtorrent@d40616f/dist/webtorrent.min.js"
+          )
+        ).default;
+      }
+      if (!window.client) {
+        window.client = new WebTorrent();
+        await registerWorker(window.client);
+      }
+
+      return window.client;
+    }
+
+    async function registerWorker(client) {
+      return new Promise(async function (resolve) {
+        if (!window.worker) {
+          const reg = await navigator.serviceWorker.register("/sw.min.js", {
+            scope: "./",
+          });
+
+          window.worker = reg.active || reg.waiting || reg.installing;
+          function checkState(worker) {
+            console.log("checkState", worker.state, worker);
+            return (
+              worker.state === "activated" &&
+              client.createServer({ controller: reg }) &&
+              resolve(window.worker)
+            );
+          }
+          if (!checkState(window.worker)) {
+            worker.addEventListener("statechange", ({ target }) =>
+              checkState(target),
+            );
+          }
+        }
+      });
+    }
+  </script>
+  <script>
+    async function handleDownload(el) {
+      const button = el.parentElement.parentElement.querySelector("button");
+      if (button.disabled) return;
+      button.disabled = true;
+
+      button.textContent = "Loading...";
+      const holder = el.parentElement.parentElement.querySelector(".filelist");
+
+      const magnetLink = button.getAttribute("data-magnet");
+      console.log("handleDownload", magnetLink);
+
+      const client = await getClient();
+      if (await client.get(magnetLink)) {
+        console.log("not adding dup:", magnetLink);
+        return;
+      }
+      clientOpts.deselect = localStorage.getItem("autoDownload") != "true";
+
+      const torrent = client.add(magnetLink, clientOpts, (torrent) => {
+        console.log("Torrent added:", torrent.name);
+      });
+
+      // Initialize progress display
+      const progressElement = document.createElement("div");
+      progressElement.innerHTML = `
+          <span class="download-status">Loading metadata...</span> | </strong> <span class="overall-progress">0%</span> | <span class="download-speed">0 bytes/sec</span> <button>Select All</button> 
+          <label><input type="checkbox" class="auto-save" name="autoDownload" onclick="if (this.checked) this.parentElement.previousElementSibling.click()" />
+            Auto
+          </label>
+
+        `;
+      holder.appendChild(progressElement);
+
+      const filesContainer = document.createElement("div");
+      holder.appendChild(filesContainer);
+
+      progressElement.querySelector("button").onclick = (e) => {
+        filesContainer
+          .querySelectorAll("input[type=checkbox]")
+          .forEach((el) => {
+            if (!el.checked) {
+              el.click();
+            }
+          });
+      };
+
+      function updateFile(file) {
+        const fileClass = encodeURIComponent(file.path);
+        const fileElement = filesContainer.getElementsByClassName(fileClass)[0];
+        const progress = (file.progress * 100).toFixed(2);
+        fileElement.querySelector(".status").textContent =
+          `Progress: ${progress}%`;
+      }
+      function updateProgress() {
+        // Update overall progress and download speed
+        holder.querySelector(".overall-progress").textContent =
+          (torrent.progress * 100).toFixed(0) + "%";
+        holder.querySelector(".download-speed").textContent =
+          torrent.downloadSpeed.toFixed(0).toLocaleString() + " bytes/sec";
+      }
+
+      torrent.on("download", () => {
+        updateProgress();
+        // Update individual file progress
+        torrent.files.forEach(updateFile);
+      });
+
+      torrent.on("upload", () => {
+        updateProgress();
+        // Update individual file progress
+        torrent.files.forEach(updateFile);
+      });
+
+      torrent.on("metadata", () => {
+        updateProgress();
+        console.log("Metadata retrieved for:", torrent.name, torrent);
+
+        torrent.files.forEach((file) => {
+          const fileClass = encodeURIComponent(file.path);
+          console.log("Adding file ui:", file.path);
+          const fileElements = filesContainer.getElementsByClassName(fileClass);
+          var fileElement
+          if (fileElements.length) {
+             fileElement = fileElements[0];
+          } else {
+             fileElement = document.createElement("div");
+            fileElement.classList.add(fileClass);
+
+            fileElement.innerHTML = `
+          <input type="checkbox"><a href="${file.streamURL}" target="_blank"> ${file.path} </a> | ${file.type} | ${file.size} bytes
+         <span class="status"></status>
+          `;
+            filesContainer.appendChild(fileElement);
+          }
+          const toggle = fileElement.querySelector("input");
+          if (localStorage.getItem("autoDownload") == "true") {
+            toggle.checked = true;
+            file.select();
+          }
+          toggle.onchange = (event) => {
+            console.log("Toggled:", file.path, event.target.checked);
+            if (event.target.checked) {
+              file.select();
+            } else {
+              file.deselect();
+            }
+          };
+
+          updateFile(file);
+
+          file.on("done", () => {
+            updateProgress();
+            updateFile(file);
+            console.log("Done:", file.name);
+
+            if (file.type.includes("video/")) {
+              const videoElement = document.createElement("video");
+              videoElement.setAttribute("controls", "true");
+              videoElement.className = "video-js";
+              videoElement.dataset.setup = "{}";
+              //fileElement.innerHTML = "";
+              fileElement.appendChild(videoElement);
+              file.streamTo(videoElement);
+            } else if (file.type.includes("image/")) {
+              const imgElement = document.createElement("img");
+              imgElement.style = "max-width: 300px; max-height: 300px;";
+              //fileElement.innerHTML = "";
+              fileElement.insertBefore(imgElement, fileElement.firstChild);
+              file.streamTo(imgElement);
+            }
+          });
+        });
+      });
+
+      torrent.on("done", () => {
+        console.log("Torrent finished downloading");
+        updateProgress();
+        holder.querySelector(".download-status").textContent = "Finished";
+      });
+
+      torrent.on("warning", (err) => {
+        console.error("Torrent warning:", err.message);
+      });
+
+      torrent.on("error", (err) => {
+        console.error("Torrent error:", err.message);
+        holder.querySelector(".download-status").textContent = err.message;
+      });
+
+      return torrent;
+    }
+  </script>
+  <script id="mainScript">
+    function decodeHtml(html) {
+      var txt = document.createElement("textarea");
+      txt.innerHTML = html;
+      return txt.value;
+    }
+
+    // Function to render markdown, LaTeX, and highlight the element
+    async function renderMarkdownAndHighlight(el, optionalHash) {
+      try {
+        // Render markdown if necessary
+        if (el.classList.contains("markdown")) {
+          el.childNodes.forEach(async function (child) {
+            if (child.nodeType === 3) {
+              const rawHtml = marked.parse(child.textContent);
+
+              const cleanHtml = DOMPurify.sanitize(rawHtml, {
+                ALLOWED_TAGS: [
+                  "a",
+                  "b",
+                  "blockquote",
+                  "code",
+                  "em",
+                  "h1",
+                  "h2",
+                  "h3",
+                  "h4",
+                  "h5",
+                  "h6",
+                  "hr",
+                  "i",
+                  "li",
+                  "ol",
+                  "p",
+                  "pre",
+                  "span", // Allow span for MathJax rendering
+                  "strong",
+                  "table",
+                  "tbody",
+                  "td",
+                  "th",
+                  "thead",
+                  "tr",
+                  "ul",
+                ],
+                ALLOWED_ATTR: ["href", "title", "class", "id", "style"],
+              });
+
+              const newElement = document.createElement("div");
+              newElement.innerHTML = await setupTorrentLinks(cleanHtml);
+              child.replaceWith(newElement);
+            }
+          });
+          el.classList.remove("markdown");
+
+          // Skip the main content but make all other markdown collapsible if too tall
+          if (el.parentNode.parentNode.id !== "content") {
+            const rect = el.getBoundingClientRect();
+            if (rect.height > 300) {
+              el.classList.add("small");
+              el.addEventListener("click", function (event) {
+                el.classList.remove("small");
+                el.style.maxHeight = null;
+                el.removeEventListener("click", arguments.callee);
+              });
+            }
+          }
+        }
+
+        // Highlight the element if data-fragment or optionalHash is provided
+        let hash = optionalHash;
+        if (!hash) {
+          hash = el.getAttribute("data-fragment");
+          el.removeAttribute("data-fragment");
+        }
+
+        if (hash) {
+          const utils = await import(
+            "https://unpkg.com/text-fragments-polyfill@5.7.0/src/text-fragment-utils.js"
+          );
+
+          const originalParent = el.parentNode;
+          const originalNextSibling = el.nextSibling;
+
+          const newDocument =
+            document.implementation.createHTMLDocument("New Document");
+          newDocument.body.appendChild(el);
+
+          const processedText = utils.processFragmentDirectives(
+            utils.parseFragmentDirectives(utils.getFragmentDirectives(hash)),
+            newDocument,
+          );
+
+          if (originalNextSibling) {
+            originalParent.insertBefore(el, originalNextSibling);
+          } else {
+            originalParent.appendChild(el);
+          }
+
+          if (el.classList.contains("small")) {
+            const smallElement = el;
+            const markElements = smallElement.querySelectorAll("mark");
+
+            if (markElements.length > 0) {
+              const firstMarkRect = markElements[0].getBoundingClientRect();
+              const lastMarkRect =
+                markElements[markElements.length - 1].getBoundingClientRect();
+              const smallRect = smallElement.getBoundingClientRect();
+
+              const totalHeightRequired =
+                lastMarkRect.bottom - firstMarkRect.top + 100;
+
+              smallElement.style.maxHeight = totalHeightRequired + "px";
+
+              const offset = firstMarkRect.top - smallRect.top - 50;
+              smallElement.scrollTop += offset;
+            }
+          }
+
+          return processedText.text;
+        }
+      } catch (error) {
+        console.error("Error in renderMarkdownAndHighlight:", error);
+      }
+      hljs.highlightAll();
+    }
+
+    function debounce(delay, func, immediate = false) {
+      let timeout;
+
+      return function (...args) {
+        const context = this;
+
+        const later = () => {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+
+        const callNow = immediate && !timeout;
+
+        clearTimeout(timeout);
+        timeout = setTimeout(later, delay);
+
+        if (callNow) func.apply(context, args);
+      };
+    }
+
+    htmx.config.ignoreTitle = true;
+  </script>
+
+  <script>
+    window.scriptAddress="{{ script_address }}"
+    
+    // Basic wallet author check function
+    async function isWalletAuthor(author) {
+      if (!author) return false;
+      
+      const walletStore = Alpine.store('walletStore');
+      if (!walletStore.activeWalletMeta) return false;
+      
+      const walletAddress = walletStore.activeWalletMeta.address;
+      
+      // Simple address match check
+      if (walletAddress === author) return true;
+      
+      // TODO: Add name resolution logic when needed
+      // For now, just return false if no direct match
+      return false;
+    }
+    
+    // Query dyson storage for data
+    async function getData(key) {
+      try {
+        const response = await fetch(`${window.location.origin}/dysonprotocol/storage/v1/storage_get?owner=${window.scriptAddress}&index=${encodeURIComponent(key)}`);
+        const result = await response.json();
+        
+        if (result.entry && result.entry.data) {
+          return JSON.parse(result.entry.data);
+        }
+        return null;
+      } catch (error) {
+        console.error('getData error:', error);
+        return null;
+      }
+    }
+    
+    // List data with prefix from dyson storage
+    async function listData(prefix, options = {}) {
+      try {
+        const params = new URLSearchParams({
+          owner: window.scriptAddress,
+          index_prefix: prefix
+        });
+        
+        // Add pagination options if provided
+        if (options.pagination) {
+          if (options.pagination.limit) params.set('pagination.limit', options.pagination.limit);
+          if (options.pagination.reverse) params.set('pagination.reverse', options.pagination.reverse);
+          if (options.pagination.offset) params.set('pagination.offset', options.pagination.offset);
+          if (options.pagination.key) params.set('pagination.key', options.pagination.key);
+        }
+        
+        const response = await fetch(`${window.location.origin}/dysonprotocol/storage/v1/storage_list?${params}`);
+        const result = await response.json();
+        
+        const dataList = (result.entries || []).map(item => ({
+          _index: item.index,
+          ...JSON.parse(item.data)
+        }));
+        
+        return {
+          dataList,
+          pagination: result.pagination || {}
+        };
+      } catch (error) {
+        console.error('listData error:', error);
+        return { dataList: [], pagination: {} };
+      }
+    }
+    
+    async function getPostPositionInHotPosts(postId, tagName) {
+      try {
+        const prefix = getScoreRatePrefix('tags', tagName, 'hot');
+        const { dataList } = await listData(prefix, { 
+          pagination: { reverse: true } 
+        });
+        
+        const position = dataList.findIndex(post => post.id == postId);
+        return position;
+      } catch (error) {
+        console.error('getPostPositionInHotPosts error:', error);
+        return -1;
+      }
+    }
+    
+    async function getPostPositionInHotReplies(postId, replyPostId) {
+      try {
+        const prefix = getScoreRatePrefix('replies', formatId(postId), 'hot');
+        const { dataList } = await listData(prefix, { 
+          pagination: { reverse: true } 
+        });
+        
+        const position = dataList.findIndex(post => post.id == replyPostId);
+        return position;
+      } catch (error) {
+        console.error('getPostPositionInHotReplies error:', error);
+        return -1;
+      }
+    }
+    
+    function getTagRewardsIndex(tagName) {
+      return `tag/tags/${tagName}`;
+    }
+    
+    function getReplyRewardsIndex(postId) {
+      return `tag/replies/${formatId(postId)}`;
+    }
+    
+    function getScoreRatePrefix(namespace, tagName, ratingType) {
+      return `rate/${namespace}/${tagName}/${ratingType}/`;
+    }
+    
+    function formatId(id) {
+      return String(id).padStart(15, '0');
+    }
+    
+    async function runFunction(params) {
+      console.warn('runFunction is deprecated, use Alpine.store("walletStore").runDysonScript instead:', params);
+      // Basic wrapper to new system
+      try {
+        const result = await Alpine.store('walletStore').runDysonScript({
+          scriptAddress: window.scriptAddress,
+          functionName: params.functionName,
+          args: params.args ? JSON.stringify(params.args) : '',
+          kwargs: params.kwargs ? JSON.stringify(params.kwargs) : '',
+          attachedMsg: params.coins ? [{
+            '@type': '/cosmos.bank.v1beta1.MsgSend',
+            from_address: Alpine.store('walletStore').activeWalletMeta.address,
+            to_address: window.scriptAddress,
+            amount: params.coins.map(coin => ({
+              denom: coin.denom === 'dys' ? 'udys' : coin.denom,
+              amount: coin.denom === 'dys' ? String(parseInt(coin.amount) * 1000000) : coin.amount
+            }))
+          }] : [],
+          gasLimit: params.gasLimit || 200000
+        });
+        
+        return result;
+      } catch (error) {
+        console.error('runFunction error:', error);
+        throw error;
+      }
+    }
+  </script>
+
+
+
+
+  <style>
+    body {
+      max-width: unset;
+    }
+    article {
+      border: 1px solid;
+      margin: 1em 0;
+      overflow: auto;
+      word-wrap: break-word;
+      padding: 1em 1.5em;
+    }
+    article article {
+      font-size: 0.9em;
+    }
+    .post-tag-list {
+      display: inline;
+      list-style: none;
+      padding: 0;
+    }
+
+    .post-tag-list > li {
+      display: inline;
+    }
+
+    .post-tag-list > li + li:before {
+      content: ", ";
+    }
+
+    .small {
+      cursor: pointer;
+      max-height: 300px;
+      overflow-y: hidden;
+    }
+    .author {
+      word-break: break-all;
+    }
+    a:hover {
+      cursor: pointer;
+    }
+    meter {
+      width: 100%;
+      padding-left: 15px;
+      margin-left: -15px;
+    }
+
+    #replies details:not([open]) {
+      margin-bottom: -1em;
+    }
+
+    .active-info {
+      margin-bottom: -1em;
+    }
+
+    .walletConnected .hideFromWallet {
+      display: none;
+    }
+    body:not(.walletConnected) .showWithWallet {
+      display: none;
+    }
+    header {
+      overflow: hidden;
+    }
+    .logo {
+      margin: 0;
+      display: inline;
+    }
+  </style>
+<meta name="htmx-config" content='{"disableInheritance":true}'>
+</head>
+<body x-data hx-boost="true" hx-target="main" hx-select="main"  hx-inherit="hx-select hx-target hx-boost" class="min-h-screen bg-base-100 latex-dark-auto" x-cloak>
+
+    <header>
+      <div>
+        <a href="/"><h1 class="logo">Nuance</h1></a>
+      </div>
+      <div>
+        <a href="/recent">Recent Posts</a> | <a href="/active">Active Posts</a> | <a href="/topics">Topics</a> | <a href="/blog">Blog</a>  <br> 
+        <a href="/publish">Publish</a>
+        <!-- Show loading spinner while wallet store is initializing -->
+        <span x-show="$store.walletStore.isLoading">| Loading wallet...</span>
+        
+        <!-- Show "Manage Wallets" if there's no active wallet and store is loaded -->
+        <span x-show="!$store.walletStore.isLoading">
+          | <a href="/wallet">Manage Wallets</a>
+        </span>
+        <!-- Show wallet info if connected and store is loaded -->
+        <span x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta">
+          | <span style="text-transform: capitalize;" x-text="$store.walletStore.activeWalletMeta?.type"></span> Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
+          | <a class="author" :href="`/authors/${$store.walletStore.activeWalletMeta?.address}`"><span x-text="$store.walletStore.activeWalletMeta?.address"></span></a> 
+          | chain-id: <span x-text="$store.walletStore.chainId"></span> 
+          | <a @click="$store.walletStore.disconnectWallet()" >Disconnect</a> 
+        </span>
+       
+      </div>
+    </header>
+    <main>{{body}}</main>
+  </body>
+</html> 

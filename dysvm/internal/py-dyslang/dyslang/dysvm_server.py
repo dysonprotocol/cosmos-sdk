@@ -35,6 +35,12 @@ import dyslang
 MAX_CUM_SIZE = dyslang.MAX_SCOPE_SIZE * dyslang.MAX_NODE_CALLS
 GAS_MULTIPLE = 1
 
+class DysMsgException(Exception):
+    """Used for dysvm _msg exceptions."""
+
+class DysQueryException(Exception):
+    """Used for dysvm _query exceptions."""
+
 
 class DeprecationError(Exception):
     """Used for deprecated methods and functions."""
@@ -216,6 +222,32 @@ def get_module_dict():
             "split": copy_docstr(re_module.split, re_module.split),
             "sub": copy_docstr(re_module.sub, re_module.sub),
             "subn": copy_docstr(re_module.subn, re_module.subn),
+            "IGNORECASE": re_module.IGNORECASE,
+            "ASCII": re_module.ASCII,
+            "VERBOSE": re_module.VERBOSE,
+            "LOCALE": re_module.LOCALE,
+            "UNICODE": re_module.UNICODE,
+            "DOTALL": re_module.DOTALL,
+            "MULTILINE": re_module.MULTILINE,
+        },
+        "re": {
+            "compile": copy_docstr(re_module.compile, re_module.compile),
+            "escape": copy_docstr(re_module.escape, re_module.escape),
+            "findall": copy_docstr(re_module.findall, re_module.findall),
+            "finditer": copy_docstr(re_module.finditer, re_module.finditer),
+            "fullmatch": copy_docstr(re_module.fullmatch, re_module.fullmatch),
+            "match": copy_docstr(re_module.match, re_module.match),
+            "search": copy_docstr(re_module.search, re_module.search),
+            "split": copy_docstr(re_module.split, re_module.split),
+            "sub": copy_docstr(re_module.sub, re_module.sub),
+            "subn": copy_docstr(re_module.subn, re_module.subn),
+            "IGNORECASE": re_module.IGNORECASE,
+            "ASCII": re_module.ASCII,
+            "VERBOSE": re_module.VERBOSE,
+            "LOCALE": re_module.LOCALE,
+            "UNICODE": re_module.UNICODE,
+            "DOTALL": re_module.DOTALL,
+            "MULTILINE": re_module.MULTILINE,
         },
         "math": {
             "ceil": math.ceil,
@@ -261,13 +293,17 @@ def get_module_dict():
             "nan": math.nan,
         },
         "typing": {
+            "Annotated": typing.Annotated,
             "Any": typing.Any,
             "Callable": typing.Callable,
             "Dict": typing.Dict,
             "List": typing.List,
+            "Literal": typing.Literal,
             "Optional": typing.Optional,
             "TypedDict": typing.TypedDict,
             "Union": typing.Union,
+            "Tuple": typing.Tuple,
+            "Iterable": typing.Iterable,
         },
         "bencoder": {
             "encode": bencoder.encode,
@@ -328,8 +364,10 @@ def build_sandbox(
                 # print(f"JSONDecodeError: {e} - {res.text}")
                 pass
 
-            if ret_json.get("error", None):
-                return {"exception": ret_json["error"]}
+            if error := ret_json.get("error", None):
+                if "out of gas" in str(error).lower():
+                    raise MemoryError(str(error))
+                return {"exception": error}
 
             return ret_json
         except json.JSONDecodeError:
@@ -431,7 +469,7 @@ def build_sandbox(
                     gas_state["unconsumed_size"] += self.size
                     if gas_state["cumsize"] > MAX_CUM_SIZE:
                         raise MemoryError("Cumsize too large")
-                if gas_state["unconsumed_size"] > 100_000 or isinstance(
+                if gas_state["unconsumed_size"] > 1_000_000 or isinstance(
                     node, ast.Module
                 ):
                     sandbox.consume_gas()
@@ -630,7 +668,7 @@ def build_sandbox(
         """
         resp = _chain("Msg", json_msg=json.dumps(params))
         if resp.get("exception"):
-            raise Exception(resp["exception"])
+            raise DysMsgException(resp["exception"])
         return resp["result"]
 
     @allow_dys_func
@@ -643,7 +681,7 @@ def build_sandbox(
         """
         resp = _chain("Query", json_query=json.dumps(params), query_height=query_height)
         if resp.get("exception", None):
-            raise Exception(resp["exception"])
+            raise DysQueryException(resp["exception"])
 
         return resp["result"]
 
@@ -651,7 +689,6 @@ def build_sandbox(
     def deprecated_chain(method, **params):
         """
         DEPRECATED: Use _msg() and _query() functions instead.
-        This function is maintained for backward compatibility but will be removed in a future release.
 
         :raises DeprecationError: Always raises this error to encourage migration to _msg and _query
         """
@@ -679,6 +716,8 @@ def build_sandbox(
         "_msg": _msg,
         "_query": _query,
         "_chain": deprecated_chain,
+        "DysMsgException": DysMsgException,
+        "DysQueryException": DysQueryException,
     }
 
     sandbox.modules = dyslang.make_modules(module_dict)
@@ -782,12 +821,10 @@ def eval_script(
                 "end_lineno": getattr(exception, "end_lineno", 0),
                 "end_col_offset": getattr(exception, "end_col_offset", 0),
                 "context": "NoneType",  # Default value
-                "source_lines": "",
                 "source_segment": "",
             }
             if hasattr(exception, "node") and exception.node is not None:
                 exception_dict["source_segment"] = ast.get_source_segment(source_code, exception.node)
-                exception_dict["source_lines"] = ("\n").join(source_code.split("\n")[exception_dict["lineno"] - 1:exception_dict["end_lineno"]])
 
             # Safely get context class name
             if hasattr(exception, "__context__") and exception.__context__ is not None:
@@ -829,6 +866,8 @@ def eval_script(
 
 dyslang.WHITELIST_FUNCTIONS.update(
     [
+        "dyslang.dysvm_server.DysQueryException",
+        "dyslang.dysvm_server.DysMsgException",
         # Freezegun: time-generating functions
         "freezegun.api.FakeDatetime.astimezone",
         "freezegun.api.FakeDatetime.combine",
@@ -887,6 +926,7 @@ dyslang.WHITELIST_FUNCTIONS.update(
         # BytesIO
         "BytesIO.read",
         "bytes.decode",
+        "bytes.join",
         # str
         "str.capitalize",
         "str.casefold",

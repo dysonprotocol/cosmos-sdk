@@ -22,6 +22,7 @@ import (
 
 	"dysonprotocol.com/x/script"
 	scripttypes "dysonprotocol.com/x/script/types"
+	"google.golang.org/grpc"
 )
 
 // ConsensusVersion defines the current x/script module consensus version.
@@ -30,10 +31,9 @@ const ConsensusVersion = 1
 var (
 	_ module.AppModuleBasic = AppModuleBasic{}
 
-	_ module.HasGenesis  = AppModule{}
-	_ module.HasServices = AppModule{}
-
-	_ appmodule.AppModule             = AppModule{}
+	_ appmodule.AppModule = AppModule{}
+	//_ appmodule.HasServices           = AppModule{}
+	_ module.HasGenesis               = AppModule{}
 	_ appmodule.HasBeginBlocker       = AppModule{}
 	_ appmodule.HasEndBlocker         = AppModule{}
 	_ autocliv1.HasCustomTxCommand    = AppModule{}
@@ -122,9 +122,10 @@ func (AppModule) GetQueryCmd() *cobra.Command {
 }
 
 // RegisterServices registers module services.
-func (am AppModule) RegisterServices(cfg module.Configurator) {
-	scripttypes.RegisterMsgServer(cfg.MsgServer(), &am.keeper)
-	scripttypes.RegisterQueryServer(cfg.QueryServer(), &am.keeper)
+func (am AppModule) RegisterServices(registrar grpc.ServiceRegistrar) error {
+	scripttypes.RegisterMsgServer(registrar, &am.keeper)
+	scripttypes.RegisterQueryServer(registrar, &am.keeper)
+	return nil
 }
 
 // RegisterMigrations registers module migrations

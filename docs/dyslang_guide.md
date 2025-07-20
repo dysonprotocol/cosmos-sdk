@@ -33,6 +33,11 @@ print(f"Using bob address: {BOB_ADDRESS}")
     Using bob address: dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el
 
 
+
+```python
+
+```
+
 ## Chain Interaction
 
 The dyslang module provides two primary functions for interacting with the blockchain: `_query` and `_msg`.
@@ -49,7 +54,8 @@ One common operation is to query an account's balance. Let's create a script tha
 
 ```python
 import json
-import shlex
+import tempfile
+import os
 
 # Create a script that queries the account balance
 query_script = '''
@@ -67,27 +73,25 @@ def query_balance():
     return response
 '''
 
-# Save the script to a temporary file and execute it
-with open('/tmp/query_balance.py', 'w') as f:
+# Write the script to a temporary file and ensure it is deleted after use
+with tempfile.NamedTemporaryFile("w+", suffix=".py", delete=True) as f:
     f.write(query_script)
-
-# Execute the script using simulate_exec.py
-out = ! ../scripts/simulate_exec.py /tmp/query_balance.py --from alice --script-address $ALICE_ADDRESS --function-name query_balance
+    f.flush()
+    # Execute the script using dysond query script run
+    out = ! dysond query script run --script-address {ALICE_ADDRESS} --executor-address {ALICE_ADDRESS} --function-name query_balance --extra-code-path {f.name} -o json
 out = '\n'.join(out)
+print(out)
 result = json.loads(out)
+json_result = json.loads(result['result'])['result']
 
-# Extract and display the balance
-script_result = result['script_result']['result']
-balance_response = script_result['result']
-print(json.dumps(balance_response, indent=2))
+assert 'balance' in json_result, "Balance not found in the result"
+print(json.dumps(json_result['balance'], indent=2))
 ```
 
+    {"result":"{\"cumsize\":6057,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":23,\"result\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"1000000000000\",\"denom\":\"udys\"}},\"script_gas_consumed\":6788,\"stdout\":\"\"}","attached_message_results":[]}
     {
-      "@type": "/cosmos.bank.v1beta1.QueryBalanceResponse",
-      "balance": {
-        "amount": "9999853593",
-        "denom": "udys"
-      }
+      "amount": "1000000000000",
+      "denom": "udys"
     }
 
 
@@ -98,6 +102,9 @@ Let's create a more advanced script that queries the balances of multiple accoun
 
 ```python
 # Create a script that queries multiple account balances
+import tempfile
+import json
+
 query_multi_script = f'''
 from dys import _query
 import json
@@ -128,33 +135,36 @@ def query_multiple_balances():
     }}
 '''
 
-# Save the script to a temporary file and execute it
-with open('/tmp/query_multi_balance.py', 'w') as f:
+# Write the script to a temporary file and ensure it is deleted after use
+with tempfile.NamedTemporaryFile("w+", suffix=".py", delete=True) as f:
     f.write(query_multi_script)
-
-# Execute the script
-out = ! ../scripts/simulate_exec.py /tmp/query_multi_balance.py --from alice --script-address $ALICE_ADDRESS --function-name query_multiple_balances
+    f.flush()
+    # Execute the script using dysond query script exec
+    out = get_ipython().getoutput(
+        f"dysond query script run --script-address {ALICE_ADDRESS} --executor-address {ALICE_ADDRESS} --function-name query_multiple_balances --extra-code-path {f.name} -o json"
+    )
 out = '\n'.join(out)
+print(out)
 result = json.loads(out)
-
-# Extract and display the results
-script_result = result['script_result']['result']
-balances = script_result['result']
-print(json.dumps(balances, indent=2))
+json_result = json.loads(result['result'])['result']
+assert 'alice_balance' in json_result, "Alice's balance not found in the result"
+assert 'bob_balance' in json_result, "Bob's balance not found in the result"
+print(json.dumps(json_result, indent=2))
 ```
 
+    {"result":"{\"cumsize\":14543,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":39,\"result\":{\"alice_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"1000000000000\",\"denom\":\"udys\"}},\"bob_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"1000000000000\",\"denom\":\"udys\"}}},\"script_gas_consumed\":7905,\"stdout\":\"\"}","attached_message_results":[]}
     {
       "alice_balance": {
         "@type": "/cosmos.bank.v1beta1.QueryBalanceResponse",
         "balance": {
-          "amount": "9999853593",
+          "amount": "1000000000000",
           "denom": "udys"
         }
       },
       "bob_balance": {
         "@type": "/cosmos.bank.v1beta1.QueryBalanceResponse",
         "balance": {
-          "amount": "10000000000",
+          "amount": "1000000000000",
           "denom": "udys"
         }
       }
@@ -216,15 +226,14 @@ def benchmark_gas(iterations=5):
 with open('/tmp/gas_benchmark.py', 'w') as f:
     f.write(gas_benchmark_script)
 
-out = ! ../scripts/simulate_exec.py /tmp/gas_benchmark.py --from alice --script-address $ALICE_ADDRESS --function-name benchmark_gas --gas auto
+out = ! dysond query script run --script-address {ALICE_ADDRESS} --executor-address {ALICE_ADDRESS} --function-name benchmark_gas --extra-code-path /tmp/gas_benchmark.py -o json
 out = '\n'.join(out)
 print(out)
 result = json.loads(out)
 
 # Extract and display the gas measurements
-script_result = result['script_result']['result']
-gas_metrics = script_result['result']
-
+gas_metrics = json.loads(result['result'])['result']
+assert 'initial_gas' in gas_metrics, "Initial gas not found in the result: " + str(gas_metrics)
 print(f"Gas report for benchmark operations:")
 print(f"- Initial gas consumed: {gas_metrics['initial_gas']}")
 print(f"- Gas after query: {gas_metrics['after_query_gas']}")
@@ -234,103 +243,14 @@ print(f"- Total gas for iterations: {gas_metrics['iterations_gas']}")
 print(f"- Average gas per iteration: {gas_metrics['per_iteration']}")
 ```
 
-    {
-      "code": 0,
-      "script_result": {
-        "result": {
-          "cumsize": 74811,
-          "exception": null,
-          "gas_limit": 18446744073709551615,
-          "nodes_called": 133,
-          "result": {
-            "after_query_gas": 59559,
-            "final_gas": 103697,
-            "initial_gas": 50763,
-            "iterations_gas": 44138,
-            "per_iteration": 8827.6,
-            "query_gas": 8796
-          },
-          "script_gas_consumed": 49232,
-          "stdout": "Iteration 1 of 5\nIteration 2 of 5\nIteration 3 of 5\nIteration 4 of 5\nIteration 5 of 5\n"
-        },
-        "attached_message_results": []
-      },
-      "raw_log": "",
-      "events": [
-        {
-          "type": "tx",
-          "attributes": [
-            {
-              "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/70",
-              "index": false
-            }
-          ]
-        },
-        {
-          "type": "tx",
-          "attributes": [
-            {
-              "key": "signature",
-              "value": "",
-              "index": false
-            }
-          ]
-        },
-        {
-          "type": "message",
-          "attributes": [
-            {
-              "key": "action",
-              "value": "/dysonprotocol.script.v1.MsgExec",
-              "index": false
-            },
-            {
-              "key": "sender",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
-              "index": false
-            },
-            {
-              "key": "module",
-              "value": "script",
-              "index": false
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": false
-            }
-          ]
-        },
-        {
-          "type": "dysonprotocol.script.v1.EventExecScript",
-          "attributes": [
-            {
-              "key": "request",
-              "value": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"extra_code\":\"\\nfrom dys import _query, get_gas_consumed, get_script_address, get_gas_limit\\nimport json\\n\\ndef benchmark_gas(iterations=5):\\n    # Start tracking gas\\n    initial_gas = get_gas_consumed()\\n    \\n    # Perform a query that consumes gas\\n    script_address = get_script_address()\\n    balance_response = _query({\\n        \\\"@type\\\": \\\"/cosmos.bank.v1beta1.QueryBalanceRequest\\\",\\n        \\\"address\\\": script_address,\\n        \\\"denom\\\": \\\"dys\\\"\\n    })\\n    \\n    # Check gas after query\\n    after_query_gas = get_gas_consumed()\\n    \\n    # Run some iterations to measure their gas cost\\n    for i in range(iterations):\\n        print(f\\\"Iteration {i+1} of {iterations}\\\")\\n    \\n    # Check final gas consumption\\n    final_gas = get_gas_consumed()\\n    \\n    # Calculate gas used by different operations\\n    query_gas = after_query_gas - initial_gas\\n    iterations_gas = final_gas - after_query_gas\\n    \\n    return {\\n        \\\"initial_gas\\\": initial_gas,\\n        \\\"after_query_gas\\\": after_query_gas,\\n        \\\"final_gas\\\": final_gas,\\n        \\\"query_gas\\\": query_gas,\\n        \\\"iterations_gas\\\": iterations_gas,\\n        \\\"per_iteration\\\": iterations_gas / iterations\\n    }\\n\",\"function_name\":\"benchmark_gas\",\"args\":\"\",\"kwargs\":\"\",\"attached_messages\":[]}",
-              "index": false
-            },
-            {
-              "key": "response",
-              "value": "{\"result\":\"{\\\"cumsize\\\":74811,\\\"exception\\\":null,\\\"gas_limit\\\":18446744073709551615,\\\"nodes_called\\\":133,\\\"result\\\":{\\\"after_query_gas\\\":59559,\\\"final_gas\\\":103697,\\\"initial_gas\\\":50763,\\\"iterations_gas\\\":44138,\\\"per_iteration\\\":8827.6,\\\"query_gas\\\":8796},\\\"script_gas_consumed\\\":49232,\\\"stdout\\\":\\\"Iteration 1 of 5\\\\nIteration 2 of 5\\\\nIteration 3 of 5\\\\nIteration 4 of 5\\\\nIteration 5 of 5\\\\n\\\"}\",\"attached_message_results\":[]}",
-              "index": false
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": false
-            }
-          ]
-        }
-      ]
-    }
+    {"result":"{\"cumsize\":71943,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":133,\"result\":{\"after_query_gas\":16424,\"final_gas\":59019,\"initial_gas\":8102,\"iterations_gas\":42595,\"per_iteration\":8519.0,\"query_gas\":8322},\"script_gas_consumed\":6788,\"stdout\":\"Iteration 1 of 5\\nIteration 2 of 5\\nIteration 3 of 5\\nIteration 4 of 5\\nIteration 5 of 5\\n\"}","attached_message_results":[]}
     Gas report for benchmark operations:
-    - Initial gas consumed: 50763
-    - Gas after query: 59559
-    - Gas after iterations: 103697
-    - Total gas for query: 8796
-    - Total gas for iterations: 44138
-    - Average gas per iteration: 8827.6
+    - Initial gas consumed: 8102
+    - Gas after query: 16424
+    - Gas after iterations: 59019
+    - Total gas for query: 8322
+    - Total gas for iterations: 42595
+    - Average gas per iteration: 8519.0
 
 
 ### Gas Limits
@@ -353,13 +273,12 @@ def check_limit():
 with open('/tmp/gas_limit.py', 'w') as f:
     f.write(gas_limit_script)
 
-out = ! ../scripts/simulate_exec.py /tmp/gas_limit.py --from alice --script-address $ALICE_ADDRESS --function-name check_limit
+out = ! dysond query script run --script-address {ALICE_ADDRESS} --executor-address {ALICE_ADDRESS} --function-name check_limit --extra-code-path /tmp/gas_limit.py -o json
 out = '\n'.join(out)
 result = json.loads(out)
 
-# Extract and display the gas limit
-script_result = result['script_result']['result']
-gas_limit = script_result['result']['gas_limit']
+# Extract and display the gas limit 
+gas_limit = json.loads(result['result'])['result']['gas_limit']
 print(f"Gas limit for this execution: {gas_limit}")
 ```
 
@@ -410,13 +329,15 @@ def count_nodes():
 with open('/tmp/node_count.py', 'w') as f:
     f.write(node_count_script)
 
-out = ! ../scripts/simulate_exec.py /tmp/node_count.py --from alice --script-address $ALICE_ADDRESS --function-name count_nodes
+out = ! dysond query script run --script-address {ALICE_ADDRESS} --executor-address {ALICE_ADDRESS} --function-name count_nodes --extra-code-path /tmp/node_count.py -o json
 out = '\n'.join(out)
 result = json.loads(out)
 
+
 # Extract and display the node metrics
-script_result = result['script_result']['result']
-node_metrics = script_result['result']
+node_metrics = json.loads(result['result'])['result']
+assert 'nodes_called' in node_metrics, "Nodes called not found in the result: " + str(node_metrics)
+
 print(f"Node execution metrics:")
 print(f"- Nodes called: {node_metrics['nodes_called']}")
 print(f"- Calculation result: {node_metrics['calculation_result']}")
@@ -447,17 +368,17 @@ def check_memory():
 with open('/tmp/memory_check.py', 'w') as f:
     f.write(memory_script)
 
-out = ! ../scripts/simulate_exec.py /tmp/memory_check.py --from alice --script-address $ALICE_ADDRESS --function-name check_memory
+out = ! dysond query script run --script-address {ALICE_ADDRESS} --executor-address {ALICE_ADDRESS} --function-name check_memory --extra-code-path /tmp/memory_check.py -o json
 out = '\n'.join(out)
 result = json.loads(out)
 
 # Extract and display the memory usage
-script_result = result['script_result']['result']
-memory_used = script_result['result']['memory_used']
-print(f"Memory usage: {memory_used} bytes")
+memory_used = json.loads(result['result'])['result']
+assert 'memory_used' in memory_used, "Memory used not found in the result: " + str(memory_used)
+print(f"Memory usage: {memory_used['memory_used']} bytes")
 ```
 
-    Memory usage: 403 bytes
+    Memory usage: 373 bytes
 
 
 ## Context Information
@@ -497,13 +418,15 @@ with open('/tmp/address_info.py', 'w') as f:
     f.write(address_script)
 
 # Execute with Bob calling Alice's script
-out = ! ../scripts/simulate_exec.py /tmp/address_info.py --from bob --script-address $ALICE_ADDRESS --function-name who_called_me
+out = ! dysond query script run --script-address {ALICE_ADDRESS} --executor-address {BOB_ADDRESS} --function-name who_called_me --extra-code-path /tmp/address_info.py -o json
 out = '\n'.join(out)
 result = json.loads(out)
 
 # Extract and display the address information
-script_result = result['script_result']['result']
-address_info = script_result['result']
+address_info = json.loads(result['result'])['result']
+assert 'script_address' in address_info, "Script address not found in the result: " + str(address_info)
+assert 'caller_address' in address_info, "Caller address not found in the result: " + str(address_info)
+assert 'is_self_call' in address_info, "Is self call not found in the result: " + str(address_info)
 print(f"Script Address: {address_info['script_address']}")
 print(f"Executor Address: {address_info['caller_address']}")
 print(f"Self-execution: {address_info['is_self_call']}")
@@ -528,9 +451,9 @@ def show_block_info():
     """Get basic block information"""
     block = get_block_info()
     return {
-        "height": block.get("Height"),
-        "chain_id": block.get("ChainID"),
-        "time": block.get("Time")
+        "height": block.get("height"),
+        "chain_id": block.get("chain_id"),
+        "time": block.get("time")
     }
 '''
 
@@ -538,13 +461,15 @@ def show_block_info():
 with open('/tmp/block_info.py', 'w') as f:
     f.write(block_info_script)
 
-out = ! ../scripts/simulate_exec.py /tmp/block_info.py --from alice --script-address $ALICE_ADDRESS --function-name show_block_info
+out = ! dysond query script run --script-address {ALICE_ADDRESS} --executor-address {ALICE_ADDRESS} --function-name show_block_info --extra-code-path /tmp/block_info.py -o json
 out = '\n'.join(out)
 result = json.loads(out)
 
 # Extract and display the block information
-script_result = result['script_result']['result']
-block_info = script_result['result']
+block_info = json.loads(result['result'])['result']
+assert 'height' in block_info and block_info['height'] is not None, "Height not found in the result: " + str(block_info)
+assert 'chain_id' in block_info and block_info['chain_id'] is not None, "Chain ID not found in the result: " + str(block_info)
+assert 'time' in block_info and block_info['time'] is not None, "Time not found in the result: " + str(block_info)
 print(f"Block Information:")
 print(f"- Height: {block_info['height']}")
 print(f"- Chain ID: {block_info['chain_id']}")
@@ -552,9 +477,9 @@ print(f"- Time: {block_info['time']}")
 ```
 
     Block Information:
-    - Height: None
-    - Chain ID: None
-    - Time: None
+    - Height: 11
+    - Chain ID: chain-a
+    - Time: 2025-07-20T11:41:12.880753Z
 
 
 ## Transaction Data
@@ -568,6 +493,8 @@ Let's create a script that checks for attached messages:
 
 ```python
 # Create a script to check for attached messages
+import shlex
+import json
 
 msg1 = shlex.quote(json.dumps({
         "@type":"/cosmos.bank.v1beta1.MsgSend",
@@ -598,26 +525,26 @@ def check_messages():
 with open('/tmp/attached_msgs.py', 'w') as f:
     f.write(attached_msgs_script)
 
-out = ! ../scripts/simulate_exec.py /tmp/attached_msgs.py \
-    --from alice \
-    --script-address $ALICE_ADDRESS \
-    --function-name check_messages \
-    --attached-message $msg1 \
-    --attached-message $msg2 \
-    
+out = ! dysond query script run --script-address {ALICE_ADDRESS} --executor-address {ALICE_ADDRESS} --function-name check_messages --extra-code-path /tmp/attached_msgs.py -o json --attached-message {msg1} --attached-message {msg2}
+
 out = '\n'.join(out)
+print(out)
 result = json.loads(out)
 
+
 # Extract and display the attached messages
-script_result = result['script_result']['result']
-messages = script_result['result']['attached_messages']
-results = script_result['result']['attached_msg_results']
-for m, r in zip(messages, results):
+
+results = json.loads(result['result'])['result']
+print(results)
+assert 'attached_messages' in results, "Attached messages not found in the result: " + str(results)
+assert 'attached_msg_results' in results, "Attached msg results not found in the result: " + str(results)
+for m, r in zip(results['attached_messages'], results['attached_msg_results']):
     print(f"Message: {m}")
     print(f"Result: {r}")
-
 ```
 
+    {"result":"{\"cumsize\":12189,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":18,\"result\":{\"attached_messages\":[{\"@type\":\"/cosmos.bank.v1beta1.MsgSend\",\"amount\":[{\"amount\":\"12\",\"denom\":\"udys\"}],\"from_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"to_address\":\"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el\"},{\"@type\":\"/cosmos.bank.v1beta1.MsgSend\",\"amount\":[{\"amount\":\"34\",\"denom\":\"udys\"}],\"from_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"to_address\":\"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el\"}],\"attached_msg_results\":[{\"@type\":\"/cosmos.bank.v1beta1.MsgSendResponse\"},{\"@type\":\"/cosmos.bank.v1beta1.MsgSendResponse\"}]},\"script_gas_consumed\":44626,\"stdout\":\"\"}","attached_message_results":[{"@type":"/cosmos.bank.v1beta1.MsgSendResponse"},{"@type":"/cosmos.bank.v1beta1.MsgSendResponse"}]}
+    {'attached_messages': [{'@type': '/cosmos.bank.v1beta1.MsgSend', 'amount': [{'amount': '12', 'denom': 'udys'}], 'from_address': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej', 'to_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el'}, {'@type': '/cosmos.bank.v1beta1.MsgSend', 'amount': [{'amount': '34', 'denom': 'udys'}], 'from_address': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej', 'to_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el'}], 'attached_msg_results': [{'@type': '/cosmos.bank.v1beta1.MsgSendResponse'}, {'@type': '/cosmos.bank.v1beta1.MsgSendResponse'}]}
     Message: {'@type': '/cosmos.bank.v1beta1.MsgSend', 'amount': [{'amount': '12', 'denom': 'udys'}], 'from_address': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej', 'to_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el'}
     Result: {'@type': '/cosmos.bank.v1beta1.MsgSendResponse'}
     Message: {'@type': '/cosmos.bank.v1beta1.MsgSend', 'amount': [{'amount': '34', 'denom': 'udys'}], 'from_address': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej', 'to_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el'}
@@ -649,25 +576,179 @@ def emit_test_event():
 with open('/tmp/emit_event.py', 'w') as f:
     f.write(emit_event_script)
 
-out = ! ../scripts/simulate_exec.py /tmp/emit_event.py --from alice --script-address $ALICE_ADDRESS --function-name emit_test_event
+
+out = ! dysond tx script exec --script-address {ALICE_ADDRESS} --from {ALICE_ADDRESS} --function-name emit_test_event --extra-code-path /tmp/emit_event.py -y --gas 400000 | dysond q wait-tx -o json
 out = '\n'.join(out)
-
 result = json.loads(out)
-for event in result['events']:
-    if event['type'] == "dysonprotocol.script.v1.EventScriptEvent":
-        for attribute in event['attributes']:
-            print(f"{attribute['key']}: {attribute['value']}")
-
+# Quering script run does not emit events
+print(json.dumps(result, indent=2))
+# make the events more readable
+events = {}
+for e in result['events']:
+    event_type = e['type']
+    events.setdefault(event_type, {})
+    for a in e['attributes']:
+        events[event_type][a['key']] = a['value']
+            
+print(json.dumps(events, indent=2))
+assert events['dysonprotocol.script.v1.EventScriptEvent']['key'] == '"foo"', "Event foo not found in the result: " + str(events)
+assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"', "Event value not found in the result: " + str(events)
 ```
 
-    address: "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej"
-    key: "payment_processed"
-    value: "success"
-    msg_index: 0
-    address: "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej"
-    key: "foo"
-    value: "123123"
-    msg_index: 0
+    {
+      "height": "14",
+      "txhash": "632B5F735A8FACFF464666984C1833C03CB0F39E3BCE8A2E2632F41831731F9F",
+      "codespace": "",
+      "code": 0,
+      "data": "12BE010A282F6479736F6E70726F746F636F6C2E7363726970742E76312E4D736745786563526573706F6E73651291010A8E017B2263756D73697A65223A323032372C22657863657074696F6E223A6E756C6C2C226761735F6C696D6974223A3430303030302C226E6F6465735F63616C6C6564223A31372C22726573756C74223A7B226576656E745F656D6974746564223A747275657D2C227363726970745F6761735F636F6E73756D6564223A35313839372C227374646F7574223A22227D",
+      "raw_log": "",
+      "logs": [],
+      "info": "",
+      "gas_wanted": "400000",
+      "gas_used": "53924",
+      "tx": null,
+      "timestamp": "",
+      "events": [
+        {
+          "type": "tx",
+          "attributes": [
+            {
+              "key": "acc_seq",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/0",
+              "index": true
+            }
+          ]
+        },
+        {
+          "type": "tx",
+          "attributes": [
+            {
+              "key": "signature",
+              "value": "a86z45BNcRi9zqe1+iDW//TFGiZmKQ+tzgyJmFJcFfh4jGd9MdAn2nIjCWFxW2/uFAogGTYIipyvAyH0SnrOJQ==",
+              "index": true
+            }
+          ]
+        },
+        {
+          "type": "message",
+          "attributes": [
+            {
+              "key": "action",
+              "value": "/dysonprotocol.script.v1.MsgExec",
+              "index": true
+            },
+            {
+              "key": "sender",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
+              "index": true
+            },
+            {
+              "key": "module",
+              "value": "script",
+              "index": true
+            },
+            {
+              "key": "msg_index",
+              "value": "0",
+              "index": true
+            }
+          ]
+        },
+        {
+          "type": "dysonprotocol.script.v1.EventScriptEvent",
+          "attributes": [
+            {
+              "key": "address",
+              "value": "\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"",
+              "index": true
+            },
+            {
+              "key": "key",
+              "value": "\"payment_processed\"",
+              "index": true
+            },
+            {
+              "key": "value",
+              "value": "\"success\"",
+              "index": true
+            },
+            {
+              "key": "msg_index",
+              "value": "0",
+              "index": true
+            }
+          ]
+        },
+        {
+          "type": "dysonprotocol.script.v1.EventScriptEvent",
+          "attributes": [
+            {
+              "key": "address",
+              "value": "\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"",
+              "index": true
+            },
+            {
+              "key": "key",
+              "value": "\"foo\"",
+              "index": true
+            },
+            {
+              "key": "value",
+              "value": "\"123123\"",
+              "index": true
+            },
+            {
+              "key": "msg_index",
+              "value": "0",
+              "index": true
+            }
+          ]
+        },
+        {
+          "type": "dysonprotocol.script.v1.EventExecScript",
+          "attributes": [
+            {
+              "key": "request",
+              "value": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"extra_code\":\"\\nfrom dys import emit_event\\n\\ndef emit_test_event():\\n    # Emit a custom event, none is a success or an exception is raised\\n    emit_event(\\\"payment_processed\\\", \\\"success\\\")\\n    emit_event(\\\"foo\\\", '123123')\\n    return {\\\"event_emitted\\\": True}\\n\",\"function_name\":\"emit_test_event\",\"args\":\"\",\"kwargs\":\"\",\"attached_messages\":[]}",
+              "index": true
+            },
+            {
+              "key": "response",
+              "value": "{\"result\":\"{\\\"cumsize\\\":2027,\\\"exception\\\":null,\\\"gas_limit\\\":400000,\\\"nodes_called\\\":17,\\\"result\\\":{\\\"event_emitted\\\":true},\\\"script_gas_consumed\\\":51897,\\\"stdout\\\":\\\"\\\"}\",\"attached_message_results\":[]}",
+              "index": true
+            },
+            {
+              "key": "msg_index",
+              "value": "0",
+              "index": true
+            }
+          ]
+        }
+      ]
+    }
+    {
+      "tx": {
+        "acc_seq": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/0",
+        "signature": "a86z45BNcRi9zqe1+iDW//TFGiZmKQ+tzgyJmFJcFfh4jGd9MdAn2nIjCWFxW2/uFAogGTYIipyvAyH0SnrOJQ=="
+      },
+      "message": {
+        "action": "/dysonprotocol.script.v1.MsgExec",
+        "sender": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
+        "module": "script",
+        "msg_index": "0"
+      },
+      "dysonprotocol.script.v1.EventScriptEvent": {
+        "address": "\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"",
+        "key": "\"foo\"",
+        "value": "\"123123\"",
+        "msg_index": "0"
+      },
+      "dysonprotocol.script.v1.EventExecScript": {
+        "request": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"extra_code\":\"\\nfrom dys import emit_event\\n\\ndef emit_test_event():\\n    # Emit a custom event, none is a success or an exception is raised\\n    emit_event(\\\"payment_processed\\\", \\\"success\\\")\\n    emit_event(\\\"foo\\\", '123123')\\n    return {\\\"event_emitted\\\": True}\\n\",\"function_name\":\"emit_test_event\",\"args\":\"\",\"kwargs\":\"\",\"attached_messages\":[]}",
+        "response": "{\"result\":\"{\\\"cumsize\\\":2027,\\\"exception\\\":null,\\\"gas_limit\\\":400000,\\\"nodes_called\\\":17,\\\"result\\\":{\\\"event_emitted\\\":true},\\\"script_gas_consumed\\\":51897,\\\"stdout\\\":\\\"\\\"}\",\"attached_message_results\":[]}",
+        "msg_index": "0"
+      }
+    }
 
 
 ### Dynamic Code Evaluation
@@ -711,13 +792,12 @@ result + 3
 with open('/tmp/dys_eval.py', 'w') as f:
     f.write(dys_eval_script)
 
-out = ! ../scripts/simulate_exec.py /tmp/dys_eval.py --from alice --script-address $ALICE_ADDRESS --function-name demonstrate_dys_eval
+out = ! dysond q script run --script-address {ALICE_ADDRESS} --executor-address {ALICE_ADDRESS} --function-name demonstrate_dys_eval --extra-code-path /tmp/dys_eval.py -o json
 out = '\n'.join(out)
-result = json.loads(out)
-
+json_out = json.loads(out)
+print(json.dumps(json_out, indent=2))
 # Extract and display the evaluation results
-script_result = result['script_result']['result']
-eval_results = script_result['result']
+eval_results = json.loads(json_out['result'])['result']
 print(f"Dynamic evaluation results:")
 print(f"- Arithmetic: {eval_results['arithmetic']}")
 print(f"- String operations: {eval_results['string_ops']}")
@@ -725,6 +805,10 @@ print(f"- With variables: {eval_results['with_variables']}")
 print(f"- Multi-statement: {eval_results['multi_statement']}")
 ```
 
+    {
+      "result": "{\"cumsize\":11512,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":84,\"result\":{\"arithmetic\":14,\"multi_statement\":38,\"string_ops\":\"hello WORLD\",\"with_variables\":50},\"script_gas_consumed\":11620,\"stdout\":\"\"}",
+      "attached_message_results": []
+    }
     Dynamic evaluation results:
     - Arithmetic: 14
     - String operations: hello WORLD
@@ -765,39 +849,47 @@ def test_a_or_b():
 with open('/tmp/coverage_test.py', 'w') as f:
     f.write(coverage_script)
 
-out = ! ../scripts/simulate_exec.py /tmp/coverage_test.py --from charlie --script-address $CHARLIE_ADDRESS --function-name test_a_or_b
+out = ! dysond q script run --script-address {CHARLIE_ADDRESS} --executor-address {CHARLIE_ADDRESS} --function-name test_a_or_b --extra-code-path /tmp/coverage_test.py -o json
 out = '\n'.join(out)
-result = json.loads(out)
-
+json_out = json.loads(out)
+print(json.dumps(json_out, indent=2))
 # Extract and interpret the coverage data
-script_result = result['script_result']['result']
-coverage_data = script_result['result']
-
+coverage_data = json.loads(json_out['result'])['result']
 # Display a simplified analysis of the coverage data
 print("Coverage Analysis Results:")
 for item in coverage_data:
-    if len(item) == 2 and isinstance(item[0], list) and len(item[0]) == 5:
-        node_info = item[0]
-        count = item[1]
-        line = node_info[0]
-        node_type = node_info[4]
-        
-        # Simplify the coverage output for key lines
-        if node_type == "FunctionDef" and line == 3:
-            print(f"- FunctionDef (a_or_b): executed {count} time{'s' if count != 1 else ''}")
-        elif node_type == "If" and line == 4:
-            print(f"- If (line {line}): {f'executed {count} times' if count > 0 else 'never executed'}")
-        elif node_type == "If" and line == 6:
-            print(f"- If (line {line}): {f'executed {count} times' if count > 0 else 'never executed'}")
-        elif node_type == "Return" and line == 5:
-            print(f"- Return (line {line}): {f'executed {count} times' if count > 0 else 'never executed'}")
-        elif node_type == "Return" and line == 7:
-            print(f"- Return (line {line}): {f'executed {count} times' if count > 0 else 'never executed'}")
-        elif node_type == "Return" and line == 8:
-            print(f"- Return (fallback): {f'executed {count} times' if count > 0 else 'never executed'}")
+    node_info = item[0]
+    count, memory_usage = item[1]
+    line = node_info[0]
+    node_type = node_info[4]
+    
+    # Simplify the coverage output for key lines
+    if node_type == "FunctionDef" and line == 3:
+        print(f"- FunctionDef (a_or_b): executed {count} time{'s' if count != 1 else ''} and used {memory_usage} bytes of memory")
+    elif node_type == "If" and line == 4:
+        print(f"- If (line {line}): {f'executed {count} times' if count > 0 else 'never executed'} and used {memory_usage} bytes of memory")
+    elif node_type == "If" and line == 6:
+        print(f"- If (line {line}): {f'executed {count} times' if count > 0 else 'never executed'} and used {memory_usage} bytes of memory")
+    elif node_type == "Return" and line == 5:
+        print(f"- Return (line {line}): {f'executed {count} times' if count > 0 else 'never executed'} and used {memory_usage} bytes of memory")
+    elif node_type == "Return" and line == 7:
+        print(f"- Return (line {line}): {f'executed {count} times' if count > 0 else 'never executed'} and used {memory_usage} bytes of memory")
+    elif node_type == "Return" and line == 8:
+        print(f"- Return (fallback): {f'executed {count} times' if count > 0 else 'never executed'} and used {memory_usage} bytes of memory")
+assert len(coverage_data) > 0, "Coverage data should be greater than 0"
 ```
 
+    {
+      "result": "{\"cumsize\":2271,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":23,\"result\":[[[3,0,8,15,\"FunctionDef\",\"\"],[1,45]],[[3,11,3,12,\"arg\",\"\"],[2,54]],[[3,14,3,15,\"arg\",\"\"],[2,54]],[[4,4,5,16,\"If\",\"\"],[2,242]],[[4,7,4,8,\"Name\",\"\"],[2,242]],[[5,8,5,16,\"Return\",\"\"],[2,242]],[[5,15,5,16,\"Name\",\"\"],[2,242]],[[6,4,7,16,\"If\",\"\"],[0,0]],[[6,7,6,8,\"Name\",\"\"],[0,0]],[[7,8,7,16,\"Return\",\"\"],[0,0]],[[7,15,7,16,\"Name\",\"\"],[0,0]],[[8,4,8,15,\"Return\",\"\"],[0,0]],[[8,11,8,15,\"Constant\",\"\"],[0,0]],[[10,0,13,16,\"FunctionDef\",\"\"],[1,94]],[[12,4,12,16,\"Expr\",\"\"],[1,105]],[[12,4,12,16,\"Call\",\"\"],[1,105]],[[12,4,12,10,\"Name\",\"\"],[1,131]],[[12,11,12,12,\"Constant\",\"\"],[1,105]],[[12,14,12,15,\"Constant\",\"\"],[1,105]],[[13,4,13,16,\"Expr\",\"\"],[1,105]],[[13,4,13,16,\"Call\",\"\"],[1,105]],[[13,4,13,10,\"Name\",\"\"],[1,131]],[[13,11,13,12,\"Constant\",\"\"],[1,105]],[[13,14,13,15,\"Constant\",\"\"],[1,105]]],\"script_gas_consumed\":5671,\"stdout\":\"\"}",
+      "attached_message_results": []
+    }
     Coverage Analysis Results:
+    - FunctionDef (a_or_b): executed 1 time and used 45 bytes of memory
+    - If (line 4): executed 2 times and used 242 bytes of memory
+    - Return (line 5): executed 2 times and used 242 bytes of memory
+    - If (line 6): never executed and used 0 bytes of memory
+    - Return (line 7): never executed and used 0 bytes of memory
+    - Return (fallback): never executed and used 0 bytes of memory
 
 
 From the coverage analysis, we can see that:

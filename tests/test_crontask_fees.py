@@ -137,7 +137,7 @@ def test_fee_deduction_insufficient_funds(chainnet, generate_account):
         "amount": [{"denom": "udys", "amount": "10"}]
     }
     
-    # Create the task using execute_tx_and_wait directly
+    # Create the task using dysond directly
     create_result = dysond_bin(
         "tx", "crontask", "create-task",
         "--scheduled-timestamp", str(scheduled_time),

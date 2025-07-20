@@ -1225,48 +1225,7 @@ paths:
                 type: array
                 items:
                   type: string
-                description: >-
-                  OPTION 1: Delete specific indexes
-
-                  List of indexes to delete. This field is mutually exclusive
-                  with
-
-                  index_prefix and filter fields.
-              index_prefix:
-                type: string
-                description: >-
-                  OPTION 2: Delete by prefix and optional filter
-
-                  The index prefix of the storage entries to delete. When
-                  specified,
-
-                  all entries with indexes starting with this prefix will be
-                  deleted
-
-                  (optionally filtered by the filter field). This field is
-                  mutually
-
-                  exclusive with the indexes field.
-              filter:
-                type: string
-                description: >-
-                  The optional gjson filter to apply when deleting by
-                  index_prefix.
-
-                  Supports GJSON query syntax with comparison operators:
-
-                  - Equality: status == "active", age == 25
-
-                  - Inequality: status != "inactive"
-
-                  - Comparison: age > 18, price <= 100
-
-                  - Pattern matching: name % "John*" (like), name !% "*test*"
-                  (not like)
-
-                  Only entries matching this filter will be deleted.
-
-                  This field can only be used in conjunction with index_prefix.
+                description: List of specific indexes to delete.
             description: MsgStorageDelete is the message for deleting storage entries.
       tags:
         - Msg
@@ -2922,6 +2881,59 @@ paths:
                       description: >-
                         Must be a valid serialized protocol buffer of the above
                         specified type.
+      tags:
+        - Query
+  /dysonprotocol/nameservice/v1/resolve_name/{name_or_address}:
+    get:
+      summary: |-
+        ResolveName resolves a name to address or returns the address if already
+        valid
+      operationId: Query_ResolveName
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              address:
+                type: string
+                title: address is the resolved address
+            description: >-
+              QueryResolveNameResponse is response type for the
+              Query/ResolveName RPC
+
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: name_or_address
+          description: name_or_address is either a nameservice name or a valid address
+          in: path
+          required: true
+          type: string
       tags:
         - Query
   /dysonprotocol.nameservice.v1.Msg/AcceptBid:
@@ -34455,29 +34467,7 @@ definitions:
         type: array
         items:
           type: string
-        description: |-
-          OPTION 1: Delete specific indexes
-          List of indexes to delete. This field is mutually exclusive with
-          index_prefix and filter fields.
-      index_prefix:
-        type: string
-        description: |-
-          OPTION 2: Delete by prefix and optional filter
-          The index prefix of the storage entries to delete. When specified,
-          all entries with indexes starting with this prefix will be deleted
-          (optionally filtered by the filter field). This field is mutually
-          exclusive with the indexes field.
-      filter:
-        type: string
-        description: |-
-          The optional gjson filter to apply when deleting by index_prefix.
-          Supports GJSON query syntax with comparison operators:
-          - Equality: status == "active", age == 25
-          - Inequality: status != "inactive"
-          - Comparison: age > 18, price <= 100
-          - Pattern matching: name % "John*" (like), name !% "*test*" (not like)
-          Only entries matching this filter will be deleted.
-          This field can only be used in conjunction with index_prefix.
+        description: List of specific indexes to delete.
     description: MsgStorageDelete is the message for deleting storage entries.
   dysonprotocol.storage.v1.MsgStorageDeleteResponse:
     type: object
@@ -35123,6 +35113,15 @@ definitions:
 
               required for a new bid compared to the previous bid
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  dysonprotocol.nameservice.v1.QueryResolveNameResponse:
+    type: object
+    properties:
+      address:
+        type: string
+        title: address is the resolved address
+    description: |-
+      QueryResolveNameResponse is response type for the Query/ResolveName RPC
+      method.
   cosmos.bank.v1beta1.DenomUnit:
     type: object
     properties:

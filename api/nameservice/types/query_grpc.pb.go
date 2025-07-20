@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Query_ComputeHash_FullMethodName = "/dysonprotocol.nameservice.v1.Query/ComputeHash"
+	Query_ResolveName_FullMethodName = "/dysonprotocol.nameservice.v1.Query/ResolveName"
 	Query_Params_FullMethodName      = "/dysonprotocol.nameservice.v1.Query/Params"
 )
 
@@ -31,6 +32,9 @@ const (
 type QueryClient interface {
 	// ComputeHash computes the hash for a name, salt, and committer address
 	ComputeHash(ctx context.Context, in *ComputeHashRequest, opts ...grpc.CallOption) (*ComputeHashResponse, error)
+	// ResolveName resolves a name to address or returns the address if already
+	// valid
+	ResolveName(ctx context.Context, in *QueryResolveNameRequest, opts ...grpc.CallOption) (*QueryResolveNameResponse, error)
 	// Params queries the nameservice module parameters
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 }
@@ -47,6 +51,16 @@ func (c *queryClient) ComputeHash(ctx context.Context, in *ComputeHashRequest, o
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ComputeHashResponse)
 	err := c.cc.Invoke(ctx, Query_ComputeHash_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ResolveName(ctx context.Context, in *QueryResolveNameRequest, opts ...grpc.CallOption) (*QueryResolveNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryResolveNameResponse)
+	err := c.cc.Invoke(ctx, Query_ResolveName_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +85,9 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 type QueryServer interface {
 	// ComputeHash computes the hash for a name, salt, and committer address
 	ComputeHash(context.Context, *ComputeHashRequest) (*ComputeHashResponse, error)
+	// ResolveName resolves a name to address or returns the address if already
+	// valid
+	ResolveName(context.Context, *QueryResolveNameRequest) (*QueryResolveNameResponse, error)
 	// Params queries the nameservice module parameters
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 	mustEmbedUnimplementedQueryServer()
@@ -85,6 +102,9 @@ type UnimplementedQueryServer struct{}
 
 func (UnimplementedQueryServer) ComputeHash(context.Context, *ComputeHashRequest) (*ComputeHashResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ComputeHash not implemented")
+}
+func (UnimplementedQueryServer) ResolveName(context.Context, *QueryResolveNameRequest) (*QueryResolveNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResolveName not implemented")
 }
 func (UnimplementedQueryServer) Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
@@ -128,6 +148,24 @@ func _Query_ComputeHash_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_ResolveName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryResolveNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ResolveName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_ResolveName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ResolveName(ctx, req.(*QueryResolveNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryParamsRequest)
 	if err := dec(in); err != nil {
@@ -156,6 +194,10 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ComputeHash",
 			Handler:    _Query_ComputeHash_Handler,
+		},
+		{
+			MethodName: "ResolveName",
+			Handler:    _Query_ResolveName_Handler,
 		},
 		{
 			MethodName: "Params",

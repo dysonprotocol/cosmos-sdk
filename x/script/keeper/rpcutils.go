@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"fmt"
-	"math"
 	"net/http"
 
 	scriptv1 "dysonprotocol.com/api/script/types"
@@ -36,6 +35,12 @@ type EmitEventResponse struct {
 // Using MsgRequest and QueryRequest from keeper.go
 
 func (rpcservice *RpcService) Msg(_ *http.Request, req *MsgRequest, response *string) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = HandleRunRecovery(r)
+		}
+	}()
+
 	r, gasused, err := rpcservice.k.HandleJSONAnyMsg(rpcservice.ctx, rpcservice.ScriptAddress, req)
 
 	fmt.Println("Msg", "JsonMsg", req.JsonMsg, "response", r, "err", err, "gasused", gasused)
@@ -121,9 +126,16 @@ func (rpcservice *RpcService) ConsumeGas(_ *http.Request, msg *ConsumeGasRequest
 
 	}()
 
-	// Recursive chain calls are exponentially more expensive
-	gasUsed := uint64(float64(msg.Amount) * math.Pow(2, float64(rpcservice.k.currentDepth-1)))
+	// Get current depth from context
+	depth, ok := sdkCtx.Value(scriptDepthKey{}).(int)
+	if !ok {
+		depth = 1
+	}
 
+	// Recursive chain calls are exponentially more expensive
+	//gasUsed := uint64(float64(msg.Amount) * math.Pow(2, float64(depth-1)))
+	gasUsed := uint64(msg.Amount) * uint64(depth)
+	fmt.Printf("gasUsed: %v, currentDepth: %v\n", gasUsed, depth)
 	gasMeter.ConsumeGas(gasUsed, "gasUsed")
 	//fmt.Printf("gasUsed: %v\n", gasUsed)
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	cosmossdkerrors "cosmossdk.io/errors"
+	storetypes "cosmossdk.io/store/types"
 	scriptv1 "dysonprotocol.com/api/script/types"
 	"dysonprotocol.com/x/script"
 	scripttypes "dysonprotocol.com/x/script/types"
@@ -267,12 +268,11 @@ func handleRunRecovery(r interface{}) error {
 	case nil:
 		// No panic, just return nil or handle gracefully
 		return nil
+	case storetypes.ErrorOutOfGas:
+		return cosmossdkerrors.Wrapf(sdkerrors.ErrOutOfGas,
+			"script ran out of gas (descriptor: %s)", rec.Descriptor,
+		)
 	case error:
-		if sdkerrors.ErrOutOfGas.Is(rec) {
-			return cosmossdkerrors.Wrapf(sdkerrors.ErrOutOfGas,
-				"script ran out of gas (original error: %v)", rec.Error(),
-			)
-		}
 		// Additional checks for other error types
 		// if cosmossdkerrors.Is(rec, sdkerrors.ErrXYZ) { ... }
 		return sdkerrors.ErrPanic.Wrapf("script panic (error type): %v", rec.Error())

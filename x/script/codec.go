@@ -33,6 +33,7 @@ import (
 	icahosttypes "github.com/cosmos/ibc-go/v10/modules/apps/27-interchain-accounts/host/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v10/modules/apps/transfer/types"
 
+	nameservicetypes "dysonprotocol.com/x/nameservice/types"
 	storagetypes "dysonprotocol.com/x/storage/types"
 	gogoprotoany "github.com/cosmos/gogoproto/types/any"
 )
@@ -88,6 +89,10 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 
 		// script web service
 		&scripttypes.WebRequest{}, &scripttypes.WebResponse{},
+
+		// nameservice
+		&nameservicetypes.QueryResolveNameRequest{}, &nameservicetypes.QueryResolveNameResponse{},
+		&nameservicetypes.QueryParamsRequest{}, &nameservicetypes.QueryParamsResponse{},
 
 		// storage
 		&storagetypes.QueryStorageGetRequest{}, &storagetypes.QueryStorageGetResponse{},

@@ -35,6 +35,14 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
+					RpcMethod: "ResolveName",
+					Use:       "resolve [name-or-address]",
+					Short:     "Resolve a name to address or return the address if already valid",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "name_or_address"},
+					},
+				},
+				{
 					RpcMethod: "Params",
 					Use:       "params",
 					Short:     "Query the current nameservice parameters",

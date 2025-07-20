@@ -38,6 +38,39 @@ func Exec(msgJSON, scriptJSON, attachedMsgResultsJSON, headerInfoJSON, port stri
 
 }
 
+func Benchmark(iterations int, details bool) (string, error) {
+	var lib *embed_util.EmbeddedFiles
+	ep, err := python.NewEmbeddedPython("dyslang")
+	if err != nil {
+		return "", err
+	}
+
+	lib, err = embed_util.NewEmbeddedFiles(data.Data, "dyslang-libs")
+	if err != nil {
+		return "", err
+	}
+
+	// TODO Make this an environment variable or config
+	ep.AddPythonPath("./dysvm/internal/py-dyslang")
+	ep.AddPythonPath(lib.GetExtractedPath())
+
+	var detailsFlag string
+	if details {
+		detailsFlag = "true"
+	} else {
+		detailsFlag = "false"
+	}
+
+	cmd, err := ep.PythonCmd("-m", "dyslang", "run_benchmark", fmt.Sprintf("%d", iterations), detailsFlag)
+	if err != nil {
+		return "", err
+	}
+
+	out, runErr := cmd.CombinedOutput()
+
+	return string(out), runErr
+}
+
 func Wsgi(port, scriptJSON, blockInfoJSON, httpreq string) (string, error) {
 	var lib *embed_util.EmbeddedFiles
 	ep, err := python.NewEmbeddedPython("dyslang")

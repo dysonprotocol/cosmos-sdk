@@ -1,0 +1,263 @@
+<div class="container mx-auto p-4" id="wallet-page-container">
+  <section x-data="{
+    statusMsg: '',
+    // ephemeral data for local wallet import
+    walletName: '',
+    password: '',
+    mnemonic: '',
+    mnemonicSaved: false,
+  
+    // ephemeral pass storage for each existing local wallet
+    // so that each wallet can be unlocked individually
+    // (indexed by wallet name)
+    passes: {},
+
+    init() {
+      console.log('wallet page init');
+    },
+  
+    clearStatus() {
+      this.statusMsg = '';
+    },
+  
+    async connectExtensionKeplr() {
+      this.statusMsg = 'Connecting Keplr...';
+      $store.walletStore.connectExtension('keplr')
+        .then(() => {
+          this.statusMsg = 'Connected via Keplr';
+        })
+        .catch(e => {
+          this.statusMsg = 'Connect error: ' + (e.message || e);
+        });
+    },
+  
+    async importCosmJsWallet() {
+      this.statusMsg = 'Importing wallet...';
+      $store.walletStore.importNamedCosmJsWallet(this.walletName, this.mnemonic, this.password)
+        .then(() => {
+          this.walletName = '';
+          this.password = '';
+          this.mnemonic = '';
+          this.mnemonicSaved = false;
+          this.statusMsg = 'Wallet imported successfully';
+        })
+        .catch(e => {
+          this.statusMsg = e.message;
+        });
+    },
+  
+    async generateMnemonic12() {
+      this.mnemonic = await $store.walletStore.generateMnemonic(12);
+    },
+  
+    async generateMnemonic24() {
+      this.mnemonic = await $store.walletStore.generateMnemonic(24);
+    },
+  
+    async connectLocalWallet(name) {
+      const pass = this.passes[name] || '';
+      if (!pass) {
+        this.statusMsg = 'Password required to connect local wallet.';
+        return;
+      }
+      $store.walletStore.connectNamedCosmJsWallet(name, pass)
+        .then(() => {
+          this.statusMsg = `Connected to local wallet '${name}'`;
+        })
+        .catch(e => {
+          this.statusMsg = e.message;
+        });
+    },
+  
+    async disconnectLocalWallet(name) {
+      $store.walletStore.disconnectWallet();
+      this.statusMsg = `Disconnected wallet '${name}'`;
+    },
+  
+    async removeLocalWallet(name) {
+      if (!confirm(`Remove wallet [${name}]? This cannot be undone.`)) return;
+      $store.walletStore.removeNamedCosmJsWallet(name);
+      this.statusMsg = `Removed local wallet '${name}'`;
+    },
+  }" id="wallet-page" class="space-y-8">
+    <!-- Extension Wallets Section -->
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body">
+        
+        <!-- Status Message -->
+        <div x-show="statusMsg" 
+             :class="statusMsg.includes('error') || statusMsg.includes('Error') ? 'alert-error' : 'alert-info'">
+          <span x-text="statusMsg"></span>
+        </div>
+  
+        <h2 class="card-title">Use Browser Extension</h2>
+        <!-- Keplr Button -->
+        <button
+          id="connect-keplr-btn"
+          :disabled="!window.keplr"
+          @click="connectExtensionKeplr()"
+          class="btn btn-primary"
+        >
+          Connect with Keplr
+        </button>
+        <div x-show="!window.keplr" class="alert alert-warning mt-4">
+          <span>Keplr extension not found. Install and enable it first.</span>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Imported Wallets Section -->
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title mb-4">Imported CosmJs Wallets</h2>
+        
+        <div x-show="$store.walletStore.localCosmJsWallets.length === 0" class="text-center py-8">
+          <p class="text-base-content/70">No local wallets found. Import one below first.</p>
+        </div>
+        
+        <div class="space-y-4">
+          <template x-for="(item, index) in $store.walletStore.localCosmJsWallets" :key="`${item.name}-${item.address}-${index}`">
+            <div class="card bg-base-100 shadow-md">
+              <div class="card-body">
+                <h3 class="font-bold text-lg" x-text="item.name"></h3>
+                <p class="text-sm">
+                  Address: <code class="text-xs bg-base-300 px-2 py-1 rounded" x-text="item.address"></code>
+                </p>
+                
+                <div class="form-control mt-3">
+                  <input
+                    type="password"
+                    :placeholder="`Password to unlock ${item.name}`"
+                    x-model="passes[item.name]"
+                    class="input input-bordered input-sm"
+                  />
+                </div>
+                
+                <div class="card-actions justify-end mt-3">
+                  <!-- Connect -->
+                  <button
+                    :disabled="$store.walletStore.activeWalletMeta?.address === item.address"
+                    @click="connectLocalWallet(item.name)"
+                    class="btn btn-primary btn-sm"
+                  >
+                    Connect
+                  </button>
+                  <!-- Disconnect (only if currently connected) -->
+                  <button
+                    :disabled="$store.walletStore.activeWalletMeta?.address !== item.address"
+                    @click="disconnectLocalWallet(item.name)"
+                    class="btn btn-outline btn-sm"
+                  >
+                    Disconnect
+                  </button>
+                  <!-- Remove -->
+                  <button
+                    @click="removeLocalWallet(item.name)"
+                    class="btn btn-error btn-outline btn-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Import New Wallet Section -->
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title mb-4">Import New CosmJs Wallet</h2>
+        
+        <div class="space-y-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Wallet Name</span>
+            </label>
+            <input 
+              id="wallet-name-input"
+              x-model="walletName" 
+              placeholder="Name your wallet"
+              class="input input-bordered"
+            />
+          </div>
+          
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Password</span>
+            </label>
+            <input 
+              id="wallet-password-input"
+              type="password" 
+              x-model="password" 
+              placeholder="Password to encrypt wallet"
+              class="input input-bordered"
+            />
+          </div>
+          
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Mnemonic</span>
+            </label>
+            <textarea
+              id="mnemonic-textarea"
+              x-model="mnemonic"
+              @change="mnemonicSaved = false; clearStatus()"
+              rows="3"
+              placeholder="Enter your mnemonic phrase..."
+              class="textarea textarea-bordered font-mono text-sm"
+            ></textarea>
+          </div>
+          
+          <div class="flex gap-2">
+            <button
+              @click="generateMnemonic12()"
+              :disabled="mnemonic.trim().length > 0"
+              class="btn btn-outline btn-sm"
+            >
+              Generate 12 words
+            </button>
+            <button
+              @click="generateMnemonic24()"
+              :disabled="mnemonic.trim().length > 0"
+              class="btn btn-outline btn-sm"
+            >
+              Generate 24 words
+            </button>
+          </div>
+          
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <input 
+                id="mnemonic-backup-checkbox"
+                type="checkbox" 
+                x-model="mnemonicSaved"
+                class="checkbox checkbox-primary"
+              />
+              <span class="label-text ml-2">I have backed up my mnemonic because I understand the risks.</span>
+            </label>
+          </div>
+          
+          <div class="flex gap-2">
+            <button
+              id="import-wallet-btn"
+              @click="importCosmJsWallet()"
+              :disabled="!walletName || !password || !mnemonic || !mnemonicSaved"
+              class="btn btn-primary"
+            >
+              Import Wallet
+            </button>
+            <button 
+              id="clear-mnemonic-btn"
+              @click="mnemonic = ''"
+              class="btn btn-outline"
+            >
+              Clear Mnemonic
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> 
+</div> 

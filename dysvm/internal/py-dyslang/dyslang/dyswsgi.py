@@ -12,11 +12,11 @@ from .dysvm_server import build_sandbox
 
 
 def main(port, script_json, block_info_json, http_request):
-    print("DYSWSGI")
-    print("PORT", port)
-    print("SCRIPT", script_json)
-    print("BLOCK INFO", block_info_json)
-    print("HTTP REQUEST", http_request)
+    #print("DYSWSGI")
+    #print("PORT", port)
+    #print("SCRIPT", script_json)
+    #print("BLOCK INFO", block_info_json)
+    #print("HTTP REQUEST", http_request)
 
     class BetterServerHandler(ServerHandler):
         def error_output(self, environ, start_response):
@@ -120,6 +120,13 @@ def main(port, script_json, block_info_json, http_request):
                     wsgiout = f"""HTTP/1.1 404\ncontent-type: text/plain\n\nOops! No WSGI Application defined on this DysonProtocol script.\nLogs:\n{buf.getvalue()}""".encode()
                 else:
                     wsgiout = f"""HTTP/1.1 500\ncontent-type: text/plain\n\nLogs:\n{buf.getvalue()}""".encode()
+            except SyntaxError as e:
+                wsgiout = dedent(f"""
+                        HTTP/1.1 500
+                        content-type: text/plain
+                        
+                        SyntaxError: {e}
+                        """).strip().encode()
             except Exception as e:
                 import traceback
                 lineno = getattr(e, "lineno", None)
@@ -143,6 +150,7 @@ def main(port, script_json, block_info_json, http_request):
                         {buf.getvalue()}""").strip().encode()
                 print("dyswsgi Execpetion:", traceback.format_exc())
             out = buf.getvalue()
+
 
     sys.stderr.write(out)
     print(base64.b64encode(wsgiout).decode(), end="")

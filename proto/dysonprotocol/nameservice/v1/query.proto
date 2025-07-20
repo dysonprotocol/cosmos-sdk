@@ -21,6 +21,13 @@ service Query {
     option (google.api.http).get = "/dysonprotocol/nameservice/v1/compute_hash";
   }
 
+  // ResolveName resolves a name to address or returns the address if already
+  // valid
+  rpc ResolveName(QueryResolveNameRequest) returns (QueryResolveNameResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/nameservice/v1/resolve_name/{name_or_address}";
+  }
+
   // Params queries the nameservice module parameters
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/dysonprotocol/nameservice/v1/params";
@@ -41,6 +48,19 @@ message ComputeHashRequest {
 message ComputeHashResponse {
   // hex_hash is the computed hash as a hex string
   string hex_hash = 1;
+}
+
+// QueryResolveNameRequest is request type for the Query/ResolveName RPC method.
+message QueryResolveNameRequest {
+  // name_or_address is either a nameservice name or a valid address
+  string name_or_address = 1;
+}
+
+// QueryResolveNameResponse is response type for the Query/ResolveName RPC
+// method.
+message QueryResolveNameResponse {
+  // address is the resolved address
+  string address = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.

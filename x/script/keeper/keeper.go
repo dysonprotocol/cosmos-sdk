@@ -95,8 +95,6 @@ type Keeper struct {
 	ScriptMap collections.Map[string, scripttypes.Script]
 	params    collections.Item[scripttypes.Params]
 
-	currentDepth int
-
 	// Authority for governance operations
 	authority string
 
@@ -176,12 +174,22 @@ type ExecScriptResponse struct {
 	Result string
 }
 
-func (k Keeper) execScript(ctx sdk.Context, scriptCtx *ExecScriptContext) (*ExecScriptResponse, error) {
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
+type scriptDepthKey struct{}
 
-	k.currentDepth += 1
+func (k Keeper) execScript(sdkCtx sdk.Context, scriptCtx *ExecScriptContext) (*ExecScriptResponse, error) {
 
-	fmt.Printf("currentDepth: %v\n", k.currentDepth)
+	// Get current depth from context
+	depth, ok := sdkCtx.Value(scriptDepthKey{}).(int)
+	if !ok {
+		depth = 1
+	} else {
+		depth++
+	}
+
+	k.Logger(sdkCtx).Info("current depth", "depth", depth)
+
+	// Create new context with updated depth
+	depthCtx := sdkCtx.WithValue(scriptDepthKey{}, depth)
 
 	executorAddr, err := k.addressCodec.StringToBytes(scriptCtx.Msg.ExecutorAddress)
 	if err != nil {
@@ -199,12 +207,12 @@ func (k Keeper) execScript(ctx sdk.Context, scriptCtx *ExecScriptContext) (*Exec
 		if len(scriptCtx.AttachedMessageResults) != len(attachedMsgs) {
 			return nil, cosmossdkerrors.Wrapf(scriptErrors.ErrInvalid, "pre-populated AttachedMessageResults length (%d) does not match attachedMsgs length (%d)", len(scriptCtx.AttachedMessageResults), len(attachedMsgs))
 		}
-		k.Logger(sdkCtx).Info("Skipping message dispatch, using pre-populated AttachedMessageResults")
+		k.Logger(depthCtx).Info("Skipping message dispatch, using pre-populated AttachedMessageResults")
 	} else {
 		// Dispatch messages attached to the script
 		results := make([]sdk.Msg, len(attachedMsgs))
 		for i, attachedMsg := range attachedMsgs {
-			r, err := k.DispatchMessage(sdkCtx, executorAddr, attachedMsg)
+			r, err := k.DispatchMessage(depthCtx, executorAddr, attachedMsg)
 			if err != nil {
 				return nil, cosmossdkerrors.Wrapf(err, "error dispatching attached message index [%d]", i)
 			}
@@ -214,7 +222,7 @@ func (k Keeper) execScript(ctx sdk.Context, scriptCtx *ExecScriptContext) (*Exec
 	}
 
 	fmt.Println("Starting RPC server")
-	port, srv, err := k.NewRPCServer(ctx, scriptCtx.Script.Address, k.App)
+	port, srv, err := k.NewRPCServer(depthCtx, scriptCtx.Script.Address, k.App)
 
 	if err != nil {
 		return nil, err
@@ -224,14 +232,13 @@ func (k Keeper) execScript(ctx sdk.Context, scriptCtx *ExecScriptContext) (*Exec
 
 	now := time.Now()
 	defer func() {
-		k.Logger(sdkCtx).Info(fmt.Sprintf("Elapsed time %s", time.Since(now)))
-		k.currentDepth -= 1
+		k.Logger(depthCtx).Info(fmt.Sprintf("Elapsed time %s", time.Since(now)))
 
 		if err := srv.Shutdown(context.Background()); err != nil {
 			fmt.Printf("shutdown error")
 			panic(err) // failure/timeout shutting down the server gracefully
 		}
-		k.Logger(sdkCtx).Info("server stopped")
+		k.Logger(depthCtx).Info("server stopped")
 	}()
 
 	msgJSON, err := k.cdc.MarshalInterfaceJSON(scriptCtx.Msg)
@@ -257,16 +264,16 @@ func (k Keeper) execScript(ctx sdk.Context, scriptCtx *ExecScriptContext) (*Exec
 	attachedMsgResultsJSON += "]"
 
 	headerInfo := header.Info{
-		Height:  sdkCtx.BlockHeight(),
-		Time:    sdkCtx.BlockTime(),
-		ChainID: sdkCtx.ChainID(),
-		AppHash: sdkCtx.BlockHeader().AppHash,
-		Hash:    sdkCtx.BlockHeader().LastBlockId.Hash,
+		Height:  depthCtx.BlockHeight(),
+		Time:    depthCtx.BlockTime(),
+		ChainID: depthCtx.ChainID(),
+		AppHash: depthCtx.BlockHeader().AppHash,
+		Hash:    depthCtx.BlockHeader().LastBlockId.Hash,
 	}
 	fmt.Printf("headerInfo: %+v\n", headerInfo)
 	headerInfoJSON, err := json.Marshal(headerInfo)
 	if err != nil {
-		k.Logger(sdkCtx).Error("failed to marshal headerInfo", "error", err)
+		k.Logger(depthCtx).Error("failed to marshal headerInfo", "error", err)
 		return nil, err
 	}
 
@@ -277,7 +284,7 @@ func (k Keeper) execScript(ctx sdk.Context, scriptCtx *ExecScriptContext) (*Exec
 		port)
 
 	if runErr != nil {
-		k.Logger(sdkCtx).Error("failed to exec", "error", runErr)
+		k.Logger(depthCtx).Error("failed to exec", "error", runErr)
 	}
 
 	temp := strings.Split(string(out), "\n")
@@ -528,25 +535,25 @@ func validateMsg(msg sdk.Msg) error {
 
 type RpcService struct {
 	k             *Keeper
-	ctx           context.Context
+	ctx           sdk.Context
 	ScriptAddress sdk.AccAddress
 	App           *baseapp.BaseApp
 }
 
-func (k Keeper) NewRPCServer(ctx context.Context, address string, app *baseapp.BaseApp) (string, *http.Server, error) {
+func (k Keeper) NewRPCServer(ctx sdk.Context, address string, app *baseapp.BaseApp) (string, *http.Server, error) {
 	s := rpc.NewServer()
 	s.RegisterCodec(rpcjson.NewCodec(), "application/json")
 	s.RegisterCodec(rpcjson.NewCodec(), "application/json;charset=UTF-8")
 	rpcservice := new(RpcService)
 	rpcservice.k = &k
 	rpcservice.ctx = ctx
-	rpcservice.App = app
 	addr, err := k.addressCodec.StringToBytes(address)
 
 	if err != nil {
 		return "", nil, err
 	}
 	rpcservice.ScriptAddress = addr
+	rpcservice.App = app
 
 	s.RegisterService(rpcservice, "")
 	r := mux.NewRouter()
@@ -607,17 +614,25 @@ func (k Keeper) RunWeb(ctx context.Context, address string, httpreq string) (str
 		return "", err
 	}
 
-	port, srv, err := k.NewRPCServer(cacheCtx, script.Address, k.App)
+	// For RunWeb, initialize depth if not present (similar to execScript)
+	depth, ok := cacheCtx.Value(scriptDepthKey{}).(int)
+	if !ok {
+		depth = 1
+	} else {
+		depth++
+	}
+	depthCtx := cacheCtx.WithValue(scriptDepthKey{}, depth)
+
+	port, srv, err := k.NewRPCServer(depthCtx, script.Address, k.App)
 
 	if err != nil {
 		return "", err
 	}
 	defer func() {
-		k.Logger(sdkCtx).Info("Elapsed time", "time", time.Since(now))
-		k.currentDepth -= 1
+		k.Logger(depthCtx).Info("Elapsed time", "time", time.Since(now))
 
 		if err := srv.Shutdown(context.Background()); err != nil {
-			k.Logger(sdkCtx).Error("shutdown error", "error", err)
+			k.Logger(depthCtx).Error("shutdown error", "error", err)
 			panic(err) // failure/timeout shutting down the server gracefully
 		}
 	}()

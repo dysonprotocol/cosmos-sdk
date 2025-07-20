@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"cosmossdk.io/collections"
 	storagev1 "dysonprotocol.com/x/storage/types"
 	"github.com/cosmos/cosmos-sdk/types"
 )
@@ -21,12 +20,12 @@ func (k Keeper) InitGenesis(ctx context.Context, genState *storagev1.GenesisStat
 			panic(err)
 		}
 
-		// Generate the pair key directly using strings
-		pairKey := collections.Join(entry.Owner, entry.Index)
-		fmt.Printf("Generated key: %v\n", pairKey)
+		// Generate the combined key
+		combinedKey := entry.Owner + "/" + entry.Index
+		fmt.Printf("Generated key: %v\n", combinedKey)
 
 		// Set the storage entry
-		if err := k.StorageMap.Set(ctx, pairKey, storagev1.Storage{
+		if err := k.StorageMap.Set(ctx, combinedKey, storagev1.Storage{
 			Owner: entry.Owner,
 			Index: entry.Index,
 			Data:  entry.Data,

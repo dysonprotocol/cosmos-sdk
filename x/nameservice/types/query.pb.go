@@ -144,6 +144,99 @@ func (m *ComputeHashResponse) GetHexHash() string {
 	return ""
 }
 
+// QueryResolveNameRequest is request type for the Query/ResolveName RPC method.
+type QueryResolveNameRequest struct {
+	// name_or_address is either a nameservice name or a valid address
+	NameOrAddress string `protobuf:"bytes,1,opt,name=name_or_address,json=nameOrAddress,proto3" json:"name_or_address,omitempty"`
+}
+
+func (m *QueryResolveNameRequest) Reset()         { *m = QueryResolveNameRequest{} }
+func (m *QueryResolveNameRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryResolveNameRequest) ProtoMessage()    {}
+func (*QueryResolveNameRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_90093133eb787ecc, []int{2}
+}
+func (m *QueryResolveNameRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryResolveNameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryResolveNameRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryResolveNameRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryResolveNameRequest.Merge(m, src)
+}
+func (m *QueryResolveNameRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryResolveNameRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryResolveNameRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryResolveNameRequest proto.InternalMessageInfo
+
+func (m *QueryResolveNameRequest) GetNameOrAddress() string {
+	if m != nil {
+		return m.NameOrAddress
+	}
+	return ""
+}
+
+// QueryResolveNameResponse is response type for the Query/ResolveName RPC
+// method.
+type QueryResolveNameResponse struct {
+	// address is the resolved address
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *QueryResolveNameResponse) Reset()         { *m = QueryResolveNameResponse{} }
+func (m *QueryResolveNameResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryResolveNameResponse) ProtoMessage()    {}
+func (*QueryResolveNameResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_90093133eb787ecc, []int{3}
+}
+func (m *QueryResolveNameResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryResolveNameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryResolveNameResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryResolveNameResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryResolveNameResponse.Merge(m, src)
+}
+func (m *QueryResolveNameResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryResolveNameResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryResolveNameResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryResolveNameResponse proto.InternalMessageInfo
+
+func (m *QueryResolveNameResponse) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
 // QueryParamsRequest is request type for the Query/Params RPC method.
 type QueryParamsRequest struct {
 }
@@ -152,7 +245,7 @@ func (m *QueryParamsRequest) Reset()         { *m = QueryParamsRequest{} }
 func (m *QueryParamsRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryParamsRequest) ProtoMessage()    {}
 func (*QueryParamsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_90093133eb787ecc, []int{2}
+	return fileDescriptor_90093133eb787ecc, []int{4}
 }
 func (m *QueryParamsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -191,7 +284,7 @@ func (m *QueryParamsResponse) Reset()         { *m = QueryParamsResponse{} }
 func (m *QueryParamsResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryParamsResponse) ProtoMessage()    {}
 func (*QueryParamsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_90093133eb787ecc, []int{3}
+	return fileDescriptor_90093133eb787ecc, []int{5}
 }
 func (m *QueryParamsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -230,6 +323,8 @@ func (m *QueryParamsResponse) GetParams() Params {
 func init() {
 	proto.RegisterType((*ComputeHashRequest)(nil), "dysonprotocol.nameservice.v1.ComputeHashRequest")
 	proto.RegisterType((*ComputeHashResponse)(nil), "dysonprotocol.nameservice.v1.ComputeHashResponse")
+	proto.RegisterType((*QueryResolveNameRequest)(nil), "dysonprotocol.nameservice.v1.QueryResolveNameRequest")
+	proto.RegisterType((*QueryResolveNameResponse)(nil), "dysonprotocol.nameservice.v1.QueryResolveNameResponse")
 	proto.RegisterType((*QueryParamsRequest)(nil), "dysonprotocol.nameservice.v1.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "dysonprotocol.nameservice.v1.QueryParamsResponse")
 }
@@ -239,38 +334,44 @@ func init() {
 }
 
 var fileDescriptor_90093133eb787ecc = []byte{
-	// 483 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x93, 0xcf, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0xe3, 0x50, 0x02, 0xdd, 0xde, 0xb6, 0x39, 0xa4, 0x51, 0x65, 0x90, 0x29, 0xa8, 0x54,
-	0xc5, 0xdb, 0x04, 0x89, 0x2b, 0x22, 0x5c, 0x38, 0x42, 0x38, 0xc1, 0xa5, 0xda, 0x38, 0x53, 0xdb,
-	0x52, 0xbc, 0xe3, 0x7a, 0x37, 0x51, 0x72, 0xe5, 0x09, 0x90, 0x38, 0x72, 0xe7, 0x09, 0x78, 0x88,
-	0x9e, 0x50, 0x05, 0x17, 0x4e, 0x08, 0x25, 0x3c, 0x08, 0xda, 0x3f, 0xb4, 0x36, 0x45, 0x0e, 0xbd,
-	0x6d, 0xf6, 0xfb, 0xcd, 0xcc, 0x37, 0x5f, 0xd6, 0x64, 0x7f, 0xbc, 0x90, 0x28, 0xf2, 0x02, 0x15,
-	0x46, 0x38, 0x61, 0x82, 0x67, 0x20, 0xa1, 0x98, 0xa5, 0x11, 0xb0, 0x59, 0x8f, 0x9d, 0x4e, 0xa1,
-	0x58, 0x84, 0x46, 0xa5, 0xbb, 0x15, 0x32, 0x2c, 0x91, 0xe1, 0xac, 0xd7, 0x6d, 0xc7, 0x18, 0xa3,
-	0x11, 0x99, 0x3e, 0xd9, 0x9a, 0xee, 0x6e, 0x8c, 0x18, 0x4f, 0x80, 0xf1, 0x3c, 0x65, 0x5c, 0x08,
-	0x54, 0x5c, 0xa5, 0x28, 0xa4, 0x53, 0xc3, 0xda, 0xd9, 0xe5, 0x01, 0x96, 0x7f, 0x58, 0xcb, 0xe7,
-	0xbc, 0xe0, 0xd9, 0x9f, 0xd6, 0x7e, 0x84, 0x32, 0x43, 0xc9, 0x46, 0x5c, 0x6a, 0x71, 0x04, 0x8a,
-	0xf7, 0x58, 0x84, 0xa9, 0x70, 0xfa, 0x41, 0x59, 0x57, 0x20, 0xc6, 0x50, 0x64, 0xa9, 0x50, 0x17,
-	0x68, 0x69, 0xf1, 0x2a, 0x6b, 0x84, 0x0b, 0x2c, 0xe7, 0x71, 0x2a, 0xcc, 0x4e, 0x8e, 0xdd, 0xb1,
-	0xec, 0xb1, 0x4d, 0xc2, 0xfe, 0x70, 0xd2, 0xbd, 0xbf, 0xdc, 0x9f, 0x5c, 0x4e, 0x13, 0x27, 0xca,
-	0x42, 0x81, 0x22, 0xf4, 0x39, 0x66, 0xf9, 0x54, 0xc1, 0x0b, 0x2e, 0x93, 0x21, 0x9c, 0x4e, 0x41,
-	0x2a, 0x4a, 0xc9, 0x86, 0x5e, 0xb6, 0xe3, 0xdd, 0xf5, 0xf6, 0x37, 0x87, 0xe6, 0xac, 0xef, 0x24,
-	0x9f, 0xa8, 0x4e, 0xd3, 0xde, 0xe9, 0x33, 0x7d, 0x42, 0x36, 0x23, 0xcc, 0xb2, 0x54, 0x29, 0x28,
-	0x3a, 0x37, 0xb4, 0x30, 0xe8, 0x7c, 0xfd, 0xfc, 0xa8, 0xed, 0x7c, 0x3c, 0x1b, 0x8f, 0x0b, 0x90,
-	0xf2, 0xb5, 0x2a, 0x52, 0x11, 0x0f, 0x2f, 0xd1, 0xe0, 0x88, 0x6c, 0x57, 0xa6, 0xca, 0x1c, 0x85,
-	0x04, 0xba, 0x43, 0x6e, 0x27, 0x30, 0x3f, 0x4e, 0xb8, 0x4c, 0xdc, 0xe8, 0x5b, 0x09, 0xcc, 0x35,
-	0x12, 0xb4, 0x09, 0x7d, 0xa5, 0x93, 0x78, 0x69, 0x42, 0x77, 0x3e, 0x83, 0x37, 0x64, 0xbb, 0x72,
-	0xeb, 0xfa, 0x0c, 0x48, 0xcb, 0xfe, 0x39, 0xa6, 0xcb, 0x56, 0x7f, 0x2f, 0xac, 0x7b, 0x4a, 0xa1,
-	0xad, 0x1e, 0x6c, 0x9c, 0xfd, 0xb8, 0xd3, 0x18, 0xba, 0xca, 0xfe, 0x97, 0x26, 0xb9, 0x69, 0x7a,
-	0xd3, 0x4f, 0x1e, 0xd9, 0x2a, 0xb9, 0xa5, 0x47, 0xf5, 0xdd, 0xae, 0xc6, 0xd9, 0xed, 0x5d, 0xa3,
-	0xc2, 0xae, 0x10, 0xf4, 0xdf, 0x7d, 0xfb, 0xf5, 0xa1, 0x79, 0x48, 0x0f, 0x58, 0xed, 0x1b, 0x8c,
-	0x6c, 0xa9, 0x89, 0x8c, 0x7e, 0xf4, 0x48, 0xcb, 0xee, 0xb2, 0xce, 0xe3, 0xd5, 0x28, 0xd7, 0x79,
-	0xfc, 0x47, 0xcc, 0xc1, 0xa1, 0xf1, 0xf8, 0x80, 0xee, 0xb1, 0xff, 0xf8, 0x4e, 0x06, 0x4f, 0xcf,
-	0x96, 0xbe, 0x77, 0xbe, 0xf4, 0xbd, 0x9f, 0x4b, 0xdf, 0x7b, 0xbf, 0xf2, 0x1b, 0xe7, 0x2b, 0xbf,
-	0xf1, 0x7d, 0xe5, 0x37, 0xde, 0xde, 0xaf, 0x4e, 0x8e, 0x30, 0x63, 0xf3, 0x4a, 0x13, 0xb5, 0xc8,
-	0x41, 0x8e, 0x5a, 0x86, 0x78, 0xfc, 0x3b, 0x00, 0x00, 0xff, 0xff, 0x85, 0x44, 0xf3, 0xf7, 0x42,
-	0x04, 0x00, 0x00,
+	// 578 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0x4f, 0x6f, 0xd3, 0x30,
+	0x1c, 0x6d, 0xc6, 0xe8, 0x98, 0x2b, 0x84, 0xe4, 0x55, 0xa2, 0xab, 0xa6, 0x80, 0xc2, 0x98, 0xc6,
+	0x34, 0xe2, 0xb5, 0x88, 0x9d, 0x10, 0x68, 0x85, 0x03, 0xa7, 0x01, 0xe5, 0x04, 0x97, 0xca, 0x4d,
+	0xbd, 0x24, 0x52, 0x63, 0x67, 0xb6, 0x5b, 0xb5, 0x42, 0x5c, 0xf8, 0x04, 0x48, 0x3b, 0x72, 0xe7,
+	0x13, 0xf0, 0x09, 0x38, 0xed, 0x38, 0xc1, 0x85, 0x13, 0x42, 0x2d, 0x1f, 0x04, 0xf9, 0x4f, 0xb7,
+	0x64, 0x85, 0x8c, 0xdd, 0x5c, 0xbf, 0xf7, 0x7e, 0xef, 0xfd, 0x7e, 0xfe, 0x35, 0x60, 0xb3, 0x37,
+	0x16, 0x8c, 0xa6, 0x9c, 0x49, 0x16, 0xb0, 0x3e, 0xa2, 0x38, 0x21, 0x82, 0xf0, 0x61, 0x1c, 0x10,
+	0x34, 0x6c, 0xa0, 0xc3, 0x01, 0xe1, 0x63, 0x5f, 0xa3, 0x70, 0x2d, 0xc7, 0xf4, 0x33, 0x4c, 0x7f,
+	0xd8, 0xa8, 0x57, 0x43, 0x16, 0x32, 0x0d, 0x22, 0x75, 0x32, 0x9a, 0xfa, 0x5a, 0xc8, 0x58, 0xd8,
+	0x27, 0x08, 0xa7, 0x31, 0xc2, 0x94, 0x32, 0x89, 0x65, 0xcc, 0xa8, 0xb0, 0xa8, 0x5f, 0xe8, 0x9d,
+	0x35, 0x30, 0xfc, 0x7b, 0x85, 0xfc, 0x14, 0x73, 0x9c, 0xcc, 0x4a, 0xbb, 0x01, 0x13, 0x09, 0x13,
+	0xa8, 0x8b, 0x85, 0x02, 0xbb, 0x44, 0xe2, 0x06, 0x0a, 0x58, 0x4c, 0x2d, 0xbe, 0x95, 0xc5, 0x25,
+	0xa1, 0x3d, 0xc2, 0x93, 0x98, 0xca, 0x53, 0x6a, 0xa6, 0xf1, 0x3c, 0x57, 0x03, 0xa7, 0xb4, 0x14,
+	0x87, 0x31, 0xd5, 0x3d, 0x59, 0xee, 0xaa, 0xe1, 0x76, 0xcc, 0x24, 0xcc, 0x0f, 0x0b, 0xdd, 0x39,
+	0x97, 0xfe, 0xe0, 0xcc, 0x8d, 0x1e, 0x48, 0x43, 0xf2, 0x24, 0x80, 0x4f, 0x59, 0x92, 0x0e, 0x24,
+	0x79, 0x8e, 0x45, 0xd4, 0x26, 0x87, 0x03, 0x22, 0x24, 0x84, 0x60, 0x51, 0x35, 0x5b, 0x73, 0x6e,
+	0x3b, 0x9b, 0xcb, 0x6d, 0x7d, 0x56, 0x77, 0x02, 0xf7, 0x65, 0x6d, 0xc1, 0xdc, 0xa9, 0x33, 0xdc,
+	0x05, 0xcb, 0x01, 0x4b, 0x92, 0x58, 0x4a, 0xc2, 0x6b, 0x57, 0x14, 0xd0, 0xaa, 0x7d, 0xfb, 0x72,
+	0xbf, 0x6a, 0x73, 0xec, 0xf5, 0x7a, 0x9c, 0x08, 0xf1, 0x5a, 0xf2, 0x98, 0x86, 0xed, 0x33, 0xaa,
+	0xb7, 0x03, 0x56, 0x72, 0xae, 0x22, 0x65, 0x54, 0x10, 0xb8, 0x0a, 0xae, 0x45, 0x64, 0xd4, 0x89,
+	0xb0, 0x88, 0xac, 0xf5, 0x52, 0x44, 0x46, 0x8a, 0xe2, 0xed, 0x81, 0x9b, 0xaf, 0xd4, 0x24, 0xda,
+	0x44, 0xb0, 0xfe, 0x90, 0xec, 0xe3, 0x84, 0xcc, 0xc2, 0x6e, 0x80, 0x1b, 0x2a, 0x60, 0x87, 0xf1,
+	0x0e, 0x36, 0x86, 0x56, 0x7c, 0x5d, 0x5d, 0xbf, 0xe0, 0x36, 0x85, 0xb7, 0x0f, 0x6a, 0xf3, 0x25,
+	0xac, 0x73, 0x13, 0x2c, 0xe5, 0xb4, 0x05, 0x6d, 0xcc, 0x88, 0x5e, 0x15, 0x40, 0x5d, 0xef, 0xa5,
+	0xde, 0x03, 0x9b, 0xc6, 0x7b, 0x03, 0x56, 0x72, 0xb7, 0xd6, 0xa0, 0x05, 0xca, 0x66, 0x5f, 0x74,
+	0xfd, 0x4a, 0x73, 0xdd, 0x2f, 0xda, 0x6e, 0xdf, 0xa8, 0x5b, 0x8b, 0xc7, 0x3f, 0x6f, 0x95, 0xda,
+	0x56, 0xd9, 0x3c, 0x5a, 0x04, 0x57, 0x75, 0x6d, 0xf8, 0xd9, 0x01, 0x95, 0xcc, 0x00, 0xe1, 0x4e,
+	0x71, 0xb5, 0xf9, 0x17, 0xae, 0x37, 0x2e, 0xa1, 0x30, 0x2d, 0x78, 0xcd, 0x0f, 0xdf, 0x7f, 0x1f,
+	0x2d, 0x6c, 0xc3, 0x2d, 0x54, 0xf8, 0xb7, 0x08, 0x8c, 0x54, 0xbf, 0x22, 0xfc, 0xea, 0x80, 0x4a,
+	0x66, 0xde, 0xf0, 0x61, 0xb1, 0xed, 0x3f, 0x9e, 0xb8, 0xbe, 0x7b, 0x59, 0x99, 0x8d, 0xfc, 0x4c,
+	0x47, 0x7e, 0x0c, 0x1f, 0x15, 0x47, 0xe6, 0x46, 0xda, 0x51, 0xd7, 0xe8, 0xdd, 0xb9, 0x65, 0x7a,
+	0x0f, 0x3f, 0x39, 0xa0, 0x6c, 0x1e, 0xe4, 0xa2, 0x41, 0xcf, 0xef, 0xc3, 0x45, 0x83, 0xfe, 0xcb,
+	0xae, 0x78, 0xdb, 0x3a, 0xf5, 0x06, 0x5c, 0x47, 0xff, 0xf1, 0xfd, 0x69, 0x3d, 0x39, 0x9e, 0xb8,
+	0xce, 0xc9, 0xc4, 0x75, 0x7e, 0x4d, 0x5c, 0xe7, 0xe3, 0xd4, 0x2d, 0x9d, 0x4c, 0xdd, 0xd2, 0x8f,
+	0xa9, 0x5b, 0x7a, 0x7b, 0x37, 0xef, 0x1c, 0xb0, 0x04, 0x8d, 0x72, 0x45, 0xe4, 0x38, 0x25, 0xa2,
+	0x5b, 0xd6, 0x8c, 0x07, 0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x20, 0x2e, 0xae, 0xa6, 0x9a, 0x05,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -287,6 +388,9 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// ComputeHash computes the hash for a name, salt, and committer address
 	ComputeHash(ctx context.Context, in *ComputeHashRequest, opts ...grpc.CallOption) (*ComputeHashResponse, error)
+	// ResolveName resolves a name to address or returns the address if already
+	// valid
+	ResolveName(ctx context.Context, in *QueryResolveNameRequest, opts ...grpc.CallOption) (*QueryResolveNameResponse, error)
 	// Params queries the nameservice module parameters
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 }
@@ -308,6 +412,15 @@ func (c *queryClient) ComputeHash(ctx context.Context, in *ComputeHashRequest, o
 	return out, nil
 }
 
+func (c *queryClient) ResolveName(ctx context.Context, in *QueryResolveNameRequest, opts ...grpc.CallOption) (*QueryResolveNameResponse, error) {
+	out := new(QueryResolveNameResponse)
+	err := c.cc.Invoke(ctx, "/dysonprotocol.nameservice.v1.Query/ResolveName", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
 	out := new(QueryParamsResponse)
 	err := c.cc.Invoke(ctx, "/dysonprotocol.nameservice.v1.Query/Params", in, out, opts...)
@@ -321,6 +434,9 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 type QueryServer interface {
 	// ComputeHash computes the hash for a name, salt, and committer address
 	ComputeHash(context.Context, *ComputeHashRequest) (*ComputeHashResponse, error)
+	// ResolveName resolves a name to address or returns the address if already
+	// valid
+	ResolveName(context.Context, *QueryResolveNameRequest) (*QueryResolveNameResponse, error)
 	// Params queries the nameservice module parameters
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 }
@@ -331,6 +447,9 @@ type UnimplementedQueryServer struct {
 
 func (*UnimplementedQueryServer) ComputeHash(ctx context.Context, req *ComputeHashRequest) (*ComputeHashResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ComputeHash not implemented")
+}
+func (*UnimplementedQueryServer) ResolveName(ctx context.Context, req *QueryResolveNameRequest) (*QueryResolveNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResolveName not implemented")
 }
 func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
@@ -354,6 +473,24 @@ func _Query_ComputeHash_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).ComputeHash(ctx, req.(*ComputeHashRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ResolveName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryResolveNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ResolveName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dysonprotocol.nameservice.v1.Query/ResolveName",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ResolveName(ctx, req.(*QueryResolveNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -384,6 +521,10 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ComputeHash",
 			Handler:    _Query_ComputeHash_Handler,
+		},
+		{
+			MethodName: "ResolveName",
+			Handler:    _Query_ResolveName_Handler,
 		},
 		{
 			MethodName: "Params",
@@ -462,6 +603,66 @@ func (m *ComputeHashResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.HexHash)
 		copy(dAtA[i:], m.HexHash)
 		i = encodeVarintQuery(dAtA, i, uint64(len(m.HexHash)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryResolveNameRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryResolveNameRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryResolveNameRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.NameOrAddress) > 0 {
+		i -= len(m.NameOrAddress)
+		copy(dAtA[i:], m.NameOrAddress)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.NameOrAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryResolveNameResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryResolveNameResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryResolveNameResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -563,6 +764,32 @@ func (m *ComputeHashResponse) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.HexHash)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryResolveNameRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.NameOrAddress)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryResolveNameResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
@@ -801,6 +1028,170 @@ func (m *ComputeHashResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.HexHash = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryResolveNameRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryResolveNameRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryResolveNameRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NameOrAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NameOrAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryResolveNameResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryResolveNameResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryResolveNameResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

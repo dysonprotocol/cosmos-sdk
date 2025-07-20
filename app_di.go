@@ -18,8 +18,8 @@ import (
 	circuitkeeper "cosmossdk.io/x/circuit/keeper"
 	evidencekeeper "cosmossdk.io/x/evidence/keeper"
 	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
-	nftkeeper "dysonprotocol.com/x/nft/keeper"
 	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
+	nftkeeper "dysonprotocol.com/x/nft/keeper"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -359,7 +359,9 @@ func (app *DysApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APICon
 	app.App.RegisterAPIRoutes(apiSvr, apiConfig)
 	// register swagger API in app.go so that other applications can override easily
 
-	if err := dysondserver.RegisterDysonServer(apiSvr.ClientCtx, apiSvr.Router, apiConfig); err != nil {
+	// Get the dwapp script pattern from configuration (default to empty string for DI)
+	scriptPattern := ""
+	if err := dysondserver.RegisterDysonServer(apiSvr.ClientCtx, apiSvr.Router, apiConfig, scriptPattern); err != nil {
 		panic(err)
 	}
 }

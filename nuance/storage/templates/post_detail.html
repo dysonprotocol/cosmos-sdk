@@ -1,0 +1,63 @@
+<div id="content">
+  <h1>Post #{{post_id}}</h1>
+  <a href="#replies">Go to replies</a>
+  <article class="">
+    <header>
+      <a href="/{{post_id}}">Post #{{post_id}}</a>
+      by
+      <a class="author" href="/authors/{{author}}">{{author}}</a>
+      on
+      <time datetime="{{created_time}}">{{created_time}}</time>
+      <script>
+        {
+          let time = document.currentScript.previousElementSibling;
+          time.innerText = new Date(
+            time.getAttribute("datetime"),
+          ).toLocaleString();
+        }
+      </script>
+      has earned {{claimed}} DYS |
+      <a href="/{{post_id}}/topics?limit=2">Topics</a>:
+      <ol
+        class="post-tag-list"
+        hx-get="/{{post_id}}/topics?limit=2"
+        hx-swap="innerHTML"
+        hx-target="this"
+        hx-trigger="revealed once"
+        hx-select="main li"
+      >
+        Loading tags...
+      </ol>
+    </header>
+
+    <hr />
+    <div class="markdown">{{content}}</div>
+
+    <script>
+      renderMarkdownAndHighlight(
+        document.currentScript.previousElementSibling,
+        document.currentScript
+          .closest("[data-fragment]")
+          ?.getAttribute("data-fragment"),
+      );
+    </script>
+  </article>
+</div>
+
+
+
+<div id="replies">
+  <h1>Replies</h1>
+  <a href="#content">Go to content</a>
+  <hr />
+  <div
+    id="load-replies-{{post_id}}"
+    hx-get="/{{post_id}}/replies/?limit=2"
+    hx-trigger="load"
+    hx-swap="outerHTML ignoreTitle:true"
+    hx-select="#reply-content"
+    hx-target="this"
+  >
+    Loading replies...
+  </div>
+</div> 

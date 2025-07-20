@@ -18,7 +18,6 @@ func main() {
 	cfg.SetBech32PrefixForConsensusNode("dys2valcons", "dys2valconspub") // consensus addresses
 
 	rootCmd := cmd.NewRootCmd()
-	// TODO: set the default node env prefix
 	if err := svrcmd.Execute(rootCmd, "DYSON", dysonprotocol.DefaultNodeHome); err != nil {
 		fmt.Fprintln(rootCmd.OutOrStderr(), err)
 		os.Exit(1)
