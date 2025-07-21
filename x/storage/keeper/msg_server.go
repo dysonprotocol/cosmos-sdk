@@ -7,7 +7,10 @@ import (
 	"fmt"
 	"time"
 
+	"cosmossdk.io/collections"
 	cosmossdkerrors "cosmossdk.io/errors"
+	"cosmossdk.io/math"
+	"dysonprotocol.com/x/storage"
 	storagetypes "dysonprotocol.com/x/storage/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -48,6 +51,54 @@ func (k Keeper) StorageSet(ctx context.Context, msg *storagetypes.MsgStorageSet)
 	// Create the combined key
 	key := msg.Owner + "/" + msg.Index
 
+	// Check if entry already exists to calculate metrics delta
+	var oldDataSize uint64
+	existingEntry, err := k.StorageMap.Get(ctx, key)
+	if err == nil {
+		// Entry exists, record old size for metrics calculation
+		oldDataSize = uint64(len(existingEntry.Data))
+	} else if !cosmossdkerrors.IsOf(err, collections.ErrNotFound) {
+		// Real error, not just "not found"
+		return nil, err
+	}
+	// If err is ErrNotFound, oldDataSize remains 0
+
+	// Stake validation: check if owner has sufficient delegated stake
+	// Only validate if storage_stake_multiple is not "0" (which disables validation)
+	if params.StorageStakeMultiple != "0" {
+		// Get current total bytes for this owner
+		currentMetrics, err := k.GetStorageMetrics(ctx, msg.Owner)
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to get current storage metrics for stake validation")
+		}
+
+		// Calculate what the new total bytes would be after this operation
+		newTotalBytes := currentMetrics.TotalBytes - oldDataSize + dataSize
+
+		// Calculate required stake for the new total
+		requiredStakeStr, err := k.CalculateMinStakeAmount(ctx, newTotalBytes)
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to calculate required stake amount")
+		}
+
+		// Get current delegated stake for the owner
+		currentStake, err := k.GetTotalDelegatedStake(ctx, msg.Owner)
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to get current delegated stake")
+		}
+
+		// Parse required stake as integer for comparison
+		requiredStake, ok := math.NewIntFromString(requiredStakeStr)
+		if !ok {
+			return nil, cosmossdkerrors.Wrap(err, "failed to parse required stake amount")
+		}
+
+		// Check if current stake is sufficient
+		if currentStake.LT(requiredStake) {
+			return nil, storage.NewInsufficientStakeError(currentStake, requiredStake, newTotalBytes)
+		}
+	}
+
 	blockHeight := uint64(sdk.UnwrapSDKContext(ctx).BlockHeight())
 	blockTime := sdk.UnwrapSDKContext(ctx).BlockTime()
 	hashBytes := sha256.Sum256([]byte(msg.Data))
@@ -63,6 +114,12 @@ func (k Keeper) StorageSet(ctx context.Context, msg *storagetypes.MsgStorageSet)
 
 	if err := k.StorageMap.Set(ctx, key, entry); err != nil {
 		return nil, err
+	}
+
+	// Update metrics after successful storage operation
+	metricsDelta := int64(dataSize) - int64(oldDataSize)
+	if err := k.UpdateStorageMetrics(ctx, msg.Owner, metricsDelta); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to update storage metrics")
 	}
 
 	// Emit the StorageUpdated event
@@ -89,8 +146,9 @@ func (k Keeper) StorageDelete(ctx context.Context, msg *storagetypes.MsgStorageD
 		return nil, status.Errorf(codes.InvalidArgument, "must specify at least one index to delete")
 	}
 
-	// Track the indexes that were deleted
+	// Track the indexes that were deleted and total bytes deleted for metrics
 	var deletedIndexes []string
+	var totalBytesDeleted uint64
 
 	// Delete specific indexes
 	for _, index := range msg.Indexes {
@@ -116,6 +174,9 @@ func (k Keeper) StorageDelete(ctx context.Context, msg *storagetypes.MsgStorageD
 				return nil, status.Errorf(codes.PermissionDenied, "cannot delete index [%s] owned by [%s]", index, entry.Owner)
 			}
 
+			// Track bytes for metrics before deletion
+			totalBytesDeleted += uint64(len(entry.Data))
+
 			if err := k.StorageMap.Remove(ctx, key); err != nil {
 				return nil, err
 			}
@@ -126,6 +187,14 @@ func (k Keeper) StorageDelete(ctx context.Context, msg *storagetypes.MsgStorageD
 	// Check if any entries were actually deleted
 	if len(deletedIndexes) == 0 {
 		return nil, status.Errorf(codes.NotFound, "no entries were deleted")
+	}
+
+	// Update metrics after successful deletion
+	if totalBytesDeleted > 0 {
+		metricsDelta := -int64(totalBytesDeleted) // Negative because we're removing bytes
+		if err := k.UpdateStorageMetrics(ctx, msg.Owner, metricsDelta); err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to update storage metrics")
+		}
 	}
 
 	// Emit the StorageDelete event

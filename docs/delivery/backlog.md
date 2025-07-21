@@ -17,7 +17,8 @@
 | 15 | Developer | [Migrate Wallet Management to dys2 Standard](./delivery/15/15-tasks.md) | Done | 1. A new `dyson.js` module is created in `nuance/storage/static/js/`.<br/>2. The new module provides functionality to connect Keplr, and to create, import, and connect to local (encrypted) CosmJS wallets.<br/>3. The new module can build, sign, and broadcast transactions, including gas estimation via simulation.<br/>4. The `nuance/script.py` `/wallet` endpoint serves a self-contained HTML page that uses the new `dyson.js` and does not rely on Alpine.js.<br/>5. The old `wallet.html` template and `walletStore.js` are removed. |
 | 16 | Developer | [Refactor Nuance dwapp to use external templates and declarative routing](./tasks/16-tasks.md) | Done | 1. All large inline HTML templates in `nuance/script.py` are extracted into separate files.<br/>2. `nuance/script.py` is updated to load these templates from on-chain storage at runtime.<br/>3. The routing logic in `nuance/script.py` is refactored from an `if/elif` block to a declarative system with a `@route` decorator.<br/>4. The application's web interface remains functionally unchanged.<br/>5. All tests in `tests/nuance/` pass after the refactoring. |
 | 17 | Developer | [Implement htmx partial loading for all Nuance endpoints](./tasks/17-tasks.md) | In Progress | 1. All route handlers check for `HTTP_HX_REQUEST` header.<br/>2. When htmx request detected, handlers return content wrapped in `<main>` tags only.<br/>3. When not an htmx request, handlers return full page using `_render_base()`.<br/>4. `/recent` and `/active` endpoints serve as implementation pattern for remaining endpoints.<br/>5. All tests in `tests/nuance/` continue to pass after implementation. |
-| 18 | Developer | [Add QueryMetrics to storage module for tracking total bytes used per address](./18/18-tasks.md) | Proposed | 1. New `StorageMetrics` message in storage.proto tracks bytes per owner.<br/>2. `QueryMetrics` RPC endpoint returns total storage usage per address.<br/>3. Storage metrics updated on StorageSet and StorageDelete operations.<br/>4. Metrics persist across restarts and accurately reflect current storage state.<br/>5. New endpoint accessible via gRPC and REST API. |
+| 18 | User | [As a User, I want to query storage metrics for a specific address so that I can monitor total bytes consumed in the storage module](./18/18-tasks.md) | In Review | QueryMetrics endpoint returns storage metrics (owner, total_bytes) for any address; CLI command available; metrics automatically updated on StorageSet/Delete operations |
+| 19 | Developer | [Require staking for storage with stake-based validation](./19/19-tasks.md) | Agreed | 1. Storage parameters include storage_stake_multiple (default "1.0") for stake requirements<br/>2. StorageMetrics includes min_stake_amount calculated as total_bytes × storage_stake_multiple<br/>3. StorageSet validates owner has sufficient delegated stake before allowing storage<br/>4. StorageDelete updates min_stake_amount but never blocks deletion<br/>5. New error type for insufficient stake with clear messaging showing have/need amounts |
 
 ## PBI History Log
 
@@ -55,3 +56,14 @@
 | 20250115-170100 | 17 | Created | Added PBI for htmx partial loading implementation across all endpoints | Agent |
 | 20250115-170200 | 17 | Status to In Progress | Started work on task 17-1 (main content endpoints) | Agent |
 | 20250115-180000 | 18 | Created | Added PBI for QueryMetrics functionality to track storage usage per address | Agent |
+| 20250115-180500 | 18 | Status to Agreed | PBI approved for development | User |
+| 20250115-180600 | 18 | Status to In Progress | Started work on task 18-1 (StorageMetrics message) | Agent |
+| 20250115-180700 | 18 | Status to Done | All tasks completed: StorageMetrics message added, QueryMetrics endpoint implemented, metrics tracking implemented | Agent |
+| 20250115-190000 | 19 | Created | Added PBI for stake-based storage validation with staking module integration | Agent |
+| 20250115-190900 | 19 | Status to Agreed | PBI approved for development | User |
+| 20250115-191000 | 19 | Status to In Progress | Started work on task 19-1 (storage_stake_multiple parameter) | Agent |
+| 20250115-193000 | 19-1 | Task completed | Added storage_stake_multiple parameter to storage module params with default "1.0" | Agent |
+| 20250115-194000 | 19-2 | Task started | Adding min_stake_amount field to StorageMetrics and restructuring QueryMetricsResponse | Agent |
+| 20250115-200000 | 19-2 | Task completed | Successfully restructured QueryMetricsResponse with embedded fields and min_stake_amount calculation | Agent |
+| 20250115-202000 | 19 | Legacy tests fixed | Fixed all storage tests to use modern CLI syntax, proper exception handling, and updated API structure - 20/20 tests passing | Agent |
+| 20250115-202100 | 19-3 | Task started | Beginning implementation of staking module integration for delegation queries | Agent |

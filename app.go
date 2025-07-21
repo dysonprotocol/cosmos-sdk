@@ -696,6 +696,7 @@ func NewDysApp(
 		runtime.NewKVStoreService(keys[storagev1.StoreKey]),
 		appCodec,
 		app.AccountKeeper,
+		app.StakingKeeper,
 		storagev1.DefaultConfig(),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cosmossdk.io/core/address"
+	"cosmossdk.io/math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -27,4 +28,10 @@ type AccountKeeper interface {
 // BankKeeper defines the expected interface needed to retrieve account balances.
 type BankKeeper interface {
 	SpendableCoins(ctx context.Context, addr sdk.AccAddress) sdk.Coins
+}
+
+// StakingKeeper defines the expected interface needed to retrieve delegation information.
+type StakingKeeper interface {
+	// GetDelegatorBonded returns the total amount a delegator has bonded.
+	GetDelegatorBonded(ctx context.Context, delegator sdk.AccAddress) (math.Int, error)
 }

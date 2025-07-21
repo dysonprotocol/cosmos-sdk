@@ -14,14 +14,16 @@ import (
 )
 
 var (
-	md_Params                  protoreflect.MessageDescriptor
-	fd_Params_max_storage_size protoreflect.FieldDescriptor
+	md_Params                        protoreflect.MessageDescriptor
+	fd_Params_max_storage_size       protoreflect.FieldDescriptor
+	fd_Params_storage_stake_multiple protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_dysonprotocol_storage_v1_params_proto_init()
 	md_Params = File_dysonprotocol_storage_v1_params_proto.Messages().ByName("Params")
 	fd_Params_max_storage_size = md_Params.Fields().ByName("max_storage_size")
+	fd_Params_storage_stake_multiple = md_Params.Fields().ByName("storage_stake_multiple")
 }
 
 var _ protoreflect.Message = (*fastReflection_Params)(nil)
@@ -95,6 +97,12 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 			return
 		}
 	}
+	if x.StorageStakeMultiple != "" {
+		value := protoreflect.ValueOfString(x.StorageStakeMultiple)
+		if !f(fd_Params_storage_stake_multiple, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -112,6 +120,8 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
 	case "dysonprotocol.storage.v1.Params.max_storage_size":
 		return x.MaxStorageSize != uint64(0)
+	case "dysonprotocol.storage.v1.Params.storage_stake_multiple":
+		return x.StorageStakeMultiple != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.storage.v1.Params"))
@@ -130,6 +140,8 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	case "dysonprotocol.storage.v1.Params.max_storage_size":
 		x.MaxStorageSize = uint64(0)
+	case "dysonprotocol.storage.v1.Params.storage_stake_multiple":
+		x.StorageStakeMultiple = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.storage.v1.Params"))
@@ -149,6 +161,9 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 	case "dysonprotocol.storage.v1.Params.max_storage_size":
 		value := x.MaxStorageSize
 		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.storage.v1.Params.storage_stake_multiple":
+		value := x.StorageStakeMultiple
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.storage.v1.Params"))
@@ -171,6 +186,8 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 	switch fd.FullName() {
 	case "dysonprotocol.storage.v1.Params.max_storage_size":
 		x.MaxStorageSize = value.Uint()
+	case "dysonprotocol.storage.v1.Params.storage_stake_multiple":
+		x.StorageStakeMultiple = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.storage.v1.Params"))
@@ -193,6 +210,8 @@ func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protore
 	switch fd.FullName() {
 	case "dysonprotocol.storage.v1.Params.max_storage_size":
 		panic(fmt.Errorf("field max_storage_size of message dysonprotocol.storage.v1.Params is not mutable"))
+	case "dysonprotocol.storage.v1.Params.storage_stake_multiple":
+		panic(fmt.Errorf("field storage_stake_multiple of message dysonprotocol.storage.v1.Params is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.storage.v1.Params"))
@@ -208,6 +227,8 @@ func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protor
 	switch fd.FullName() {
 	case "dysonprotocol.storage.v1.Params.max_storage_size":
 		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.storage.v1.Params.storage_stake_multiple":
+		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.storage.v1.Params"))
@@ -280,6 +301,10 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if x.MaxStorageSize != 0 {
 			n += 1 + runtime.Sov(uint64(x.MaxStorageSize))
 		}
+		l = len(x.StorageStakeMultiple)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -308,6 +333,13 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.StorageStakeMultiple) > 0 {
+			i -= len(x.StorageStakeMultiple)
+			copy(dAtA[i:], x.StorageStakeMultiple)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.StorageStakeMultiple)))
+			i--
+			dAtA[i] = 0x12
 		}
 		if x.MaxStorageSize != 0 {
 			i = runtime.EncodeVarint(dAtA, i, uint64(x.MaxStorageSize))
@@ -382,6 +414,38 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 						break
 					}
 				}
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field StorageStakeMultiple", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.StorageStakeMultiple = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -439,6 +503,9 @@ type Params struct {
 	// max_storage_size defines the maximum storage size in bytes that can be
 	// stored per owner
 	MaxStorageSize uint64 `protobuf:"varint,1,opt,name=max_storage_size,json=maxStorageSize,proto3" json:"max_storage_size,omitempty"`
+	// storage_stake_multiple defines the stake requirement multiplier per byte
+	// stored. Value "0" disables stake requirements entirely.
+	StorageStakeMultiple string `protobuf:"bytes,2,opt,name=storage_stake_multiple,json=storageStakeMultiple,proto3" json:"storage_stake_multiple,omitempty"`
 }
 
 func (x *Params) Reset() {
@@ -468,6 +535,13 @@ func (x *Params) GetMaxStorageSize() uint64 {
 	return 0
 }
 
+func (x *Params) GetStorageStakeMultiple() string {
+	if x != nil {
+		return x.StorageStakeMultiple
+	}
+	return ""
+}
+
 var File_dysonprotocol_storage_v1_params_proto protoreflect.FileDescriptor
 
 var file_dysonprotocol_storage_v1_params_proto_rawDesc = []byte{
@@ -476,15 +550,20 @@ var file_dysonprotocol_storage_v1_params_proto_rawDesc = []byte{
 	0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x18, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x2e, 0x76,
 	0x31, 0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67,
-	0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x4f, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d,
-	0x73, 0x12, 0x45, 0x0a, 0x10, 0x6d, 0x61, 0x78, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65,
-	0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x42, 0x1b, 0xf2, 0xde, 0x1f,
-	0x17, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x61, 0x78, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x61,
-	0x67, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x22, 0x52, 0x0e, 0x6d, 0x61, 0x78, 0x53, 0x74, 0x6f,
-	0x72, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x42, 0x23, 0x5a, 0x21, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f,
-	0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xa8, 0x01, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61,
+	0x6d, 0x73, 0x12, 0x45, 0x0a, 0x10, 0x6d, 0x61, 0x78, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67,
+	0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x42, 0x1b, 0xf2, 0xde,
+	0x1f, 0x17, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x61, 0x78, 0x5f, 0x73, 0x74, 0x6f, 0x72,
+	0x61, 0x67, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x22, 0x52, 0x0e, 0x6d, 0x61, 0x78, 0x53, 0x74,
+	0x6f, 0x72, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x57, 0x0a, 0x16, 0x73, 0x74, 0x6f,
+	0x72, 0x61, 0x67, 0x65, 0x5f, 0x73, 0x74, 0x61, 0x6b, 0x65, 0x5f, 0x6d, 0x75, 0x6c, 0x74, 0x69,
+	0x70, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x21, 0xf2, 0xde, 0x1f, 0x1d, 0x79,
+	0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x5f, 0x73, 0x74, 0x61,
+	0x6b, 0x65, 0x5f, 0x6d, 0x75, 0x6c, 0x74, 0x69, 0x70, 0x6c, 0x65, 0x22, 0x52, 0x14, 0x73, 0x74,
+	0x6f, 0x72, 0x61, 0x67, 0x65, 0x53, 0x74, 0x61, 0x6b, 0x65, 0x4d, 0x75, 0x6c, 0x74, 0x69, 0x70,
+	0x6c, 0x65, 0x42, 0x23, 0x5a, 0x21, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67,
+	0x65, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (

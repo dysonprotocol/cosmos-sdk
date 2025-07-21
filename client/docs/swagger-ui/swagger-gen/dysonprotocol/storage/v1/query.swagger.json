@@ -11,6 +11,38 @@
     "application/json"
   ],
   "paths": {
+    "/dysonprotocol/storage/v1/metrics": {
+      "get": {
+        "summary": "Metrics queries the storage metrics for a given owner address",
+        "operationId": "Query_Metrics",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.QueryMetricsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "owner",
+            "description": "The address of the owner to query storage metrics for.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
     "/dysonprotocol/storage/v1/params": {
       "get": {
         "summary": "Params queries the storage module parameters",
@@ -226,9 +258,36 @@
           "type": "string",
           "format": "uint64",
           "title": "max_storage_size defines the maximum storage size in bytes that can be\nstored per owner"
+        },
+        "storage_stake_multiple": {
+          "type": "string",
+          "description": "storage_stake_multiple defines the stake requirement multiplier per byte\nstored. Value \"0\" disables stake requirements entirely."
         }
       },
       "description": "Params defines the parameters for the storage module."
+    },
+    "dysonprotocol.storage.v1.QueryMetricsResponse": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "owner is the account address that owns storage entries."
+        },
+        "total_bytes": {
+          "type": "string",
+          "format": "uint64",
+          "description": "total_bytes is the total number of bytes consumed by all storage entries\nfor this owner address."
+        },
+        "min_stake_amount": {
+          "type": "string",
+          "description": "min_stake_amount is the minimum stake required in udys for the current\nstorage usage (total_bytes \u00d7 storage_stake_multiple)."
+        },
+        "current_stake_amount": {
+          "type": "string",
+          "description": "current_stake_amount is the owner's current total delegated stake in udys\nacross all validators."
+        }
+      },
+      "description": "QueryMetricsResponse is response type for the Query/Metrics RPC method."
     },
     "dysonprotocol.storage.v1.QueryParamsResponse": {
       "type": "object",

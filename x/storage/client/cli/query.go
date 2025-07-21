@@ -26,6 +26,7 @@ func NewQueryCmd() *cobra.Command {
 	queryCmd.AddCommand(NewQueryStorageGetCmd())
 	queryCmd.AddCommand(NewQueryStorageListCmd())
 	queryCmd.AddCommand(NewQueryParamsCmd())
+	queryCmd.AddCommand(NewQueryMetricsCmd())
 
 	return queryCmd
 }
@@ -214,6 +215,48 @@ Examples:
 			req := &storagetypes.QueryParamsRequest{}
 
 			res, err := queryClient.Params(context.Background(), req)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// NewQueryMetricsCmd returns the CLI command handler for querying storage metrics.
+func NewQueryMetricsCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "metrics <owner>",
+		Short: "Query storage metrics for a given owner address",
+		Long: `Query storage metrics (total bytes consumed) for a given owner address.
+
+Examples:
+  # Query storage metrics for an address
+  $ dysond query storage metrics dys21...
+  
+  # Query storage metrics with JSON output
+  $ dysond query storage metrics dys21... --output json`,
+		Args: cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			owner := args[0]
+
+			queryClient := storagetypes.NewQueryClient(clientCtx)
+
+			req := &storagetypes.QueryMetricsRequest{
+				Owner: owner,
+			}
+
+			res, err := queryClient.Metrics(context.Background(), req)
 			if err != nil {
 				return err
 			}

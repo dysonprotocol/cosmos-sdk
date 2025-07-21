@@ -34,6 +34,13 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/dysonprotocol/storage/v1/params";
   }
+
+  // Metrics queries the storage metrics for a given owner address
+  rpc Metrics(QueryMetricsRequest) returns (QueryMetricsResponse) {
+    option (google.api.http) = {
+      get : "/dysonprotocol/storage/v1/metrics"
+    };
+  }
 }
 
 message QueryStorageGetRequest {
@@ -80,4 +87,28 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryMetricsRequest is request type for the Query/Metrics RPC method.
+message QueryMetricsRequest {
+  // The address of the owner to query storage metrics for.
+  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+}
+
+// QueryMetricsResponse is response type for the Query/Metrics RPC method.
+message QueryMetricsResponse {
+  // owner is the account address that owns storage entries.
+  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // total_bytes is the total number of bytes consumed by all storage entries
+  // for this owner address.
+  uint64 total_bytes = 2;
+
+  // min_stake_amount is the minimum stake required in udys for the current
+  // storage usage (total_bytes × storage_stake_multiple).
+  string min_stake_amount = 3;
+
+  // current_stake_amount is the owner's current total delegated stake in udys
+  // across all validators.
+  string current_stake_amount = 4;
 }

@@ -11,4 +11,9 @@ message Params {
   // stored per owner
   uint64 max_storage_size = 1
       [ (gogoproto.moretags) = "yaml:\"max_storage_size\"" ];
+
+  // storage_stake_multiple defines the stake requirement multiplier per byte
+  // stored. Value "0" disables stake requirements entirely.
+  string storage_stake_multiple = 2
+      [ (gogoproto.moretags) = "yaml:\"storage_stake_multiple\"" ];
 }

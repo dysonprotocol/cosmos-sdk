@@ -303,3 +303,34 @@ func (k Keeper) Params(ctx context.Context, req *storagetypes.QueryParamsRequest
 	params := k.GetParams(ctx)
 	return &storagetypes.QueryParamsResponse{Params: params}, nil
 }
+
+// Metrics returns the storage metrics for a given owner address
+func (k Keeper) Metrics(ctx context.Context, req *storagetypes.QueryMetricsRequest) (*storagetypes.QueryMetricsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	// Validate the owner address is properly formatted
+	if _, err := sdk.AccAddressFromBech32(req.Owner); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid owner address: %v", err)
+	}
+
+	// Get storage metrics for the owner
+	metrics, err := k.GetStorageMetrics(ctx, req.Owner)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get storage metrics: %v", err)
+	}
+
+	// Get current stake amount from staking module
+	currentStake, err := k.GetTotalDelegatedStake(ctx, req.Owner)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get current stake amount: %v", err)
+	}
+
+	return &storagetypes.QueryMetricsResponse{
+		Owner:              metrics.Owner,
+		TotalBytes:         metrics.TotalBytes,
+		MinStakeAmount:     metrics.MinStakeAmount,
+		CurrentStakeAmount: currentStake.String(),
+	}, nil
+}

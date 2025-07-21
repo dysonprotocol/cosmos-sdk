@@ -33,3 +33,16 @@ message Storage {
   // hash is SHA-256 hex of data field.
   string hash = 6;
 }
+
+message StorageMetrics {
+  // owner is the account address that owns storage entries.
+  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // total_bytes is the total number of bytes consumed by all storage entries
+  // for this owner address.
+  uint64 total_bytes = 2;
+
+  // min_stake_amount is the minimum stake required in udys for the current
+  // storage usage (total_bytes × storage_stake_multiple).
+  string min_stake_amount = 3;
+}

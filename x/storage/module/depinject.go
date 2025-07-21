@@ -11,6 +11,7 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -34,6 +35,7 @@ type StorageInputs struct {
 	Cdc           codec.Codec
 	StoreService  store.KVStoreService
 	AccountKeeper authkeeper.AccountKeeper
+	StakingKeeper *stakingkeeper.Keeper
 	Registry      cdctypes.InterfaceRegistry
 	Config        *modulev1.Module
 }
@@ -58,6 +60,7 @@ func ProvideModule(in StorageInputs) ModuleOutputs {
 		in.StoreService,
 		in.Cdc,
 		in.AccountKeeper,
+		in.StakingKeeper,
 		storage.Config{},
 		authority,
 	)

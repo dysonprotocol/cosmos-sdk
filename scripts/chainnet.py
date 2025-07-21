@@ -104,7 +104,7 @@ def generate_chain_structure(chainnet_offset: int, idx: int, num_chains: int, no
         nid = idx * nodes_per_chain + j + 1
         moniker = f"node-{nid}"
         home = base_dir / f"{chain_id}-{moniker}"
-        ports = generate_ports(port_offset=nid, chainnet_offset=chainnet_offset)
+        ports = generate_ports(port_offset=nid-1, chainnet_offset=chainnet_offset)
         nodes.append({
             "moniker": moniker,
             "home": str(home),

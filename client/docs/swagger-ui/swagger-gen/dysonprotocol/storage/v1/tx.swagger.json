@@ -189,6 +189,10 @@
           "type": "string",
           "format": "uint64",
           "title": "max_storage_size defines the maximum storage size in bytes that can be\nstored per owner"
+        },
+        "storage_stake_multiple": {
+          "type": "string",
+          "description": "storage_stake_multiple defines the stake requirement multiplier per byte\nstored. Value \"0\" disables stake requirements entirely."
         }
       },
       "description": "Params defines the parameters for the storage module."
