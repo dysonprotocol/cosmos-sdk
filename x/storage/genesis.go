@@ -8,6 +8,7 @@ import (
 // NewGenesisState creates a new genesis state with default values.
 func NewGenesisState() *types.GenesisState {
 	return &types.GenesisState{
+		Params:  types.DefaultParams(),
 		Entries: []types.Storage{},
 	}
 }
@@ -19,6 +20,12 @@ func DefaultGenesis() *types.GenesisState {
 
 // ValidateGenesisState performs basic genesis state validation returning an error upon any failure.
 func ValidateGenesisState(s types.GenesisState) error {
+	// Validate params
+	if err := s.Params.Validate(); err != nil {
+		return err
+	}
+
+	// Validate entries
 	for _, entry := range s.Entries {
 		if entry.Index == "" {
 			return ErrEmptyIndex

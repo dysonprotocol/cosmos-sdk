@@ -9,6 +9,7 @@ import "cosmos_proto/cosmos.proto";
 import "amino/amino.proto";
 
 import "dysonprotocol/storage/v1/storage.proto";
+import "dysonprotocol/storage/v1/params.proto";
 
 option go_package = "dysonprotocol.com/x/storage/types";
 
@@ -27,6 +28,11 @@ service Query {
     option (google.api.http) = {
       get : "/dysonprotocol/storage/v1/storage_list"
     };
+  }
+
+  // Params queries the storage module parameters
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/dysonprotocol/storage/v1/params";
   }
 }
 
@@ -65,4 +71,13 @@ message QueryStorageListRequest {
 message QueryStorageListResponse {
   repeated Storage entries = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [ (gogoproto.nullable) = false ];
 }

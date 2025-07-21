@@ -894,6 +894,55 @@ paths:
             description: MsgUpdateScript is the Msg/UpdateScript request type.
       tags:
         - Msg
+  /dysonprotocol/storage/v1/params:
+    get:
+      summary: Params queries the storage module parameters
+      operationId: Query_StorageParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+                properties:
+                  max_storage_size:
+                    type: string
+                    format: uint64
+                    title: >-
+                      max_storage_size defines the maximum storage size in bytes
+                      that can be
+
+                      stored per owner
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      tags:
+        - Query
   /dysonprotocol/storage/v1/storage_get:
     get:
       summary: Gets the stored data for the given owner and index.
@@ -1278,6 +1327,75 @@ paths:
                 type: string
                 description: The data to set for the storage entry.
             description: MsgStorageSet is the message for setting a storage entry.
+      tags:
+        - Msg
+  /dysonprotocol.storage.v1.Msg/UpdateParams:
+    post:
+      summary: |-
+        UpdateParams defines a governance operation for updating the x/storage
+        module parameters. The authority defaults to the x/gov module account.
+      operationId: Msg_UpdateStorageParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            description: >-
+              MsgUpdateParamsResponse defines the response structure for
+              executing a
+
+              MsgUpdateParams message.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              authority:
+                type: string
+                description: >-
+                  authority is the address that controls the module (defaults to
+                  x/gov unless
+
+                  overwritten).
+              params:
+                description: |-
+                  params defines the x/storage parameters to update.
+                  NOTE: All parameters must be supplied.
+                type: object
+                properties:
+                  max_storage_size:
+                    type: string
+                    format: uint64
+                    title: >-
+                      max_storage_size defines the maximum storage size in bytes
+                      that can be
+
+                      stored per owner
+            description: MsgUpdateParams is the Msg/UpdateParams request type.
       tags:
         - Msg
   /dysonprotocol/crontask/v1/params:
@@ -34345,6 +34463,32 @@ definitions:
                repeated Bar results = 1;
                PageResponse page = 2;
        }
+  dysonprotocol.storage.v1.Params:
+    type: object
+    properties:
+      max_storage_size:
+        type: string
+        format: uint64
+        title: |-
+          max_storage_size defines the maximum storage size in bytes that can be
+          stored per owner
+    description: Params defines the parameters for the storage module.
+  dysonprotocol.storage.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+        properties:
+          max_storage_size:
+            type: string
+            format: uint64
+            title: >-
+              max_storage_size defines the maximum storage size in bytes that
+              can be
+
+              stored per owner
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
   dysonprotocol.storage.v1.QueryStorageGetResponse:
     type: object
     properties:
@@ -34494,6 +34638,36 @@ definitions:
   dysonprotocol.storage.v1.MsgStorageSetResponse:
     type: object
     description: MsgStorageSetResponse is the response for setting a storage entry.
+  dysonprotocol.storage.v1.MsgUpdateParams:
+    type: object
+    properties:
+      authority:
+        type: string
+        description: >-
+          authority is the address that controls the module (defaults to x/gov
+          unless
+
+          overwritten).
+      params:
+        description: |-
+          params defines the x/storage parameters to update.
+          NOTE: All parameters must be supplied.
+        type: object
+        properties:
+          max_storage_size:
+            type: string
+            format: uint64
+            title: >-
+              max_storage_size defines the maximum storage size in bytes that
+              can be
+
+              stored per owner
+    description: MsgUpdateParams is the Msg/UpdateParams request type.
+  dysonprotocol.storage.v1.MsgUpdateParamsResponse:
+    type: object
+    description: |-
+      MsgUpdateParamsResponse defines the response structure for executing a
+      MsgUpdateParams message.
   cosmos.base.v1beta1.Coin:
     type: object
     properties:

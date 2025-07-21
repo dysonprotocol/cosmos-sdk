@@ -11,6 +11,29 @@
     "application/json"
   ],
   "paths": {
+    "/dysonprotocol/storage/v1/params": {
+      "get": {
+        "summary": "Params queries the storage module parameters",
+        "operationId": "Query_Params",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.QueryParamsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "tags": [
+          "Query"
+        ]
+      }
+    },
     "/dysonprotocol/storage/v1/storage_get": {
       "get": {
         "summary": "Gets the stored data for the given owner and index.",
@@ -195,6 +218,27 @@
         }
       },
       "description": "PageResponse is to be embedded in gRPC response messages where the\ncorresponding request message has used PageRequest.\n\n message SomeResponse {\n         repeated Bar results = 1;\n         PageResponse page = 2;\n }"
+    },
+    "dysonprotocol.storage.v1.Params": {
+      "type": "object",
+      "properties": {
+        "max_storage_size": {
+          "type": "string",
+          "format": "uint64",
+          "title": "max_storage_size defines the maximum storage size in bytes that can be\nstored per owner"
+        }
+      },
+      "description": "Params defines the parameters for the storage module."
+    },
+    "dysonprotocol.storage.v1.QueryParamsResponse": {
+      "type": "object",
+      "properties": {
+        "params": {
+          "$ref": "#/definitions/dysonprotocol.storage.v1.Params",
+          "description": "params holds all the parameters of this module."
+        }
+      },
+      "description": "QueryParamsResponse is response type for the Query/Params RPC method."
     },
     "dysonprotocol.storage.v1.QueryStorageGetResponse": {
       "type": "object",

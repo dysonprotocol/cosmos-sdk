@@ -10,6 +10,11 @@ import (
 
 // InitGenesis initializes the storage module's state from a genesis state.
 func (k Keeper) InitGenesis(ctx context.Context, genState *storagev1.GenesisState) {
+	// Set the module parameters
+	if err := k.SetParams(ctx, genState.Params); err != nil {
+		panic(fmt.Errorf("failed to set params: %w", err))
+	}
+
 	// Iterate through all the storage entries in the genesis state and set them
 	for i, entry := range genState.Entries {
 		fmt.Printf("Processing genesis entry %d: owner=%s, index=%s\n", i, entry.Owner, entry.Index)
@@ -39,6 +44,9 @@ func (k Keeper) InitGenesis(ctx context.Context, genState *storagev1.GenesisStat
 
 // ExportGenesis exports the storage module's state to a genesis state.
 func (k Keeper) ExportGenesis(ctx context.Context) *storagev1.GenesisState {
+	// Get current parameters
+	params := k.GetParams(ctx)
+
 	// Initialize an empty slice for entries
 	entries := []storagev1.Storage{}
 
@@ -58,8 +66,9 @@ func (k Keeper) ExportGenesis(ctx context.Context) *storagev1.GenesisState {
 		entries = append(entries, value)
 	}
 
-	// Create and return a new genesis state with the entries
+	// Create and return a new genesis state with the params and entries
 	return &storagev1.GenesisState{
+		Params:  params,
 		Entries: entries,
 	}
 }

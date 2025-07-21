@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"time"
 
+	cosmossdkerrors "cosmossdk.io/errors"
 	storagetypes "dysonprotocol.com/x/storage/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -33,6 +35,14 @@ func (k Keeper) StorageSet(ctx context.Context, msg *storagetypes.MsgStorageSet)
 
 	if !isPrintableASCII(msg.Index) {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid index, must be printable ASCII")
+	}
+
+	// Get current parameters to check max storage size
+	params := k.GetParams(ctx)
+	dataSize := uint64(len(msg.Data))
+
+	if dataSize > params.MaxStorageSize {
+		return nil, status.Errorf(codes.InvalidArgument, "data size %d bytes exceeds maximum allowed size %d bytes", dataSize, params.MaxStorageSize)
 	}
 
 	// Create the combined key
@@ -130,4 +140,29 @@ func (k Keeper) StorageDelete(ctx context.Context, msg *storagetypes.MsgStorageD
 	return &storagetypes.MsgStorageDeleteResponse{
 		DeletedIndexes: deletedIndexes,
 	}, nil
+}
+
+// UpdateParams updates the module parameters
+func (k Keeper) UpdateParams(ctx context.Context, msg *storagetypes.MsgUpdateParams) (*storagetypes.MsgUpdateParamsResponse, error) {
+	// Check authority - this should be the governance module account or a dedicated module admin
+	if msg.Authority != k.GetAuthority() {
+		return nil, cosmossdkerrors.Wrapf(
+			sdkerrors.ErrUnauthorized,
+			"invalid authority; expected %s, got %s",
+			k.GetAuthority(),
+			msg.Authority,
+		)
+	}
+
+	// Validate the parameters
+	if err := msg.Params.Validate(); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "invalid parameters")
+	}
+
+	// Set the parameters
+	if err := k.SetParams(ctx, msg.Params); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to update parameters")
+	}
+
+	return &storagetypes.MsgUpdateParamsResponse{}, nil
 }

@@ -25,6 +25,7 @@ func NewQueryCmd() *cobra.Command {
 
 	queryCmd.AddCommand(NewQueryStorageGetCmd())
 	queryCmd.AddCommand(NewQueryStorageListCmd())
+	queryCmd.AddCommand(NewQueryParamsCmd())
 
 	return queryCmd
 }
@@ -184,6 +185,44 @@ Examples:
 	cmd.Flags().String("extract", "", "Optional GJSON path to extract sub-field from each entry's data")
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "storage entries")
+
+	return cmd
+}
+
+// NewQueryParamsCmd returns the CLI command handler for querying storage module parameters.
+func NewQueryParamsCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "params",
+		Short: "Query the storage module parameters",
+		Long: `Query the current parameters for the storage module.
+
+Examples:
+  # Query storage parameters
+  $ dysond query storage params
+  
+  # Query storage parameters with JSON output
+  $ dysond query storage params --output json`,
+		Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			queryClient := storagetypes.NewQueryClient(clientCtx)
+
+			req := &storagetypes.QueryParamsRequest{}
+
+			res, err := queryClient.Params(context.Background(), req)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }

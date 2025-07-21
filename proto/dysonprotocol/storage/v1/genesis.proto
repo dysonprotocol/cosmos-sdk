@@ -6,6 +6,7 @@ package dysonprotocol.storage.v1;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "dysonprotocol/storage/v1/storage.proto";
+import "dysonprotocol/storage/v1/params.proto";
 import "amino/amino.proto";
 
 option go_package = "dysonprotocol.com/x/storage/types";
@@ -15,6 +16,9 @@ message GenesisState {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
+  // params defines all the parameters of the module.
+  Params params = 1 [ (gogoproto.nullable) = false ];
+
   // entries defines the storage entries contained in the GenesisState
-  repeated Storage entries = 1 [ (gogoproto.nullable) = false ];
+  repeated Storage entries = 2 [ (gogoproto.nullable) = false ];
 }

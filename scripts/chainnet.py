@@ -407,6 +407,35 @@ def setup(config_file, force):
             app_state_ns_params = app_state_ns.setdefault('params', {})
             for key, value in ns_params.items():
                 app_state_ns_params[key] = str(value)
+            # Set bank denom metadata for dys/udys with 6 exponent
+            app_state_bank = app_state.setdefault('bank', {})
+            app_state_bank['denom_metadata'] = [
+                {
+                    "description": "The native staking and governance token of the Dyson Protocol",
+                    "denom_units": [
+                        {
+                            "denom": 'udys',
+                            "exponent": 0,
+                            "aliases": []
+                        },
+                        {
+                            "denom": 'dys2',
+                            "exponent": 6,
+                            "aliases": []
+                        }
+                    ],
+                    "base": 'udys',
+                    "display": 'dys2',
+                    "name": "Dys2",
+                    "symbol": "DYS2"
+                }
+            ]
+            # Set consensus params for evidence and block size limits
+            consensus_params = gdata.setdefault('consensus_params', {})
+            evidence_params = consensus_params.setdefault('evidence', {})
+            evidence_params['max_bytes'] = "204800"  # 200KB
+            block_params = consensus_params.setdefault('block', {})
+            block_params['max_bytes'] = "3145728"  # 3MB
             current_genesis_path.write_text(json.dumps(gdata, indent=2))
 
             # Add user accounts to this node's genesis

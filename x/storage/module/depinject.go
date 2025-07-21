@@ -9,6 +9,8 @@ import (
 	"dysonprotocol.com/x/storage"
 	"dysonprotocol.com/x/storage/keeper"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -33,6 +35,7 @@ type StorageInputs struct {
 	StoreService  store.KVStoreService
 	AccountKeeper authkeeper.AccountKeeper
 	Registry      cdctypes.InterfaceRegistry
+	Config        *modulev1.Module
 }
 
 type ModuleOutputs struct {
@@ -43,11 +46,20 @@ type ModuleOutputs struct {
 }
 
 func ProvideModule(in StorageInputs) ModuleOutputs {
+	// Use the authority from the config if provided, otherwise default to gov module account
+	authority := authtypes.NewModuleAddress(govtypes.ModuleName).String()
+
+	// If authority is explicitly set in the config, use that instead
+	if in.Config != nil && in.Config.Authority != "" {
+		authority = in.Config.Authority
+	}
+
 	k := keeper.NewKeeper(
 		in.StoreService,
 		in.Cdc,
 		in.AccountKeeper,
 		storage.Config{},
+		authority,
 	)
 	m := NewAppModule(in.Cdc, k, in.AccountKeeper, in.Registry)
 	return ModuleOutputs{StorageKeeper: k, Module: m}

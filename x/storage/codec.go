@@ -18,8 +18,8 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 	registrar.RegisterImplementations((*sdk.Msg)(nil),
 		&types.MsgStorageSet{},
 		&types.MsgStorageDelete{},
+		&types.MsgUpdateParams{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registrar, &types.Msg_serviceDesc)
-
 }

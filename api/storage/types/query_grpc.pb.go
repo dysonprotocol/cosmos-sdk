@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Query_StorageGet_FullMethodName  = "/dysonprotocol.storage.v1.Query/StorageGet"
 	Query_StorageList_FullMethodName = "/dysonprotocol.storage.v1.Query/StorageList"
+	Query_Params_FullMethodName      = "/dysonprotocol.storage.v1.Query/Params"
 )
 
 // QueryClient is the client API for Query service.
@@ -33,6 +34,8 @@ type QueryClient interface {
 	// filter and extract to filter and extract the data and iterate over the data
 	// efficiently.
 	StorageList(ctx context.Context, in *QueryStorageListRequest, opts ...grpc.CallOption) (*QueryStorageListResponse, error)
+	// Params queries the storage module parameters
+	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 }
 
 type queryClient struct {
@@ -63,6 +66,16 @@ func (c *queryClient) StorageList(ctx context.Context, in *QueryStorageListReque
 	return out, nil
 }
 
+func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryParamsResponse)
+	err := c.cc.Invoke(ctx, Query_Params_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -73,6 +86,8 @@ type QueryServer interface {
 	// filter and extract to filter and extract the data and iterate over the data
 	// efficiently.
 	StorageList(context.Context, *QueryStorageListRequest) (*QueryStorageListResponse, error)
+	// Params queries the storage module parameters
+	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -88,6 +103,9 @@ func (UnimplementedQueryServer) StorageGet(context.Context, *QueryStorageGetRequ
 }
 func (UnimplementedQueryServer) StorageList(context.Context, *QueryStorageListRequest) (*QueryStorageListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StorageList not implemented")
+}
+func (UnimplementedQueryServer) Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -146,6 +164,24 @@ func _Query_StorageList_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryParamsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Params(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Params_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Params(ctx, req.(*QueryParamsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -160,6 +196,10 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StorageList",
 			Handler:    _Query_StorageList_Handler,
+		},
+		{
+			MethodName: "Params",
+			Handler:    _Query_Params_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

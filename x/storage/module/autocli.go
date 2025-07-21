@@ -27,6 +27,11 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						{ProtoField: "owner"},
 					},
 				},
+				{
+					RpcMethod: "Params",
+					Use:       "params",
+					Short:     "Query the storage module parameters",
+				},
 			},
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{

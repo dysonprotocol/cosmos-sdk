@@ -76,6 +76,39 @@
           "Msg"
         ]
       }
+    },
+    "/dysonprotocol.storage.v1.Msg/UpdateParams": {
+      "post": {
+        "summary": "UpdateParams defines a governance operation for updating the x/storage\nmodule parameters. The authority defaults to the x/gov module account.",
+        "operationId": "Msg_UpdateParams",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.MsgUpdateParamsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.MsgUpdateParams"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
     }
   },
   "definitions": {
@@ -130,6 +163,35 @@
     "dysonprotocol.storage.v1.MsgStorageSetResponse": {
       "type": "object",
       "description": "MsgStorageSetResponse is the response for setting a storage entry."
+    },
+    "dysonprotocol.storage.v1.MsgUpdateParams": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "type": "string",
+          "description": "authority is the address that controls the module (defaults to x/gov unless\noverwritten)."
+        },
+        "params": {
+          "$ref": "#/definitions/dysonprotocol.storage.v1.Params",
+          "description": "params defines the x/storage parameters to update.\nNOTE: All parameters must be supplied."
+        }
+      },
+      "description": "MsgUpdateParams is the Msg/UpdateParams request type."
+    },
+    "dysonprotocol.storage.v1.MsgUpdateParamsResponse": {
+      "type": "object",
+      "description": "MsgUpdateParamsResponse defines the response structure for executing a\nMsgUpdateParams message."
+    },
+    "dysonprotocol.storage.v1.Params": {
+      "type": "object",
+      "properties": {
+        "max_storage_size": {
+          "type": "string",
+          "format": "uint64",
+          "title": "max_storage_size defines the maximum storage size in bytes that can be\nstored per owner"
+        }
+      },
+      "description": "Params defines the parameters for the storage module."
     },
     "google.protobuf.Any": {
       "type": "object",

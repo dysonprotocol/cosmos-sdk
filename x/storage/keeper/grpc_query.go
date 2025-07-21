@@ -293,3 +293,13 @@ func (k Keeper) StorageList(ctx context.Context, req *storagetypes.QueryStorageL
 
 	return resp, nil
 }
+
+// Params returns the current module parameters
+func (k Keeper) Params(ctx context.Context, req *storagetypes.QueryParamsRequest) (*storagetypes.QueryParamsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	params := k.GetParams(ctx)
+	return &storagetypes.QueryParamsResponse{Params: params}, nil
+}
