@@ -436,6 +436,7 @@ def setup(config_file, force):
             evidence_params['max_bytes'] = "204800"  # 200KB
             block_params = consensus_params.setdefault('block', {})
             block_params['max_bytes'] = "3145728"  # 3MB
+            block_params['max_gas'] = "10000000000"  # 10T gas
             current_genesis_path.write_text(json.dumps(gdata, indent=2))
 
             # Add user accounts to this node's genesis
