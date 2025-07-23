@@ -14,7 +14,7 @@
     "/ibc/core/connection/v1/client_connections/{client_id}": {
       "get": {
         "summary": "ClientConnections queries the connection paths associated with a client\nstate.",
-        "operationId": "Query_ClientConnections",
+        "operationId": "/ibc.core.connection.v1.QueryClientConnectionsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -46,7 +46,7 @@
     "/ibc/core/connection/v1/connections": {
       "get": {
         "summary": "Connections queries all the IBC connections of a chain.",
-        "operationId": "Query_Connections",
+        "operationId": "/ibc.core.connection.v1.QueryConnectionsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -64,7 +64,6 @@
         "parameters": [
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -72,7 +71,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -80,7 +78,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -88,14 +85,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -109,7 +104,7 @@
     "/ibc/core/connection/v1/connections/{connection_id}": {
       "get": {
         "summary": "Connection queries an IBC connection end.",
-        "operationId": "Query_Connection",
+        "operationId": "/ibc.core.connection.v1.QueryConnectionRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -141,7 +136,7 @@
     "/ibc/core/connection/v1/connections/{connection_id}/client_state": {
       "get": {
         "summary": "ConnectionClientState queries the client state associated with the\nconnection.",
-        "operationId": "Query_ConnectionClientState",
+        "operationId": "/ibc.core.connection.v1.QueryConnectionClientStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -173,7 +168,7 @@
     "/ibc/core/connection/v1/connections/{connection_id}/consensus_state/revision/{revision_number}/height/{revision_height}": {
       "get": {
         "summary": "ConnectionConsensusState queries the consensus state associated with the\nconnection.",
-        "operationId": "Query_ConnectionConsensusState",
+        "operationId": "/ibc.core.connection.v1.QueryConnectionConsensusStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -219,7 +214,7 @@
     "/ibc/core/connection/v1/params": {
       "get": {
         "summary": "ConnectionParams queries all parameters of the ibc connection submodule.",
-        "operationId": "Query_ConnectionParams",
+        "operationId": "/ibc.core.connection.v1.QueryConnectionParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.staking.v1beta1.QueryDelegationRequest",
+    "definitions": {
+        "cosmos.staking.v1beta1.QueryDelegationRequest": {
+            "properties": {
+                "delegator_addr": {
+                    "type": "string",
+                    "description": "delegator_addr defines the delegator address to query for."
+                },
+                "validator_addr": {
+                    "type": "string",
+                    "description": "validator_addr defines the validator address to query for."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Delegation Request",
+            "description": "QueryDelegationRequest is request type for the Query/Delegation RPC method."
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.script.v1.MsgCreateNewScript",
+    "definitions": {
+        "dysonprotocol.script.v1.MsgCreateNewScript": {
+            "properties": {
+                "creator_address": {
+                    "type": "string",
+                    "description": "creator is the account address creating the script."
+                },
+                "code": {
+                    "type": "string",
+                    "description": "code is the script content."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Msg Create New Script",
+            "description": "MsgCreateNewScript is the Msg/CreateNewScript request type."
+        }
+    }
+}

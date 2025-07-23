@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ibc.applications.transfer.v1.QueryDenomRequest",
+    "definitions": {
+        "ibc.applications.transfer.v1.QueryDenomRequest": {
+            "properties": {
+                "hash": {
+                    "type": "string",
+                    "description": "hash (in hex format) or denom (full denom with ibc prefix) of the on chain denomination."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Denom Request",
+            "description": "QueryDenomRequest is the request type for the Query/Denom RPC method"
+        }
+    }
+}

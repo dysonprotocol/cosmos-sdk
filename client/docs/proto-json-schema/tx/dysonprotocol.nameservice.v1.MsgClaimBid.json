@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgClaimBid",
+    "definitions": {
+        "dysonprotocol.nameservice.v1.MsgClaimBid": {
+            "properties": {
+                "bidder": {
+                    "type": "string"
+                },
+                "nft_class_id": {
+                    "type": "string"
+                },
+                "nft_id": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Msg Claim Bid"
+        }
+    }
+}

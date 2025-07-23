@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.crontask.v1.QueryTaskByIDRequest",
+    "definitions": {
+        "dysonprotocol.crontask.v1.QueryTaskByIDRequest": {
+            "properties": {
+                "task_id": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Task By ID Request",
+            "description": "QueryTaskByIDRequest is the request type for the Query/TaskByID RPC method"
+        }
+    }
+}

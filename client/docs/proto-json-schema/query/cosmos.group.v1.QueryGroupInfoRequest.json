@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.group.v1.QueryGroupInfoRequest",
+    "definitions": {
+        "cosmos.group.v1.QueryGroupInfoRequest": {
+            "properties": {
+                "group_id": {
+                    "type": "string",
+                    "description": "group_id is the unique ID of the group."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Group Info Request",
+            "description": "QueryGroupInfoRequest is the Query/GroupInfo request type."
+        }
+    }
+}

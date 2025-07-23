@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.protocolpool.v1.QueryContinuousFundRequest",
+    "definitions": {
+        "cosmos.protocolpool.v1.QueryContinuousFundRequest": {
+            "properties": {
+                "recipient": {
+                    "type": "string",
+                    "description": "recipient is the recipient address to query unclaimed budget amount for."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Continuous Fund Request",
+            "description": "QueryContinuousFundRequest is the request type for the Query/ContinuousFund RPC method."
+        }
+    }
+}

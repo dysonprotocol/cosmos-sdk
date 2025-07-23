@@ -1,0 +1,52 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgUpdateParams",
+    "definitions": {
+        "dysonprotocol.nameservice.v1.MsgUpdateParams": {
+            "properties": {
+                "authority": {
+                    "type": "string",
+                    "description": "authority is the address that controls the module (defaults to x/gov unless overwritten)."
+                },
+                "params": {
+                    "$ref": "#/definitions/dysonprotocol.nameservice.v1.Params",
+                    "additionalProperties": false,
+                    "description": "params defines the x/nameservice parameters to update. NOTE: All parameters must be supplied."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Msg Update Params",
+            "description": "MsgUpdateParams is the Msg/UpdateParams request type."
+        },
+        "dysonprotocol.nameservice.v1.Params": {
+            "properties": {
+                "bid_timeout": {
+                    "pattern": "^([0-9]+\\.?[0-9]*|\\.[0-9]+)s$",
+                    "type": "string",
+                    "description": "bid_timeout defines the duration after which a bid can be claimed by the bidder",
+                    "format": "regex"
+                },
+                "allowed_denoms": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "allowed_denoms defines the denominations that are allowed to be used for valuations and bids"
+                },
+                "reject_bid_valuation_fee_percent": {
+                    "type": "string",
+                    "description": "reject_bid_valuation_fee_percent defines the percentage of the new valuation to charge as a fee when rejecting a bid"
+                },
+                "minimum_bid_percent_increase": {
+                    "type": "string",
+                    "description": "minimum_bid_percent_increase defines the minimum percentage increase required for a new bid compared to the previous bid"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Params",
+            "description": "Params defines the parameters for the nameservice module."
+        }
+    }
+}

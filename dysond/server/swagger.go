@@ -36,12 +36,11 @@ func RegisterDysonServer(clientCtx client.Context, rtr *mux.Router, config confi
 		rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
 		rtr.PathPrefix("/favicon.ico").Handler(staticServer)
 
-		// serve ../proto_json_schema
-		//protoJsonSchema, err := fs.Sub(docs.ProtoJsonSchema, "proto_json_schema")
-		//if err != nil {
-		//	return err
-		//}
-		//rtr.PathPrefix("/proto_json_schema/").Handler(http.StripPrefix("/proto_json_schema/", http.FileServer(http.FS(protoJsonSchema))))
+		protoJsonSchema, err := fs.Sub(docs.ProtoJSONSchema, "proto-json-schema")
+		if err != nil {
+			return err
+		}
+		rtr.PathPrefix("/proto-json-schema/").Handler(http.StripPrefix("/proto-json-schema/", http.FileServer(http.FS(protoJsonSchema))))
 	}
 
 	if config.Enable {
@@ -53,7 +52,8 @@ func RegisterDysonServer(clientCtx client.Context, rtr *mux.Router, config confi
 					strings.HasPrefix(r.URL.Path, "/cosmos/") ||
 					strings.HasPrefix(r.URL.Path, "/ibc/") ||
 					strings.HasPrefix(r.URL.Path, "/favicon.ico") ||
-					strings.HasPrefix(r.URL.Path, "/swagger/")) {
+					strings.HasPrefix(r.URL.Path, "/swagger/") ||
+					strings.HasPrefix(r.URL.Path, "/proto-json-schema/")) {
 					// Condition matched: use alternative handler
 					dwappHandler.ServeHTTP(w, r)
 					return

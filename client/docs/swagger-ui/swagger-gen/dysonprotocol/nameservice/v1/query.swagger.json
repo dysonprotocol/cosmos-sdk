@@ -14,7 +14,7 @@
     "/dysonprotocol/nameservice/v1/compute_hash": {
       "get": {
         "summary": "ComputeHash computes the hash for a name, salt, and committer address",
-        "operationId": "Query_ComputeHash",
+        "operationId": "/dysonprotocol.nameservice.v1.QueryComputeHashRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -60,7 +60,7 @@
     "/dysonprotocol/nameservice/v1/params": {
       "get": {
         "summary": "Params queries the nameservice module parameters",
-        "operationId": "Query_Params",
+        "operationId": "/dysonprotocol.nameservice.v1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -83,7 +83,7 @@
     "/dysonprotocol/nameservice/v1/resolve_name/{name_or_address}": {
       "get": {
         "summary": "ResolveName resolves a name to address or returns the address if already\nvalid",
-        "operationId": "Query_ResolveName",
+        "operationId": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

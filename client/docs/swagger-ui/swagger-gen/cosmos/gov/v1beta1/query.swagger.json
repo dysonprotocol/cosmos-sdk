@@ -14,7 +14,7 @@
     "/cosmos/gov/v1beta1/params/{params_type}": {
       "get": {
         "summary": "Params queries all parameters of the gov module.",
-        "operationId": "Query_Params",
+        "operationId": "/cosmos.gov.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -46,7 +46,7 @@
     "/cosmos/gov/v1beta1/proposals": {
       "get": {
         "summary": "Proposals queries all proposals based on given status.",
-        "operationId": "Query_Proposals",
+        "operationId": "/cosmos.gov.v1beta1.QueryProposalsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -94,7 +94,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -102,7 +101,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -110,7 +108,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -118,14 +115,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -139,7 +134,7 @@
     "/cosmos/gov/v1beta1/proposals/{proposal_id}": {
       "get": {
         "summary": "Proposal queries proposal details based on ProposalID.",
-        "operationId": "Query_Proposal",
+        "operationId": "/cosmos.gov.v1beta1.QueryProposalRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -172,7 +167,7 @@
     "/cosmos/gov/v1beta1/proposals/{proposal_id}/deposits": {
       "get": {
         "summary": "Deposits queries all deposits of a single proposal.",
-        "operationId": "Query_Deposits",
+        "operationId": "/cosmos.gov.v1beta1.QueryDepositsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -198,7 +193,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -206,7 +200,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -214,7 +207,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -222,14 +214,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -243,7 +233,7 @@
     "/cosmos/gov/v1beta1/proposals/{proposal_id}/deposits/{depositor}": {
       "get": {
         "summary": "Deposit queries single deposit information based on proposalID, depositor\naddress.",
-        "operationId": "Query_Deposit",
+        "operationId": "/cosmos.gov.v1beta1.QueryDepositRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -283,7 +273,7 @@
     "/cosmos/gov/v1beta1/proposals/{proposal_id}/tally": {
       "get": {
         "summary": "TallyResult queries the tally of a proposal vote.",
-        "operationId": "Query_TallyResult",
+        "operationId": "/cosmos.gov.v1beta1.QueryTallyResultRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -316,7 +306,7 @@
     "/cosmos/gov/v1beta1/proposals/{proposal_id}/votes": {
       "get": {
         "summary": "Votes queries votes of a given proposal.",
-        "operationId": "Query_Votes",
+        "operationId": "/cosmos.gov.v1beta1.QueryVotesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -342,7 +332,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -350,7 +339,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -358,7 +346,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -366,14 +353,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -387,7 +372,7 @@
     "/cosmos/gov/v1beta1/proposals/{proposal_id}/votes/{voter}": {
       "get": {
         "summary": "Vote queries voted information based on proposalID, voterAddr.",
-        "operationId": "Query_Vote",
+        "operationId": "/cosmos.gov.v1beta1.QueryVoteRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

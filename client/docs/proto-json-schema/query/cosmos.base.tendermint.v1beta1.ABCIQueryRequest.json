@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.base.tendermint.v1beta1.ABCIQueryRequest",
+    "definitions": {
+        "cosmos.base.tendermint.v1beta1.ABCIQueryRequest": {
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "format": "binary",
+                    "binaryEncoding": "base64"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "string"
+                },
+                "prove": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "ABCI Query Request",
+            "description": "ABCIQueryRequest defines the request structure for the ABCIQuery gRPC query."
+        }
+    }
+}

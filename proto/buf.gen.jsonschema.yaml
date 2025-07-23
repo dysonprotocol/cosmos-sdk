@@ -1,5 +1,5 @@
 version: v1
 plugins:
   - name: jsonschema
-    out: ./proto_json_schema
-    opt: paths=source_relative,disallow_additional_properties=true,disallow_bigints_as_strings=true,all_fields_required=false
+    out: ./proto-json-schema
+    opt: paths=source_relative,disallow_additional_properties,all_fields_required=false

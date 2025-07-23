@@ -1,0 +1,39 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.storage.v1.MsgUpdateParams",
+    "definitions": {
+        "dysonprotocol.storage.v1.MsgUpdateParams": {
+            "properties": {
+                "authority": {
+                    "type": "string",
+                    "description": "authority is the address that controls the module (defaults to x/gov unless overwritten)."
+                },
+                "params": {
+                    "$ref": "#/definitions/dysonprotocol.storage.v1.Params",
+                    "additionalProperties": false,
+                    "description": "params defines the x/storage parameters to update. NOTE: All parameters must be supplied."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Msg Update Params",
+            "description": "MsgUpdateParams is the Msg/UpdateParams request type."
+        },
+        "dysonprotocol.storage.v1.Params": {
+            "properties": {
+                "max_storage_size": {
+                    "type": "string",
+                    "description": "max_storage_size defines the maximum storage size in bytes that can be stored per owner"
+                },
+                "storage_stake_multiple": {
+                    "type": "string",
+                    "description": "storage_stake_multiple defines the stake requirement multiplier per byte stored. Value \"0\" disables stake requirements entirely."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Params",
+            "description": "Params defines the parameters for the storage module."
+        }
+    }
+}

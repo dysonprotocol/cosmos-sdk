@@ -15,7 +15,7 @@
       "get": {
         "summary": "DelegatorDelegations queries all delegations of a given delegator address.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_DelegatorDelegations",
+        "operationId": "/cosmos.staking.v1beta1.QueryDelegatorDelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -40,7 +40,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -48,7 +47,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -56,7 +54,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -64,14 +61,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -86,7 +81,7 @@
       "get": {
         "summary": "Redelegations queries redelegations of given address.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_Redelegations",
+        "operationId": "/cosmos.staking.v1beta1.QueryRedelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -125,7 +120,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -133,7 +127,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -141,7 +134,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -149,14 +141,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -171,7 +161,7 @@
       "get": {
         "summary": "DelegatorUnbondingDelegations queries all unbonding delegations of a given\ndelegator address.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_DelegatorUnbondingDelegations",
+        "operationId": "/cosmos.staking.v1beta1.QueryDelegatorUnbondingDelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -196,7 +186,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -204,7 +193,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -212,7 +200,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -220,14 +207,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -242,7 +227,7 @@
       "get": {
         "summary": "DelegatorValidators queries all validators info for given delegator\naddress.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_DelegatorValidators",
+        "operationId": "/cosmos.staking.v1beta1.QueryDelegatorValidatorsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -267,7 +252,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -275,7 +259,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -283,7 +266,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -291,14 +273,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -312,7 +292,7 @@
     "/cosmos/staking/v1beta1/delegators/{delegator_addr}/validators/{validator_addr}": {
       "get": {
         "summary": "DelegatorValidator queries validator info for given delegator validator\npair.",
-        "operationId": "Query_DelegatorValidator",
+        "operationId": "/cosmos.staking.v1beta1.QueryDelegatorValidatorRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -351,7 +331,7 @@
     "/cosmos/staking/v1beta1/historical_info/{height}": {
       "get": {
         "summary": "HistoricalInfo queries the historical info for given height.",
-        "operationId": "Query_HistoricalInfo",
+        "operationId": "/cosmos.staking.v1beta1.QueryHistoricalInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -384,7 +364,7 @@
     "/cosmos/staking/v1beta1/params": {
       "get": {
         "summary": "Parameters queries the staking parameters.",
-        "operationId": "Query_Params",
+        "operationId": "/cosmos.staking.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -407,7 +387,7 @@
     "/cosmos/staking/v1beta1/pool": {
       "get": {
         "summary": "Pool queries the pool info.",
-        "operationId": "Query_Pool",
+        "operationId": "/cosmos.staking.v1beta1.QueryPoolRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -431,7 +411,7 @@
       "get": {
         "summary": "Validators queries all validators that match the given status.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_Validators",
+        "operationId": "/cosmos.staking.v1beta1.QueryValidatorsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -456,7 +436,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -464,7 +443,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -472,7 +450,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -480,14 +457,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -501,7 +476,7 @@
     "/cosmos/staking/v1beta1/validators/{validator_addr}": {
       "get": {
         "summary": "Validator queries validator info for given validator address.",
-        "operationId": "Query_Validator",
+        "operationId": "/cosmos.staking.v1beta1.QueryValidatorRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -534,7 +509,7 @@
       "get": {
         "summary": "ValidatorDelegations queries delegate info for given validator.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_ValidatorDelegations",
+        "operationId": "/cosmos.staking.v1beta1.QueryValidatorDelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -559,7 +534,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -567,7 +541,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -575,7 +548,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -583,14 +555,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -604,7 +574,7 @@
     "/cosmos/staking/v1beta1/validators/{validator_addr}/delegations/{delegator_addr}": {
       "get": {
         "summary": "Delegation queries delegate info for given validator delegator pair.",
-        "operationId": "Query_Delegation",
+        "operationId": "/cosmos.staking.v1beta1.QueryDelegationRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -643,7 +613,7 @@
     "/cosmos/staking/v1beta1/validators/{validator_addr}/delegations/{delegator_addr}/unbonding_delegation": {
       "get": {
         "summary": "UnbondingDelegation queries unbonding info for given validator delegator\npair.",
-        "operationId": "Query_UnbondingDelegation",
+        "operationId": "/cosmos.staking.v1beta1.QueryUnbondingDelegationRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -683,7 +653,7 @@
       "get": {
         "summary": "ValidatorUnbondingDelegations queries unbonding delegations of a validator.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_ValidatorUnbondingDelegations",
+        "operationId": "/cosmos.staking.v1beta1.QueryValidatorUnbondingDelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -708,7 +678,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -716,7 +685,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -724,7 +692,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -732,14 +699,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"

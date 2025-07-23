@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.group.v1.MsgWithdrawProposal",
+    "definitions": {
+        "cosmos.group.v1.MsgWithdrawProposal": {
+            "properties": {
+                "proposal_id": {
+                    "type": "string",
+                    "description": "proposal is the unique ID of the proposal."
+                },
+                "address": {
+                    "type": "string",
+                    "description": "address is the admin of the group policy or one of the proposer of the proposal."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Msg Withdraw Proposal",
+            "description": "MsgWithdrawProposal is the Msg/WithdrawProposal request type."
+        }
+    }
+}

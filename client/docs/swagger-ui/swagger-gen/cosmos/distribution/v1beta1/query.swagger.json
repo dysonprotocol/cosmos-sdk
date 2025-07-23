@@ -15,7 +15,7 @@
       "get": {
         "summary": "CommunityPool queries the community pool coins.",
         "description": "WARNING: This query will fail if an external community pool is used.",
-        "operationId": "Query_CommunityPool",
+        "operationId": "/cosmos.distribution.v1beta1.QueryCommunityPoolRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -38,7 +38,7 @@
     "/cosmos/distribution/v1beta1/delegators/{delegator_address}/rewards": {
       "get": {
         "summary": "DelegationTotalRewards queries the total rewards accrued by each\nvalidator.",
-        "operationId": "Query_DelegationTotalRewards",
+        "operationId": "/cosmos.distribution.v1beta1.QueryDelegationTotalRewardsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -70,7 +70,7 @@
     "/cosmos/distribution/v1beta1/delegators/{delegator_address}/rewards/{validator_address}": {
       "get": {
         "summary": "DelegationRewards queries the total rewards accrued by a delegation.",
-        "operationId": "Query_DelegationRewards",
+        "operationId": "/cosmos.distribution.v1beta1.QueryDelegationRewardsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -109,7 +109,7 @@
     "/cosmos/distribution/v1beta1/delegators/{delegator_address}/validators": {
       "get": {
         "summary": "DelegatorValidators queries the validators of a delegator.",
-        "operationId": "Query_DelegatorValidators",
+        "operationId": "/cosmos.distribution.v1beta1.QueryDelegatorValidatorsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -141,7 +141,7 @@
     "/cosmos/distribution/v1beta1/delegators/{delegator_address}/withdraw_address": {
       "get": {
         "summary": "DelegatorWithdrawAddress queries withdraw address of a delegator.",
-        "operationId": "Query_DelegatorWithdrawAddress",
+        "operationId": "/cosmos.distribution.v1beta1.QueryDelegatorWithdrawAddressRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -173,7 +173,7 @@
     "/cosmos/distribution/v1beta1/params": {
       "get": {
         "summary": "Params queries params of the distribution module.",
-        "operationId": "Query_Params",
+        "operationId": "/cosmos.distribution.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -196,7 +196,7 @@
     "/cosmos/distribution/v1beta1/validators/{validator_address}": {
       "get": {
         "summary": "ValidatorDistributionInfo queries validator commission and self-delegation\nrewards for validator",
-        "operationId": "Query_ValidatorDistributionInfo",
+        "operationId": "/cosmos.distribution.v1beta1.QueryValidatorDistributionInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -228,7 +228,7 @@
     "/cosmos/distribution/v1beta1/validators/{validator_address}/commission": {
       "get": {
         "summary": "ValidatorCommission queries accumulated commission for a validator.",
-        "operationId": "Query_ValidatorCommission",
+        "operationId": "/cosmos.distribution.v1beta1.QueryValidatorCommissionRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -260,7 +260,7 @@
     "/cosmos/distribution/v1beta1/validators/{validator_address}/outstanding_rewards": {
       "get": {
         "summary": "ValidatorOutstandingRewards queries rewards of a validator address.",
-        "operationId": "Query_ValidatorOutstandingRewards",
+        "operationId": "/cosmos.distribution.v1beta1.QueryValidatorOutstandingRewardsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -292,7 +292,7 @@
     "/cosmos/distribution/v1beta1/validators/{validator_address}/slashes": {
       "get": {
         "summary": "ValidatorSlashes queries slash events of a validator.",
-        "operationId": "Query_ValidatorSlashes",
+        "operationId": "/cosmos.distribution.v1beta1.QueryValidatorSlashesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -333,7 +333,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -341,7 +340,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -349,7 +347,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -357,14 +354,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"

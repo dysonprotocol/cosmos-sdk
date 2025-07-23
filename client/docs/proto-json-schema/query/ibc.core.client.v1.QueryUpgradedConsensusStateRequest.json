@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ibc.core.client.v1.QueryUpgradedConsensusStateRequest",
+    "definitions": {
+        "ibc.core.client.v1.QueryUpgradedConsensusStateRequest": {
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Upgraded Consensus State Request",
+            "description": "QueryUpgradedConsensusStateRequest is the request type for the Query/UpgradedConsensusState RPC method"
+        }
+    }
+}

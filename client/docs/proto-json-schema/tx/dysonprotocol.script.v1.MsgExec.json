@@ -1,0 +1,61 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.script.v1.MsgExec",
+    "definitions": {
+        "dysonprotocol.script.v1.MsgExec": {
+            "properties": {
+                "executor_address": {
+                    "type": "string",
+                    "description": "executor is the account address used to execute the script."
+                },
+                "script_address": {
+                    "type": "string",
+                    "description": "address is the script address to execute. This can be either a bech32 address or a nameservice name (e.g., \"example.dys\")"
+                },
+                "extra_code": {
+                    "type": "string",
+                    "description": "Only if the executor is the owner of the script  will the optional extra_code be temporary appended to the script for this message before calling the function."
+                },
+                "function_name": {
+                    "type": "string",
+                    "description": "The function name to run"
+                },
+                "args": {
+                    "type": "string",
+                    "description": "The positional arguments to pass to the function (*args) encoded as a json list"
+                },
+                "kwargs": {
+                    "type": "string",
+                    "description": "The keyword argument to pass to the function (**kwargs) encoded as a json dict"
+                },
+                "attached_messages": {
+                    "items": {
+                        "properties": {
+                            "type_url": {
+                                "type": "string",
+                                "description": "The type url prefixed with a slash, like '/cosmos.bank.v1beta1.MsgSend'"
+                            },
+                            "value": {
+                                "type": "string",
+                                "description": "Must be a valid serialized protocol buffer of the above specified type.",
+                                "format": "binary",
+                                "binaryEncoding": "base64"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "type": "object",
+                        "title": "Any",
+                        "description": "Contains the serialized protocol buffer message using the response bytes from `/dysonprotocol.script.v1.QueryEncodeJsonRequest`"
+                    },
+                    "additionalProperties": false,
+                    "type": "array",
+                    "description": "The list of messages to run before the script and the result will be available in `dys.get_attached_messages()`. If any of the attached messages fails, the script execution will be aborted. The script can assume that the attached messages have been executed successfully by virtue of the fact that the script execution will never occur if any of the attached messages had failed. The attached messages are executed in the order they are provided."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Msg Exec",
+            "description": "MsgExec executes a script by calling a function with arguments."
+        }
+    }
+}

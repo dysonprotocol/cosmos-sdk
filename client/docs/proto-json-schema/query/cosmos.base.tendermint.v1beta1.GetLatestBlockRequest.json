@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.base.tendermint.v1beta1.GetLatestBlockRequest",
+    "definitions": {
+        "cosmos.base.tendermint.v1beta1.GetLatestBlockRequest": {
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Get Latest Block Request",
+            "description": "GetLatestBlockRequest is the request type for the Query/GetLatestBlock RPC method."
+        }
+    }
+}

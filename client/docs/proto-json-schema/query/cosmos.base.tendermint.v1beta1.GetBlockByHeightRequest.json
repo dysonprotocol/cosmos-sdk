@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.base.tendermint.v1beta1.GetBlockByHeightRequest",
+    "definitions": {
+        "cosmos.base.tendermint.v1beta1.GetBlockByHeightRequest": {
+            "properties": {
+                "height": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Get Block By Height Request",
+            "description": "GetBlockByHeightRequest is the request type for the Query/GetBlockByHeight RPC method."
+        }
+    }
+}

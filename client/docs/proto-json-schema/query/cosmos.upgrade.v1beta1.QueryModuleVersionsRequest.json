@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.upgrade.v1beta1.QueryModuleVersionsRequest",
+    "definitions": {
+        "cosmos.upgrade.v1beta1.QueryModuleVersionsRequest": {
+            "properties": {
+                "module_name": {
+                    "type": "string",
+                    "description": "module_name is a field to query a specific module consensus version from state. Leaving this empty will fetch the full list of module versions from state"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Module Versions Request",
+            "description": "QueryModuleVersionsRequest is the request type for the Query/ModuleVersions RPC method."
+        }
+    }
+}

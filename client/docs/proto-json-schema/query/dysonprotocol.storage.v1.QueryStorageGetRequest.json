@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.storage.v1.QueryStorageGetRequest",
+    "definitions": {
+        "dysonprotocol.storage.v1.QueryStorageGetRequest": {
+            "properties": {
+                "owner": {
+                    "type": "string",
+                    "description": "The address of the owner of the storage entry."
+                },
+                "index": {
+                    "type": "string",
+                    "description": "The index of the storage entry."
+                },
+                "extract": {
+                    "type": "string",
+                    "description": "The gjson path to extract from the storage entry."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Storage Get Request"
+        }
+    }
+}

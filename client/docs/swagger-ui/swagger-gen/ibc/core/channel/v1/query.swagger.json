@@ -14,7 +14,7 @@
     "/ibc/core/channel/v1/channels": {
       "get": {
         "summary": "Channels queries all the IBC channels of a chain.",
-        "operationId": "Query_Channels",
+        "operationId": "/ibc.core.channel.v1.QueryChannelsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -32,7 +32,6 @@
         "parameters": [
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -40,7 +39,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -48,7 +46,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -56,14 +53,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -77,7 +72,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}": {
       "get": {
         "summary": "Channel queries an IBC Channel.",
-        "operationId": "Query_Channel",
+        "operationId": "/ibc.core.channel.v1.QueryChannelRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -116,7 +111,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/client_state": {
       "get": {
         "summary": "ChannelClientState queries for the client state for the channel associated\nwith the provided channel identifiers.",
-        "operationId": "Query_ChannelClientState",
+        "operationId": "/ibc.core.channel.v1.QueryChannelClientStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -155,7 +150,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/consensus_state/revision/{revision_number}/height/{revision_height}": {
       "get": {
         "summary": "ChannelConsensusState queries for the consensus state for the channel\nassociated with the provided channel identifiers.",
-        "operationId": "Query_ChannelConsensusState",
+        "operationId": "/ibc.core.channel.v1.QueryChannelConsensusStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -210,7 +205,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/next_sequence": {
       "get": {
         "summary": "NextSequenceReceive returns the next receive sequence for a given channel.",
-        "operationId": "Query_NextSequenceReceive",
+        "operationId": "/ibc.core.channel.v1.QueryNextSequenceReceiveRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -249,7 +244,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/next_sequence_send": {
       "get": {
         "summary": "NextSequenceSend returns the next send sequence for a given channel.",
-        "operationId": "Query_NextSequenceSend",
+        "operationId": "/ibc.core.channel.v1.QueryNextSequenceSendRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -288,7 +283,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_acknowledgements": {
       "get": {
         "summary": "PacketAcknowledgements returns all the packet acknowledgements associated\nwith a channel.",
-        "operationId": "Query_PacketAcknowledgements",
+        "operationId": "/ibc.core.channel.v1.QueryPacketAcknowledgementsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -320,7 +315,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -328,7 +322,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -336,7 +329,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -344,14 +336,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -377,7 +367,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_acks/{sequence}": {
       "get": {
         "summary": "PacketAcknowledgement queries a stored packet acknowledgement hash.",
-        "operationId": "Query_PacketAcknowledgement",
+        "operationId": "/ibc.core.channel.v1.QueryPacketAcknowledgementRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -424,7 +414,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_commitments": {
       "get": {
         "summary": "PacketCommitments returns all the packet commitments hashes associated\nwith a channel.",
-        "operationId": "Query_PacketCommitments",
+        "operationId": "/ibc.core.channel.v1.QueryPacketCommitmentsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -456,7 +446,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -464,7 +453,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -472,7 +460,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -480,14 +467,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -501,7 +486,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_commitments/{packet_ack_sequences}/unreceived_acks": {
       "get": {
         "summary": "UnreceivedAcks returns all the unreceived IBC acknowledgements associated\nwith a channel and sequences.",
-        "operationId": "Query_UnreceivedAcks",
+        "operationId": "/ibc.core.channel.v1.QueryUnreceivedAcksRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -553,7 +538,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_commitments/{packet_commitment_sequences}/unreceived_packets": {
       "get": {
         "summary": "UnreceivedPackets returns all the unreceived IBC packets associated with a\nchannel and sequences.",
-        "operationId": "Query_UnreceivedPackets",
+        "operationId": "/ibc.core.channel.v1.QueryUnreceivedPacketsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -605,7 +590,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_commitments/{sequence}": {
       "get": {
         "summary": "PacketCommitment queries a stored packet commitment hash.",
-        "operationId": "Query_PacketCommitment",
+        "operationId": "/ibc.core.channel.v1.QueryPacketCommitmentRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -652,7 +637,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_receipts/{sequence}": {
       "get": {
         "summary": "PacketReceipt queries if a given packet sequence has been received on the\nqueried chain",
-        "operationId": "Query_PacketReceipt",
+        "operationId": "/ibc.core.channel.v1.QueryPacketReceiptRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -699,7 +684,7 @@
     "/ibc/core/channel/v1/connections/{connection}/channels": {
       "get": {
         "summary": "ConnectionChannels queries all the channels associated with a connection\nend.",
-        "operationId": "Query_ConnectionChannels",
+        "operationId": "/ibc.core.channel.v1.QueryConnectionChannelsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -724,7 +709,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -732,7 +716,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -740,7 +723,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -748,14 +730,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"

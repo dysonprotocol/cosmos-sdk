@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.storage.v1.QueryMetricsRequest",
+    "definitions": {
+        "dysonprotocol.storage.v1.QueryMetricsRequest": {
+            "properties": {
+                "owner": {
+                    "type": "string",
+                    "description": "The address of the owner to query storage metrics for."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Metrics Request",
+            "description": "QueryMetricsRequest is request type for the Query/Metrics RPC method."
+        }
+    }
+}

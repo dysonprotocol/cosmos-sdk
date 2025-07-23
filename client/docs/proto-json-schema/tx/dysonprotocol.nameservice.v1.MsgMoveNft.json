@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgMoveNft",
+    "definitions": {
+        "dysonprotocol.nameservice.v1.MsgMoveNft": {
+            "properties": {
+                "owner": {
+                    "type": "string",
+                    "description": "Signer owning class root name"
+                },
+                "class_id": {
+                    "type": "string",
+                    "description": "NFT class ID"
+                },
+                "nft_id": {
+                    "type": "string",
+                    "description": "NFT ID"
+                },
+                "to_address": {
+                    "type": "string",
+                    "description": "Destination holder (non-module)"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Msg Move Nft",
+            "description": "MsgMoveNft force moves an NFT between accounts when signer owns the NFT class."
+        }
+    }
+}

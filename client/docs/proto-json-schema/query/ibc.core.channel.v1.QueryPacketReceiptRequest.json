@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ibc.core.channel.v1.QueryPacketReceiptRequest",
+    "definitions": {
+        "ibc.core.channel.v1.QueryPacketReceiptRequest": {
+            "properties": {
+                "port_id": {
+                    "type": "string",
+                    "description": "port unique identifier"
+                },
+                "channel_id": {
+                    "type": "string",
+                    "description": "channel unique identifier"
+                },
+                "sequence": {
+                    "type": "string",
+                    "description": "packet sequence"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Packet Receipt Request",
+            "description": "QueryPacketReceiptRequest is the request type for the Query/PacketReceipt RPC method"
+        }
+    }
+}

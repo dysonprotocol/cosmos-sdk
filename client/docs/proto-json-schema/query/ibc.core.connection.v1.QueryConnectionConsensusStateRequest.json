@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ibc.core.connection.v1.QueryConnectionConsensusStateRequest",
+    "definitions": {
+        "ibc.core.connection.v1.QueryConnectionConsensusStateRequest": {
+            "properties": {
+                "connection_id": {
+                    "type": "string",
+                    "description": "connection identifier"
+                },
+                "revision_number": {
+                    "type": "string"
+                },
+                "revision_height": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Connection Consensus State Request",
+            "description": "QueryConnectionConsensusStateRequest is the request type for the Query/ConnectionConsensusState RPC method"
+        }
+    }
+}

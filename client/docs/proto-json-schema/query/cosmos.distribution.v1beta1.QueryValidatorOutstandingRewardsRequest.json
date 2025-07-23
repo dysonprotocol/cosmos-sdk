@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.distribution.v1beta1.QueryValidatorOutstandingRewardsRequest",
+    "definitions": {
+        "cosmos.distribution.v1beta1.QueryValidatorOutstandingRewardsRequest": {
+            "properties": {
+                "validator_address": {
+                    "type": "string",
+                    "description": "validator_address defines the validator address to query for."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Validator Outstanding Rewards Request",
+            "description": "QueryValidatorOutstandingRewardsRequest is the request type for the Query/ValidatorOutstandingRewards RPC method."
+        }
+    }
+}

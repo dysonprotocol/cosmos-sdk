@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.script.v1.WebRequest",
+    "definitions": {
+        "dysonprotocol.script.v1.WebRequest": {
+            "properties": {
+                "address_or_name": {
+                    "type": "string",
+                    "description": "address is the account address of the script."
+                },
+                "httprequest": {
+                    "type": "string",
+                    "description": "httprequest is the http request."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Web Request",
+            "description": "WebRequest is the Service/Web request type."
+        }
+    }
+}

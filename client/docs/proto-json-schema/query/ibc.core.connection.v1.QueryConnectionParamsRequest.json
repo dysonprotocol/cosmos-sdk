@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ibc.core.connection.v1.QueryConnectionParamsRequest",
+    "definitions": {
+        "ibc.core.connection.v1.QueryConnectionParamsRequest": {
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Connection Params Request",
+            "description": "QueryConnectionParamsRequest is the request type for the Query/ConnectionParams RPC method."
+        }
+    }
+}

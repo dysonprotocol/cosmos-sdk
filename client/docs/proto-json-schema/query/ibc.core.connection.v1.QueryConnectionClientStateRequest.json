@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ibc.core.connection.v1.QueryConnectionClientStateRequest",
+    "definitions": {
+        "ibc.core.connection.v1.QueryConnectionClientStateRequest": {
+            "properties": {
+                "connection_id": {
+                    "type": "string",
+                    "description": "connection identifier"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Connection Client State Request",
+            "description": "QueryConnectionClientStateRequest is the request type for the Query/ConnectionClientState RPC method"
+        }
+    }
+}

@@ -14,7 +14,7 @@
     "/dysonprotocol/nft/v1beta1/balance/{owner}/{class_id}": {
       "get": {
         "summary": "Balance queries the number of NFTs of a given class owned by the owner,\nsame as balanceOf in ERC721",
-        "operationId": "Query_Balance",
+        "operationId": "/dysonprotocol.nft.v1beta1.QueryBalanceRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -53,7 +53,7 @@
     "/dysonprotocol/nft/v1beta1/classes": {
       "get": {
         "summary": "Classes queries all NFT classes",
-        "operationId": "Query_Classes",
+        "operationId": "/dysonprotocol.nft.v1beta1.QueryClassesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -71,7 +71,6 @@
         "parameters": [
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -79,7 +78,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -87,7 +85,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -95,14 +92,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -116,7 +111,7 @@
     "/dysonprotocol/nft/v1beta1/classes/{class_id}": {
       "get": {
         "summary": "Class queries an NFT class based on its id",
-        "operationId": "Query_Class",
+        "operationId": "/dysonprotocol.nft.v1beta1.QueryClassRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -148,7 +143,7 @@
     "/dysonprotocol/nft/v1beta1/nfts": {
       "get": {
         "summary": "NFTs queries all NFTs of a given class or owner,choose at least one of the\ntwo, similar to tokenByIndex in ERC721Enumerable",
-        "operationId": "Query_NFTs",
+        "operationId": "/dysonprotocol.nft.v1beta1.QueryNFTsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -180,7 +175,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -188,7 +182,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -196,7 +189,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -204,14 +196,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -225,7 +215,7 @@
     "/dysonprotocol/nft/v1beta1/nfts/{class_id}/{id}": {
       "get": {
         "summary": "NFT queries an NFT based on its class and id.",
-        "operationId": "Query_NFT",
+        "operationId": "/dysonprotocol.nft.v1beta1.QueryNFTRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -264,7 +254,7 @@
     "/dysonprotocol/nft/v1beta1/owner/{class_id}/{id}": {
       "get": {
         "summary": "Owner queries the owner of the NFT based on its class and id, same as\nownerOf in ERC721",
-        "operationId": "Query_Owner",
+        "operationId": "/dysonprotocol.nft.v1beta1.QueryOwnerRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -303,7 +293,7 @@
     "/dysonprotocol/nft/v1beta1/supply/{class_id}": {
       "get": {
         "summary": "Supply queries the number of NFTs from the given class, same as totalSupply\nof ERC721.",
-        "operationId": "Query_Supply",
+        "operationId": "/dysonprotocol.nft.v1beta1.QuerySupplyRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

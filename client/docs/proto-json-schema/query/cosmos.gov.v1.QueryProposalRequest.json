@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.gov.v1.QueryProposalRequest",
+    "definitions": {
+        "cosmos.gov.v1.QueryProposalRequest": {
+            "properties": {
+                "proposal_id": {
+                    "type": "string",
+                    "description": "proposal_id defines the unique id of the proposal."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Proposal Request",
+            "description": "QueryProposalRequest is the request type for the Query/Proposal RPC method."
+        }
+    }
+}

@@ -23,8 +23,9 @@ service Msg {
   // ExecScript executes a script by calling a function with arguments.
   rpc ExecScript(MsgExec) returns (MsgExecResponse);
 
-  // Create a new script with new address = hash(creator + content), a new authz
-  // updatescript permission will also be created for the creator
+  // CreateNewScript | Create a new script with new address = hash(creator +
+  // content), a new authz updatescript permission will also be created for the
+  // creator
   rpc CreateNewScript(MsgCreateNewScript) returns (MsgCreateNewScriptResponse);
 
   // UpdateParams defines a governance operation for updating the x/script

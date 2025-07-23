@@ -1,0 +1,64 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.storage.v1.QueryStorageListRequest",
+    "definitions": {
+        "dysonprotocol.storage.v1.QueryStorageListRequest": {
+            "properties": {
+                "owner": {
+                    "type": "string",
+                    "description": "The address of the owner of the storage entry."
+                },
+                "index_prefix": {
+                    "type": "string",
+                    "description": "The index prefix of the storage entry to filter by."
+                },
+                "filter": {
+                    "type": "string",
+                    "description": "The optional gjson filter to filter the storage entry. Supports GJSON query syntax with comparison operators: - Equality: status == \"active\", age == 18 - Inequality: type != \"test\" - Comparison: age > 18, count <= 100, score >= 50 - Pattern matching: name % \"John*\" (like), tag !% \"*beta*\" (not like) Only entries matching the filter will be included in results."
+                },
+                "extract": {
+                    "type": "string",
+                    "description": "The optional gjson path to extract from the storage entry. For example, Given data like {\"user\": {\"name\": \"jeff\"}}, the extract \"user.name\" will return \"jeff\"."
+                },
+                "pagination": {
+                    "$ref": "#/definitions/cosmos.base.query.v1beta1.PageRequest",
+                    "additionalProperties": false,
+                    "description": "The pagination request."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Storage List Request"
+        },
+        "cosmos.base.query.v1beta1.PageRequest": {
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "description": "key is a value returned in PageResponse.next_key to begin querying the next page most efficiently. Only one of offset or key should be set.",
+                    "format": "binary",
+                    "binaryEncoding": "base64"
+                },
+                "offset": {
+                    "type": "string",
+                    "description": "offset is a numeric offset that can be used when key is unavailable. It is less efficient than using key. Only one of offset or key should be set."
+                },
+                "limit": {
+                    "type": "string",
+                    "description": "limit is the total number of results to be returned in the result page. If left empty it will default to a value to be set by each app."
+                },
+                "count_total": {
+                    "type": "boolean",
+                    "description": "count_total is set to true  to indicate that the result set should include a count of the total number of items available for pagination in UIs. count_total is only respected when offset is used. It is ignored when key is set."
+                },
+                "reverse": {
+                    "type": "boolean",
+                    "description": "reverse is set to true if results are to be returned in the descending order."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Page Request",
+            "description": "PageRequest is to be embedded in gRPC request messages for efficient pagination. Ex:  message SomeRequest {          Foo some_parameter = 1;          PageRequest pagination = 2;  }"
+        }
+    }
+}

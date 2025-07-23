@@ -14,7 +14,7 @@
     "/cosmos/auth/v1beta1/account_info/{address}": {
       "get": {
         "summary": "AccountInfo queries account info which is common to all account types.",
-        "operationId": "Query_AccountInfo",
+        "operationId": "/cosmos.auth.v1beta1.QueryAccountInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -47,7 +47,7 @@
       "get": {
         "summary": "Accounts returns all the existing accounts.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_Accounts",
+        "operationId": "/cosmos.auth.v1beta1.QueryAccountsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -65,7 +65,6 @@
         "parameters": [
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -73,7 +72,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -81,7 +79,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -89,14 +86,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -110,7 +105,7 @@
     "/cosmos/auth/v1beta1/accounts/{address}": {
       "get": {
         "summary": "Account returns account details based on address.",
-        "operationId": "Query_Account",
+        "operationId": "/cosmos.auth.v1beta1.QueryAccountRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -142,7 +137,7 @@
     "/cosmos/auth/v1beta1/address_by_id/{id}": {
       "get": {
         "summary": "AccountAddressByID returns account address based on account number.",
-        "operationId": "Query_AccountAddressByID",
+        "operationId": "/cosmos.auth.v1beta1.QueryAccountAddressByIDRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -183,7 +178,7 @@
     "/cosmos/auth/v1beta1/bech32": {
       "get": {
         "summary": "Bech32Prefix queries bech32Prefix",
-        "operationId": "Query_Bech32Prefix",
+        "operationId": "/cosmos.auth.v1beta1.QueryBech32PrefixRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -206,7 +201,7 @@
     "/cosmos/auth/v1beta1/bech32/{address_bytes}": {
       "get": {
         "summary": "AddressBytesToString converts Account Address bytes to string",
-        "operationId": "Query_AddressBytesToString",
+        "operationId": "/cosmos.auth.v1beta1.QueryAddressBytesToStringRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -238,7 +233,7 @@
     "/cosmos/auth/v1beta1/bech32/{address_string}": {
       "get": {
         "summary": "AddressStringToBytes converts Address string to bytes",
-        "operationId": "Query_AddressStringToBytes",
+        "operationId": "/cosmos.auth.v1beta1.QueryAddressStringToBytesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -269,7 +264,7 @@
     "/cosmos/auth/v1beta1/module_accounts": {
       "get": {
         "summary": "ModuleAccounts returns all the existing module accounts.",
-        "operationId": "Query_ModuleAccounts",
+        "operationId": "/cosmos.auth.v1beta1.QueryModuleAccountsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -292,7 +287,7 @@
     "/cosmos/auth/v1beta1/module_accounts/{name}": {
       "get": {
         "summary": "ModuleAccountByName returns the module account info by module name",
-        "operationId": "Query_ModuleAccountByName",
+        "operationId": "/cosmos.auth.v1beta1.QueryModuleAccountByNameRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -323,7 +318,7 @@
     "/cosmos/auth/v1beta1/params": {
       "get": {
         "summary": "Params queries all parameters.",
-        "operationId": "Query_Params",
+        "operationId": "/cosmos.auth.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

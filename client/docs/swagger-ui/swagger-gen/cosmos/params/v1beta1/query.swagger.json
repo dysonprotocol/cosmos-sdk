@@ -14,7 +14,7 @@
     "/cosmos/params/v1beta1/params": {
       "get": {
         "summary": "Params queries a specific parameter of a module, given its subspace and\nkey.",
-        "operationId": "Query_Params",
+        "operationId": "/cosmos.params.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -53,7 +53,7 @@
     "/cosmos/params/v1beta1/subspaces": {
       "get": {
         "summary": "Subspaces queries for all registered subspaces and all keys for a subspace.",
-        "operationId": "Query_Subspaces",
+        "operationId": "/cosmos.params.v1beta1.QuerySubspacesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

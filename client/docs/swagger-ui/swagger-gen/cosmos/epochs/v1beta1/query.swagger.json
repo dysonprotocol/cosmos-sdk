@@ -14,7 +14,7 @@
     "/cosmos/epochs/v1beta1/current_epoch": {
       "get": {
         "summary": "CurrentEpoch provide current epoch of specified identifier",
-        "operationId": "Query_CurrentEpoch",
+        "operationId": "/cosmos.epochs.v1beta1.QueryCurrentEpochRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -45,7 +45,7 @@
     "/cosmos/epochs/v1beta1/epochs": {
       "get": {
         "summary": "EpochInfos provide running epochInfos",
-        "operationId": "Query_EpochInfos",
+        "operationId": "/cosmos.epochs.v1beta1.QueryEpochInfosRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

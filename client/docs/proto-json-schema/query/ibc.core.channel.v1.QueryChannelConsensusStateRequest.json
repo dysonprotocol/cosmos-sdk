@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ibc.core.channel.v1.QueryChannelConsensusStateRequest",
+    "definitions": {
+        "ibc.core.channel.v1.QueryChannelConsensusStateRequest": {
+            "properties": {
+                "port_id": {
+                    "type": "string",
+                    "description": "port unique identifier"
+                },
+                "channel_id": {
+                    "type": "string",
+                    "description": "channel unique identifier"
+                },
+                "revision_number": {
+                    "type": "string",
+                    "description": "revision number of the consensus state"
+                },
+                "revision_height": {
+                    "type": "string",
+                    "description": "revision height of the consensus state"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Channel Consensus State Request",
+            "description": "QueryChannelConsensusStateRequest is the request type for the Query/ConsensusState RPC method"
+        }
+    }
+}

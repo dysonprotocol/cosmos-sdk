@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.upgrade.v1beta1.QueryCurrentPlanRequest",
+    "definitions": {
+        "cosmos.upgrade.v1beta1.QueryCurrentPlanRequest": {
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Current Plan Request",
+            "description": "QueryCurrentPlanRequest is the request type for the Query/CurrentPlan RPC method."
+        }
+    }
+}

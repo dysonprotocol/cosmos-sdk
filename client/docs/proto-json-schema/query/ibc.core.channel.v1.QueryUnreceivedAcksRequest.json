@@ -1,0 +1,29 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ibc.core.channel.v1.QueryUnreceivedAcksRequest",
+    "definitions": {
+        "ibc.core.channel.v1.QueryUnreceivedAcksRequest": {
+            "properties": {
+                "port_id": {
+                    "type": "string",
+                    "description": "port unique identifier"
+                },
+                "channel_id": {
+                    "type": "string",
+                    "description": "channel unique identifier"
+                },
+                "packet_ack_sequences": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "list of acknowledgement sequences"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Unreceived Acks Request",
+            "description": "QueryUnreceivedAcks is the request type for the Query/UnreceivedAcks RPC method"
+        }
+    }
+}

@@ -14,7 +14,7 @@
     "/dysonprotocol/storage/v1/metrics": {
       "get": {
         "summary": "Metrics queries the storage metrics for a given owner address",
-        "operationId": "Query_Metrics",
+        "operationId": "/dysonprotocol.storage.v1.QueryMetricsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -46,7 +46,7 @@
     "/dysonprotocol/storage/v1/params": {
       "get": {
         "summary": "Params queries the storage module parameters",
-        "operationId": "Query_Params",
+        "operationId": "/dysonprotocol.storage.v1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -69,7 +69,7 @@
     "/dysonprotocol/storage/v1/storage_get": {
       "get": {
         "summary": "Gets the stored data for the given owner and index.",
-        "operationId": "Query_StorageGet",
+        "operationId": "/dysonprotocol.storage.v1.QueryStorageGetRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -115,7 +115,7 @@
     "/dysonprotocol/storage/v1/storage_list": {
       "get": {
         "summary": "Lists all storage entries for the owner under a given index prefix. Use\nfilter and extract to filter and extract the data and iterate over the data\nefficiently.",
-        "operationId": "Query_StorageList",
+        "operationId": "/dysonprotocol.storage.v1.QueryStorageListRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -161,7 +161,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -169,7 +168,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -177,7 +175,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -185,14 +182,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"

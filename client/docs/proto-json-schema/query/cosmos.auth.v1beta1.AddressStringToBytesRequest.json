@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.auth.v1beta1.AddressStringToBytesRequest",
+    "definitions": {
+        "cosmos.auth.v1beta1.AddressStringToBytesRequest": {
+            "properties": {
+                "address_string": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Address String To Bytes Request",
+            "description": "AddressStringToBytesRequest is the request type for AccountBytes rpc method."
+        }
+    }
+}

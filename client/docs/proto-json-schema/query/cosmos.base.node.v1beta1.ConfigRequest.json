@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.base.node.v1beta1.ConfigRequest",
+    "definitions": {
+        "cosmos.base.node.v1beta1.ConfigRequest": {
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Config Request",
+            "description": "ConfigRequest defines the request structure for the Config gRPC query."
+        }
+    }
+}

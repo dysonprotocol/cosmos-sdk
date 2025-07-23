@@ -14,7 +14,7 @@
     "/ibc/apps/transfer/v1/channels/{channel_id}/ports/{port_id}/escrow_address": {
       "get": {
         "summary": "EscrowAddress returns the escrow address for a particular port and channel\nid.",
-        "operationId": "Query_EscrowAddress",
+        "operationId": "/ibc.applications.transfer.v1.QueryEscrowAddressRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -53,7 +53,7 @@
     "/ibc/apps/transfer/v1/denom_hashes/{trace}": {
       "get": {
         "summary": "DenomHash queries a denomination hash information.",
-        "operationId": "Query_DenomHash",
+        "operationId": "/ibc.applications.transfer.v1.QueryDenomHashRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -85,7 +85,7 @@
     "/ibc/apps/transfer/v1/denoms": {
       "get": {
         "summary": "Denoms queries all denominations",
-        "operationId": "Query_Denoms",
+        "operationId": "/ibc.applications.transfer.v1.QueryDenomsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -103,7 +103,6 @@
         "parameters": [
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -111,7 +110,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -119,7 +117,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -127,14 +124,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -148,7 +143,7 @@
     "/ibc/apps/transfer/v1/denoms/{hash}": {
       "get": {
         "summary": "Denom queries a denomination",
-        "operationId": "Query_Denom",
+        "operationId": "/ibc.applications.transfer.v1.QueryDenomRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -180,7 +175,7 @@
     "/ibc/apps/transfer/v1/params": {
       "get": {
         "summary": "Params queries all parameters of the ibc-transfer module.",
-        "operationId": "Query_Params",
+        "operationId": "/ibc.applications.transfer.v1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -203,7 +198,7 @@
     "/ibc/apps/transfer/v1/total_escrow/{denom}": {
       "get": {
         "summary": "TotalEscrowForDenom returns the total amount of tokens in escrow based on\nthe denom.",
-        "operationId": "Query_TotalEscrowForDenom",
+        "operationId": "/ibc.applications.transfer.v1.QueryTotalEscrowForDenomRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

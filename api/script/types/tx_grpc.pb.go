@@ -38,8 +38,9 @@ type MsgClient interface {
 	UpdateScript(ctx context.Context, in *MsgUpdateScript, opts ...grpc.CallOption) (*MsgUpdateScriptResponse, error)
 	// ExecScript executes a script by calling a function with arguments.
 	ExecScript(ctx context.Context, in *MsgExec, opts ...grpc.CallOption) (*MsgExecResponse, error)
-	// Create a new script with new address = hash(creator + content), a new authz
-	// updatescript permission will also be created for the creator
+	// CreateNewScript | Create a new script with new address = hash(creator +
+	// content), a new authz updatescript permission will also be created for the
+	// creator
 	CreateNewScript(ctx context.Context, in *MsgCreateNewScript, opts ...grpc.CallOption) (*MsgCreateNewScriptResponse, error)
 	// UpdateParams defines a governance operation for updating the x/script
 	// module parameters. The authority defaults to the x/gov module account.
@@ -105,8 +106,9 @@ type MsgServer interface {
 	UpdateScript(context.Context, *MsgUpdateScript) (*MsgUpdateScriptResponse, error)
 	// ExecScript executes a script by calling a function with arguments.
 	ExecScript(context.Context, *MsgExec) (*MsgExecResponse, error)
-	// Create a new script with new address = hash(creator + content), a new authz
-	// updatescript permission will also be created for the creator
+	// CreateNewScript | Create a new script with new address = hash(creator +
+	// content), a new authz updatescript permission will also be created for the
+	// creator
 	CreateNewScript(context.Context, *MsgCreateNewScript) (*MsgCreateNewScriptResponse, error)
 	// UpdateParams defines a governance operation for updating the x/script
 	// module parameters. The authority defaults to the x/gov module account.

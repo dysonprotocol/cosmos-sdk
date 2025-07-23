@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.circuit.v1.QueryAccountRequest",
+    "definitions": {
+        "cosmos.circuit.v1.QueryAccountRequest": {
+            "properties": {
+                "address": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Account Request",
+            "description": "QueryAccountRequest is the request type for the Query/Account RPC method."
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ibc.core.channel.v2.QueryUnreceivedPacketsRequest",
+    "definitions": {
+        "ibc.core.channel.v2.QueryUnreceivedPacketsRequest": {
+            "properties": {
+                "client_id": {
+                    "type": "string",
+                    "description": "client unique identifier"
+                },
+                "sequences": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "list of packet sequences"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Unreceived Packets Request",
+            "description": "QueryUnreceivedPacketsRequest is the request type for the Query/UnreceivedPackets RPC method"
+        }
+    }
+}

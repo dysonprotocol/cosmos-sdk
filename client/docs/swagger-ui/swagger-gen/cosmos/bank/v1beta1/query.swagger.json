@@ -15,7 +15,7 @@
       "get": {
         "summary": "AllBalances queries the balance of all coins for a single account.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_AllBalances",
+        "operationId": "/cosmos.bank.v1beta1.QueryAllBalancesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -40,7 +40,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -48,7 +47,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -56,7 +54,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -64,14 +61,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -92,7 +87,7 @@
     "/cosmos/bank/v1beta1/balances/{address}/by_denom": {
       "get": {
         "summary": "Balance queries the balance of a single coin for a single account.",
-        "operationId": "Query_Balance",
+        "operationId": "/cosmos.bank.v1beta1.QueryBalanceRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -132,7 +127,7 @@
       "get": {
         "summary": "DenomOwners queries for all account addresses that own a particular token\ndenomination.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_DenomOwners",
+        "operationId": "/cosmos.bank.v1beta1.QueryDenomOwnersRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -157,7 +152,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -165,7 +159,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -173,7 +166,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -181,14 +173,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -202,7 +192,7 @@
     "/cosmos/bank/v1beta1/denom_owners_by_query": {
       "get": {
         "summary": "DenomOwnersByQuery queries for all account addresses that own a particular\ntoken denomination.",
-        "operationId": "Query_DenomOwnersByQuery",
+        "operationId": "/cosmos.bank.v1beta1.QueryDenomOwnersByQueryRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -227,7 +217,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -235,7 +224,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -243,7 +231,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -251,14 +238,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -272,7 +257,7 @@
     "/cosmos/bank/v1beta1/denoms_metadata": {
       "get": {
         "summary": "DenomsMetadata queries the client metadata for all registered coin\ndenominations.",
-        "operationId": "Query_DenomsMetadata",
+        "operationId": "/cosmos.bank.v1beta1.QueryDenomsMetadataRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -290,7 +275,6 @@
         "parameters": [
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -298,7 +282,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -306,7 +289,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -314,14 +296,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -335,7 +315,7 @@
     "/cosmos/bank/v1beta1/denoms_metadata/{denom}": {
       "get": {
         "summary": "DenomMetadata queries the client metadata of a given coin denomination.",
-        "operationId": "Query_DenomMetadata",
+        "operationId": "/cosmos.bank.v1beta1.QueryDenomMetadataRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -367,7 +347,7 @@
     "/cosmos/bank/v1beta1/denoms_metadata_by_query_string": {
       "get": {
         "summary": "DenomMetadataByQueryString queries the client metadata of a given coin\ndenomination.",
-        "operationId": "Query_DenomMetadataByQueryString",
+        "operationId": "/cosmos.bank.v1beta1.QueryDenomMetadataByQueryStringRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -399,7 +379,7 @@
     "/cosmos/bank/v1beta1/params": {
       "get": {
         "summary": "Params queries the parameters of x/bank module.",
-        "operationId": "Query_Params",
+        "operationId": "/cosmos.bank.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -423,7 +403,7 @@
       "get": {
         "summary": "SendEnabled queries for SendEnabled entries.",
         "description": "This query only returns denominations that have specific SendEnabled\nsettings. Any denomination that does not have a specific setting will use\nthe default params.default_send_enabled, and will not be returned by this\nquery.",
-        "operationId": "Query_SendEnabled",
+        "operationId": "/cosmos.bank.v1beta1.QuerySendEnabledRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -452,7 +432,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -460,7 +439,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -468,7 +446,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -476,14 +453,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -498,7 +473,7 @@
       "get": {
         "summary": "SpendableBalances queries the spendable balance of all coins for a single\naccount.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_SpendableBalances",
+        "operationId": "/cosmos.bank.v1beta1.QuerySpendableBalancesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -523,7 +498,6 @@
           },
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -531,7 +505,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -539,7 +512,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -547,14 +519,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -569,7 +539,7 @@
       "get": {
         "summary": "SpendableBalanceByDenom queries the spendable balance of a single denom for\na single account.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_SpendableBalanceByDenom",
+        "operationId": "/cosmos.bank.v1beta1.QuerySpendableBalanceByDenomRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -609,7 +579,7 @@
       "get": {
         "summary": "TotalSupply queries the total supply of all coins.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_TotalSupply",
+        "operationId": "/cosmos.bank.v1beta1.QueryTotalSupplyRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -627,7 +597,6 @@
         "parameters": [
           {
             "name": "pagination.key",
-            "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -635,7 +604,6 @@
           },
           {
             "name": "pagination.offset",
-            "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -643,7 +611,6 @@
           },
           {
             "name": "pagination.limit",
-            "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -651,14 +618,12 @@
           },
           {
             "name": "pagination.count_total",
-            "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set.",
             "in": "query",
             "required": false,
             "type": "boolean"
           },
           {
             "name": "pagination.reverse",
-            "description": "reverse is set to true if results are to be returned in the descending\norder.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -673,7 +638,7 @@
       "get": {
         "summary": "SupplyOf queries the supply of a single coin.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "Query_SupplyOf",
+        "operationId": "/cosmos.bank.v1beta1.QuerySupplyOfRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

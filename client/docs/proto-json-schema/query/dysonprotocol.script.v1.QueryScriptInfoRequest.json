@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/dysonprotocol.script.v1.QueryScriptInfoRequest",
+    "definitions": {
+        "dysonprotocol.script.v1.QueryScriptInfoRequest": {
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "description": "address is the account address of the script."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Script Info Request",
+            "description": "QueryScriptInfoRequest is the Query/ScriptInfo request type."
+        }
+    }
+}

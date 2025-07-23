@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.protocolpool.v1.QueryCommunityPoolRequest",
+    "definitions": {
+        "cosmos.protocolpool.v1.QueryCommunityPoolRequest": {
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Community Pool Request",
+            "description": "QueryCommunityPoolRequest is the request type for the Query/CommunityPool RPC method."
+        }
+    }
+}

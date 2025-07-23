@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.group.v1.MsgCreateGroupWithPolicy",
+    "definitions": {
+        "cosmos.group.v1.MsgCreateGroupWithPolicy": {
+            "properties": {
+                "admin": {
+                    "type": "string",
+                    "description": "admin is the account address of the group and group policy admin."
+                },
+                "members": {
+                    "items": {
+                        "$ref": "#/definitions/cosmos.group.v1.MemberRequest"
+                    },
+                    "additionalProperties": false,
+                    "type": "array",
+                    "description": "members defines the group members."
+                },
+                "group_metadata": {
+                    "type": "string",
+                    "description": "group_metadata is any arbitrary metadata attached to the group."
+                },
+                "group_policy_metadata": {
+                    "type": "string",
+                    "description": "group_policy_metadata is any arbitrary metadata attached to the group policy."
+                },
+                "group_policy_as_admin": {
+                    "type": "boolean",
+                    "description": "group_policy_as_admin is a boolean field, if set to true, the group policy account address will be used as group and group policy admin."
+                },
+                "decision_policy": {
+                    "properties": {
+                        "type_url": {
+                            "type": "string",
+                            "description": "The type url prefixed with a slash, like '/cosmos.bank.v1beta1.MsgSend'"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Must be a valid serialized protocol buffer of the above specified type.",
+                            "format": "binary",
+                            "binaryEncoding": "base64"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "type": "object",
+                    "description": "decision_policy specifies the group policy's decision policy."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Msg Create Group With Policy",
+            "description": "MsgCreateGroupWithPolicy is the Msg/CreateGroupWithPolicy request type."
+        },
+        "cosmos.group.v1.MemberRequest": {
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "description": "address is the member's account address."
+                },
+                "weight": {
+                    "type": "string",
+                    "description": "weight is the member's voting weight that should be greater than 0."
+                },
+                "metadata": {
+                    "type": "string",
+                    "description": "metadata is any arbitrary metadata attached to the member."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Member Request",
+            "description": "MemberRequest represents a group member to be used in Msg server requests. Contrary to `Member`, it doesn't have any `added_at` field since this field cannot be set as part of requests."
+        }
+    }
+}

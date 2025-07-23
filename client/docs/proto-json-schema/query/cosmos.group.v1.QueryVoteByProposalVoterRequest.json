@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/cosmos.group.v1.QueryVoteByProposalVoterRequest",
+    "definitions": {
+        "cosmos.group.v1.QueryVoteByProposalVoterRequest": {
+            "properties": {
+                "proposal_id": {
+                    "type": "string",
+                    "description": "proposal_id is the unique ID of a proposal."
+                },
+                "voter": {
+                    "type": "string",
+                    "description": "voter is a proposal voter account address."
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Query Vote By Proposal Voter Request",
+            "description": "QueryVoteByProposalVoterRequest is the Query/VoteByProposalVoter request type."
+        }
+    }
+}

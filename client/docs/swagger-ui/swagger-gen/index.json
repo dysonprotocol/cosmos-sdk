@@ -2,14 +2,12 @@
   {"type":"directory","name":"cosmos","contents":[
     {"type":"directory","name":"auth","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"authz","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"autocli","contents":[
@@ -19,8 +17,7 @@
     ]},
     {"type":"directory","name":"bank","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"base","contents":[
@@ -35,38 +32,24 @@
         ]}
       ]}
     ]},
-    {"type":"directory","name":"benchmark","contents":[
-      {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"tx.swagger.json"}
-      ]}
-    ]},
     {"type":"directory","name":"circuit","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"consensus","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"counter","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
-      ]}
-    ]},
-    {"type":"directory","name":"crisis","contents":[
-      {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"distribution","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"epochs","contents":[
@@ -76,36 +59,30 @@
     ]},
     {"type":"directory","name":"evidence","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"feegrant","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"gov","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]},
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"group","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"mint","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"params","contents":[
@@ -115,8 +92,7 @@
     ]},
     {"type":"directory","name":"protocolpool","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"query","contents":[
@@ -126,63 +102,49 @@
     ]},
     {"type":"directory","name":"slashing","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"staking","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"tx","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"service.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"service.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"upgrade","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
-      ]}
-    ]},
-    {"type":"directory","name":"vesting","contents":[
-      {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]}
   ]},
   {"type":"directory","name":"dysonprotocol","contents":[
     {"type":"directory","name":"crontask","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"nameservice","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"nft","contents":[
       {"type":"directory","name":"v1beta1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"script","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
     {"type":"directory","name":"storage","contents":[
       {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"},
-        {"type":"file","name":"tx.swagger.json"}
+        {"type":"file","name":"query.swagger.json"}
       ]}
     ]}
   ]},
@@ -191,61 +153,45 @@
       {"type":"directory","name":"interchain_accounts","contents":[
         {"type":"directory","name":"controller","contents":[
           {"type":"directory","name":"v1","contents":[
-            {"type":"file","name":"query.swagger.json"},
-            {"type":"file","name":"tx.swagger.json"}
+            {"type":"file","name":"query.swagger.json"}
           ]}
         ]},
         {"type":"directory","name":"host","contents":[
           {"type":"directory","name":"v1","contents":[
-            {"type":"file","name":"query.swagger.json"},
-            {"type":"file","name":"tx.swagger.json"}
+            {"type":"file","name":"query.swagger.json"}
           ]}
         ]}
       ]},
       {"type":"directory","name":"transfer","contents":[
         {"type":"directory","name":"v1","contents":[
-          {"type":"file","name":"query.swagger.json"},
-          {"type":"file","name":"tx.swagger.json"}
+          {"type":"file","name":"query.swagger.json"}
         ]}
       ]}
     ]},
     {"type":"directory","name":"core","contents":[
       {"type":"directory","name":"channel","contents":[
         {"type":"directory","name":"v1","contents":[
-          {"type":"file","name":"query.swagger.json"},
-          {"type":"file","name":"tx.swagger.json"}
+          {"type":"file","name":"query.swagger.json"}
         ]},
         {"type":"directory","name":"v2","contents":[
-          {"type":"file","name":"query.swagger.json"},
-          {"type":"file","name":"tx.swagger.json"}
+          {"type":"file","name":"query.swagger.json"}
         ]}
       ]},
       {"type":"directory","name":"client","contents":[
         {"type":"directory","name":"v1","contents":[
-          {"type":"file","name":"query.swagger.json"},
-          {"type":"file","name":"tx.swagger.json"}
+          {"type":"file","name":"query.swagger.json"}
         ]},
         {"type":"directory","name":"v2","contents":[
-          {"type":"file","name":"query.swagger.json"},
-          {"type":"file","name":"tx.swagger.json"}
+          {"type":"file","name":"query.swagger.json"}
         ]}
       ]},
       {"type":"directory","name":"connection","contents":[
         {"type":"directory","name":"v1","contents":[
-          {"type":"file","name":"query.swagger.json"},
-          {"type":"file","name":"tx.swagger.json"}
-        ]}
-      ]}
-    ]},
-    {"type":"directory","name":"lightclients","contents":[
-      {"type":"directory","name":"wasm","contents":[
-        {"type":"directory","name":"v1","contents":[
-          {"type":"file","name":"query.swagger.json"},
-          {"type":"file","name":"tx.swagger.json"}
+          {"type":"file","name":"query.swagger.json"}
         ]}
       ]}
     ]}
   ]}
 ,
-  {"type":"report","directories":87,"files":73}
+  {"type":"report","directories":78,"files":37}
 ]
