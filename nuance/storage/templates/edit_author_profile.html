@@ -1,5 +1,157 @@
 <div>
-<input id="author" name="author" value="{{author_name}}" />
-<textarea id="post-content" name="content">{{content}}</textarea>
-<button id="save" disabled>Save</button>
-</div> 
+  <h1>Edit Profile for {{author_name}}</h1>
+  <textarea id="profile-content" name="content" rows="10">{{content}}</textarea>
+  <button id="saveButton" :disabled="$store.walletStore.isLoading || !$store.walletStore.activeWalletMeta">Save Profile</button>
+</div>
+
+<div>
+  <h2>Custom Pages</h2>
+  <div id="custom-pages-list">
+    <!-- Custom pages will be populated by JavaScript -->
+  </div>
+  
+  <h3>Add New Custom Page</h3>
+  <div>
+    <input type="text" id="new-page-path" placeholder="Path (e.g., 'about', 'contact')" maxlength="50">
+    <input type="text" id="new-page-title" placeholder="Page Title" maxlength="100">
+    <input type="number" id="new-page-post-id" placeholder="Post ID" min="1">
+    <button id="addPageButton" :disabled="$store.walletStore.isLoading || !$store.walletStore.activeWalletMeta">Add Page</button>
+  </div>
+</div>
+
+<script>
+  // Store custom pages data
+  const customPagesData = JSON.parse('{{custom_pages}}' || '[]');
+  
+  function renderCustomPages() {
+    const container = document.getElementById('custom-pages-list');
+    if (customPagesData.length === 0) {
+      container.innerHTML = '<p>No custom pages yet.</p>';
+      return;
+    }
+    
+    const pagesHtml = customPagesData.map(page => `
+      <div class="custom-page-item" data-path="${page.path}">
+        <strong>${page.title}</strong> 
+        <span>(${page.path} → Post #${page.post_id})</span>
+        <button onclick="removePage('${page.path}')" class="remove-page-btn">Remove</button>
+      </div>
+    `).join('');
+    
+    container.innerHTML = pagesHtml;
+  }
+  
+  function addPage() {
+    const path = document.getElementById('new-page-path').value.trim();
+    const title = document.getElementById('new-page-title').value.trim();
+    const postId = parseInt(document.getElementById('new-page-post-id').value);
+    
+    if (!path || !title || !postId) {
+      alert('Please fill in all fields');
+      return;
+    }
+    
+    // Validate path format
+    if (!/^[a-zA-Z0-9_-]+$/.test(path)) {
+      alert('Path must contain only letters, numbers, hyphens, and underscores');
+      return;
+    }
+    
+    // Check for duplicate paths
+    if (customPagesData.some(page => page.path === path)) {
+      alert('A page with this path already exists');
+      return;
+    }
+    
+    // Use the new wallet store method instead of deprecated runFunction
+    Alpine.store('walletStore').runDysonScript({
+      scriptAddress: window.scriptAddress,
+      functionName: "link_page",
+      kwargs: JSON.stringify({ 
+        path: path, 
+        title: title, 
+        post_id: postId, 
+        author: "{{author_name}}" 
+      }),
+      gasLimit: "auto",
+    })
+    .then((result) => {
+      if (result.success) {
+        customPagesData.push({ path, title, post_id: postId });
+        renderCustomPages();
+        // Clear form
+        document.getElementById('new-page-path').value = '';
+        document.getElementById('new-page-title').value = '';
+        document.getElementById('new-page-post-id').value = '';
+        alert("Custom page added successfully!");
+      } else {
+        throw new Error(result.rawLog || 'Transaction failed');
+      }
+    })
+    .catch((e) => {
+      console.error("Error adding custom page:", e);
+      alert("Failed to add custom page: " + e.message);
+    });
+  }
+  
+  function removePage(path) {
+    if (!confirm(`Remove custom page "${path}"?`)) return;
+    
+    // Use the new wallet store method instead of deprecated runFunction
+    Alpine.store('walletStore').runDysonScript({
+      scriptAddress: window.scriptAddress,
+      functionName: "unlink_page",
+      kwargs: JSON.stringify({ 
+        path: path, 
+        author: "{{author_name}}" 
+      }),
+      gasLimit: "auto",
+    })
+    .then((result) => {
+      if (result.success) {
+        const index = customPagesData.findIndex(page => page.path === path);
+        if (index > -1) {
+          customPagesData.splice(index, 1);
+          renderCustomPages();
+        }
+        alert("Custom page removed successfully!");
+      } else {
+        throw new Error(result.rawLog || 'Transaction failed');
+      }
+    })
+    .catch((e) => {
+      console.error("Error removing custom page:", e);
+      alert("Failed to remove custom page: " + e.message);
+    });
+  }
+  
+  // Initialize page
+  renderCustomPages();
+
+  document.getElementById("saveButton").addEventListener("click", () => {
+    const content = document.getElementById("profile-content").value;
+    const author = "{{author_name}}";
+
+    // Use the new wallet store method instead of deprecated runFunction
+    Alpine.store('walletStore').runDysonScript({
+      scriptAddress: window.scriptAddress,
+      functionName: "edit_author_profile",
+      kwargs: JSON.stringify({ content: content, author: author }),
+      gasLimit: "auto",
+    })
+    .then((result) => {
+      if (result.success) {
+        alert("Profile updated successfully!");
+        window.location.href = "/authors/" + author;
+      } else {
+        throw new Error(result.rawLog || 'Profile update failed');
+      }
+    })
+    .catch((e) => {
+        console.error("Error updating profile:", e);
+        alert("Failed to update profile: " + e.message);
+    });
+  });
+  
+  document.getElementById("addPageButton").addEventListener("click", addPage);
+</script> 

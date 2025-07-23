@@ -289,7 +289,7 @@ def chainnet(worker_id, test_base_dir, test_config_path):
         "--config-file", str(config_path),
         "--block-speed", "100ms",
         "--no-blocks-timeout", "3", 
-        "--logs"
+        #"--logs"
     ], preexec_fn=os.setsid)
 
     # Track processes for cleanup
@@ -674,13 +674,17 @@ def _walk_ast_forbidding_nodes(tree, filename):
 
     class Visitor(ast.NodeVisitor):
         def visit_Try(self, node):
-            # Only flag try/except blocks, allow try/finally for resource cleanup
-            if node.handlers:  # node.handlers contains except clauses
-                errors.append(f"{filename}:{node.lineno} - use of 'try/except' and 'if' statements is disallowed")
+            errors.append(f"{filename}:{node.lineno} - use of 'try/except' and 'if' statements is disallowed")
             self.generic_visit(node)
 
         def visit_If(self, node):
             errors.append(f"{filename}:{node.lineno} - 'if' and 'try/except' statement usage is disallowed")
+            self.generic_visit(node)
+
+        # forbid "wait_for_timeout" attribute in playwright
+        def visit_Attribute(self, node):
+            if isinstance(node.value, ast.Attribute) and node.value.attr == "wait_for_timeout":
+                errors.append(f"{filename}:{node.lineno} - 'wait_for_timeout' attribute usage is disallowed")
             self.generic_visit(node)
 
     Visitor().visit(tree)

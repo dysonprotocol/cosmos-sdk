@@ -678,7 +678,7 @@
           | <a href="/wallet">Manage Wallets</a>
         </span>
         <!-- Show wallet info if connected and store is loaded -->
-        <span x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta">
+        <span x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta?.address">
           | <span style="text-transform: capitalize;" x-text="$store.walletStore.activeWalletMeta?.type"></span> Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
           | <a class="author" :href="`/authors/${$store.walletStore.activeWalletMeta?.address}`"><span x-text="$store.walletStore.activeWalletMeta?.address"></span></a> 
           | chain-id: <span x-text="$store.walletStore.chainId"></span> 

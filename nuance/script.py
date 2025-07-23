@@ -305,6 +305,116 @@ def edit_author_profile(content: TEXTAREA, author: str = ""):
     _store_data(_get_author_profile_index(author), profile_data)
 
 
+def link_page(path: str, title: str, post_id: int, author: str = ""):
+    """Link a custom page to a post for an author.
+    
+    Creates a custom author page that displays the specified post at the given path.
+    Only the author or authorized name owner can create links.
+    
+    Args:
+        path (str): The custom path for the page (e.g., "about", "contact")
+        title (str): The display title for the custom page
+        post_id (int): The ID of the post to display at this path
+        author (str): The author name or address (defaults to caller)
+        
+    Raises:
+        Exception: If caller is not authorized for the author
+        AssertionError: If post doesn't exist or path is invalid
+    """
+    path = path.strip()
+    title = title.strip()
+    author = author.strip()
+    
+    # Validate path
+    assert path and len(path) <= 50, "Path must be 1-50 characters"
+    # Check if path contains only allowed characters (letters, numbers, hyphens, underscores)
+    allowed_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+    for c in path:
+        assert c in allowed_chars, "Path must contain only letters, numbers, hyphens, and underscores"
+    
+    # Validate title
+    assert title and len(title) <= 100, "Title must be 1-100 characters"
+    
+    # Validate author authorization
+    if get_caller() and author:
+        try:
+            name_resp = _query(
+                {
+                    "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
+                    "name_or_address": author,
+                }
+            )
+            destination_address = name_resp["address"]
+            assert get_caller() == destination_address
+        except Exception as e:
+            raise Exception(f'[{get_caller()}] is not authorized for "{author}": {e}')
+    
+    # Set author to caller if not specified
+    author = author or get_caller()
+    
+    # Validate post exists
+    try:
+        _get_data(_get_post_index(post_id))
+    except Exception as e:
+        raise AssertionError(f"Post {post_id} not found: {e}")
+    
+    # Store the page link
+    page_data = {
+        "title": title,
+        "post_id": post_id,
+        "author": author,
+        "created_time": get_block_info()["time"]
+    }
+    
+    _store_data(_get_author_page_index(author, path), page_data)
+
+
+def unlink_page(path: str, author: str = ""):
+    """Remove a custom page link for an author.
+    
+    Removes the custom author page at the specified path.
+    Only the author or authorized name owner can remove links.
+    
+    Args:
+        path (str): The custom path to remove
+        author (str): The author name or address (defaults to caller)
+        
+    Raises:
+        Exception: If caller is not authorized for the author
+        AssertionError: If page doesn't exist
+    """
+    path = path.strip()
+    author = author.strip()
+    
+    # Validate author authorization
+    if get_caller() and author:
+        try:
+            name_resp = _query(
+                {
+                    "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
+                    "name_or_address": author,
+                }
+            )
+            destination_address = name_resp["address"]
+            assert get_caller() == destination_address
+        except Exception as e:
+            raise Exception(f'[{get_caller()}] is not authorized for "{author}": {e}')
+    
+    # Set author to caller if not specified
+    author = author or get_caller()
+    
+    # Delete the page link
+    page_index = _get_author_page_index(author, path)
+    
+    # Verify page exists before deletion
+    try:
+        _get_data(page_index)
+    except Exception as e:
+        raise AssertionError(f"Page '{path}' not found for author '{author}': {e}")
+    
+    _delete_data(page_index)
+
+
 def _get_next_id(key: str):
     index = _get_next_id_index(key)
     # Query the blockchain for the current ID and increment it
@@ -444,6 +554,14 @@ def _get_author_post_index(author: str, post_id: int, **kwargs) -> str:
 
 def _get_author_profile_index(author: str) -> str:
     return f"authors/{author}/profile"
+
+
+def _get_author_page_index(author: str, path: str) -> str:
+    return f"author_page/{author}/{path}"
+
+
+def _get_author_page_prefix(author: str) -> str:
+    return f"author_page/{author}/"
 
 
 def _get_next_id_index(key: str) -> str:
@@ -1079,7 +1197,7 @@ def _set_rewards_indexes(namespace, rewards):
 CONTENT_TYPE_HTML = ("Content-Type", "text/html; charset=UTF-8")
 CONTENT_TYPE_JS = ("Content-Type", "application/javascript; charset=utf-8")
 HEADERS = [
-    ("Cache-Control", "max-age=60, public"),
+    #("Cache-Control", "max-age=60, public"),
     ("Service-Worker-Allowed", "/"),
     # /("Content-Security-Policy-Report-Only", "default-src 'none'"),
     (
@@ -1292,8 +1410,7 @@ def handle_active(environ, start_response):
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
 
     content = items_html + load_more_html
-    # if environ.get("HTTP_HX_REQUEST") == "true":
-    #    return [("<main>" + content + "</main>").encode()]
+
     html_content = _render_base(content, title="Active Posts")
 
     return [html_content]
@@ -1314,17 +1431,6 @@ def handle_recent(environ, start_response):
     )
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
-
-    if environ.get("HTTP_HX_REQUEST") == "true":
-        return [
-            (
-                """
-        <main>
-        """
-                + content
-                + """</main>"""
-            ).encode()
-        ]
 
     html_content = _render_base(content, title="Post List")
 
@@ -1426,9 +1532,6 @@ def handle_post_detail(environ, start_response, post_id):
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
 
-    # if environ.get("HTTP_HX_REQUEST") == "true":
-    #    return [("<main>" + content + "</main>").encode()]
-
     html_content = _render_base(content, title=f"Post {post_id}")
     return [html_content]
 
@@ -1440,9 +1543,6 @@ def handle_topics(environ, start_response):
     content = fetch_template("topics.html")
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
-
-    if environ.get("HTTP_HX_REQUEST") == "true":
-        return [("<main>" + content + "</main>").encode()]
 
     html_content = _render_base(content, title="Topics")
     return [html_content]
@@ -1456,9 +1556,6 @@ def handle_publish(environ, start_response):
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
 
-    if environ.get("HTTP_HX_REQUEST") == "true":
-        return [("<main>" + content + "</main>").encode()]
-
     html_content = _render_base(content, title="New Post")
     return [html_content]
 
@@ -1471,9 +1568,6 @@ def handle_wallet(environ, start_response):
     wallet_body_html = wallet_body_template.substitute({})
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
-    if environ.get("HTTP_HX_REQUEST") == "true":
-        return [("<main>" + wallet_body_html + "</main>").encode()]
-
     html_content = _render_base(wallet_body_html, title="Wallet Management")
     return [html_content]
 
@@ -1487,6 +1581,25 @@ def handle_author_posts(environ, start_response, author):
     posts, pagination = _list_data(
         _get_author_post_prefix(author), pagination=req_pagination
     )
+
+    # Load custom pages for this author
+    try:
+        custom_pages, _ = _list_data(_get_author_page_prefix(author))
+        custom_pages_html = ""
+        if custom_pages:
+            pages_list = "\n".join([
+                f'<li><a href="/authors/{author}/{page["_index"].split("/")[-1]}">{html.escape(page["title"])}</a></li>'
+                for page in custom_pages
+            ])
+            custom_pages_html = f"""
+            <div>
+                <h3>Custom Pages</h3>
+                <ul>{pages_list}</ul>
+            </div>
+            """
+    except Exception as e:
+        print(f"No custom pages found for author {author}: {e}")
+        custom_pages_html = ""
 
     posts_html = render_posts(
         posts=posts,
@@ -1506,10 +1619,11 @@ def handle_author_posts(environ, start_response, author):
         <script>
             renderMarkdownAndHighlight(document.currentScript.previousElementSibling)
         </script>
+        {custom_pages_html}
         <div>
         <h1>Posts by <span class="author">{author}</span></h1>
         <p>Total Earned: <strong>{profile_data.get("claimed", {}).get("dys",0) } DYS</strong></p>
-        <p><a href="/authors/{author}/edit">Edit Profile</a></p>
+        <p><a href="/edit-author/{author}">Edit Profile</a></p>
         """
         + posts_html
         + "</div>"
@@ -1517,27 +1631,134 @@ def handle_author_posts(environ, start_response, author):
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
 
-    if environ.get("HTTP_HX_REQUEST") == "true":
-        return [("<main>" + content + "</main>").encode()]
-
     html_content = _render_base(content, title="Author Post List")
     return [html_content]
 
 
-@route(r"^/authors/(?P<author>[^/]+)/edit/?$")
+@route(r"^/edit-author/(?P<author>[^/]+)/?$")
 def handle_edit_author(environ, start_response, author):
     """Handle author profile editing page"""
     profile_data = _get_profile(author)
+    
+    # Load custom pages for this author
+    try:
+        custom_pages, _ = _list_data(_get_author_page_prefix(author))
+        custom_pages_data = [
+            {
+                "path": page["_index"].split("/")[-1],
+                "title": page["title"],
+                "post_id": page["post_id"]
+            }
+            for page in custom_pages
+        ]
+    except Exception as e:
+        print(f"No custom pages found for author {author}: {e}")
+        custom_pages_data = []
+    
     edit_template = SafeTemplate(fetch_template("edit_author_profile.html"))
-    content = edit_template.substitute({"author_name": author, **profile_data})
+    content = edit_template.substitute({
+        "author_name": author, 
+        "custom_pages": json.dumps(custom_pages_data),
+        **profile_data
+    })
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
 
-    if environ.get("HTTP_HX_REQUEST") == "true":
-        return [("<main>" + content + "</main>").encode()]
-
     html_content = _render_base(content, title=f"Edit profile: {author}")
     return [html_content]
+
+
+@route(r"^/authors/(?P<author>[^/]+)/(?P<path>[^/]+)/?$")
+def handle_author_page(environ, start_response, author, path):
+    """Handle custom author page display"""
+    try:
+        # Load the custom page data
+        page_data = _get_data(_get_author_page_index(author, path))
+        
+        # Load the referenced post
+        post = _get_data(_get_post_index(page_data["post_id"]))
+        
+        # Escape HTML to prevent injection attacks
+        depth = max(
+            0,
+            min(3, int(dict(parse_qsl(environ.get("QUERY_STRING", ""))).get("depth", 1))),
+        )
+
+        post_id = post["post_id"]
+        content_text = html.escape(post["content"])
+        custom_title = html.escape(page_data["title"])
+        
+        # Handle post references in content (same as post detail)
+        if depth > 0:
+            content_text = re.sub(
+                POST_RE,
+                rf"""
+                <div
+                        hx-trigger="intersect once"
+                        hx-get="/\1?depth={depth - 1}"
+                        hx-select="article"
+                        hx-swap="innerHTML ignoreTitle:true"
+                        hx-target="closest div"
+                        data-fragment="\2"
+                        >
+                            Loading: \1  ...
+                </div>
+    """,
+                content_text,
+            )
+        else:
+            content_text = re.sub(
+                POST_RE,
+                rf"""
+                <div data-fragment="\2">
+                        <a
+                            hx-trigger="click once"
+                            hx-get="/\1?depth={depth}"
+                            hx-select="article"
+                            hx-swap="innerHTML ignoreTitle:true"
+                            hx-target="closest div"
+                        >
+                        /\1\2
+                        </a>
+                </div>
+    """,
+                content_text,
+            )
+
+        # Use custom post template or create custom content
+        content = f"""
+        <div id="content">
+          <h1>{custom_title}</h1>
+          <p>By <a class="author" href="/authors/{author}">{author}</a> | 
+             <a href="/{post_id}">View original post #{post_id}</a></p>
+          <article class="">
+            <div class="markdown">{content_text}</div>
+            <script>
+              renderMarkdownAndHighlight(
+                document.currentScript.previousElementSibling,
+                document.currentScript
+                  .closest("[data-fragment]")
+                  ?.getAttribute("data-fragment"),
+              );
+            </script>
+          </article>
+        </div>
+        """
+
+        start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
+
+        html_content = _render_base(content, title=custom_title)
+        return [html_content]
+        
+    except Exception as e:
+        # If the page is not found, return a 404 error
+        start_response("404 Not Found", [CONTENT_TYPE_HTML])
+        error_template = SafeTemplate(fetch_template("error.html"))
+        content = error_template.substitute(
+            {"message": f"Custom page '{path}' not found for author '{author}': {e}"}
+        )
+        html_content = _render_base(content, title="404 Not Found")
+        return [html_content]
 
 
 @route(r"^/(?P<post_id>\d+)/replies/?$")
@@ -1744,9 +1965,6 @@ def handle_post_topics(environ, start_response, post_id):
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
 
-    if environ.get("HTTP_HX_REQUEST") == "true":
-        return [("<main>" + content + "</main>").encode()]
-
     html_content = _render_base(content, title=f"Post {post_id} tags")
     return [html_content]
 
@@ -1841,9 +2059,6 @@ def handle_topic_posts(environ, start_response, tag_name, sortby):
         }
     )
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
-
-    if environ.get("HTTP_HX_REQUEST") == "true":
-        return [("<main>" + content + "</main>").encode()]
 
     html_content = _render_base(content, title=f"Posts tagged: {tag_name}")
 
