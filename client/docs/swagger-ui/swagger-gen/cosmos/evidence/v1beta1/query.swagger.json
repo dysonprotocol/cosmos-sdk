@@ -14,7 +14,7 @@
     "/cosmos/evidence/v1beta1/evidence": {
       "get": {
         "summary": "AllEvidence queries all evidence.",
-        "operationId": "/cosmos.evidence.v1beta1.QueryAllEvidenceRequest",
+        "operationId": "cosmos.evidence.v1beta1.QueryAllEvidenceRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -72,7 +72,7 @@
     "/cosmos/evidence/v1beta1/evidence/{hash}": {
       "get": {
         "summary": "Evidence queries evidence based on evidence hash.",
-        "operationId": "/cosmos.evidence.v1beta1.QueryEvidenceRequest",
+        "operationId": "cosmos.evidence.v1beta1.QueryEvidenceRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

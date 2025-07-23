@@ -14,7 +14,7 @@
     "/cosmos/circuit/v1/accounts": {
       "get": {
         "summary": "Account returns account permissions.",
-        "operationId": "/cosmos.circuit.v1.QueryAccountsRequest",
+        "operationId": "cosmos.circuit.v1.QueryAccountsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -72,7 +72,7 @@
     "/cosmos/circuit/v1/accounts/{address}": {
       "get": {
         "summary": "Account returns account permissions.",
-        "operationId": "/cosmos.circuit.v1.QueryAccountRequest",
+        "operationId": "cosmos.circuit.v1.QueryAccountRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -103,7 +103,7 @@
     "/cosmos/circuit/v1/disable_list": {
       "get": {
         "summary": "DisabledList returns a list of disabled message urls",
-        "operationId": "/cosmos.circuit.v1.QueryDisabledListRequest",
+        "operationId": "cosmos.circuit.v1.QueryDisabledListRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

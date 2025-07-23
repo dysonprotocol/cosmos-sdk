@@ -14,7 +14,7 @@
     "/cosmos/group/v1/group_info/{group_id}": {
       "get": {
         "summary": "GroupInfo queries group info based on group id.",
-        "operationId": "/cosmos.group.v1.QueryGroupInfoRequest",
+        "operationId": "cosmos.group.v1.QueryGroupInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -47,7 +47,7 @@
     "/cosmos/group/v1/group_members/{group_id}": {
       "get": {
         "summary": "GroupMembers queries members of a group by group id.",
-        "operationId": "/cosmos.group.v1.QueryGroupMembersRequest",
+        "operationId": "cosmos.group.v1.QueryGroupMembersRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -113,7 +113,7 @@
     "/cosmos/group/v1/group_policies_by_admin/{admin}": {
       "get": {
         "summary": "GroupPoliciesByAdmin queries group policies by admin address.",
-        "operationId": "/cosmos.group.v1.QueryGroupPoliciesByAdminRequest",
+        "operationId": "cosmos.group.v1.QueryGroupPoliciesByAdminRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -178,7 +178,7 @@
     "/cosmos/group/v1/group_policies_by_group/{group_id}": {
       "get": {
         "summary": "GroupPoliciesByGroup queries group policies by group id.",
-        "operationId": "/cosmos.group.v1.QueryGroupPoliciesByGroupRequest",
+        "operationId": "cosmos.group.v1.QueryGroupPoliciesByGroupRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -244,7 +244,7 @@
     "/cosmos/group/v1/group_policy_info/{address}": {
       "get": {
         "summary": "GroupPolicyInfo queries group policy info based on account address of group\npolicy.",
-        "operationId": "/cosmos.group.v1.QueryGroupPolicyInfoRequest",
+        "operationId": "cosmos.group.v1.QueryGroupPolicyInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -276,7 +276,7 @@
     "/cosmos/group/v1/groups": {
       "get": {
         "summary": "Groups queries all groups in state.",
-        "operationId": "/cosmos.group.v1.QueryGroupsRequest",
+        "operationId": "cosmos.group.v1.QueryGroupsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -334,7 +334,7 @@
     "/cosmos/group/v1/groups_by_admin/{admin}": {
       "get": {
         "summary": "GroupsByAdmin queries groups by admin address.",
-        "operationId": "/cosmos.group.v1.QueryGroupsByAdminRequest",
+        "operationId": "cosmos.group.v1.QueryGroupsByAdminRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -399,7 +399,7 @@
     "/cosmos/group/v1/groups_by_member/{address}": {
       "get": {
         "summary": "GroupsByMember queries groups by member address.",
-        "operationId": "/cosmos.group.v1.QueryGroupsByMemberRequest",
+        "operationId": "cosmos.group.v1.QueryGroupsByMemberRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -464,7 +464,7 @@
     "/cosmos/group/v1/proposal/{proposal_id}": {
       "get": {
         "summary": "Proposal queries a proposal based on proposal id.",
-        "operationId": "/cosmos.group.v1.QueryProposalRequest",
+        "operationId": "cosmos.group.v1.QueryProposalRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -497,7 +497,7 @@
     "/cosmos/group/v1/proposals/{proposal_id}/tally": {
       "get": {
         "summary": "TallyResult returns the tally result of a proposal. If the proposal is\nstill in voting period, then this query computes the current tally state,\nwhich might not be final. On the other hand, if the proposal is final,\nthen it simply returns the `final_tally_result` state stored in the\nproposal itself.",
-        "operationId": "/cosmos.group.v1.QueryTallyResultRequest",
+        "operationId": "cosmos.group.v1.QueryTallyResultRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -530,7 +530,7 @@
     "/cosmos/group/v1/proposals_by_group_policy/{address}": {
       "get": {
         "summary": "ProposalsByGroupPolicy queries proposals based on account address of group\npolicy.",
-        "operationId": "/cosmos.group.v1.QueryProposalsByGroupPolicyRequest",
+        "operationId": "cosmos.group.v1.QueryProposalsByGroupPolicyRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -595,7 +595,7 @@
     "/cosmos/group/v1/vote_by_proposal_voter/{proposal_id}/{voter}": {
       "get": {
         "summary": "VoteByProposalVoter queries a vote by proposal id and voter.",
-        "operationId": "/cosmos.group.v1.QueryVoteByProposalVoterRequest",
+        "operationId": "cosmos.group.v1.QueryVoteByProposalVoterRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -635,7 +635,7 @@
     "/cosmos/group/v1/votes_by_proposal/{proposal_id}": {
       "get": {
         "summary": "VotesByProposal queries a vote by proposal id.",
-        "operationId": "/cosmos.group.v1.QueryVotesByProposalRequest",
+        "operationId": "cosmos.group.v1.QueryVotesByProposalRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -701,7 +701,7 @@
     "/cosmos/group/v1/votes_by_voter/{voter}": {
       "get": {
         "summary": "VotesByVoter queries a vote by voter.",
-        "operationId": "/cosmos.group.v1.QueryVotesByVoterRequest",
+        "operationId": "cosmos.group.v1.QueryVotesByVoterRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

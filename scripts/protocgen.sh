@@ -99,7 +99,7 @@ def update_operation_ids(data):
                 request_name = service + method_name
             else:
                 continue
-            new_id = '/' + package + '.' + request_name
+            new_id = package + '.' + request_name
             print(f"Updating {old_id} -> {new_id}")
             op['operationId'] = new_id
 

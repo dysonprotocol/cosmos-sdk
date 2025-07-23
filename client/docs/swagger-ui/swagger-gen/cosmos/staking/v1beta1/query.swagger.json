@@ -15,7 +15,7 @@
       "get": {
         "summary": "DelegatorDelegations queries all delegations of a given delegator address.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.staking.v1beta1.QueryDelegatorDelegationsRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryDelegatorDelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -81,7 +81,7 @@
       "get": {
         "summary": "Redelegations queries redelegations of given address.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.staking.v1beta1.QueryRedelegationsRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryRedelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -161,7 +161,7 @@
       "get": {
         "summary": "DelegatorUnbondingDelegations queries all unbonding delegations of a given\ndelegator address.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.staking.v1beta1.QueryDelegatorUnbondingDelegationsRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryDelegatorUnbondingDelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -227,7 +227,7 @@
       "get": {
         "summary": "DelegatorValidators queries all validators info for given delegator\naddress.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.staking.v1beta1.QueryDelegatorValidatorsRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryDelegatorValidatorsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -292,7 +292,7 @@
     "/cosmos/staking/v1beta1/delegators/{delegator_addr}/validators/{validator_addr}": {
       "get": {
         "summary": "DelegatorValidator queries validator info for given delegator validator\npair.",
-        "operationId": "/cosmos.staking.v1beta1.QueryDelegatorValidatorRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryDelegatorValidatorRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -331,7 +331,7 @@
     "/cosmos/staking/v1beta1/historical_info/{height}": {
       "get": {
         "summary": "HistoricalInfo queries the historical info for given height.",
-        "operationId": "/cosmos.staking.v1beta1.QueryHistoricalInfoRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryHistoricalInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -364,7 +364,7 @@
     "/cosmos/staking/v1beta1/params": {
       "get": {
         "summary": "Parameters queries the staking parameters.",
-        "operationId": "/cosmos.staking.v1beta1.QueryParamsRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -387,7 +387,7 @@
     "/cosmos/staking/v1beta1/pool": {
       "get": {
         "summary": "Pool queries the pool info.",
-        "operationId": "/cosmos.staking.v1beta1.QueryPoolRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryPoolRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -411,7 +411,7 @@
       "get": {
         "summary": "Validators queries all validators that match the given status.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.staking.v1beta1.QueryValidatorsRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryValidatorsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -476,7 +476,7 @@
     "/cosmos/staking/v1beta1/validators/{validator_addr}": {
       "get": {
         "summary": "Validator queries validator info for given validator address.",
-        "operationId": "/cosmos.staking.v1beta1.QueryValidatorRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryValidatorRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -509,7 +509,7 @@
       "get": {
         "summary": "ValidatorDelegations queries delegate info for given validator.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.staking.v1beta1.QueryValidatorDelegationsRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryValidatorDelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -574,7 +574,7 @@
     "/cosmos/staking/v1beta1/validators/{validator_addr}/delegations/{delegator_addr}": {
       "get": {
         "summary": "Delegation queries delegate info for given validator delegator pair.",
-        "operationId": "/cosmos.staking.v1beta1.QueryDelegationRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryDelegationRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -613,7 +613,7 @@
     "/cosmos/staking/v1beta1/validators/{validator_addr}/delegations/{delegator_addr}/unbonding_delegation": {
       "get": {
         "summary": "UnbondingDelegation queries unbonding info for given validator delegator\npair.",
-        "operationId": "/cosmos.staking.v1beta1.QueryUnbondingDelegationRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryUnbondingDelegationRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -653,7 +653,7 @@
       "get": {
         "summary": "ValidatorUnbondingDelegations queries unbonding delegations of a validator.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.staking.v1beta1.QueryValidatorUnbondingDelegationsRequest",
+        "operationId": "cosmos.staking.v1beta1.QueryValidatorUnbondingDelegationsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

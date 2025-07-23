@@ -14,7 +14,7 @@
     "/cosmos/authz/v1beta1/grants": {
       "get": {
         "summary": "Returns list of `Authorization`, granted to the grantee by the granter.",
-        "operationId": "/cosmos.authz.v1beta1.QueryGrantsRequest",
+        "operationId": "cosmos.authz.v1beta1.QueryGrantsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -91,7 +91,7 @@
     "/cosmos/authz/v1beta1/grants/grantee/{grantee}": {
       "get": {
         "summary": "GranteeGrants returns a list of `GrantAuthorization` by grantee.",
-        "operationId": "/cosmos.authz.v1beta1.QueryGranteeGrantsRequest",
+        "operationId": "cosmos.authz.v1beta1.QueryGranteeGrantsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -155,7 +155,7 @@
     "/cosmos/authz/v1beta1/grants/granter/{granter}": {
       "get": {
         "summary": "GranterGrants returns list of `GrantAuthorization`, granted by granter.",
-        "operationId": "/cosmos.authz.v1beta1.QueryGranterGrantsRequest",
+        "operationId": "cosmos.authz.v1beta1.QueryGranterGrantsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

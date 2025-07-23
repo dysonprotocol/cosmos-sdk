@@ -14,7 +14,7 @@
     "/dysonprotocol/nft/v1beta1/balance/{owner}/{class_id}": {
       "get": {
         "summary": "Balance queries the number of NFTs of a given class owned by the owner,\nsame as balanceOf in ERC721",
-        "operationId": "/dysonprotocol.nft.v1beta1.QueryBalanceRequest",
+        "operationId": "dysonprotocol.nft.v1beta1.QueryBalanceRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -53,7 +53,7 @@
     "/dysonprotocol/nft/v1beta1/classes": {
       "get": {
         "summary": "Classes queries all NFT classes",
-        "operationId": "/dysonprotocol.nft.v1beta1.QueryClassesRequest",
+        "operationId": "dysonprotocol.nft.v1beta1.QueryClassesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -111,7 +111,7 @@
     "/dysonprotocol/nft/v1beta1/classes/{class_id}": {
       "get": {
         "summary": "Class queries an NFT class based on its id",
-        "operationId": "/dysonprotocol.nft.v1beta1.QueryClassRequest",
+        "operationId": "dysonprotocol.nft.v1beta1.QueryClassRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -143,7 +143,7 @@
     "/dysonprotocol/nft/v1beta1/nfts": {
       "get": {
         "summary": "NFTs queries all NFTs of a given class or owner,choose at least one of the\ntwo, similar to tokenByIndex in ERC721Enumerable",
-        "operationId": "/dysonprotocol.nft.v1beta1.QueryNFTsRequest",
+        "operationId": "dysonprotocol.nft.v1beta1.QueryNFTsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -215,7 +215,7 @@
     "/dysonprotocol/nft/v1beta1/nfts/{class_id}/{id}": {
       "get": {
         "summary": "NFT queries an NFT based on its class and id.",
-        "operationId": "/dysonprotocol.nft.v1beta1.QueryNFTRequest",
+        "operationId": "dysonprotocol.nft.v1beta1.QueryNFTRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -254,7 +254,7 @@
     "/dysonprotocol/nft/v1beta1/owner/{class_id}/{id}": {
       "get": {
         "summary": "Owner queries the owner of the NFT based on its class and id, same as\nownerOf in ERC721",
-        "operationId": "/dysonprotocol.nft.v1beta1.QueryOwnerRequest",
+        "operationId": "dysonprotocol.nft.v1beta1.QueryOwnerRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -293,7 +293,7 @@
     "/dysonprotocol/nft/v1beta1/supply/{class_id}": {
       "get": {
         "summary": "Supply queries the number of NFTs from the given class, same as totalSupply\nof ERC721.",
-        "operationId": "/dysonprotocol.nft.v1beta1.QuerySupplyRequest",
+        "operationId": "dysonprotocol.nft.v1beta1.QuerySupplyRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

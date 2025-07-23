@@ -14,7 +14,7 @@
     "/cosmos/auth/v1beta1/account_info/{address}": {
       "get": {
         "summary": "AccountInfo queries account info which is common to all account types.",
-        "operationId": "/cosmos.auth.v1beta1.QueryAccountInfoRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryAccountInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -47,7 +47,7 @@
       "get": {
         "summary": "Accounts returns all the existing accounts.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.auth.v1beta1.QueryAccountsRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryAccountsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -105,7 +105,7 @@
     "/cosmos/auth/v1beta1/accounts/{address}": {
       "get": {
         "summary": "Account returns account details based on address.",
-        "operationId": "/cosmos.auth.v1beta1.QueryAccountRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryAccountRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -137,7 +137,7 @@
     "/cosmos/auth/v1beta1/address_by_id/{id}": {
       "get": {
         "summary": "AccountAddressByID returns account address based on account number.",
-        "operationId": "/cosmos.auth.v1beta1.QueryAccountAddressByIDRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryAccountAddressByIDRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -178,7 +178,7 @@
     "/cosmos/auth/v1beta1/bech32": {
       "get": {
         "summary": "Bech32Prefix queries bech32Prefix",
-        "operationId": "/cosmos.auth.v1beta1.QueryBech32PrefixRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryBech32PrefixRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -201,7 +201,7 @@
     "/cosmos/auth/v1beta1/bech32/{address_bytes}": {
       "get": {
         "summary": "AddressBytesToString converts Account Address bytes to string",
-        "operationId": "/cosmos.auth.v1beta1.QueryAddressBytesToStringRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryAddressBytesToStringRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -233,7 +233,7 @@
     "/cosmos/auth/v1beta1/bech32/{address_string}": {
       "get": {
         "summary": "AddressStringToBytes converts Address string to bytes",
-        "operationId": "/cosmos.auth.v1beta1.QueryAddressStringToBytesRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryAddressStringToBytesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -264,7 +264,7 @@
     "/cosmos/auth/v1beta1/module_accounts": {
       "get": {
         "summary": "ModuleAccounts returns all the existing module accounts.",
-        "operationId": "/cosmos.auth.v1beta1.QueryModuleAccountsRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryModuleAccountsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -287,7 +287,7 @@
     "/cosmos/auth/v1beta1/module_accounts/{name}": {
       "get": {
         "summary": "ModuleAccountByName returns the module account info by module name",
-        "operationId": "/cosmos.auth.v1beta1.QueryModuleAccountByNameRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryModuleAccountByNameRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -318,7 +318,7 @@
     "/cosmos/auth/v1beta1/params": {
       "get": {
         "summary": "Params queries all parameters.",
-        "operationId": "/cosmos.auth.v1beta1.QueryParamsRequest",
+        "operationId": "cosmos.auth.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

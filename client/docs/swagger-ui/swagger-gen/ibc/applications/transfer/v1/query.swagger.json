@@ -14,7 +14,7 @@
     "/ibc/apps/transfer/v1/channels/{channel_id}/ports/{port_id}/escrow_address": {
       "get": {
         "summary": "EscrowAddress returns the escrow address for a particular port and channel\nid.",
-        "operationId": "/ibc.applications.transfer.v1.QueryEscrowAddressRequest",
+        "operationId": "ibc.applications.transfer.v1.QueryEscrowAddressRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -53,7 +53,7 @@
     "/ibc/apps/transfer/v1/denom_hashes/{trace}": {
       "get": {
         "summary": "DenomHash queries a denomination hash information.",
-        "operationId": "/ibc.applications.transfer.v1.QueryDenomHashRequest",
+        "operationId": "ibc.applications.transfer.v1.QueryDenomHashRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -85,7 +85,7 @@
     "/ibc/apps/transfer/v1/denoms": {
       "get": {
         "summary": "Denoms queries all denominations",
-        "operationId": "/ibc.applications.transfer.v1.QueryDenomsRequest",
+        "operationId": "ibc.applications.transfer.v1.QueryDenomsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -143,7 +143,7 @@
     "/ibc/apps/transfer/v1/denoms/{hash}": {
       "get": {
         "summary": "Denom queries a denomination",
-        "operationId": "/ibc.applications.transfer.v1.QueryDenomRequest",
+        "operationId": "ibc.applications.transfer.v1.QueryDenomRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -175,7 +175,7 @@
     "/ibc/apps/transfer/v1/params": {
       "get": {
         "summary": "Params queries all parameters of the ibc-transfer module.",
-        "operationId": "/ibc.applications.transfer.v1.QueryParamsRequest",
+        "operationId": "ibc.applications.transfer.v1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -198,7 +198,7 @@
     "/ibc/apps/transfer/v1/total_escrow/{denom}": {
       "get": {
         "summary": "TotalEscrowForDenom returns the total amount of tokens in escrow based on\nthe denom.",
-        "operationId": "/ibc.applications.transfer.v1.QueryTotalEscrowForDenomRequest",
+        "operationId": "ibc.applications.transfer.v1.QueryTotalEscrowForDenomRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

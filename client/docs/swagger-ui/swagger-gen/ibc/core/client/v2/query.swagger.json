@@ -14,7 +14,7 @@
     "/ibc/core/client/v2/config/{client_id}": {
       "get": {
         "summary": "Config queries the IBC client v2 configuration for a given client.",
-        "operationId": "/ibc.core.client.v2.QueryConfigRequest",
+        "operationId": "ibc.core.client.v2.QueryConfigRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -46,7 +46,7 @@
     "/ibc/core/client/v2/counterparty_info/{client_id}": {
       "get": {
         "summary": "CounterpartyInfo queries an IBC light counter party info.",
-        "operationId": "/ibc.core.client.v2.QueryCounterpartyInfoRequest",
+        "operationId": "ibc.core.client.v2.QueryCounterpartyInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

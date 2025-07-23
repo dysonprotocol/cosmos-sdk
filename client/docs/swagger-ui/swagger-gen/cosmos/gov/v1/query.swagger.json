@@ -14,7 +14,7 @@
     "/cosmos/gov/v1/constitution": {
       "get": {
         "summary": "Constitution queries the chain's constitution.",
-        "operationId": "/cosmos.gov.v1.QueryConstitutionRequest",
+        "operationId": "cosmos.gov.v1.QueryConstitutionRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -37,7 +37,7 @@
     "/cosmos/gov/v1/params/{params_type}": {
       "get": {
         "summary": "Params queries all parameters of the gov module.",
-        "operationId": "/cosmos.gov.v1.QueryParamsRequest",
+        "operationId": "cosmos.gov.v1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -69,7 +69,7 @@
     "/cosmos/gov/v1/proposals": {
       "get": {
         "summary": "Proposals queries all proposals based on given status.",
-        "operationId": "/cosmos.gov.v1.QueryProposalsRequest",
+        "operationId": "cosmos.gov.v1.QueryProposalsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -157,7 +157,7 @@
     "/cosmos/gov/v1/proposals/{proposal_id}": {
       "get": {
         "summary": "Proposal queries proposal details based on ProposalID.",
-        "operationId": "/cosmos.gov.v1.QueryProposalRequest",
+        "operationId": "cosmos.gov.v1.QueryProposalRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -190,7 +190,7 @@
     "/cosmos/gov/v1/proposals/{proposal_id}/deposits": {
       "get": {
         "summary": "Deposits queries all deposits of a single proposal.",
-        "operationId": "/cosmos.gov.v1.QueryDepositsRequest",
+        "operationId": "cosmos.gov.v1.QueryDepositsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -256,7 +256,7 @@
     "/cosmos/gov/v1/proposals/{proposal_id}/deposits/{depositor}": {
       "get": {
         "summary": "Deposit queries single deposit information based on proposalID,\ndepositAddr.",
-        "operationId": "/cosmos.gov.v1.QueryDepositRequest",
+        "operationId": "cosmos.gov.v1.QueryDepositRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -296,7 +296,7 @@
     "/cosmos/gov/v1/proposals/{proposal_id}/tally": {
       "get": {
         "summary": "TallyResult queries the tally of a proposal vote.",
-        "operationId": "/cosmos.gov.v1.QueryTallyResultRequest",
+        "operationId": "cosmos.gov.v1.QueryTallyResultRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -329,7 +329,7 @@
     "/cosmos/gov/v1/proposals/{proposal_id}/votes": {
       "get": {
         "summary": "Votes queries votes of a given proposal.",
-        "operationId": "/cosmos.gov.v1.QueryVotesRequest",
+        "operationId": "cosmos.gov.v1.QueryVotesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -395,7 +395,7 @@
     "/cosmos/gov/v1/proposals/{proposal_id}/votes/{voter}": {
       "get": {
         "summary": "Vote queries voted information based on proposalID, voterAddr.",
-        "operationId": "/cosmos.gov.v1.QueryVoteRequest",
+        "operationId": "cosmos.gov.v1.QueryVoteRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

@@ -14,7 +14,7 @@
     "/cosmos.counter.v1.Query/GetCount": {
       "post": {
         "summary": "GetCount queries the parameters of x/Counter module.",
-        "operationId": "/cosmos.counter.v1.QueryGetCountRequest",
+        "operationId": "cosmos.counter.v1.QueryGetCountRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

@@ -14,7 +14,7 @@
     "/ibc/core/channel/v1/channels": {
       "get": {
         "summary": "Channels queries all the IBC channels of a chain.",
-        "operationId": "/ibc.core.channel.v1.QueryChannelsRequest",
+        "operationId": "ibc.core.channel.v1.QueryChannelsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -72,7 +72,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}": {
       "get": {
         "summary": "Channel queries an IBC Channel.",
-        "operationId": "/ibc.core.channel.v1.QueryChannelRequest",
+        "operationId": "ibc.core.channel.v1.QueryChannelRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -111,7 +111,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/client_state": {
       "get": {
         "summary": "ChannelClientState queries for the client state for the channel associated\nwith the provided channel identifiers.",
-        "operationId": "/ibc.core.channel.v1.QueryChannelClientStateRequest",
+        "operationId": "ibc.core.channel.v1.QueryChannelClientStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -150,7 +150,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/consensus_state/revision/{revision_number}/height/{revision_height}": {
       "get": {
         "summary": "ChannelConsensusState queries for the consensus state for the channel\nassociated with the provided channel identifiers.",
-        "operationId": "/ibc.core.channel.v1.QueryChannelConsensusStateRequest",
+        "operationId": "ibc.core.channel.v1.QueryChannelConsensusStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -205,7 +205,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/next_sequence": {
       "get": {
         "summary": "NextSequenceReceive returns the next receive sequence for a given channel.",
-        "operationId": "/ibc.core.channel.v1.QueryNextSequenceReceiveRequest",
+        "operationId": "ibc.core.channel.v1.QueryNextSequenceReceiveRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -244,7 +244,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/next_sequence_send": {
       "get": {
         "summary": "NextSequenceSend returns the next send sequence for a given channel.",
-        "operationId": "/ibc.core.channel.v1.QueryNextSequenceSendRequest",
+        "operationId": "ibc.core.channel.v1.QueryNextSequenceSendRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -283,7 +283,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_acknowledgements": {
       "get": {
         "summary": "PacketAcknowledgements returns all the packet acknowledgements associated\nwith a channel.",
-        "operationId": "/ibc.core.channel.v1.QueryPacketAcknowledgementsRequest",
+        "operationId": "ibc.core.channel.v1.QueryPacketAcknowledgementsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -367,7 +367,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_acks/{sequence}": {
       "get": {
         "summary": "PacketAcknowledgement queries a stored packet acknowledgement hash.",
-        "operationId": "/ibc.core.channel.v1.QueryPacketAcknowledgementRequest",
+        "operationId": "ibc.core.channel.v1.QueryPacketAcknowledgementRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -414,7 +414,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_commitments": {
       "get": {
         "summary": "PacketCommitments returns all the packet commitments hashes associated\nwith a channel.",
-        "operationId": "/ibc.core.channel.v1.QueryPacketCommitmentsRequest",
+        "operationId": "ibc.core.channel.v1.QueryPacketCommitmentsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -486,7 +486,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_commitments/{packet_ack_sequences}/unreceived_acks": {
       "get": {
         "summary": "UnreceivedAcks returns all the unreceived IBC acknowledgements associated\nwith a channel and sequences.",
-        "operationId": "/ibc.core.channel.v1.QueryUnreceivedAcksRequest",
+        "operationId": "ibc.core.channel.v1.QueryUnreceivedAcksRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -538,7 +538,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_commitments/{packet_commitment_sequences}/unreceived_packets": {
       "get": {
         "summary": "UnreceivedPackets returns all the unreceived IBC packets associated with a\nchannel and sequences.",
-        "operationId": "/ibc.core.channel.v1.QueryUnreceivedPacketsRequest",
+        "operationId": "ibc.core.channel.v1.QueryUnreceivedPacketsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -590,7 +590,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_commitments/{sequence}": {
       "get": {
         "summary": "PacketCommitment queries a stored packet commitment hash.",
-        "operationId": "/ibc.core.channel.v1.QueryPacketCommitmentRequest",
+        "operationId": "ibc.core.channel.v1.QueryPacketCommitmentRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -637,7 +637,7 @@
     "/ibc/core/channel/v1/channels/{channel_id}/ports/{port_id}/packet_receipts/{sequence}": {
       "get": {
         "summary": "PacketReceipt queries if a given packet sequence has been received on the\nqueried chain",
-        "operationId": "/ibc.core.channel.v1.QueryPacketReceiptRequest",
+        "operationId": "ibc.core.channel.v1.QueryPacketReceiptRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -684,7 +684,7 @@
     "/ibc/core/channel/v1/connections/{connection}/channels": {
       "get": {
         "summary": "ConnectionChannels queries all the channels associated with a connection\nend.",
-        "operationId": "/ibc.core.channel.v1.QueryConnectionChannelsRequest",
+        "operationId": "ibc.core.channel.v1.QueryConnectionChannelsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

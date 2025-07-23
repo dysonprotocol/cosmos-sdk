@@ -14,7 +14,7 @@
     "/cosmos/feegrant/v1beta1/allowance/{granter}/{grantee}": {
       "get": {
         "summary": "Allowance returns granted allwance to the grantee by the granter.",
-        "operationId": "/cosmos.feegrant.v1beta1.QueryAllowanceRequest",
+        "operationId": "cosmos.feegrant.v1beta1.QueryAllowanceRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -53,7 +53,7 @@
     "/cosmos/feegrant/v1beta1/allowances/{grantee}": {
       "get": {
         "summary": "Allowances returns all the grants for the given grantee address.",
-        "operationId": "/cosmos.feegrant.v1beta1.QueryAllowancesRequest",
+        "operationId": "cosmos.feegrant.v1beta1.QueryAllowancesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -117,7 +117,7 @@
     "/cosmos/feegrant/v1beta1/issued/{granter}": {
       "get": {
         "summary": "AllowancesByGranter returns all the grants given by an address",
-        "operationId": "/cosmos.feegrant.v1beta1.QueryAllowancesByGranterRequest",
+        "operationId": "cosmos.feegrant.v1beta1.QueryAllowancesByGranterRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

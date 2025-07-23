@@ -167,7 +167,7 @@ func (k Keeper) CalculateMinStakeAmount(ctx context.Context, totalBytes uint64) 
 	// Parse the storage_stake_multiple as a decimal
 	stakeMultiple, err := math.LegacyNewDecFromStr(params.StorageStakeMultiple)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "failed to parse storage_stake_multiple")
 	}
 
 	// Convert totalBytes to decimal for calculation
@@ -186,13 +186,13 @@ func (k Keeper) GetTotalDelegatedStake(ctx context.Context, delegatorAddr string
 	// Parse the delegator address
 	delAddr, err := sdk.AccAddressFromBech32(delegatorAddr)
 	if err != nil {
-		return math.ZeroInt(), err
+		return math.ZeroInt(), errors.Wrap(err, "failed to parse delegator address")
 	}
 
 	// Query the total bonded amount using the staking keeper
 	totalBonded, err := k.stakingKeeper.GetDelegatorBonded(ctx, delAddr)
 	if err != nil {
-		return math.ZeroInt(), err
+		return math.ZeroInt(), errors.Wrap(err, "failed to get total bonded amount")
 	}
 
 	return totalBonded, nil

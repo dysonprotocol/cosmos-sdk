@@ -14,7 +14,7 @@
     "/cosmos.autocli.v1.Query/AppOptions": {
       "post": {
         "summary": "AppOptions returns the autocli options for all of the modules in an app.",
-        "operationId": "/cosmos.autocli.v1.QueryAppOptionsRequest",
+        "operationId": "cosmos.autocli.v1.QueryAppOptionsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

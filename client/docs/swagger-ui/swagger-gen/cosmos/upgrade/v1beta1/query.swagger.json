@@ -14,7 +14,7 @@
     "/cosmos/upgrade/v1beta1/applied_plan/{name}": {
       "get": {
         "summary": "AppliedPlan queries a previously applied upgrade plan by its name.",
-        "operationId": "/cosmos.upgrade.v1beta1.QueryAppliedPlanRequest",
+        "operationId": "cosmos.upgrade.v1beta1.QueryAppliedPlanRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -46,7 +46,7 @@
     "/cosmos/upgrade/v1beta1/authority": {
       "get": {
         "summary": "Returns the account with authority to conduct upgrades",
-        "operationId": "/cosmos.upgrade.v1beta1.QueryAuthorityRequest",
+        "operationId": "cosmos.upgrade.v1beta1.QueryAuthorityRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -69,7 +69,7 @@
     "/cosmos/upgrade/v1beta1/current_plan": {
       "get": {
         "summary": "CurrentPlan queries the current upgrade plan.",
-        "operationId": "/cosmos.upgrade.v1beta1.QueryCurrentPlanRequest",
+        "operationId": "cosmos.upgrade.v1beta1.QueryCurrentPlanRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -92,7 +92,7 @@
     "/cosmos/upgrade/v1beta1/module_versions": {
       "get": {
         "summary": "ModuleVersions queries the list of module versions from state.",
-        "operationId": "/cosmos.upgrade.v1beta1.QueryModuleVersionsRequest",
+        "operationId": "cosmos.upgrade.v1beta1.QueryModuleVersionsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -124,7 +124,7 @@
     "/cosmos/upgrade/v1beta1/upgraded_consensus_state/{last_height}": {
       "get": {
         "summary": "UpgradedConsensusState queries the consensus state that will serve\nas a trusted kernel for the next version of this chain. It will only be\nstored at the last height of this chain.\nUpgradedConsensusState RPC not supported with legacy querier\nThis rpc is deprecated now that IBC has its own replacement\n(https://github.com/cosmos/ibc-go/blob/2c880a22e9f9cc75f62b527ca94aa75ce1106001/proto/ibc/core/client/v1/query.proto#L54)",
-        "operationId": "/cosmos.upgrade.v1beta1.QueryUpgradedConsensusStateRequest",
+        "operationId": "cosmos.upgrade.v1beta1.QueryUpgradedConsensusStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

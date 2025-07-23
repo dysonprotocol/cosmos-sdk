@@ -14,7 +14,7 @@
     "/ibc/apps/interchain_accounts/host/v1/params": {
       "get": {
         "summary": "Params queries all parameters of the ICA host submodule.",
-        "operationId": "/ibc.applications.interchain_accounts.host.v1.QueryParamsRequest",
+        "operationId": "ibc.applications.interchain_accounts.host.v1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

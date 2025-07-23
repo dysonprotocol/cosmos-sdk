@@ -15,7 +15,7 @@
       "get": {
         "summary": "AllBalances queries the balance of all coins for a single account.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.bank.v1beta1.QueryAllBalancesRequest",
+        "operationId": "cosmos.bank.v1beta1.QueryAllBalancesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -87,7 +87,7 @@
     "/cosmos/bank/v1beta1/balances/{address}/by_denom": {
       "get": {
         "summary": "Balance queries the balance of a single coin for a single account.",
-        "operationId": "/cosmos.bank.v1beta1.QueryBalanceRequest",
+        "operationId": "cosmos.bank.v1beta1.QueryBalanceRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -127,7 +127,7 @@
       "get": {
         "summary": "DenomOwners queries for all account addresses that own a particular token\ndenomination.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.bank.v1beta1.QueryDenomOwnersRequest",
+        "operationId": "cosmos.bank.v1beta1.QueryDenomOwnersRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -192,7 +192,7 @@
     "/cosmos/bank/v1beta1/denom_owners_by_query": {
       "get": {
         "summary": "DenomOwnersByQuery queries for all account addresses that own a particular\ntoken denomination.",
-        "operationId": "/cosmos.bank.v1beta1.QueryDenomOwnersByQueryRequest",
+        "operationId": "cosmos.bank.v1beta1.QueryDenomOwnersByQueryRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -257,7 +257,7 @@
     "/cosmos/bank/v1beta1/denoms_metadata": {
       "get": {
         "summary": "DenomsMetadata queries the client metadata for all registered coin\ndenominations.",
-        "operationId": "/cosmos.bank.v1beta1.QueryDenomsMetadataRequest",
+        "operationId": "cosmos.bank.v1beta1.QueryDenomsMetadataRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -315,7 +315,7 @@
     "/cosmos/bank/v1beta1/denoms_metadata/{denom}": {
       "get": {
         "summary": "DenomMetadata queries the client metadata of a given coin denomination.",
-        "operationId": "/cosmos.bank.v1beta1.QueryDenomMetadataRequest",
+        "operationId": "cosmos.bank.v1beta1.QueryDenomMetadataRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -347,7 +347,7 @@
     "/cosmos/bank/v1beta1/denoms_metadata_by_query_string": {
       "get": {
         "summary": "DenomMetadataByQueryString queries the client metadata of a given coin\ndenomination.",
-        "operationId": "/cosmos.bank.v1beta1.QueryDenomMetadataByQueryStringRequest",
+        "operationId": "cosmos.bank.v1beta1.QueryDenomMetadataByQueryStringRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -379,7 +379,7 @@
     "/cosmos/bank/v1beta1/params": {
       "get": {
         "summary": "Params queries the parameters of x/bank module.",
-        "operationId": "/cosmos.bank.v1beta1.QueryParamsRequest",
+        "operationId": "cosmos.bank.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -403,7 +403,7 @@
       "get": {
         "summary": "SendEnabled queries for SendEnabled entries.",
         "description": "This query only returns denominations that have specific SendEnabled\nsettings. Any denomination that does not have a specific setting will use\nthe default params.default_send_enabled, and will not be returned by this\nquery.",
-        "operationId": "/cosmos.bank.v1beta1.QuerySendEnabledRequest",
+        "operationId": "cosmos.bank.v1beta1.QuerySendEnabledRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -473,7 +473,7 @@
       "get": {
         "summary": "SpendableBalances queries the spendable balance of all coins for a single\naccount.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.bank.v1beta1.QuerySpendableBalancesRequest",
+        "operationId": "cosmos.bank.v1beta1.QuerySpendableBalancesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -539,7 +539,7 @@
       "get": {
         "summary": "SpendableBalanceByDenom queries the spendable balance of a single denom for\na single account.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.bank.v1beta1.QuerySpendableBalanceByDenomRequest",
+        "operationId": "cosmos.bank.v1beta1.QuerySpendableBalanceByDenomRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -579,7 +579,7 @@
       "get": {
         "summary": "TotalSupply queries the total supply of all coins.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.bank.v1beta1.QueryTotalSupplyRequest",
+        "operationId": "cosmos.bank.v1beta1.QueryTotalSupplyRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -638,7 +638,7 @@
       "get": {
         "summary": "SupplyOf queries the supply of a single coin.",
         "description": "When called from another module, this query might consume a high amount of\ngas if the pagination field is incorrectly set.",
-        "operationId": "/cosmos.bank.v1beta1.QuerySupplyOfRequest",
+        "operationId": "cosmos.bank.v1beta1.QuerySupplyOfRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

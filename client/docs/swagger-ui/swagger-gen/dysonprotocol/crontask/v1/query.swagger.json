@@ -14,7 +14,7 @@
     "/dysonprotocol/crontask/v1/params": {
       "get": {
         "summary": "Params returns the module parameters",
-        "operationId": "/dysonprotocol.crontask.v1.QueryParamsRequest",
+        "operationId": "dysonprotocol.crontask.v1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -37,7 +37,7 @@
     "/dysonprotocol/crontask/v1/tasks": {
       "get": {
         "summary": "TasksAll returns all tasks ordered by ID",
-        "operationId": "/dysonprotocol.crontask.v1.QueryTasksAllRequest",
+        "operationId": "dysonprotocol.crontask.v1.QueryTasksAllRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -95,7 +95,7 @@
     "/dysonprotocol/crontask/v1/tasks/creator/{creator}": {
       "get": {
         "summary": "TasksByAddress returns all tasks created by a specific address",
-        "operationId": "/dysonprotocol.crontask.v1.QueryTasksByAddressRequest",
+        "operationId": "dysonprotocol.crontask.v1.QueryTasksByAddressRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -159,7 +159,7 @@
     "/dysonprotocol/crontask/v1/tasks/status/{status}": {
       "get": {
         "summary": "TasksByStatusTimestamp returns tasks filtered by status and ordered by\ntimestamp",
-        "operationId": "/dysonprotocol.crontask.v1.QueryTasksByStatusTimestampRequest",
+        "operationId": "dysonprotocol.crontask.v1.QueryTasksByStatusTimestampRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -223,7 +223,7 @@
     "/dysonprotocol/crontask/v1/tasks/status/{status}/by_gas": {
       "get": {
         "summary": "TasksByStatusGasPrice returns tasks filtered by status and ordered by gas\nprice",
-        "operationId": "/dysonprotocol.crontask.v1.QueryTasksByStatusGasPriceRequest",
+        "operationId": "dysonprotocol.crontask.v1.QueryTasksByStatusGasPriceRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -287,7 +287,7 @@
     "/dysonprotocol/crontask/v1/tasks/{task_id}": {
       "get": {
         "summary": "TaskByID returns a task by its ID",
-        "operationId": "/dysonprotocol.crontask.v1.QueryTaskByIDRequest",
+        "operationId": "dysonprotocol.crontask.v1.QueryTaskByIDRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

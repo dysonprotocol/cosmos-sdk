@@ -14,7 +14,7 @@
     "/ibc/core/connection/v1/client_connections/{client_id}": {
       "get": {
         "summary": "ClientConnections queries the connection paths associated with a client\nstate.",
-        "operationId": "/ibc.core.connection.v1.QueryClientConnectionsRequest",
+        "operationId": "ibc.core.connection.v1.QueryClientConnectionsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -46,7 +46,7 @@
     "/ibc/core/connection/v1/connections": {
       "get": {
         "summary": "Connections queries all the IBC connections of a chain.",
-        "operationId": "/ibc.core.connection.v1.QueryConnectionsRequest",
+        "operationId": "ibc.core.connection.v1.QueryConnectionsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -104,7 +104,7 @@
     "/ibc/core/connection/v1/connections/{connection_id}": {
       "get": {
         "summary": "Connection queries an IBC connection end.",
-        "operationId": "/ibc.core.connection.v1.QueryConnectionRequest",
+        "operationId": "ibc.core.connection.v1.QueryConnectionRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -136,7 +136,7 @@
     "/ibc/core/connection/v1/connections/{connection_id}/client_state": {
       "get": {
         "summary": "ConnectionClientState queries the client state associated with the\nconnection.",
-        "operationId": "/ibc.core.connection.v1.QueryConnectionClientStateRequest",
+        "operationId": "ibc.core.connection.v1.QueryConnectionClientStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -168,7 +168,7 @@
     "/ibc/core/connection/v1/connections/{connection_id}/consensus_state/revision/{revision_number}/height/{revision_height}": {
       "get": {
         "summary": "ConnectionConsensusState queries the consensus state associated with the\nconnection.",
-        "operationId": "/ibc.core.connection.v1.QueryConnectionConsensusStateRequest",
+        "operationId": "ibc.core.connection.v1.QueryConnectionConsensusStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -214,7 +214,7 @@
     "/ibc/core/connection/v1/params": {
       "get": {
         "summary": "ConnectionParams queries all parameters of the ibc connection submodule.",
-        "operationId": "/ibc.core.connection.v1.QueryConnectionParamsRequest",
+        "operationId": "ibc.core.connection.v1.QueryConnectionParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

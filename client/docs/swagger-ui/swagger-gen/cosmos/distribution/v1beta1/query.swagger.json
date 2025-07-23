@@ -15,7 +15,7 @@
       "get": {
         "summary": "CommunityPool queries the community pool coins.",
         "description": "WARNING: This query will fail if an external community pool is used.",
-        "operationId": "/cosmos.distribution.v1beta1.QueryCommunityPoolRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryCommunityPoolRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -38,7 +38,7 @@
     "/cosmos/distribution/v1beta1/delegators/{delegator_address}/rewards": {
       "get": {
         "summary": "DelegationTotalRewards queries the total rewards accrued by each\nvalidator.",
-        "operationId": "/cosmos.distribution.v1beta1.QueryDelegationTotalRewardsRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryDelegationTotalRewardsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -70,7 +70,7 @@
     "/cosmos/distribution/v1beta1/delegators/{delegator_address}/rewards/{validator_address}": {
       "get": {
         "summary": "DelegationRewards queries the total rewards accrued by a delegation.",
-        "operationId": "/cosmos.distribution.v1beta1.QueryDelegationRewardsRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryDelegationRewardsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -109,7 +109,7 @@
     "/cosmos/distribution/v1beta1/delegators/{delegator_address}/validators": {
       "get": {
         "summary": "DelegatorValidators queries the validators of a delegator.",
-        "operationId": "/cosmos.distribution.v1beta1.QueryDelegatorValidatorsRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryDelegatorValidatorsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -141,7 +141,7 @@
     "/cosmos/distribution/v1beta1/delegators/{delegator_address}/withdraw_address": {
       "get": {
         "summary": "DelegatorWithdrawAddress queries withdraw address of a delegator.",
-        "operationId": "/cosmos.distribution.v1beta1.QueryDelegatorWithdrawAddressRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryDelegatorWithdrawAddressRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -173,7 +173,7 @@
     "/cosmos/distribution/v1beta1/params": {
       "get": {
         "summary": "Params queries params of the distribution module.",
-        "operationId": "/cosmos.distribution.v1beta1.QueryParamsRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -196,7 +196,7 @@
     "/cosmos/distribution/v1beta1/validators/{validator_address}": {
       "get": {
         "summary": "ValidatorDistributionInfo queries validator commission and self-delegation\nrewards for validator",
-        "operationId": "/cosmos.distribution.v1beta1.QueryValidatorDistributionInfoRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryValidatorDistributionInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -228,7 +228,7 @@
     "/cosmos/distribution/v1beta1/validators/{validator_address}/commission": {
       "get": {
         "summary": "ValidatorCommission queries accumulated commission for a validator.",
-        "operationId": "/cosmos.distribution.v1beta1.QueryValidatorCommissionRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryValidatorCommissionRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -260,7 +260,7 @@
     "/cosmos/distribution/v1beta1/validators/{validator_address}/outstanding_rewards": {
       "get": {
         "summary": "ValidatorOutstandingRewards queries rewards of a validator address.",
-        "operationId": "/cosmos.distribution.v1beta1.QueryValidatorOutstandingRewardsRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryValidatorOutstandingRewardsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -292,7 +292,7 @@
     "/cosmos/distribution/v1beta1/validators/{validator_address}/slashes": {
       "get": {
         "summary": "ValidatorSlashes queries slash events of a validator.",
-        "operationId": "/cosmos.distribution.v1beta1.QueryValidatorSlashesRequest",
+        "operationId": "cosmos.distribution.v1beta1.QueryValidatorSlashesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

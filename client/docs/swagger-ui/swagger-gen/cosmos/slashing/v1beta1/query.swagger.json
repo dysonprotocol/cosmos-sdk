@@ -14,7 +14,7 @@
     "/cosmos/slashing/v1beta1/params": {
       "get": {
         "summary": "Params queries the parameters of slashing module",
-        "operationId": "/cosmos.slashing.v1beta1.QueryParamsRequest",
+        "operationId": "cosmos.slashing.v1beta1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -37,7 +37,7 @@
     "/cosmos/slashing/v1beta1/signing_infos": {
       "get": {
         "summary": "SigningInfos queries signing info of all validators",
-        "operationId": "/cosmos.slashing.v1beta1.QuerySigningInfosRequest",
+        "operationId": "cosmos.slashing.v1beta1.QuerySigningInfosRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -95,7 +95,7 @@
     "/cosmos/slashing/v1beta1/signing_infos/{cons_address}": {
       "get": {
         "summary": "SigningInfo queries the signing info of given cons address",
-        "operationId": "/cosmos.slashing.v1beta1.QuerySigningInfoRequest",
+        "operationId": "cosmos.slashing.v1beta1.QuerySigningInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

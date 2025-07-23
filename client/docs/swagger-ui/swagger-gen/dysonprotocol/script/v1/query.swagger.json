@@ -14,7 +14,7 @@
     "/dysonprotocol/script/v1/block": {
       "get": {
         "summary": "GetBlock returns the current block information.",
-        "operationId": "/dysonprotocol.script.v1.QueryGetBlockRequest",
+        "operationId": "dysonprotocol.script.v1.QueryGetBlockRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -37,7 +37,7 @@
     "/dysonprotocol/script/v1/decode_bytes": {
       "get": {
         "summary": "DecodeBytes decodes bytes to a JSON string.",
-        "operationId": "/dysonprotocol.script.v1.QueryDecodeBytesRequest",
+        "operationId": "dysonprotocol.script.v1.QueryDecodeBytesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -76,7 +76,7 @@
     "/dysonprotocol/script/v1/encode_json": {
       "get": {
         "summary": "EncodeJson encodes a JSON string to bytes.",
-        "operationId": "/dysonprotocol.script.v1.QueryEncodeJsonRequest",
+        "operationId": "dysonprotocol.script.v1.QueryEncodeJsonRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -108,7 +108,7 @@
     "/dysonprotocol/script/v1/params": {
       "get": {
         "summary": "Params queries the parameters of the script module.",
-        "operationId": "/dysonprotocol.script.v1.QueryParamsRequest",
+        "operationId": "dysonprotocol.script.v1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -131,7 +131,7 @@
     "/dysonprotocol/script/v1/run": {
       "post": {
         "summary": "Run executes a script function in read-only mode without modifying\nstate.",
-        "operationId": "/dysonprotocol.script.v1.QueryRunRequest",
+        "operationId": "dysonprotocol.script.v1.QueryRunRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -164,7 +164,7 @@
     "/dysonprotocol/script/v1/script_info/{address}": {
       "get": {
         "summary": "ScriptInfo queries script info based on script address",
-        "operationId": "/dysonprotocol.script.v1.QueryScriptInfoRequest",
+        "operationId": "dysonprotocol.script.v1.QueryScriptInfoRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -196,7 +196,7 @@
     "/dysonprotocol/script/v1/verify_tx": {
       "get": {
         "summary": "VerifyTx verifies a transaction.",
-        "operationId": "/dysonprotocol.script.v1.QueryVerifyTxRequest",
+        "operationId": "dysonprotocol.script.v1.QueryVerifyTxRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -228,7 +228,7 @@
     "/dysonprotocol/script/v1/web_request": {
       "post": {
         "summary": "Queries the WSGI web application function of a script.",
-        "operationId": "/dysonprotocol.script.v1.QueryWebRequest",
+        "operationId": "dysonprotocol.script.v1.QueryWebRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

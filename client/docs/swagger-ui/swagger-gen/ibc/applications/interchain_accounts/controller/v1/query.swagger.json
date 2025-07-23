@@ -14,7 +14,7 @@
     "/ibc/apps/interchain_accounts/controller/v1/owners/{owner}/connections/{connection_id}": {
       "get": {
         "summary": "InterchainAccount returns the interchain account address for a given owner\naddress on a given connection",
-        "operationId": "/ibc.applications.interchain_accounts.controller.v1.QueryInterchainAccountRequest",
+        "operationId": "ibc.applications.interchain_accounts.controller.v1.QueryInterchainAccountRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -51,7 +51,7 @@
     "/ibc/apps/interchain_accounts/controller/v1/params": {
       "get": {
         "summary": "Params queries all parameters of the ICA controller submodule.",
-        "operationId": "/ibc.applications.interchain_accounts.controller.v1.QueryParamsRequest",
+        "operationId": "ibc.applications.interchain_accounts.controller.v1.QueryParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",

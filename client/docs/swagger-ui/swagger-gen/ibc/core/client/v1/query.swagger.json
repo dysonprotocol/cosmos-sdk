@@ -14,7 +14,7 @@
     "/ibc/core/client/v1/client_creator/{client_id}": {
       "get": {
         "summary": "ClientCreator queries the creator of a given client.",
-        "operationId": "/ibc.core.client.v1.QueryClientCreatorRequest",
+        "operationId": "ibc.core.client.v1.QueryClientCreatorRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -46,7 +46,7 @@
     "/ibc/core/client/v1/client_states": {
       "get": {
         "summary": "ClientStates queries all the IBC light clients of a chain.",
-        "operationId": "/ibc.core.client.v1.QueryClientStatesRequest",
+        "operationId": "ibc.core.client.v1.QueryClientStatesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -104,7 +104,7 @@
     "/ibc/core/client/v1/client_states/{client_id}": {
       "get": {
         "summary": "ClientState queries an IBC light client.",
-        "operationId": "/ibc.core.client.v1.QueryClientStateRequest",
+        "operationId": "ibc.core.client.v1.QueryClientStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -136,7 +136,7 @@
     "/ibc/core/client/v1/client_status/{client_id}": {
       "get": {
         "summary": "Status queries the status of an IBC client.",
-        "operationId": "/ibc.core.client.v1.QueryClientStatusRequest",
+        "operationId": "ibc.core.client.v1.QueryClientStatusRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -168,7 +168,7 @@
     "/ibc/core/client/v1/consensus_states/{client_id}": {
       "get": {
         "summary": "ConsensusStates queries all the consensus state associated with a given\nclient.",
-        "operationId": "/ibc.core.client.v1.QueryConsensusStatesRequest",
+        "operationId": "ibc.core.client.v1.QueryConsensusStatesRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -233,7 +233,7 @@
     "/ibc/core/client/v1/consensus_states/{client_id}/heights": {
       "get": {
         "summary": "ConsensusStateHeights queries the height of every consensus states\nassociated with a given client.",
-        "operationId": "/ibc.core.client.v1.QueryConsensusStateHeightsRequest",
+        "operationId": "ibc.core.client.v1.QueryConsensusStateHeightsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -298,7 +298,7 @@
     "/ibc/core/client/v1/consensus_states/{client_id}/revision/{revision_number}/height/{revision_height}": {
       "get": {
         "summary": "ConsensusState queries a consensus state associated with a client state at\na given height.",
-        "operationId": "/ibc.core.client.v1.QueryConsensusStateRequest",
+        "operationId": "ibc.core.client.v1.QueryConsensusStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -353,7 +353,7 @@
     "/ibc/core/client/v1/params": {
       "get": {
         "summary": "ClientParams queries all parameters of the ibc client submodule.",
-        "operationId": "/ibc.core.client.v1.QueryClientParamsRequest",
+        "operationId": "ibc.core.client.v1.QueryClientParamsRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -376,7 +376,7 @@
     "/ibc/core/client/v1/upgraded_client_states": {
       "get": {
         "summary": "UpgradedClientState queries an Upgraded IBC light client.",
-        "operationId": "/ibc.core.client.v1.QueryUpgradedClientStateRequest",
+        "operationId": "ibc.core.client.v1.QueryUpgradedClientStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -399,7 +399,7 @@
     "/ibc/core/client/v1/upgraded_consensus_states": {
       "get": {
         "summary": "UpgradedConsensusState queries an Upgraded IBC consensus state.",
-        "operationId": "/ibc.core.client.v1.QueryUpgradedConsensusStateRequest",
+        "operationId": "ibc.core.client.v1.QueryUpgradedConsensusStateRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -422,7 +422,7 @@
     "/ibc/core/client/v1/verify_membership": {
       "post": {
         "summary": "VerifyMembership queries an IBC light client for proof verification of a\nvalue at a given key path.",
-        "operationId": "/ibc.core.client.v1.QueryVerifyMembershipRequest",
+        "operationId": "ibc.core.client.v1.QueryVerifyMembershipRequest",
         "responses": {
           "200": {
             "description": "A successful response.",
