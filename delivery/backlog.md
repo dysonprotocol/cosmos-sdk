@@ -20,7 +20,16 @@
 | 18 | User | [As a User, I want to query storage metrics for a specific address so that I can monitor total bytes consumed in the storage module](./18/18-tasks.md) | In Review | QueryMetrics endpoint returns storage metrics (owner, total_bytes) for any address; CLI command available; metrics automatically updated on StorageSet/Delete operations |
 | 19 | Developer | [Require staking for storage with stake-based validation](./19/19-tasks.md) | Agreed | 1. Storage parameters include storage_stake_multiple (default "1.0") for stake requirements<br/>2. StorageMetrics includes min_stake_amount calculated as total_bytes × storage_stake_multiple<br/>3. StorageSet validates owner has sufficient delegated stake before allowing storage<br/>4. StorageDelete updates min_stake_amount but never blocks deletion<br/>5. New error type for insufficient stake with clear messaging showing have/need amounts |
 | 20 | Developer | [Add OpenAPI v3 generation from buf](./20/20-tasks.md) | Proposed | 1. protoc-gen-openapi plugin installed and configured in protobuf generation pipeline<br/>2. New buf.gen.openapi.yaml template created for OpenAPI v3 generation<br/>3. protocgen.sh script updated to generate OpenAPI v3 documents alongside existing swagger generation<br/>4. Generated OpenAPI v3 files have specific description keys removed (for `Any` and `A URL/resource`) matching swagger cleaning process<br/>5. OpenAPI v3 files generated for all dysonprotocol modules (tx.proto, query.proto, service.proto)<br/>6. Generated OpenAPI v3 documents are valid and complement existing swagger documentation |
+| 23 | Authority | [Create external names without commit-reveal process](./23/23-tasks.md) | In Review | 1. MsgCreateExternalName added to tx.proto with authority signer<br/>2. ExternalNameRegex validates domain/subdomain format<br/>3. Message handler creates name NFT directly without commitment<br/>4. No naming restrictions except domain validity<br/>5. Only nameservice authority can use this message type |
+| 24 | Script Executor | [As a Script Executor, I want to specify the script by either its bech32 address or name separately in execution messages, so that I can use names more flexibly without combining them.](./24/24-tasks.md) | Proposed | 1. MsgExec has separate fields: script_address (optional bech32) and script_name (optional name).<br/>2. Validation: if both provided, name must resolve to the address; if only name, resolve to address; if only address, use it; at least one must be provided.<br/>3. Similar changes for RunScript in query.proto.<br/>4. Add dys.get_script_name() in dysvm_server which returns the optional script_name from the message.<br/>5. Update keeper logic to handle the separation, including resolution. |
+| 25 | Developer | [As a Developer, I want to support separate DYSON_SCRIPT_NAME and DYSON_SCRIPT_ADDRESS TXT records for RunWeb so that domain configurations can specify script name and address independently](./25/25-tasks.md) | In Review | 1. DysonTxtRecords struct replaces map[string]string return type from getTXTRecords<br/>2. getTXTRecords parses both DYSON_SCRIPT_NAME and DYSON_SCRIPT_ADDRESS from TXT records<br/>3. WebRequest protobuf updated with separate script_address and script_name fields<br/>4. RunWeb function validates name matches address when both provided and resolves name when only name provided<br/>5. Comprehensive tests verify TXT record parsing and validation logic |
 | 21 | User | [Implement author custom pages with link management](./tasks/21-tasks.md) | Done | 1. `link_page(author, path, title, post_id)` function validates author authority and creates custom page links<br/>2. `unlink_page(author, path)` function validates author authority and removes custom page links<br/>3. Author profile pages display list of custom page links<br/>4. Edit profile page includes UI to add/remove custom page links<br/>5. Custom author pages accessible via `/author_page/<author>/<path>` route displaying referenced post<br/>6. All functions validate author is signer or destination of name service |
+
+## Done PBIs
+
+| ID | Actor | User Story | Status | Conditions of Satisfaction (CoS) |
+|---|---|---|---|---|
+| 22 | User | As a User, I want to query all names pointing to a specific destination address so that I can see reverse relations of Name NFT destinations. | Done | 1. Store reverse mappings from address to list of names.<br/>2. Update reverse mappings when setting or changing destination.<br/>3. New query QueryNamesByDestination(address) returns paginated list of names pointing to the address.<br/>4. Query supports standard pagination. |
 
 ## PBI History Log
 
@@ -72,3 +81,15 @@
 | 20250115-210000 | 21 | Created | Added PBI for author custom pages with link_page/unlink_page functions and UI management | Agent |
 | 20250115-210100 | 21 | Status to Agreed | PBI approved for development | User |
 | 20250115-210800 | 21 | Status to Done | All tasks completed: link_page/unlink_page functions, UI management, and routing implemented with comprehensive tests | Agent |
+| 20241015-120000 | 22 | Created | Added PBI 22 for reverse name mappings and query | Agent |
+| 20241015-120200 | 22-5, 22-6 | Tasks renumbered to 22-4, 22-5 after removal | Agent |
+| 20241015-120300 | 22 | Status to Agreed | PBI approved for development | User |
+| 20241015-121300 | 22 | Status to In Review | All tasks completed, ready for user review | Agent |
+| 20241015-121500 | 22 | Status to Done | PBI completed successfully, all tests passing | Agent |
+| 20250725-000000 | 23 | Created | Added PBI for MsgCreateExternalName to allow authority to create names without commit-reveal | Agent |
+| 20250725-000200 | 23 | Status to In Progress | Started work on task 23-1 (Add MsgCreateExternalName to tx.proto) | Agent |
+| 20250725-001300 | 23 | Status to In Review | All tasks completed: MsgCreateExternalName functionality implemented with comprehensive tests | Agent |
+| 20241016-120000 | 24 | Created | Added PBI for separating script address and name in MsgExec and RunScript | Agent |
+| 20250725-093000 | 25 | Created | Added PBI for separate DYSON_SCRIPT_NAME and DYSON_SCRIPT_ADDRESS TXT record support | Agent |
+| 20250725-094000 | 25 | Status to Agreed | PBI approved for development | User |
+| 20250725-100100 | 25 | Status to In Review | All tasks completed: TXT record parsing, protobuf updates, RunWeb validation, comprehensive tests passing | Agent |

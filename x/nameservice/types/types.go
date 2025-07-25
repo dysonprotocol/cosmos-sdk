@@ -10,7 +10,12 @@ import (
 var (
 	// NameRegex defines the regex for valid name strings
 	// Must be lowercase alphanumeric, start with a letter, may contain dashes, and must end with ".dys"
-	NameRegex = regexp.MustCompile("^[a-z][a-z0-9-]*\\.dys$")
+	NameRegex = regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?\.dys$`)
+	
+	// ExternalNameRegex defines the regex for valid external domain names
+	// Must be lowercase alphanumeric with dashes, following domain/subdomain format
+	// No consecutive dashes allowed
+	ExternalNameRegex = regexp.MustCompile(`^[a-z0-9]([a-z0-9]|-[a-z0-9])*(\.[a-z0-9]([a-z0-9]|-[a-z0-9])*)+$`)
 )
 
 // ValidateBasic performs basic validation of NFTData

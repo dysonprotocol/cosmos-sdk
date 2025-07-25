@@ -577,16 +577,41 @@ func (k Keeper) NewRPCServer(ctx sdk.Context, address string, app *baseapp.BaseA
 	return port, srv, nil
 }
 
-func (k Keeper) RunWeb(ctx context.Context, address string, httpreq string) (string, error) {
+func (k Keeper) RunWeb(ctx context.Context, scriptAddress string, scriptName string, httpreq string) (string, error) {
 	now := time.Now()
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	cacheCtx, _ := sdkCtx.CacheContext()
-
-	// Resolve the address parameter using the nameservice keeper
-	resolvedAddress, err := k.NameserviceKeeper.ResolveNameOrAddress(cacheCtx, address)
-	if err != nil {
-		return "", cosmossdkerrors.Wrapf(err, "failed to resolve address or name: %s", address)
+	
+	// Validate input: at least one field must be provided
+	if scriptAddress == "" && scriptName == "" {
+		return "", cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "either script_address or script_name must be provided")
+	}
+	
+	var resolvedAddress, name string
+	
+	if scriptAddress != "" && scriptName != "" {
+		// Both provided: validate that name resolves to the address
+		nameResolvedAddress, err := k.NameserviceKeeper.ResolveNameOrAddress(cacheCtx, scriptName)
+		if err != nil {
+			return "", cosmossdkerrors.Wrapf(err, "failed to resolve script name: %s", scriptName)
+		}
+		if nameResolvedAddress != scriptAddress {
+			return "", cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "script name %s resolves to %s but script address %s was provided", scriptName, nameResolvedAddress, scriptAddress)
+		}
+		resolvedAddress = scriptAddress
+		name = scriptName
+	} else if scriptName != "" {
+		// Only name provided: resolve to address
+		var err error
+		resolvedAddress, err = k.NameserviceKeeper.ResolveNameOrAddress(cacheCtx, scriptName)
+		if err != nil {
+			return "", cosmossdkerrors.Wrapf(err, "failed to resolve script name: %s", scriptName)
+		}
+		name = scriptName
+	} else {
+		// Only address provided: use it directly
+		resolvedAddress = scriptAddress
 	}
 
 	script, err := k.ScriptMap.Get(cacheCtx, resolvedAddress)
@@ -637,7 +662,7 @@ func (k Keeper) RunWeb(ctx context.Context, address string, httpreq string) (str
 		}
 	}()
 
-	out, err := dysvm.Wsgi(port, string(scriptJSON), string(headerInfoJSON), httpreq)
+	out, err := dysvm.Wsgi(port, name, string(scriptJSON), string(headerInfoJSON), httpreq)
 
 	if err != nil {
 		return "", cosmossdkerrors.Wrapf(err, "error running script: %s", string(out))

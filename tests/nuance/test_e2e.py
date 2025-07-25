@@ -18,6 +18,21 @@ ALICE_ADDRESS = "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej"
 ALICE_MNEMONIC = "public feature teach face federal matrix throw legend bridge brass diary beach typical doll evoke weapon among crane regret trust enact swarm brother outside"
 
 
+def assert_no_unexpected_console_errors(console_messages):
+    """Assert that there are no unexpected console errors, filtering out expected 404s during tx polling."""
+    error_messages = [m for m in console_messages if m.type == "error"]
+    
+    # Filter out expected 404 errors during transaction polling
+    unexpected_errors = []
+    for msg in error_messages:
+        # These 404 errors are expected during transaction polling before blocks are processed
+        if "Failed to load resource: the server responded with a status of 404 (Not Found)" in msg.text:
+            continue  # Skip expected 404s
+        unexpected_errors.append(msg)
+    
+    assert not unexpected_errors, f"Unexpected console errors: {unexpected_errors}"
+
+
 def assert_page_loads_successfully(page: Page, expected_url: str, expected_status: int = 200) -> list[ConsoleMessage]:
     """Assert that a page loads successfully with the expected status code."""
     console_messages = []
@@ -143,7 +158,7 @@ def make_post(page: Page, demo_url):
         console_messages = assert_page_loads_successfully(page, f"{demo_url}/publish")
         print(f"Console messages: {console_messages}")
         
-        assert not any(m.type == "error" for m in console_messages), f"Console messages: {console_messages}"
+        assert_no_unexpected_console_errors(console_messages)
         assert page.url.endswith("/publish")
         assert page.locator("title").inner_text() == "New Post"
 
@@ -184,7 +199,7 @@ def edit_profile(page: Page, demo_url):
         page.set_default_timeout(5000)
         console_messages = assert_page_loads_successfully(page, demo_url)
         print(f"Console messages: {console_messages}")
-        assert not any(m.type == "error" for m in console_messages), f"Console messages: {console_messages}"
+        assert_no_unexpected_console_errors(console_messages)
 
         def wait_for_author_link():
             # Click the first .author link is visible
@@ -207,7 +222,7 @@ def edit_profile(page: Page, demo_url):
         def extract_author_address():
             current_url = page.evaluate("location.href")
             match = re.search(r'/authors/(dys[a-z0-9]+)', current_url)
-            assert not any(m.type == "error" for m in console_messages), f"Console messages: {console_messages}"
+            assert_no_unexpected_console_errors(console_messages)
 
             return match.group(1) if match else None
         
@@ -216,19 +231,19 @@ def edit_profile(page: Page, demo_url):
         
         # Wait for "Edit Profile" link and click it
         page.locator("text=Edit Profile").click()
-        assert not any(m.type == "error" for m in console_messages), f"Console messages: {console_messages}"
+        assert_no_unexpected_console_errors(console_messages)
 
         # Wait for #profile-content and input the text
         page.locator("#profile-content").fill(text)
-        assert not any(m.type == "error" for m in console_messages), f"Console messages: {console_messages}"
+        assert_no_unexpected_console_errors(console_messages)
 
         # Wait and click #saveButton
         page.locator("#saveButton").click()
-        assert not any(m.type == "error" for m in console_messages), f"Console messages: {console_messages}"
+        assert_no_unexpected_console_errors(console_messages)
         
         # Wait for and click #confirmBtn
         page.locator("#confirmBtn").click()
-        assert not any(m.type == "error" for m in console_messages), f"Console messages: {console_messages}"
+        assert_no_unexpected_console_errors(console_messages)
         
         
         # Poll until URL is /authors/<bech32 address> again
@@ -244,6 +259,56 @@ def edit_profile(page: Page, demo_url):
     return _edit_profile
 
 
+@pytest.fixture(scope="function")
+def page_link(page: Page, demo_url):
+    """Fixture that returns a function to create custom page links."""
+    def _page_link(path: str, title: str, post_id: int, author_address: str = ALICE_ADDRESS) -> None:
+        """Create a custom page link with the given path, title, and post ID."""
+        page.set_default_timeout(5000)
+        
+        # Navigate to edit author page
+        edit_url = f"{demo_url}/edit-author/{author_address}"
+        console_messages = assert_page_loads_successfully(page, edit_url)
+        print(f"Console messages: {console_messages}")
+        
+        assert_no_unexpected_console_errors(console_messages)
+        assert page.url.endswith(f"/edit-author/{author_address}")
+        
+        # Fill in the custom page form using placeholder-based selectors
+        page.locator("input[placeholder*='Path']").fill(path)
+        page.locator("input[placeholder*='Page Title']").fill(title)
+        page.locator("input[placeholder*='Post ID']").fill(str(post_id))
+        
+        # Click Add Page button (now uses text content instead of ID)
+        page.locator("button:has-text('Add Page')").click()
+        assert_no_unexpected_console_errors(console_messages)
+        
+        # Wait for and click confirmation button
+        page.wait_for_selector("#confirmBtn")
+        page.locator("#confirmBtn").click()
+        assert_no_unexpected_console_errors(console_messages)
+        
+        # Wait for success message to appear (Alpine.js shows success message)
+        def check_success_message():
+            return page.locator(".success-message:has-text('Custom page added successfully')").is_visible()
+        
+        poll_until_condition(check_success_message, timeout=10, poll_interval=0.5,
+                           error_message="Failed to find success message after adding custom page")
+        
+        # Wait for the custom page to appear in the custom pages list
+        def check_page_in_list():
+            # Look for the page in the Alpine.js rendered list
+            page_item = page.locator(f".custom-page-item:has-text('{title}'):has-text('/{path}'):has-text('Post ID: {post_id}')")
+            return page_item.is_visible()
+        
+        poll_until_condition(check_page_in_list, timeout=10, poll_interval=0.5,
+                           error_message=f"Failed to find custom page '{title}' (/{path}) with Post ID {post_id} in the list")
+        
+        print(f"Successfully created custom page: {title} (/{path}) → Post #{post_id}")
+    
+    return _page_link
+
+
 @pytest.mark.frontend 
 def test_homepage_loads(page: Page, demo_url):
     """Test that the homepage loads and redirects to /recent."""
@@ -252,7 +317,7 @@ def test_homepage_loads(page: Page, demo_url):
     console_messages = assert_page_loads_successfully(page, demo_url)
     print(f"Console messages: {console_messages}")
     
-    assert not any(m.type == "error" for m in console_messages), f"Console messages: {console_messages}"
+    assert_no_unexpected_console_errors(console_messages)
     # Root redirects to /recent
     assert page.url.endswith("/recent")
     assert page.locator("title").inner_text() == "Post List"
@@ -271,4 +336,21 @@ def test_edit_profile(edit_profile):
     """Test that profiles can be edited successfully."""
     author_address = edit_profile("This is a test profile")
     assert author_address == ALICE_ADDRESS, f"Author address is not Alice's address: {author_address} != {ALICE_ADDRESS}"
+
+
+@pytest.mark.frontend
+def test_custom_page_link(make_post, page_link, demo_url, page):
+    """Test that custom page links can be created successfully."""
+    console_messages = assert_page_loads_successfully(page, demo_url)
+
+    # First create a post to link to
+    post_1 = make_post("This is a test post for custom page linking")
+    
+    # Then create a custom page link
+    page_link("about", "About Me", post_1)
+
+    post_2 = make_post("This is a new post for custom page linking")
+    
+    # Then create a custom page link
+    page_link("new", "New", post_2)
 

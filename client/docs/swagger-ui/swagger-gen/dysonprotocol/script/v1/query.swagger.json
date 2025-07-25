@@ -387,7 +387,11 @@
         },
         "script_address": {
           "type": "string",
-          "title": "address is the script address to execute.\nThis can be either a bech32 address or a nameservice name (e.g.,\n\"example.dys\")"
+          "description": "address is the script bech32 address to execute."
+        },
+        "script_name": {
+          "type": "string",
+          "title": "script_name is the optional nameservice name of the script to execute\n(e.g., \"example.dys\")"
         },
         "extra_code": {
           "type": "string",
@@ -433,9 +437,13 @@
     "dysonprotocol.script.v1.WebRequest": {
       "type": "object",
       "properties": {
-        "address_or_name": {
+        "script_address": {
           "type": "string",
-          "description": "address is the account address of the script."
+          "description": "script_address is the bech32 account address of the script."
+        },
+        "script_name": {
+          "type": "string",
+          "description": "script_name is the name of the script (e.g., \"example.dys\")."
         },
         "httprequest": {
           "type": "string",

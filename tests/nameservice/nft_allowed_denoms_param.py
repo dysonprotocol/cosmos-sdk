@@ -136,11 +136,6 @@ def _update_allowed_denoms_via_gov(
     assert set(updated) == set(allowed_denoms), f"AllowedDenoms not updated: {updated}"
 
 
-# -----------------------------------------------------------------------------
-# Test implementing scenarios from docs/delivery/8/8-6.md
-# -----------------------------------------------------------------------------
-
-
 def _random_suffix(n: int = 6) -> str:
     return "".join(random.choices(string.ascii_lowercase, k=n))
 

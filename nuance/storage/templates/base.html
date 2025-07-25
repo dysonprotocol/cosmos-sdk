@@ -13,7 +13,7 @@
     <!-- AlpineJS plugins must be loaded BEFORE Alpine.js and before walletStore.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
-   
+
     <!-- Wallet/Message/etc. stores - generated dynamically -->
    {{ static_scripts }}
    
@@ -25,9 +25,15 @@
     integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm"
     crossorigin="anonymous"
   ></script>
+  <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/alpine-morph.js"></script>
+
+  
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basecoat-css@0.2.8/dist/basecoat.cdn.min.css">
+    
+  <script src="https://esm.sh/@tailwindcss/browser@4" defer type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.2.8/dist/js/all.min.js" defer></script>
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css"
@@ -39,26 +45,28 @@
 
 
   <script>
+    
     // Fix for Alpine Morph with HTMX history
+    // Remove all alpine ifs and fors from main that have been x-morph'd
+    // Leave any in the header that still have their state.
     document.addEventListener("htmx:beforeHistorySave", (evt) => {
-      document.querySelectorAll("[x-for]").forEach((item) => {
+      console.log("[HTMX] beforeHistorySave event triggered");
+      document.querySelectorAll("main [x-for]").forEach((item) => {
         if (item._x_lookup) {
           Object.values(item._x_lookup).forEach((el) => el.remove());
         }
       });
-      document.querySelectorAll("[x-if]").forEach((item) => {
+
+      document.querySelectorAll("main [x-if]").forEach((item) => {
         if (item._x_currentIfEl) {
           item._x_currentIfEl.remove();
         }
       });
     });
-    // Log when everything is loaded
-    document.addEventListener("DOMContentLoaded", () => {
-      console.log("DOMContentLoaded");
-    });
+    
   </script>
-</head>
 
+ 
   {{head_extra}}
   <script>
     async function setupTorrentLinks(inputString) {
@@ -125,7 +133,7 @@
 
           window.worker = reg.active || reg.waiting || reg.installing;
           function checkState(worker) {
-            console.log("checkState", worker.state, worker);
+
             return (
               worker.state === "activated" &&
               client.createServer({ controller: reg }) &&
@@ -658,12 +666,89 @@
       margin: 0;
       display: inline;
     }
+
+    :root {
+  --radius-xl: 0.0rem;
+  --radius-lg: 0.0rem;
+  --radius-md: 0.0rem;
+  --radius-sm: 0.0rem;
+  --radius-xs: 0.0rem;
+  --radius-2xs: 0.0rem;
+  --radius-3xs: 0.0rem;
+  --radius-4xs: 0.0rem;
+  --radius: 0.0rem;
+  --background: var(--body-bg-color);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: var(--body-color);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.269 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.371 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.439 0 0);
+}
   </style>
 <meta name="htmx-config" content='{"disableInheritance":true}'>
 </head>
-<body x-data hx-boost="true" hx-target="main" hx-select="main"  hx-inherit="hx-select hx-target hx-boost" class="min-h-screen bg-base-100 latex-dark-auto" x-cloak>
+<body x-data hx-boost="true" hx-target="main" hx-swap="morph" hx-select="main"  hx-inherit="hx-select hx-target hx-swap hx-boost" class="min-h-screen bg-base-100 latex-dark-auto" x-cloak>
 
-    <header>
+    <header class="nuance">
       <div>
         <a href="/"><h1 class="logo">Nuance</h1></a>
       </div>
@@ -671,22 +756,79 @@
         <a href="/recent">Recent Posts</a> | <a href="/active">Active Posts</a> | <a href="/topics">Topics</a> | <a href="/blog">Blog</a>  <br> 
         <a href="/publish">Publish</a>
         <!-- Show loading spinner while wallet store is initializing -->
-        <span x-show="$store.walletStore.isLoading">| Loading wallet...</span>
+        <span x-show="$store.walletStore.isLoading" x-effect="console.log('[Header] Loading spinner visible:', $store.walletStore.isLoading)">| Loading wallet...</span>
         
         <!-- Show "Manage Wallets" if there's no active wallet and store is loaded -->
-        <span x-show="!$store.walletStore.isLoading">
+        <span x-show="!$store.walletStore.isLoading" x-effect="console.log('[Header] Manage Wallets visible:', !$store.walletStore.isLoading)">
           | <a href="/wallet">Manage Wallets</a>
-        </span>
+        </span><br>
         <!-- Show wallet info if connected and store is loaded -->
-        <span x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta?.address">
-          | <span style="text-transform: capitalize;" x-text="$store.walletStore.activeWalletMeta?.type"></span> Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
-          | <a class="author" :href="`/authors/${$store.walletStore.activeWalletMeta?.address}`"><span x-text="$store.walletStore.activeWalletMeta?.address"></span></a> 
-          | chain-id: <span x-text="$store.walletStore.chainId"></span> 
+        <template x-if="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta?.address" x-effect="console.log('[Header] Wallet menu template condition:', {isLoading: $store.walletStore.isLoading, hasWallet: !!$store.walletStore.activeWalletMeta?.address, activeWalletMeta: $store.walletStore.activeWalletMeta})">
+          <span x-data="{
+            availableIdentities: [],
+            currentAuthorIdentity: '',
+            currentWalletAddress: '',
+            componentId: Math.random().toString(36).substr(2, 9),
+            async init() {
+
+             
+              
+              await this.refreshIdentities();
+              
+              // Watch for wallet address changes
+              this.$watch('$store.walletStore.activeWalletMeta?.address', async (newAddress, oldAddress) => {
+                if (newAddress !== oldAddress && newAddress) {
+                  await this.refreshIdentities();
+                }
+              });
+              
+              // Watch for loading state changes
+              this.$watch('$store.walletStore.isLoading', (newLoading, oldLoading) => {
+              });
+              
+            },
+            async refreshIdentities() {
+              try {
+                this.currentWalletAddress = $store.walletStore.activeWalletMeta?.address || '';
+                
+                this.availableIdentities = await $store.walletStore.getAvailableAuthorIdentities();
+                
+                this.currentAuthorIdentity = $store.walletStore.getAuthorIdentity();
+                
+              } catch (error) {
+                console.error('[WalletMenu]', this.componentId, 'Failed to refresh identities:', error);
+                this.availableIdentities = [];
+                this.currentAuthorIdentity = '';
+              }
+            },
+            async onIdentityChange(event) {
+              const selectedIdentity = event.target.value;
+              try {
+                await $store.walletStore.setAuthorIdentity(selectedIdentity);
+                this.currentAuthorIdentity = selectedIdentity;
+              } catch (error) {
+                console.error('[WalletMenu]', this.componentId, 'Failed to set author identity:', error);
+                // Reset to current value on error
+                event.target.value = this.currentAuthorIdentity;
+              }
+            }
+          }" x-init="init()">
+          Author: <select @change="onIdentityChange" x-model="currentAuthorIdentity">
+              <template x-for="identity in availableIdentities" :key="identity">
+                <option :value="identity" x-text="$store.walletStore.getDisplayTextForIdentity(identity)"></option>
+              </template>
+            </select>
+          | <a :href="`/authors/${$store.walletStore.getAuthorIdentity()}`">View Profile</a>
+          | <a :href="`/edit-author/${$store.walletStore.getAuthorIdentity()}`">Edit Profile</a><br>
+          Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
+          | Chain: <span x-text="$store.walletStore.chainId"></span> 
           | <a @click="$store.walletStore.disconnectWallet()" >Disconnect</a> 
-        </span>
+          </span>
+        </template>
        
       </div>
     </header>
+
     <main>{{body}}</main>
   </body>
 </html> 

@@ -318,13 +318,14 @@ paths:
                 title: executor is the account address used to execute the script
               script_address:
                 type: string
+                description: address is the script bech32 address to execute.
+              script_name:
+                type: string
                 title: >-
-                  address is the script address to execute.
+                  script_name is the optional nameservice name of the script to
+                  execute
 
-                  This can be either a bech32 address or a nameservice name
-                  (e.g.,
-
-                  "example.dys")
+                  (e.g., "example.dys")
               extra_code:
                 type: string
                 title: >-
@@ -521,9 +522,12 @@ paths:
           schema:
             type: object
             properties:
-              address_or_name:
+              script_address:
                 type: string
-                description: address is the account address of the script.
+                description: script_address is the bech32 account address of the script.
+              script_name:
+                type: string
+                description: script_name is the name of the script (e.g., "example.dys").
               httprequest:
                 type: string
                 description: httprequest is the http request.
@@ -2045,6 +2049,103 @@ paths:
           in: query
           required: false
           type: string
+      tags:
+        - Query
+  /dysonprotocol/nameservice/v1/names_by_destination/{destination}:
+    get:
+      summary: >-
+        QueryNamesByDestination queries all names pointing to a destination
+        address
+      operationId: dysonprotocol.nameservice.v1.QueryQueryNamesByDestinationRequest
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              names:
+                type: array
+                items:
+                  type: string
+                title: >-
+                  names is the list of name strings pointing to the destination
+                  address
+              pagination:
+                description: pagination defines the pagination in the response.
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+            description: |-
+              QueryNamesByDestinationResponse is response type for the
+              Query/QueryNamesByDestination RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: destination
+          description: destination is the address to find names for
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   /dysonprotocol/nameservice/v1/params:
@@ -16410,10 +16511,12 @@ definitions:
         title: executor is the account address used to execute the script
       script_address:
         type: string
+        description: address is the script bech32 address to execute.
+      script_name:
+        type: string
         title: |-
-          address is the script address to execute.
-          This can be either a bech32 address or a nameservice name (e.g.,
-          "example.dys")
+          script_name is the optional nameservice name of the script to execute
+          (e.g., "example.dys")
       extra_code:
         type: string
         title: |-
@@ -16465,9 +16568,12 @@ definitions:
   dysonprotocol.script.v1.WebRequest:
     type: object
     properties:
-      address_or_name:
+      script_address:
         type: string
-        description: address is the account address of the script.
+        description: script_address is the bech32 account address of the script.
+      script_name:
+        type: string
+        description: script_name is the name of the script (e.g., "example.dys").
       httprequest:
         type: string
         description: httprequest is the http request.
@@ -17221,6 +17327,36 @@ definitions:
           minimum_bid_percent_increase defines the minimum percentage increase
           required for a new bid compared to the previous bid
     description: Params defines the parameters for the nameservice module.
+  dysonprotocol.nameservice.v1.QueryNamesByDestinationResponse:
+    type: object
+    properties:
+      names:
+        type: array
+        items:
+          type: string
+        title: names is the list of name strings pointing to the destination address
+      pagination:
+        description: pagination defines the pagination in the response.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    description: |-
+      QueryNamesByDestinationResponse is response type for the
+      Query/QueryNamesByDestination RPC method.
   dysonprotocol.nameservice.v1.QueryParamsResponse:
     type: object
     properties:

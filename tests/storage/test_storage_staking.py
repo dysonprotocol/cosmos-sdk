@@ -120,8 +120,8 @@ class TestStorageStakingParameters:
             # Submit proposal (should succeed)
             with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=True) as f:
                 json.dump(proposal_data, f)
+                f.flush()
                 proposal_file = f.name
-            
                 prop_result = dysond("tx", "gov", "submit-proposal", proposal_file, "--from", proposer_name)
                 assert prop_result["code"] == 0, f"Valid proposal should succeed for '{multiplier}'"
             
@@ -512,7 +512,7 @@ class TestStorageStakingValidation:
         with tempfile.NamedTemporaryFile(mode='w', delete=True, suffix='.json') as f:
             json.dump(proposal_data, f, indent=2)
             proposal_file = f.name
-        
+            f.flush()
             # Submit proposal
             prop_result = dysond("tx", "gov", "submit-proposal", proposal_file, "--from", proposer)
         assert prop_result["code"] == 0

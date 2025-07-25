@@ -19,8 +19,15 @@ import (
 )
 
 const (
-	txtRecordKey = "DYS_DWAPP"
+	txtScriptNameRecordKey    = "DYSON_SCRIPT_NAME"
+	txtScriptAddressRecordKey = "DYSON_SCRIPT_ADDRESS"
 )
+
+// DysonTxtRecords holds the parsed TXT record values for Dyson script configuration
+type DysonTxtRecords struct {
+	ScriptName    string
+	ScriptAddress string
+}
 
 func NewDefaultHandler(clientCtx client.Context, ScriptAddressOrNamePattern string) http.Handler {
 	fmt.Println("ScriptAddressOrNamePattern: ", ScriptAddressOrNamePattern)
@@ -37,31 +44,6 @@ type DefaultHandler struct {
 }
 
 func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	var addressOrName string
-
-	// First, try to get address from TXT records
-	txtRecords, err := getTXTRecords(req.Host)
-	if err == nil && txtRecords != nil {
-		if txtAddressOrName, ok := txtRecords[txtRecordKey]; ok && txtAddressOrName != "" {
-			addressOrName = txtAddressOrName
-			fmt.Printf("Found address from TXT record: %s\n", addressOrName)
-		}
-	}
-
-	// If no address found in TXT records, fall back to regex pattern matching
-	if addressOrName == "" {
-		// split the host and use the first part as the address
-		match := h.scriptAddressOrNameRe.FindStringSubmatch(req.Host)
-
-		if len(match) <= 1 {
-			errorMsg := fmt.Sprintf("No address found for host: `%s` using ScriptAddressOrNamePattern: `%s`  match: %v", req.Host, h.scriptAddressOrNameRe.String(), match)
-			http.Error(w, errorMsg, http.StatusNotFound)
-			return
-		} else {
-			addressOrName = match[1]
-			fmt.Printf("Found address from regex pattern: %s\n", addressOrName)
-		}
-	}
 
 	// get the raw request
 	rawRequest, err := getRawRequest(req)
@@ -72,10 +54,45 @@ func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	fmt.Println("rawRequest: ", rawRequest)
 
-	// Create the request
+	// Create the request - determine if addressOrName is an address or name
 	queryReq := &scriptv1.WebRequest{
-		AddressOrName: addressOrName,
-		Httprequest:   rawRequest,
+		Httprequest: rawRequest,
+	}
+
+	// First, try to get script address/name from TXT records
+	txtRecords, err := getTXTRecords(req.Host)
+	if err == nil {
+		// Prefer script address if available, otherwise use script name
+		if txtRecords.ScriptAddress != "" {
+			queryReq.ScriptAddress = txtRecords.ScriptAddress
+			fmt.Printf("Found script address from TXT record: %s\n", queryReq.ScriptAddress)
+		}
+		if txtRecords.ScriptName != "" {
+			queryReq.ScriptName = txtRecords.ScriptName
+			fmt.Printf("Found script name from TXT record: %s\n", queryReq.ScriptName)
+		}
+	}
+
+	// If no address found in TXT records, fall back to regex pattern matching
+	if queryReq.ScriptAddress == "" && queryReq.ScriptName == "" {
+		// split the host and use the first part as the address
+		match := h.scriptAddressOrNameRe.FindStringSubmatch(req.Host)
+
+		if len(match) <= 1 {
+			errorMsg := fmt.Sprintf("No address found for host: `%s` using ScriptAddressOrNamePattern: `%s`  match: %v", req.Host, h.scriptAddressOrNameRe.String(), match)
+			http.Error(w, errorMsg, http.StatusNotFound)
+			return
+		} else {
+			addressOrName := match[1]
+			fmt.Printf("Found address from regex pattern: %s\n", addressOrName)
+
+			// Simple heuristic: if it starts with "dys", treat as address, otherwise as name
+			if strings.HasPrefix(addressOrName, "dys21") {
+				queryReq.ScriptAddress = addressOrName
+			} else {
+				queryReq.ScriptName = addressOrName
+			}
+		}
 	}
 
 	// Create a response object
@@ -214,8 +231,8 @@ func getRawRequest(r *http.Request) (string, error) {
 	return buf.String(), nil
 }
 
-// getTXTRecords queries DNS TXT records for a domain and looks for dyson= entries
-func getTXTRecords(host string) (map[string]string, error) {
+// getTXTRecords queries DNS TXT records for a domain and looks for DYSON_SCRIPT_NAME and DYSON_SCRIPT_ADDRESS entries
+func getTXTRecords(host string) (DysonTxtRecords, error) {
 	// Remove port if present
 	domain, _, err := net.SplitHostPort(host)
 	if err != nil {
@@ -226,32 +243,32 @@ func getTXTRecords(host string) (map[string]string, error) {
 	// Query TXT records
 	txtRecords, err := net.LookupTXT(domain)
 	if err != nil {
-		return nil, err
+		return DysonTxtRecords{}, err
 	}
 
-	// Look for dyson= in TXT records
+	result := DysonTxtRecords{}
+
+	// Look for DYSON_SCRIPT_NAME or DYSON_SCRIPT_ADDRESS in TXT records
 	for _, txt := range txtRecords {
-		if strings.Contains(txt, txtRecordKey+"=") {
+		// Check if this TXT record contains either of our keys
+		if strings.Contains(txt, txtScriptNameRecordKey+"=") || strings.Contains(txt, txtScriptAddressRecordKey+"=") {
 			// Parse the TXT record as URL query parameters
 			values, err := url.ParseQuery(txt)
 			if err != nil {
 				continue
 			}
 
-			// Convert url.Values to map[string]string
-			result := make(map[string]string)
-			for k, v := range values {
-				if len(v) > 0 {
-					result[k] = v[0]
-				}
+			// Extract script name if present
+			if scriptNames := values[txtScriptNameRecordKey]; len(scriptNames) == 1 {
+				result.ScriptName = strings.ToLower(strings.TrimSpace(scriptNames[0]))
 			}
 
-			// If dyson key exists, return the map
-			if _, ok := result[txtRecordKey]; ok {
-				return result, nil
+			// Extract script address if present
+			if scriptAddresses := values[txtScriptAddressRecordKey]; len(scriptAddresses) == 1 {
+				result.ScriptAddress = strings.ToLower(strings.TrimSpace(scriptAddresses[0]))
 			}
 		}
 	}
 
-	return nil, nil
+	return result, nil
 }

@@ -1,8 +1,10 @@
+AGENT.md
+delivery/
 demo-tew/universal-connectivity/
 test-results
 */internal/data/*
 .ipynb_checkpoints
-.cursor
+.cursor/
 .dysonprotocol
 .dyson-data
 .venv

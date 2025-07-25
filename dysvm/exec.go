@@ -71,7 +71,7 @@ func Benchmark(iterations int, details bool) (string, error) {
 	return string(out), runErr
 }
 
-func Wsgi(port, scriptJSON, blockInfoJSON, httpreq string) (string, error) {
+func Wsgi(port, scriptName, scriptJSON, blockInfoJSON, httpreq string) (string, error) {
 	var lib *embed_util.EmbeddedFiles
 	ep, err := python.NewEmbeddedPython("dyslang")
 	if err != nil {
@@ -87,7 +87,7 @@ func Wsgi(port, scriptJSON, blockInfoJSON, httpreq string) (string, error) {
 	ep.AddPythonPath("./dysvm/internal/py-dyslang")
 	ep.AddPythonPath(lib.GetExtractedPath())
 
-	cmd, err := ep.PythonCmd("-m", "dyslang", "run_wsgi", port, scriptJSON, blockInfoJSON, httpreq)
+	cmd, err := ep.PythonCmd("-m", "dyslang", "run_wsgi", port, scriptName, scriptJSON, blockInfoJSON, httpreq)
 
 	if err != nil {
 		return "", err

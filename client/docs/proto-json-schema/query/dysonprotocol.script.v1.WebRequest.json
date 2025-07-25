@@ -4,9 +4,13 @@
     "definitions": {
         "dysonprotocol.script.v1.WebRequest": {
             "properties": {
-                "address_or_name": {
+                "script_address": {
                     "type": "string",
-                    "description": "address is the account address of the script."
+                    "description": "script_address is the bech32 account address of the script."
+                },
+                "script_name": {
+                    "type": "string",
+                    "description": "script_name is the name of the script (e.g., \"example.dys\")."
                 },
                 "httprequest": {
                     "type": "string",

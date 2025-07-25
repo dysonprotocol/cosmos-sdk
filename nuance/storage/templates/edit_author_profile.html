@@ -1,157 +1,100 @@
 <div>
-  <h1>Edit Profile for {{author_name}}</h1>
-  <textarea id="profile-content" name="content" rows="10">{{content}}</textarea>
-  <button id="saveButton" :disabled="$store.walletStore.isLoading || !$store.walletStore.activeWalletMeta">Save Profile</button>
+  <h1>Edit Profile</h1>
+  <div x-show="$store.walletStore.isWalletConnected()">
+    <p><strong>Editing as:</strong> <span x-text="$store.walletStore.getAuthorIdentity()"></span></p>
+  </div>
+  <div x-show="!$store.walletStore.isWalletConnected()" style="color: red;">
+    <p>Please connect your wallet to edit your profile.</p>
+  </div>
+  <textarea id="profile-content" name="content" rows="10" :disabled="!$store.walletStore.isWalletConnected()">{{content}}</textarea>
+  <button id="saveButton" :disabled="$store.walletStore.isLoading || !$store.walletStore.isWalletConnected()">Save Profile</button>
 </div>
 
-<div>
+<!-- Hidden data element for JavaScript to access -->
+<script type="application/json" id="custom-pages-data">{{custom_pages}}</script>
+
+<div x-data="customPagesManager()" x-init="init()">
   <h2>Custom Pages</h2>
+  
+  <!-- Custom Pages List -->
   <div id="custom-pages-list">
-    <!-- Custom pages will be populated by JavaScript -->
+    <template x-for="page in pages" :key="page.path">
+      <div class="custom-page-item" style="border: 1px solid #ddd; padding: 10px; margin: 5px 0;">
+        <strong x-text="page.title"></strong>
+        <span> (/<span x-text="page.path"></span>) - Post ID: <span x-text="page.post_id"></span></span>
+        <button 
+          @click="removePage(page.path)" 
+          :disabled="$store.walletStore.isLoading || !$store.walletStore.isWalletConnected()"
+          style="margin-left: 10px; background: #dc3545; color: white; border: none; padding: 2px 8px;">
+          Remove
+        </button>
+      </div>
+    </template>
+    
+    <div x-show="pages.length === 0" style="color: #666; font-style: italic;">
+      No custom pages yet.
+    </div>
   </div>
   
   <h3>Add New Custom Page</h3>
   <div>
-    <input type="text" id="new-page-path" placeholder="Path (e.g., 'about', 'contact')" maxlength="50">
-    <input type="text" id="new-page-title" placeholder="Page Title" maxlength="100">
-    <input type="number" id="new-page-post-id" placeholder="Post ID" min="1">
-    <button id="addPageButton" :disabled="$store.walletStore.isLoading || !$store.walletStore.activeWalletMeta">Add Page</button>
+    <input 
+      type="text" 
+      x-model="newPage.path" 
+      placeholder="Path (e.g., 'about', 'contact')" 
+      maxlength="50">
+    <input 
+      type="text" 
+      x-model="newPage.title" 
+      placeholder="Page Title" 
+      maxlength="100">
+    <input 
+      type="number" 
+      x-model.number="newPage.postId" 
+      placeholder="Post ID" 
+      min="1">
+    <button 
+      @click="addPage()" 
+      :disabled="$store.walletStore.isLoading || !$store.walletStore.isWalletConnected() || !canAddPage">
+      Add Page
+    </button>
+  </div>
+  
+  <!-- Error/Success Messages -->
+  <div x-show="message" :class="messageType === 'error' ? 'error-message' : 'success-message'" style="margin-top: 10px; padding: 10px;">
+    <span x-text="message"></span>
   </div>
 </div>
 
-<script>
-  // Store custom pages data
-  const customPagesData = JSON.parse('{{custom_pages}}' || '[]');
+<script type="module">
+  // Import the author pages functionality
+  import { customPagesManager, initProfileEditor } from '/static/js/authorPages.js';
   
-  function renderCustomPages() {
-    const container = document.getElementById('custom-pages-list');
-    if (customPagesData.length === 0) {
-      container.innerHTML = '<p>No custom pages yet.</p>';
-      return;
-    }
-    
-    const pagesHtml = customPagesData.map(page => `
-      <div class="custom-page-item" data-path="${page.path}">
-        <strong>${page.title}</strong> 
-        <span>(${page.path} → Post #${page.post_id})</span>
-        <button onclick="removePage('${page.path}')" class="remove-page-btn">Remove</button>
-      </div>
-    `).join('');
-    
-    container.innerHTML = pagesHtml;
-  }
+  // Make customPagesManager available globally for Alpine.js
+  window.customPagesManager = customPagesManager;
   
-  function addPage() {
-    const path = document.getElementById('new-page-path').value.trim();
-    const title = document.getElementById('new-page-title').value.trim();
-    const postId = parseInt(document.getElementById('new-page-post-id').value);
-    
-    if (!path || !title || !postId) {
-      alert('Please fill in all fields');
-      return;
-    }
-    
-    // Validate path format
-    if (!/^[a-zA-Z0-9_-]+$/.test(path)) {
-      alert('Path must contain only letters, numbers, hyphens, and underscores');
-      return;
-    }
-    
-    // Check for duplicate paths
-    if (customPagesData.some(page => page.path === path)) {
-      alert('A page with this path already exists');
-      return;
-    }
-    
-    // Use the new wallet store method instead of deprecated runFunction
-    Alpine.store('walletStore').runDysonScript({
-      scriptAddress: window.scriptAddress,
-      functionName: "link_page",
-      kwargs: JSON.stringify({ 
-        path: path, 
-        title: title, 
-        post_id: postId, 
-        author: "{{author_name}}" 
-      }),
-      gasLimit: "auto",
-    })
-    .then((result) => {
-      if (result.success) {
-        customPagesData.push({ path, title, post_id: postId });
-        renderCustomPages();
-        // Clear form
-        document.getElementById('new-page-path').value = '';
-        document.getElementById('new-page-title').value = '';
-        document.getElementById('new-page-post-id').value = '';
-        alert("Custom page added successfully!");
-      } else {
-        throw new Error(result.rawLog || 'Transaction failed');
-      }
-    })
-    .catch((e) => {
-      console.error("Error adding custom page:", e);
-      alert("Failed to add custom page: " + e.message);
-    });
-  }
-  
-  function removePage(path) {
-    if (!confirm(`Remove custom page "${path}"?`)) return;
-    
-    // Use the new wallet store method instead of deprecated runFunction
-    Alpine.store('walletStore').runDysonScript({
-      scriptAddress: window.scriptAddress,
-      functionName: "unlink_page",
-      kwargs: JSON.stringify({ 
-        path: path, 
-        author: "{{author_name}}" 
-      }),
-      gasLimit: "auto",
-    })
-    .then((result) => {
-      if (result.success) {
-        const index = customPagesData.findIndex(page => page.path === path);
-        if (index > -1) {
-          customPagesData.splice(index, 1);
-          renderCustomPages();
-        }
-        alert("Custom page removed successfully!");
-      } else {
-        throw new Error(result.rawLog || 'Transaction failed');
-      }
-    })
-    .catch((e) => {
-      console.error("Error removing custom page:", e);
-      alert("Failed to remove custom page: " + e.message);
-    });
-  }
-  
-  // Initialize page
-  renderCustomPages();
-
-  document.getElementById("saveButton").addEventListener("click", () => {
-    const content = document.getElementById("profile-content").value;
-    const author = "{{author_name}}";
-
-    // Use the new wallet store method instead of deprecated runFunction
-    Alpine.store('walletStore').runDysonScript({
-      scriptAddress: window.scriptAddress,
-      functionName: "edit_author_profile",
-      kwargs: JSON.stringify({ content: content, author: author }),
-      gasLimit: "auto",
-    })
-    .then((result) => {
-      if (result.success) {
-        alert("Profile updated successfully!");
-        window.location.href = "/authors/" + author;
-      } else {
-        throw new Error(result.rawLog || 'Profile update failed');
-      }
-    })
-    .catch((e) => {
-        console.error("Error updating profile:", e);
-        alert("Failed to update profile: " + e.message);
-    });
-  });
-  
-  document.getElementById("addPageButton").addEventListener("click", addPage);
+  // Initialize profile editor functionality
+  initProfileEditor();
 </script> 
+
+<style>
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+  }
+  
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+  }
+  
+  .custom-page-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+</style> 

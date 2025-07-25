@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Query_ComputeHash_FullMethodName = "/dysonprotocol.nameservice.v1.Query/ComputeHash"
-	Query_ResolveName_FullMethodName = "/dysonprotocol.nameservice.v1.Query/ResolveName"
-	Query_Params_FullMethodName      = "/dysonprotocol.nameservice.v1.Query/Params"
+	Query_ComputeHash_FullMethodName             = "/dysonprotocol.nameservice.v1.Query/ComputeHash"
+	Query_ResolveName_FullMethodName             = "/dysonprotocol.nameservice.v1.Query/ResolveName"
+	Query_Params_FullMethodName                  = "/dysonprotocol.nameservice.v1.Query/Params"
+	Query_QueryNamesByDestination_FullMethodName = "/dysonprotocol.nameservice.v1.Query/QueryNamesByDestination"
 )
 
 // QueryClient is the client API for Query service.
@@ -37,6 +38,8 @@ type QueryClient interface {
 	ResolveName(ctx context.Context, in *QueryResolveNameRequest, opts ...grpc.CallOption) (*QueryResolveNameResponse, error)
 	// Params queries the nameservice module parameters
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
+	// QueryNamesByDestination queries all names pointing to a destination address
+	QueryNamesByDestination(ctx context.Context, in *QueryNamesByDestinationRequest, opts ...grpc.CallOption) (*QueryNamesByDestinationResponse, error)
 }
 
 type queryClient struct {
@@ -77,6 +80,16 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 	return out, nil
 }
 
+func (c *queryClient) QueryNamesByDestination(ctx context.Context, in *QueryNamesByDestinationRequest, opts ...grpc.CallOption) (*QueryNamesByDestinationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryNamesByDestinationResponse)
+	err := c.cc.Invoke(ctx, Query_QueryNamesByDestination_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -90,6 +103,8 @@ type QueryServer interface {
 	ResolveName(context.Context, *QueryResolveNameRequest) (*QueryResolveNameResponse, error)
 	// Params queries the nameservice module parameters
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
+	// QueryNamesByDestination queries all names pointing to a destination address
+	QueryNamesByDestination(context.Context, *QueryNamesByDestinationRequest) (*QueryNamesByDestinationResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -108,6 +123,9 @@ func (UnimplementedQueryServer) ResolveName(context.Context, *QueryResolveNameRe
 }
 func (UnimplementedQueryServer) Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
+}
+func (UnimplementedQueryServer) QueryNamesByDestination(context.Context, *QueryNamesByDestinationRequest) (*QueryNamesByDestinationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryNamesByDestination not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -184,6 +202,24 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_QueryNamesByDestination_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNamesByDestinationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).QueryNamesByDestination(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_QueryNamesByDestination_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).QueryNamesByDestination(ctx, req.(*QueryNamesByDestinationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -202,6 +238,10 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Params",
 			Handler:    _Query_Params_Handler,
+		},
+		{
+			MethodName: "QueryNamesByDestination",
+			Handler:    _Query_QueryNamesByDestination_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

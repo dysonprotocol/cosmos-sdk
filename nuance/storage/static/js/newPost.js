@@ -1,7 +1,6 @@
 function createNewPostData() {
   return {
     content: Alpine.$persist(''),
-    author: Alpine.$persist(''),
     previewHtml: '',
     error: '',
     isSubmitting: false,
@@ -13,10 +12,15 @@ function createNewPostData() {
       this.$watch('content', () => {
         this.clearError();
       });
-      
-      this.$watch('author', () => {
-        this.clearError();
-      });
+    },
+    
+    // Get the current author identity from wallet store
+    get currentAuthor() {
+      try {
+        return this.$store.walletStore.getAuthorIdentity();
+      } catch (error) {
+        return '';
+      }
     },
     
     clearError() {
@@ -77,11 +81,16 @@ function createNewPostData() {
         this.isSubmitting = true;
         this.error = '';
         
+        // Validate we have an author identity
+        if (!this.currentAuthor) {
+          throw new Error('No author identity selected. Please connect your wallet and select an identity.');
+        }
+        
         const scriptAddress = window.scriptAddress; // Set in base.html
         const result = await this.$store.walletStore.runDysonScript({
           scriptAddress,
           functionName: 'publish_post',
-          kwargs: JSON.stringify({ content: this.content, author: this.author }),
+          kwargs: JSON.stringify({ content: this.content, author: this.currentAuthor }),
           gasLimit: 'auto'
         });
         

@@ -31,11 +31,65 @@ func (k Keeper) SetDestination(ctx context.Context, msg *nameservicev1.MsgSetDes
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrUnauthorized, "only the owner can set the destination")
 	}
 
+	// Store the old destination to update reverse mappings
+	oldDestination := nameNFT.Uri
+	k.Logger.Info("SetDestination: Current destination", "name", msg.Name, "old_destination", oldDestination, "new_destination", msg.Destination)
+
+	// Validate the destination before updating
+	if msg.Destination != "" {
+		// Check if destination is a valid bech32 address
+		_, err := sdk.AccAddressFromBech32(msg.Destination)
+		if err != nil {
+			k.Logger.Info("SetDestination: Destination is not a valid bech32 address, checking if it's an existing name", "destination", msg.Destination, "error", err)
+			// Not a valid address, check if it's an existing name
+			_, found := k.nftKeeper.GetNFT(ctx, NamesClassID, msg.Destination)
+			k.Logger.Info("SetDestination: Checked for existing name", "destination", msg.Destination, "found", found)
+			if !found {
+				k.Logger.Error("SetDestination: Invalid destination - not a valid address or existing name", "destination", msg.Destination)
+				return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "destination must be a valid bech32 address or existing name")
+			}
+			k.Logger.Info("SetDestination: Destination is an existing name", "destination", msg.Destination)
+		} else {
+			k.Logger.Info("SetDestination: Destination is a valid bech32 address", "destination", msg.Destination)
+		}
+	}
+
 	// Update the NFT
 	nameNFT.Uri = msg.Destination
 	if err := k.nftKeeper.Update(ctx, nameNFT); err != nil {
 		k.Logger.Error("SetDestination: Failed to update NFT", "name", msg.Name, "error", err)
 		return nil, cosmossdkerrors.Wrap(err, "failed to update NFT")
+	}
+
+	// Verify that the updated name can be resolved properly
+	if msg.Destination != "" {
+		_, err := k.ResolveNameOrAddress(ctx, msg.Name)
+		if err != nil {
+			k.Logger.Error("SetDestination: Name resolution failed after update", "name", msg.Name, "destination", msg.Destination, "error", err)
+			return nil, cosmossdkerrors.Wrap(err, "destination creates unresolvable name chain")
+		}
+		k.Logger.Info("SetDestination: Name resolution verified", "name", msg.Name, "destination", msg.Destination)
+	}
+
+	// Update reverse mappings
+	// Remove old mapping if it exists and is not empty
+	if oldDestination != "" {
+		if err := k.RemoveNameDestinationMapping(ctx, oldDestination, msg.Name); err != nil {
+			k.Logger.Error("SetDestination: Failed to remove old reverse mapping", "old_destination", oldDestination, "name", msg.Name, "error", err)
+			// Don't fail the transaction for reverse mapping errors, just log
+		} else {
+			k.Logger.Info("SetDestination: Removed old reverse mapping", "old_destination", oldDestination, "name", msg.Name)
+		}
+	}
+
+	// Add new mapping if destination is not empty
+	if msg.Destination != "" {
+		if err := k.SetNameDestinationMapping(ctx, msg.Destination, msg.Name); err != nil {
+			k.Logger.Error("SetDestination: Failed to add new reverse mapping", "new_destination", msg.Destination, "name", msg.Name, "error", err)
+			// Don't fail the transaction for reverse mapping errors, just log
+		} else {
+			k.Logger.Info("SetDestination: Added new reverse mapping", "new_destination", msg.Destination, "name", msg.Name)
+		}
 	}
 
 	k.Logger.Info("SetDestination: Successfully updated name NFT", "name", msg.Name, "destination", nameNFT.Uri)

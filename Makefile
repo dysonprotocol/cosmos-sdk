@@ -117,7 +117,7 @@ init:
 
 start: install
 	@echo "--> Starting dyson"
-	./scripts/chainnet.py start --config-file /tmp/dysonchains/chains.json --block-speed 500ms --logs --no-blocks-timeout 3
+	./scripts/chainnet.py start --config-file /tmp/dysonchains/chains.json --block-speed 500ms --logs --no-blocks-timeout 10
 
 
 # The 'watch' target monitors .go files and restarts the application on changes.

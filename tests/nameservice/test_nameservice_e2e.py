@@ -495,24 +495,231 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     assert owner_data["owner"] == charlie_address, f"NFT not transferred to Charlie: {owner_data['owner']} != {charlie_address}"
     print(f"Verified NFT ownership transferred to Charlie: {charlie_address}")
 
-    print("Nameservice E2E test completed successfully!") 
+    print("Nameservice E2E test completed successfully!")
 
-# Helper: Register a name for Alice and return the name dict
-@pytest.fixture
-def register_name(chainnet, generate_account, faucet):
+
+def test_set_destination_validation(chainnet, generate_account, faucet, register_name):
+    """Test that SetDestination properly validates destinations"""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="udys", amount="25000")
+    
+    # Register a name
+    valid_name = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    
+    # Test 1: Setting destination to a valid address should work
+    set_valid_addr = dysond_bin("tx", "nameservice", "set-destination", "--name", valid_name, "--destination", alice_address, "--from", alice_name)
+    assert set_valid_addr["code"] == 0, f"Valid address destination failed: {set_valid_addr.get('raw_log', '')}"
+    print(f"✓ Valid address destination accepted: {alice_address}")
+    
+    # Test 2: Setting destination to empty string should work
+    set_empty = dysond_bin("tx", "nameservice", "set-destination", "--name", valid_name, "--destination", "", "--from", alice_name)
+    assert set_empty["code"] == 0, f"Empty destination failed: {set_empty.get('raw_log', '')}"
+    print("✓ Empty destination accepted")
+    
+    # Test 3: Setting destination to an existing name should work
+    other_name = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    set_dest_addr = dysond_bin("tx", "nameservice", "set-destination", "--name", other_name, "--destination", alice_address, "--from", alice_name)
+    assert set_dest_addr["code"] == 0
+    
+    set_name_dest = dysond_bin("tx", "nameservice", "set-destination", "--name", valid_name, "--destination", other_name, "--from", alice_name)
+    assert set_name_dest["code"] == 0, f"Existing name destination failed: {set_name_dest.get('raw_log', '')}"
+    print(f"✓ Existing name destination accepted: {other_name}")
+    
+    # Test 4: Setting destination to non-existent name should fail
+    nonexistent_name = f"nonexistent-{int(time.time())}.dys"
+    set_invalid = dysond_bin("tx", "nameservice", "set-destination", "--name", valid_name, "--destination", nonexistent_name, "--from", alice_name)
+    assert set_invalid["code"] != 0, f"Non-existent name destination should have failed but succeeded: {set_invalid}"
+    print(f"✓ Non-existent name destination rejected: {nonexistent_name}")
+    
+    # Test 5: Setting destination to invalid address should fail
+    invalid_address = "invalid-address-123"
+    set_invalid_addr = dysond_bin("tx", "nameservice", "set-destination", "--name", valid_name, "--destination", invalid_address, "--from", alice_name)
+    assert set_invalid_addr["code"] != 0, f"Invalid address destination should have failed but succeeded: {set_invalid_addr}"
+    print(f"✓ Invalid address destination rejected: {invalid_address}")
 
-    name = f"testname{alice_address[:6]}.dys"
-    salt = "testsalt"
-    hash_result = dysond_bin("query", "nameservice", "compute-hash", "--name", name, "--salt", salt, "--committer", alice_address)
-    hex_hash = hash_result["hex_hash"]
-    commit_result = dysond_bin("tx", "nameservice", "commit", "--commitment", hex_hash, "--valuation", "100udys", "--from", alice_name)
-    assert commit_result["code"] == 0
-    reveal_result = dysond_bin("tx", "nameservice", "reveal", "--name", name, "--salt", salt, "--from", alice_name)
-    assert reveal_result["code"] == 0
-    return {"name": name, "alice_name": alice_name, "alice_address": alice_address} 
+
+def test_set_destination_cycle_prevention(chainnet, generate_account, faucet, register_name):
+    """Test that SetDestination prevents creating cycles"""
+    dysond_bin = chainnet[0]
+    [alice_name, alice_address] = generate_account('alice')
+    
+    # Register two names
+    name1 = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    name2 = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    
+    # Set name1 -> name2 (should work)
+    set_dest1 = dysond_bin("tx", "nameservice", "set-destination", "--name", name1, "--destination", name2, "--from", alice_name)
+    assert set_dest1["code"] == 0, f"Setting name1 -> name2 failed: {set_dest1.get('raw_log', '')}"
+    
+    # Try to set name2 -> name1 (should fail due to cycle)
+    set_dest2 = dysond_bin("tx", "nameservice", "set-destination", "--name", name2, "--destination", name1, "--from", alice_name)
+    assert set_dest2["code"] != 0, f"Creating cycle should have failed but succeeded: {set_dest2}"
+    print(f"✓ Cycle prevention: {name1} -> {name2} -> {name1} (rejected)")
+    
+    # Verify name1 can still be resolved (points to name2 -> address)
+    set_name2_addr = dysond_bin("tx", "nameservice", "set-destination", "--name", name2, "--destination", alice_address, "--from", alice_name)
+    assert set_name2_addr["code"] == 0
+    
+    resolution = dysond_bin("query", "nameservice", "resolve", name1)
+    assert resolution["address"] == alice_address
+    print(f"✓ Name resolution still works: {name1} -> {name2} -> {alice_address}")
+
+
+def test_set_destination_max_depth_prevention(chainnet, generate_account, faucet, register_name):
+    """Test that SetDestination prevents creating chains that exceed max depth"""
+    dysond_bin = chainnet[0]
+    [alice_name, alice_address] = generate_account('alice')
+    
+    # Create a chain of 9 names (at the limit)
+    names = []
+    for i in range(10):
+        name = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+        names.append(name)
+    
+    # Chain first 9 names together
+    for i in range(8):
+        set_dest = dysond_bin("tx", "nameservice", "set-destination", "--name", names[i], "--destination", names[i+1], "--from", alice_name)
+        assert set_dest["code"] == 0, f"Setting {names[i]} -> {names[i+1]} failed: {set_dest.get('raw_log', '')}"
+    
+    # Set the 9th name to point to alice_address
+    set_final = dysond_bin("tx", "nameservice", "set-destination", "--name", names[8], "--destination", alice_address, "--from", alice_name)
+    assert set_final["code"] == 0, f"Setting {names[8]} -> {alice_address} failed: {set_final.get('raw_log', '')}"
+    
+    # Try to set the 10th name to point to the chain start (would exceed depth)
+    set_exceed = dysond_bin("tx", "nameservice", "set-destination", "--name", names[9], "--destination", names[0], "--from", alice_name)
+    assert set_exceed["code"] != 0, f"Exceeding max depth should have failed but succeeded: {set_exceed}"
+    print(f"✓ Max depth prevention: chain of 10+ names rejected")
+    
+    # Verify the 9-name chain still resolves correctly
+    resolution = dysond_bin("query", "nameservice", "resolve", names[0])
+    assert resolution["address"] == alice_address
+    print(f"✓ 9-name chain still resolves: {names[0]} -> ... -> {alice_address}")
+
+
+def test_nested_name_resolution(chainnet, generate_account, faucet, register_name):
+    """Test iterative resolution of nested name destinations"""
+    dysond_bin = chainnet[0]
+    [alice_name, alice_address] = generate_account('alice')
+    [bob_name, bob_address] = generate_account('bob')
+    
+    # Register two names using the fixture
+    name1 = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    name2 = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    
+    # Set name2 destination to alice_address
+    set_dest2 = dysond_bin("tx", "nameservice", "set-destination", "--name", name2, "--destination", alice_address, "--from", alice_name)
+    assert set_dest2["code"] == 0
+    
+    # Set name1 destination to name2 (nested)
+    set_dest1 = dysond_bin("tx", "nameservice", "set-destination", "--name", name1, "--destination", name2, "--from", alice_name)
+    assert set_dest1["code"] == 0
+    
+    # Test resolution: name1 should resolve through name2 to alice_address
+    resolution = dysond_bin("query", "nameservice", "resolve", name1)
+    assert resolution["address"] == alice_address, f"Expected {alice_address}, got {resolution['address']}"
+    print(f"✓ Nested resolution: {name1} -> {name2} -> {alice_address}")
+
+
+def test_cycle_detection(chainnet, generate_account, faucet, register_name):
+    """Test cycle detection in name resolution"""
+    dysond_bin = chainnet[0]
+    [alice_name, alice_address] = generate_account('alice')
+    
+    # Register both names using the fixture
+    name1 = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    name2 = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    
+    # Create name1 -> name2 (should work)
+    set_dest1 = dysond_bin("tx", "nameservice", "set-destination", "--name", name1, "--destination", name2, "--from", alice_name)
+    assert set_dest1["code"] == 0, f"Setting name1 -> name2 failed: {set_dest1.get('raw_log', '')}"
+    
+    # Try to create cycle: name2 -> name1 (should fail due to cycle)
+    set_dest2 = dysond_bin("tx", "nameservice", "set-destination", "--name", name2, "--destination", name1, "--from", alice_name)
+    assert set_dest2["code"] != 0, f"Creating cycle should have failed but succeeded: {set_dest2}"
+    print(f"✓ Cycle prevention: {name1} -> {name2} -> {name1} (rejected)")
+    
+    # Verify name1 can still be resolved (points to name2 -> address)
+    set_name2_addr = dysond_bin("tx", "nameservice", "set-destination", "--name", name2, "--destination", alice_address, "--from", alice_name)
+    assert set_name2_addr["code"] == 0
+    
+    resolution = dysond_bin("query", "nameservice", "resolve", name1)
+    assert resolution["address"] == alice_address
+    print(f"✓ Name resolution still works: {name1} -> {name2} -> {alice_address}")
+
+
+def test_max_depth_exceeded(chainnet, generate_account, faucet, register_name):
+    """Test maximum depth protection in name resolution"""
+    dysond_bin = chainnet[0]
+    [alice_name, alice_address] = generate_account('alice')
+    
+    # Create a chain longer than maxDepth (10)
+    names = []
+    for i in range(12):
+        name = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+        names.append(name)
+    
+    # Chain them together: names[0] -> names[1] -> ... -> names[10] -> alice_address
+    for i in range(len(names) - 1):
+        destination = names[i + 1] if i < len(names) - 2 else alice_address
+        set_dest = dysond_bin("tx", "nameservice", "set-destination", "--name", names[i], "--destination", destination, "--from", alice_name)
+        assert set_dest["code"] == 0, f"Setting {names[i]} -> {destination} failed: {set_dest.get('raw_log', '')}"
+    
+    # Set final name to alice_address
+    set_final = dysond_bin("tx", "nameservice", "set-destination", "--name", names[-1], "--destination", alice_address, "--from", alice_name)
+    assert set_final["code"] == 0, f"Setting {names[-1]} -> {alice_address} failed: {set_final.get('raw_log', '')}"
+    
+    # Test that resolution fails with max depth exceeded
+    resolution = dysond_bin("query", "nameservice", "resolve", names[0])
+    # Should return error in response instead of successful resolution
+    assert "error" in resolution or "exceeded maximum depth" in str(resolution), f"Expected depth error, got: {resolution}"
+    print(f"✓ Max depth protection: chain of {len(names)} names")
+
+
+def test_mixed_name_types(chainnet, generate_account, faucet, register_name):
+    """Test resolution with mixed name types (not just .dys)"""
+    dysond_bin = chainnet[0]
+    [alice_name, alice_address] = generate_account('alice')
+    
+    # Register all names using the fixture
+    name_dys = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    name_custom = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    name_test = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    
+    # Chain: name_dys -> name_custom -> name_test -> alice_address
+    set_dest1 = dysond_bin("tx", "nameservice", "set-destination", "--name", name_dys, "--destination", name_custom, "--from", alice_name)
+    assert set_dest1["code"] == 0, f"Setting {name_dys} -> {name_custom} failed: {set_dest1.get('raw_log', '')}"
+    set_dest2 = dysond_bin("tx", "nameservice", "set-destination", "--name", name_custom, "--destination", name_test, "--from", alice_name)
+    assert set_dest2["code"] == 0, f"Setting {name_custom} -> {name_test} failed: {set_dest2.get('raw_log', '')}"
+    set_dest3 = dysond_bin("tx", "nameservice", "set-destination", "--name", name_test, "--destination", alice_address, "--from", alice_name)
+    assert set_dest3["code"] == 0, f"Setting {name_test} -> {alice_address} failed: {set_dest3.get('raw_log', '')}"
+    
+    # Test resolution through mixed name types
+    resolution = dysond_bin("query", "nameservice", "resolve", name_dys)
+    assert resolution["address"] == alice_address, f"Expected {alice_address}, got {resolution['address']}"
+    print(f"✓ Mixed types: {name_dys} -> {name_custom} -> {name_test} -> {alice_address}")
+
+
+def test_invalid_intermediate_destination(chainnet, generate_account, faucet, register_name):
+    """Test error handling for invalid intermediate destinations"""
+    dysond_bin = chainnet[0]
+    [alice_name, alice_address] = generate_account('alice')
+    
+    # Create valid name using the fixture
+    valid_name = register_name(dysond_bin, alice_name, alice_address, "1000udys")
+    
+    # Set destination to non-existent name - this should now fail at transaction level
+    nonexistent_name = f"nonexistent-{int(time.time())}.dys"
+    set_dest = dysond_bin("tx", "nameservice", "set-destination", "--name", valid_name, "--destination", nonexistent_name, "--from", alice_name)
+    assert set_dest["code"] != 0, f"Setting destination to non-existent name should fail, but got: {set_dest}"
+    print(f"✓ Invalid destination rejected at transaction level: {valid_name} -> {nonexistent_name}")
+    
+    # Also test invalid address format
+    invalid_address = "invalid-address-format"
+    set_invalid_addr = dysond_bin("tx", "nameservice", "set-destination", "--name", valid_name, "--destination", invalid_address, "--from", alice_name)
+    assert set_invalid_addr["code"] != 0, f"Setting destination to invalid address should fail, but got: {set_invalid_addr}"
+    print(f"✓ Invalid address format rejected: {valid_name} -> {invalid_address}") 
+
+ 
 
 def poll_until_proposal_passes(dysond_bin, proposal_id: str, timeout: int = 60):
     def has_proposal_reached_final_state():

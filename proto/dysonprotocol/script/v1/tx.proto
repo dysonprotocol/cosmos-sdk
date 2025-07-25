@@ -60,26 +60,28 @@ message MsgExec {
   string executor_address = 1
       [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
-  // address is the script address to execute.
-  // This can be either a bech32 address or a nameservice name (e.g.,
-  // "example.dys")
+  // address is the script bech32 address to execute.
   string script_address = 2;
+
+  // script_name is the optional nameservice name of the script to execute
+  // (e.g., "example.dys")
+  string script_name = 3;
 
   // Only if the executor is the owner of the script  will the optional
   // extra_code be temporary appended to the script for this message before
   // calling the function.
-  string extra_code = 3;
+  string extra_code = 4;
 
   // The function name to run
-  string function_name = 4;
+  string function_name = 5;
 
   // The positional arguments to pass to the function (*args) encoded as a
   // json list
-  string args = 5;
+  string args = 6;
 
   // The keyword argument to pass to the function (**kwargs) encoded as a
   // json dict
-  string kwargs = 6;
+  string kwargs = 7;
 
   // The list of messages to run before the script and the result will be
   // available in `dys.get_attached_messages()`. If any of the attached messages
@@ -88,7 +90,7 @@ message MsgExec {
   // that the script execution will never occur if any of the attached messages
   // had failed. The attached messages are executed in the order they are
   // provided.
-  repeated google.protobuf.Any attached_messages = 7;
+  repeated google.protobuf.Any attached_messages = 8;
 }
 
 // MsgExecResponse is the Msg/Exec request type.

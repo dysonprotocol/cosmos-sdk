@@ -469,12 +469,13 @@ def _list_data(prefix: str, **kwargs):
     }
 
     # DEBUG: Print the exact query being constructed
-    # print(f"DEBUG _list_data: Constructing query with params: {json.dumps(query_params, indent=2)}")
+    print(f"DEBUG _list_data: Constructing query with params: {json.dumps(query_params, indent=2)}")
 
     result = _query(query_params)
 
     # DEBUG: Print the raw result
-    # print(f"DEBUG _list_data: Raw query result: {json.dumps(result, indent=2)}")
+    print(f"DEBUG _list_data: Raw query result: {json.dumps(result, indent=2)}")
+
 
     processed_entries = [
         {"_index": item["index"], **json.loads(item["data"])}
@@ -1582,25 +1583,6 @@ def handle_author_posts(environ, start_response, author):
         _get_author_post_prefix(author), pagination=req_pagination
     )
 
-    # Load custom pages for this author
-    try:
-        custom_pages, _ = _list_data(_get_author_page_prefix(author))
-        custom_pages_html = ""
-        if custom_pages:
-            pages_list = "\n".join([
-                f'<li><a href="/authors/{author}/{page["_index"].split("/")[-1]}">{html.escape(page["title"])}</a></li>'
-                for page in custom_pages
-            ])
-            custom_pages_html = f"""
-            <div>
-                <h3>Custom Pages</h3>
-                <ul>{pages_list}</ul>
-            </div>
-            """
-    except Exception as e:
-        print(f"No custom pages found for author {author}: {e}")
-        custom_pages_html = ""
-
     posts_html = render_posts(
         posts=posts,
         pagination=pagination,
@@ -1613,21 +1595,38 @@ def handle_author_posts(environ, start_response, author):
         use_template=False,
     )
 
-    content = (
-        f"""
-        <div class="markdown">{profile_data['content']}</div>
-        <script>
-            renderMarkdownAndHighlight(document.currentScript.previousElementSibling)
-        </script>
-        {custom_pages_html}
-        <div>
-        <h1>Posts by <span class="author">{author}</span></h1>
-        <p>Total Earned: <strong>{profile_data.get("claimed", {}).get("dys",0) } DYS</strong></p>
-        <p><a href="/edit-author/{author}">Edit Profile</a></p>
-        """
-        + posts_html
-        + "</div>"
-    )
+  
+    
+    profile_content = html.escape(profile_data.get("content", ""))
+    
+    profile_content = re.sub(
+            POST_RE,
+            rf"""
+
+            <div
+                    hx-trigger="intersect once"
+                    hx-get="/\1"
+                    hx-select="article"
+                    hx-swap="innerHTML ignoreTitle:true"
+                    hx-target="closest div"
+                    data-fragment="\2"
+                    >
+                        Loading: \1  ...
+            </div>
+
+""",
+            profile_content,
+        )
+   
+
+    # Use the new author_posts.html template
+    author_posts_template = SafeTemplate(fetch_template("author_posts.html"))
+    content = author_posts_template.substitute({
+        "author": author,
+        "claimed_dys": profile_data.get("claimed", {}).get("dys", 0),
+        "profile_content": SafeString(profile_content),
+        "posts_html": SafeString(posts_html),
+    })
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
 
@@ -1658,7 +1657,7 @@ def handle_edit_author(environ, start_response, author):
     edit_template = SafeTemplate(fetch_template("edit_author_profile.html"))
     content = edit_template.substitute({
         "author_name": author, 
-        "custom_pages": json.dumps(custom_pages_data),
+        "custom_pages": SafeString(json.dumps(custom_pages_data)),
         **profile_data
     })
 
@@ -1725,25 +1724,14 @@ def handle_author_page(environ, start_response, author, path):
                 content_text,
             )
 
-        # Use custom post template or create custom content
-        content = f"""
-        <div id="content">
-          <h1>{custom_title}</h1>
-          <p>By <a class="author" href="/authors/{author}">{author}</a> | 
-             <a href="/{post_id}">View original post #{post_id}</a></p>
-          <article class="">
-            <div class="markdown">{content_text}</div>
-            <script>
-              renderMarkdownAndHighlight(
-                document.currentScript.previousElementSibling,
-                document.currentScript
-                  .closest("[data-fragment]")
-                  ?.getAttribute("data-fragment"),
-              );
-            </script>
-          </article>
-        </div>
-        """
+        # Use the new author_custom_page.html template
+        author_custom_page_template = SafeTemplate(fetch_template("author_custom_page.html"))
+        content = author_custom_page_template.substitute({
+            "custom_title": custom_title,
+            "author": author,
+            "post_id": post_id,
+            "content_text": SafeString(content_text),
+        })
 
         start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
 

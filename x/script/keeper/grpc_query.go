@@ -62,7 +62,7 @@ func (k Keeper) ScriptInfo(ctx context.Context, req *scripttypes.QueryScriptInfo
 
 func (k Keeper) Web(ctx context.Context, req *scripttypes.WebRequest) (*scripttypes.WebResponse, error) {
 	// Calls RunWeb which handles name resolution via nameservice keeper
-	out, err := k.RunWeb(ctx, req.AddressOrName, req.Httprequest)
+	out, err := k.RunWeb(ctx, req.ScriptAddress, req.ScriptName, req.Httprequest)
 	if err != nil {
 		return nil, err
 	}
@@ -252,8 +252,8 @@ func (k Keeper) Run(ctx context.Context, req *scripttypes.RunScript) (*scripttyp
 	if req.ExecutorAddress == "" {
 		return nil, status.Error(codes.InvalidArgument, "executor address is required")
 	}
-	if req.ScriptAddress == "" {
-		return nil, status.Error(codes.InvalidArgument, "script address is required")
+	if req.ScriptAddress == "" && req.ScriptName == "" {
+		return nil, status.Error(codes.InvalidArgument, "either script_address or script_name is required")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -265,6 +265,7 @@ func (k Keeper) Run(ctx context.Context, req *scripttypes.RunScript) (*scripttyp
 	msgExec := &scripttypes.MsgExec{
 		ExecutorAddress:  req.ExecutorAddress,
 		ScriptAddress:    req.ScriptAddress,
+		ScriptName:       req.ScriptName,
 		ExtraCode:        req.ExtraCode,
 		FunctionName:     req.FunctionName,
 		Args:             req.Args,

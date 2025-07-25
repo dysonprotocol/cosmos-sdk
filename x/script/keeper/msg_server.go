@@ -74,10 +74,43 @@ func (k Keeper) ExecScript(ctx context.Context, msg *scripttypes.MsgExec) (*scri
 	resp := &scripttypes.MsgExecResponse{}
 	var scriptObj scripttypes.Script
 
-	// Resolve the script address using the nameservice keeper
-	addr, resolvErr := k.NameserviceKeeper.ResolveNameOrAddress(ctx, msg.ScriptAddress)
-	if resolvErr != nil {
-		return nil, cosmossdkerrors.Wrap(resolvErr, fmt.Sprintf("failed to resolve script address: '%s'", msg.ScriptAddress))
+	// Handle script address and name resolution
+	var addr string
+	var err error
+
+	// Validate that at least one of script_address or script_name is provided
+	if msg.ScriptAddress == "" && msg.ScriptName == "" {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "either script_address or script_name must be provided")
+	}
+
+	// Case 1: Both address and name provided - validate they resolve to the same address
+	if msg.ScriptAddress != "" && msg.ScriptName != "" {
+		// script_address should be a bech32 address (no resolution needed)
+		scriptAddr := msg.ScriptAddress
+
+		// Resolve the name to an address
+		nameAddr, nameErr := k.NameserviceKeeper.ResolveNameOrAddress(ctx, msg.ScriptName)
+		if nameErr != nil {
+			return nil, cosmossdkerrors.Wrap(nameErr, fmt.Sprintf("failed to resolve script_name: '%s'", msg.ScriptName))
+		}
+
+		// Validate they match
+		if scriptAddr != nameAddr {
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, 
+				fmt.Sprintf("script_address '%s' does not match resolved script_name '%s' (resolves to '%s') - they must be the same address", 
+					scriptAddr, msg.ScriptName, nameAddr))
+		}
+
+		addr = scriptAddr
+	} else if msg.ScriptName != "" {
+		// Case 2: Only name provided - resolve to address
+		addr, err = k.NameserviceKeeper.ResolveNameOrAddress(ctx, msg.ScriptName)
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, fmt.Sprintf("failed to resolve script_name: '%s'", msg.ScriptName))
+		}
+	} else {
+		// Case 3: Only address provided - use as bech32 address directly (no resolution)
+		addr = msg.ScriptAddress
 	}
 
 	exists, err := k.ScriptMap.Has(ctx, addr)

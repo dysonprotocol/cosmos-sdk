@@ -10,7 +10,11 @@
                 },
                 "script_address": {
                     "type": "string",
-                    "description": "address is the script address to execute. This can be either a bech32 address or a nameservice name (e.g., \"example.dys\")"
+                    "description": "address is the script bech32 address to execute."
+                },
+                "script_name": {
+                    "type": "string",
+                    "description": "script_name is the optional nameservice name of the script to execute (e.g., \"example.dys\")"
                 },
                 "extra_code": {
                     "type": "string",

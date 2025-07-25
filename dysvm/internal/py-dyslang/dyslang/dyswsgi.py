@@ -11,9 +11,10 @@ from textwrap import dedent
 from .dysvm_server import build_sandbox
 
 
-def main(port, script_json, block_info_json, http_request):
+def main(port, script_name, script_json, block_info_json, http_request):
     #print("DYSWSGI")
     #print("PORT", port)
+    #print("SCRIPT_NAME", script_name)
     #print("SCRIPT", script_json)
     #print("BLOCK INFO", block_info_json)
     #print("HTTP REQUEST", http_request)
@@ -99,7 +100,7 @@ def main(port, script_json, block_info_json, http_request):
         with io.StringIO() as buf, redirect_stdout(buf):
             try:
                 sandbox = build_sandbox(
-                    msg=None,
+                    msg={"script_name": script_name},
                     script=script,
                     attached_msg_results=None,
                     block_info=block_info,

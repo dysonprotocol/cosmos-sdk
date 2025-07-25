@@ -151,10 +151,10 @@ func (k Keeper) StorageList(ctx context.Context, req *storagetypes.QueryStorageL
 
 		if reverse {
 			// For reverse pagination, we need to iterate from ownerPrefix to the pagination key (inclusive)
-			ranger = (&collections.Range[string]{}).StartInclusive(ownerPrefix).EndInclusive(startKey).Descending()
+			ranger = (&collections.Range[string]{}).StartInclusive(fullPrefix).EndInclusive(startKey).Descending()
 			k.Logger(sdkCtx).Info("Reverse range constructed with endKey",
 				"module", storage.ModuleName,
-				"startInclusive", ownerPrefix,
+				"startInclusive", fullPrefix,
 				"endInclusive", startKey,
 			)
 		} else {

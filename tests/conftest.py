@@ -174,12 +174,12 @@ def make_run_command(dysond_bin, node_home):
                             return json_out
                         continue
                     except json.JSONDecodeError:
-                        print(f"Error parsing tx response: \nOUT: {out.stdout}\nERR: {out.stderr}")
                         if "timed out waiting for transaction" in out.stderr:
                             continue
                         if "connect: connection refused" in out.stderr:
                             time.sleep(random.uniform(0.05, 0.1))
                             continue
+                        print(f"Error parsing tx response: \nOUT: {out.stdout}\nERR: {out.stderr}")
                         return stdout + "\n" + stderr
                 return stdout + "\n" + stderr
             
@@ -288,7 +288,7 @@ def chainnet(worker_id, test_base_dir, test_config_path):
         "python3", CHAINNET_SCRIPT, "start",
         "--config-file", str(config_path),
         "--block-speed", "100ms",
-        "--no-blocks-timeout", "3", 
+        "--no-blocks-timeout", "10", 
         #"--logs"
     ], preexec_fn=os.setsid)
 
@@ -685,7 +685,17 @@ def _walk_ast_forbidding_nodes(tree, filename):
         def visit_Attribute(self, node):
             if isinstance(node.value, ast.Attribute) and node.value.attr == "wait_for_timeout":
                 errors.append(f"{filename}:{node.lineno} - 'wait_for_timeout' attribute usage is disallowed")
+            # time.sleep is disallowed
+            if isinstance(node.value, ast.Attribute) and node.value.attr == "sleep":
+                errors.append(f"{filename}:{node.lineno} - 'time.sleep' function usage is disallowed")
             self.generic_visit(node)
+
+        # sleep is disallowed
+        def visit_Call(self, node):
+            if isinstance(node.func, ast.Name) and node.func.id == "sleep":
+                errors.append(f"{filename}:{node.lineno} - 'sleep' function usage is disallowed")
+            self.generic_visit(node)
+             
 
     Visitor().visit(tree)
     return errors, warnings_list

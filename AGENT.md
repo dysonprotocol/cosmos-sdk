@@ -1,3 +1,33 @@
+# Dyson Protocol Agent Guide
+
+## Build & Test Commands
+- `make install` - Build and install dysond binary (required before testing/running)
+- `make dysvm` - Build custom Python VM (run first after clone)
+- `make test PYTEST_ARGS="tests/<the test file>::<the test function> --ff --nf -xs"` - Run Python pytest integration tests (will automatically build and install dysond first)
+- `make init` - Initialize single chain with 2 nodes for development
+- `make start` - Start development blockchain with logs
+- `make init-localnet` - Initialize 2 chains with IBC for cross-chain testing
+- `make start-localnet` - Start multi-chain testnet
+- `make proto-gen` - After changing anything in ./proto dir, regenerate the go types and schema files
+- `DEFAULT_BASE_DIR=/tmp/test-dysonchains python -m pytest tests/test_FILE.py::test_function -xs` - Run single Python test without building or installing dysond
+
+## Architecture
+- **Core**: Cosmos SDK-based blockchain with custom modules in x/ (storage, script, crontask, nameservice, nft)
+- **DYSVM**: Custom Python VM with embedded Python 3.12+ runtime for on-chain script execution
+- **Key modules**: x/storage (on-chain data), x/script (Python execution), x/crontask (scheduled tasks), x/nameservice (domain market)
+- **Testing**: Python pytest integration tests with chainnet.py orchestration, all tests are in the `tests/` directory, not using go tests
+- **Client**: dysond CLI binary for transactions and queries
+
+## Code Style
+- **Go**: Standard Cosmos SDK patterns, collections framework for state, keeper pattern
+- **Imports**: cosmossdk.io/* grouped first, then github.com/cosmos/*, then project imports (dysonprotocol.com/*)
+- **Testing**: pytest with fixtures for integration tests
+- **Types**: Protobuf-generated types in types/ directories
+- **Error handling**: cosmossdk.io/errors for wrapped errors with codes
+- **Naming**: CamelCase for exported, camelCase for private, snake_case in Python
+- **State**: Use collections.Map/Item for robust state management, prefix separation
+
+
 # AI Coding Agent Policy Document
 
 ## 1\. Introduction
@@ -6,7 +36,7 @@
 
 This document outlines the coding policy that any human or AI Coding Agent (hereafter "AI Agent") must strictly adhere to when making changes to a codebase. It covers scoping features via Product Backlog Items (PBIs) and managing the tasks required to implement those features. This policy ensures a disciplined, transparent, and human-controlled approach to software development.
 
-This document should typically be stored in a project's documentation directory, for example, in subfolders like `docs/delivery/` or `docs/planning/`, separate from user-facing documentation.
+This document should be stored in a project's documentation directory, `./delivery/` , separate from user-facing documentation.
 
 ### 1.2. Actors
 
@@ -35,7 +65,12 @@ This policy is primarily for the AI Agent, operating under the User's strict gui
      * The task must be re-attempted, ensuring strict adherence to scope.  
    * Repeat this process until the implemented changes are 100% unambiguously linked to the task's defined scope.  
 8. **Integrity and Sense-Checking:** The AI Agent is expected to critically evaluate instructions against this policy. If instructions appear mistaken, conflicting, or violate the spirit of this policy, the AI Agent must pause and initiate a conversation with the User, presenting its questions or observations.  
-9. **Comprehensive Logging:** All significant actions and changes related to PBIs and tasks must be logged in their respective History sections.
+9. **Comprehensive Logging:** All significant actions and changes related to PBIs and tasks must be logged in their respective History sections.  
+10. **Solution Options Requirement:** When the User requests a code change, the AI Agent must suggest three solution options for the User to consider:
+    * **Quick Direct Solution:** A straightforward, minimal change that directly addresses the request with the least complexity or overhead.
+    * **Idiomatic Solution:** An approach that follows best practices and conventions for the relevant language, framework, or ecosystem, balancing clarity and maintainability.
+    * **Robust Professional Solution:** A comprehensive, production-quality approach that anticipates edge cases, includes error handling, documentation, and is suitable for long-term maintainability.
+    The AI Agent must briefly describe each option and, if appropriate, recommend one based on the context. The User will select the preferred approach before implementation proceeds.
 
 ## 3\. Product Backlog Item (PBI) Management
 
@@ -45,7 +80,7 @@ All changes to the product are defined by a set of Product Backlog Items (PBIs).
 
 ### 3.2. The Backlog Document
 
-* The product backlog is wholly defined within a single Markdown document, by default located at `docs/delivery/backlog.md`.  
+* The product backlog is wholly defined within a single Markdown document, by default located at `./delivery/backlog.md`.  
 * **Scope and Purpose:** The document should begin with a "Scope and Purpose" section, describing what the backlog covers (e.g., "All features for this repository" or linked to a specific PRD).
 
 ### 3.3. Backlog Structure
@@ -171,7 +206,7 @@ These fields must appear EXACTLY as specified in ALL PBI tables.
 
 If the User requests to "create a backlog," the AI Agent will:
 
-1. Create an empty `docs/delivery/backlog.md` file.  
+1. Create an empty `./delivery/backlog.md` file.  
 2. Populate it with the standard "Scope and Purpose" header and empty "Not Done" and "Done" PBI tables (with headers).  
 3. Include an empty "PBI History Log" table.  
 4. Encourage the User to add initial PBIs.
@@ -188,18 +223,17 @@ If the User requests to "create a backlog," the AI Agent will:
 ### 4.2. Task Planning for a PBI
 
 1. Two files are created for each PBI:
-   - `tasks/<PBI-ID>-tasks.md`: Task list table (existing format)
-   - Individual task files `tasks/<PBI-ID>-<TASK-ID>.md` with:
+   - `<PBI-ID>/<PBI-ID>-tasks.md`: Task list table (existing format)
+   - Individual task files `<PBI-ID>/<PBI-ID>-<TASK-ID>.md` with:
 
 2. The PBI row in `backlog.md` must link to its task list:
    ```markdown
-   | 1 | User | [Create website with URL only](./tasks/1-tasks.md) | Proposed | ... |
+   | 1 | User | [Create website with URL only](./1/1-tasks.md) | Proposed | ... |
    ```
 
 ### 4.6. Detailed Task Documentation
 
 Each task requires a standalone file with this exact structure:
-
 ```markdown
 # [Task-ID] [Task-Name]
 

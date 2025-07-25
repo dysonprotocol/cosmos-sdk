@@ -156,51 +156,48 @@ def _submit_and_execute_proposal(dysond, proposer_name, proposal_data):
     """Helper function to submit and execute a governance proposal."""
     
     # Write proposal to temporary file
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
+    with tempfile.NamedTemporaryFile(mode='w', delete=True, suffix='.json') as f:
         json.dump(proposal_data, f, indent=2)
         proposal_file = f.name
-    
-    try:
+        f.flush()
         # Submit governance proposal using file
         prop_result = dysond("tx", "gov", "submit-proposal", proposal_file, "--from", proposer_name)
-        assert prop_result["code"] == 0, f"Proposal submission failed: {prop_result['raw_log']}"
         
-        # Get proposal ID from events
-        events = prop_result.get("events", [])
-        submit_proposal_events = [e for e in events if e["type"] == "submit_proposal"]
-        assert len(submit_proposal_events) > 0, f"No submit_proposal event found in: {events}"
-        
-        proposal_id_attrs = [attr for attr in submit_proposal_events[0]["attributes"] if attr["key"] == "proposal_id"]
-        assert len(proposal_id_attrs) > 0, f"No proposal_id attribute found in submit_proposal event"
-        proposal_id = proposal_id_attrs[0]["value"]
-        print(f"Created governance proposal {proposal_id}")
-        
-        # Vote on proposal (assuming alice has voting power from genesis)
-        vote_result = dysond("tx", "gov", "vote", proposal_id, "yes", "--from", "alice")
-        assert vote_result["code"] == 0, f"Voting failed: {vote_result['raw_log']}"
-        print(f"Voted on proposal {proposal_id}")
-        
-        # Wait for proposal to pass
-        def check_proposal_status():
-            result = dysond("query", "gov", "proposal", proposal_id)
-            status = result.get("proposal", {}).get("status", "UNKNOWN")
-            print(f"Current proposal status: {status}")
-            final_states = ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_FAILED"]
-            return status in final_states
+    
+    assert prop_result["code"] == 0, f"Proposal submission failed: {prop_result['raw_log']}"
+    
+    # Get proposal ID from events
+    events = prop_result.get("events", [])
+    submit_proposal_events = [e for e in events if e["type"] == "submit_proposal"]
+    assert len(submit_proposal_events) > 0, f"No submit_proposal event found in: {events}"
+    
+    proposal_id_attrs = [attr for attr in submit_proposal_events[0]["attributes"] if attr["key"] == "proposal_id"]
+    assert len(proposal_id_attrs) > 0, f"No proposal_id attribute found in submit_proposal event"
+    proposal_id = proposal_id_attrs[0]["value"]
+    print(f"Created governance proposal {proposal_id}")
+    
+    # Vote on proposal (assuming alice has voting power from genesis)
+    vote_result = dysond("tx", "gov", "vote", proposal_id, "yes", "--from", "alice")
+    assert vote_result["code"] == 0, f"Voting failed: {vote_result['raw_log']}"
+    print(f"Voted on proposal {proposal_id}")
+    
+    # Wait for proposal to pass
+    def check_proposal_status():
+        result = dysond("query", "gov", "proposal", proposal_id)
+        status = result.get("proposal", {}).get("status", "UNKNOWN")
+        print(f"Current proposal status: {status}")
+        final_states = ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_FAILED"]
+        return status in final_states
 
-        poll_until_condition(check_proposal_status, timeout=60, poll_interval=2)
-        
-        # Verify proposal passed
-        final_result = dysond("query", "gov", "proposal", proposal_id)
-        final_status = final_result.get("proposal", {}).get("status", "UNKNOWN")
-        assert final_status == "PROPOSAL_STATUS_PASSED", f"Expected proposal to pass but got status: {final_status}"
-        print(f"✅ Proposal {proposal_id} passed!")
-        
-        return proposal_id
-        
-    finally:
-        # Clean up temporary file
-        os.unlink(proposal_file)
+    poll_until_condition(check_proposal_status, timeout=60, poll_interval=2)
+    
+    # Verify proposal passed
+    final_result = dysond("query", "gov", "proposal", proposal_id)
+    final_status = final_result.get("proposal", {}).get("status", "UNKNOWN")
+    assert final_status == "PROPOSAL_STATUS_PASSED", f"Expected proposal to pass but got status: {final_status}"
+    print(f"✅ Proposal {proposal_id} passed!")
+    
+    return proposal_id
 
 
 def test_storage_params_query(chainnet):
@@ -338,16 +335,13 @@ def test_storage_params_validation(chainnet, generate_account, faucet):
     }
     
     # Write proposal to temporary file
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=True) as f:
         json.dump(proposal_data, f)
         proposal_file = f.name
-    
-    try:
+        f.flush()
         invalid_prop_result = dysond("tx", "gov", "submit-proposal", proposal_file,
-                                   "--from", proposer_name)
-    finally:
-        os.unlink(proposal_file)
-    
+                                "--from", proposer_name)
+        
     # The proposal submission should succeed, but if voted on and executed, it should fail
     # For now, just verify we can submit proposals with invalid params
     # The validation happens during execution, not submission
@@ -375,18 +369,15 @@ def test_storage_params_validation(chainnet, generate_account, faucet):
     }
     
     # Write proposal to temporary file
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=True) as f:
         json.dump(too_large_proposal_data, f)
         proposal_file = f.name
-    
-    try:
+        f.flush()
         too_large_prop_result = dysond("tx", "gov", "submit-proposal", proposal_file,
-                                     "--from", proposer_name)
-    finally:
-        os.unlink(proposal_file)
+                                "--from", proposer_name)
     
     assert too_large_prop_result["code"] == 0, f"Proposal submission should succeed: {too_large_prop_result['raw_log']}"
-    
+        
     print("✅ Parameter validation test completed") 
 
 

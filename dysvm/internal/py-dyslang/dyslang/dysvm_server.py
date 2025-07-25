@@ -562,6 +562,14 @@ def build_sandbox(
         return script.get("address")
 
     @allow_dys_func
+    def get_script_name() -> str:
+        """
+        Returns the script name used in the execution message, if provided.
+        Returns empty string if not provided.
+        """
+        return msg.get("script_name", "")
+
+    @allow_dys_func
     def get_executor_address() -> str:
         """
         Returns the address of the caller of this script.
@@ -704,6 +712,7 @@ def build_sandbox(
         "get_gas_consumed": get_gas_consumed,
         "get_gas_limit": get_gas_limit,
         "get_script_address": get_script_address,
+        "get_script_name": get_script_name,
         "get_executor_address": get_executor_address,
         "get_block_info": get_block_info,
         "get_nodes_called": get_nodes_called,

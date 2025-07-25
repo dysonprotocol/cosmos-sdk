@@ -5,8 +5,8 @@ import (
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
-	"dysonprotocol.com/x/nft"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
+	"dysonprotocol.com/x/nft"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -136,6 +136,16 @@ func (k Keeper) Reveal(ctx context.Context, msg *nameservicev1.MsgReveal) (*name
 	// Mint the NFT
 	if err := k.nftKeeper.Mint(ctx, token, committerAddr); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to mint name NFT")
+	}
+
+	// Add reverse mapping for the newly registered name
+	if msg.Committer != "" {
+		if err := k.SetNameDestinationMapping(ctx, msg.Committer, msg.Name); err != nil {
+			k.Logger.Error("Reveal: Failed to add reverse mapping", "destination", msg.Committer, "name", msg.Name, "error", err)
+			// Don't fail the transaction for reverse mapping errors, just log
+		} else {
+			k.Logger.Info("Reveal: Added reverse mapping for new name", "destination", msg.Committer, "name", msg.Name)
+		}
 	}
 
 	// Delete commitment

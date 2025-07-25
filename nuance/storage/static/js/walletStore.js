@@ -21,13 +21,14 @@ document.addEventListener("alpine:init", () => {
     activeWalletInstance: null,
     isLoading: true,
     denomMetadatas: [], // Cache for denom metadata
+    
+    // Author identity management (separate from wallet/signer)
+    selectedAuthorIdentity: Alpine.$persist(null), // Can be address or name
+    addressNames: {}, // Cache for fetched names by address
 
     // Call this somewhere (e.g. <body x-init="$store.walletStore.init()">
     async init() {      
-      ///====
-      console.log("walletStore init");
-      ///====
-
+      
       await this.loadChainIdFromApi();
       
       // Attempt to reconnect if activeWalletMeta is set
@@ -40,12 +41,16 @@ document.addEventListener("alpine:init", () => {
           } else {
             const offlineSigner = provider.getOfflineSigner(this.chainId);
             this.activeWalletInstance = offlineSigner;
+            // Restore author identity after reconnection
+            await this.restoreAuthorIdentity();
           }
         } else if (this.activeWalletMeta.type === COSMJS_WALLET_TYPE) {
           const walletData = this.localCosmJsWallets.find((w) => w.name === this.activeWalletMeta.name);
           if (walletData && walletData._pass && walletData._pass.trim() !== "") {
             try {
               await this.connectNamedCosmJsWallet(walletData.name, walletData._pass);
+              // Restore author identity after reconnection
+              await this.restoreAuthorIdentity();
             } catch (error) {
               console.error("Auto reconnection failed for wallet", walletData.name, error);
             }
@@ -63,6 +68,283 @@ document.addEventListener("alpine:init", () => {
 
       // Mark as loaded
       this.isLoading = false;
+      
+    },
+
+    // ========================================
+    // SIGNER METHODS (Wallet Address)
+    // ========================================
+    
+    /**
+     * Get the wallet address that signs transactions
+     * @returns {string} The wallet address
+     */
+    getSignerAddress() {
+      if (!this.activeWalletMeta?.address) {
+        throw new Error("No wallet connected.");
+      }
+      return this.activeWalletMeta.address;
+    },
+
+    /**
+     * Check if a wallet is connected
+     * @returns {boolean}
+     */
+    isWalletConnected() {
+      return !!this.activeWalletMeta?.address;
+    },
+
+    // ========================================
+    // AUTHOR IDENTITY METHODS
+    // ========================================
+    
+         /**
+      * Get the current author identity (can be address or name)
+      * @returns {string} The author identity to use for posts/profiles
+      */
+     getAuthorIdentity() {
+      
+       if (!this.isWalletConnected()) {
+
+         throw new Error("No wallet connected.");
+       }
+       
+       // If no author identity is set, default to wallet address
+       const result = this.selectedAuthorIdentity || this.getSignerAddress();
+      
+       return result;
+     },
+
+    /**
+     * Set the author identity
+     * @param {string} identity - Can be wallet address or a name
+     */
+    async setAuthorIdentity(identity) {
+      if (!this.isWalletConnected()) {
+        throw new Error("No wallet connected.");
+      }
+      
+      // Validate that this identity is valid for the current wallet
+      if (identity !== this.getSignerAddress()) {
+        // If it's not the wallet address, verify it's a name that resolves to this address
+        const isValid = await this.validateNameForCurrentWallet(identity);
+        if (!isValid) {
+          throw new Error(`Identity "${identity}" does not resolve to current wallet address.`);
+        }
+      }
+      
+      this.selectedAuthorIdentity = identity;
+    },
+
+         /**
+      * Get available author identities for the current wallet
+      * @returns {Promise<Array<string>>} Array of available identities (address + names)
+      */
+     async getAvailableAuthorIdentities() {
+       
+       if (!this.isWalletConnected()) {
+         return [];
+       }
+       
+       const address = this.getSignerAddress();
+       
+       const names = await this.fetchNamesByDestination(address);
+       
+       // Always include the address, then add unique names
+       const identities = [address];
+       names.forEach(name => {
+         if (name !== address && !identities.includes(name)) {
+           identities.push(name);
+         }
+       });
+       
+       return identities;
+     },
+
+    /**
+     * Get display text for an identity option
+     * @param {string} identity 
+     * @returns {string}
+     */
+    getDisplayTextForIdentity(identity) {
+      const address = this.getSignerAddress();
+      
+      // If the identity is the address itself, truncate it
+      if (identity === address) {
+        if (identity.length <= 13) return identity;
+        return identity.slice(0, 8) + '...' + identity.slice(-5);
+      }
+      
+      // If it's a name, show it in full
+      return identity;
+    },
+
+         /**
+      * Restore author identity after wallet reconnection
+      */
+     async restoreAuthorIdentity() {
+       if (this.selectedAuthorIdentity) {
+         try {
+           // Validate the stored identity is still valid for current wallet
+           if (this.selectedAuthorIdentity !== this.getSignerAddress()) {
+             const isValid = await this.validateNameForCurrentWallet(this.selectedAuthorIdentity);
+             if (!isValid) {
+               console.warn("Stored author identity is no longer valid for current wallet, resetting to wallet address");
+               this.selectedAuthorIdentity = this.getSignerAddress();
+               return;
+             }
+           }
+           // Identity is valid (either it's the wallet address or a valid name)
+         } catch (error) {
+           console.warn("Error validating stored author identity, resetting to wallet address:", error);
+           this.selectedAuthorIdentity = this.getSignerAddress();
+         }
+       } else {
+         // No stored identity, default to wallet address
+         this.selectedAuthorIdentity = this.getSignerAddress();
+       }
+     },
+
+    /**
+     * Validate that a name resolves to the current wallet address
+     * @param {string} name 
+     * @returns {Promise<boolean>}
+     */
+    async validateNameForCurrentWallet(name) {
+      if (!this.isWalletConnected()) {
+        return false;
+      }
+      
+      try {
+        const address = this.getSignerAddress();
+        const names = await this.fetchNamesByDestination(address);
+        return names.includes(name);
+      } catch (error) {
+        console.error("Error validating name:", error);
+        return false;
+      }
+    },
+
+    // ========================================
+    // NAME RESOLUTION METHODS (Updated)
+    // ========================================
+
+    // Fetch names associated with an address
+    async fetchNamesByDestination(address) {
+      
+      if (this.addressNames[address]) {
+        return this.addressNames[address];
+      }
+      
+      try {
+        const url = `${this.restUrl}/dysonprotocol/nameservice/v1/names_by_destination/${address}`;
+        
+        const resp = await fetch(url);
+        if (!resp.ok) {
+          console.warn(`[WalletStore] Failed to fetch names for address ${address}: ${resp.status} ${resp.statusText}`);
+          this.addressNames[address] = [];
+          return [];
+        }
+        
+        const json = await resp.json();
+        
+        const names = json.names || [];
+        
+        this.addressNames[address] = names;
+        
+        return names;
+      } catch (error) {
+        console.error(`[WalletStore] Error fetching names for address ${address}:`, error);
+        this.addressNames[address] = [];
+        return [];
+      }
+    },
+
+    // ========================================
+    // WALLET CONNECTION METHODS (Updated)
+    // ========================================
+
+    async connectNamedCosmJsWallet(name, password) {
+      const walletData = this.localCosmJsWallets.find((w) => w.name === name);
+      if (!walletData) throw new Error(`No local wallet named "${name}".`);
+      if (!password.trim()) throw new Error("Password required to unlock wallet.");
+
+      const kdfConf = extractKdfConfiguration(walletData.encrypted);
+      const encryptionKey = await executeKdf(password, kdfConf);
+      const wallet = await DirectSecp256k1HdWallet.deserializeWithEncryptionKey(walletData.encrypted, encryptionKey);
+      const address = (await wallet.getAccounts())[0].address;
+
+      this.activeWalletMeta = {
+        name,
+        address,
+        type: COSMJS_WALLET_TYPE,
+      };
+      this.activeWalletInstance = wallet;
+      
+      // Clear cached names and reset author identity to new wallet address when switching wallets
+      this.addressNames = {};
+      this.selectedAuthorIdentity = address;
+    },
+
+    async connectExtension(type) {
+      const provider = type === "keplr" ? window.keplr : null;
+      if (!provider) {
+        throw new Error(`Extension not found: ${type}`);
+      }
+      await this.loadChainIdFromApi();
+      await this.suggestChainIfNeeded(provider);
+
+      const offlineSigner = provider.getOfflineSigner(this.chainId);
+      let { name, bech32Address: address } = await provider.getKey(this.chainId);
+      this.activeWalletMeta = { name: String(name), address: String(address), type: String(type) };
+      this.activeWalletInstance = offlineSigner;
+      
+      // Clear cached names and reset author identity to new wallet address when switching wallets
+      this.addressNames = {};
+      this.selectedAuthorIdentity = address;
+    },
+
+    disconnectWallet() {
+      this.activeWalletMeta = null;
+      this.activeWalletInstance = null;
+      this.selectedAuthorIdentity = null;
+      // Clear cached address names when disconnecting
+      this.addressNames = {};
+    },
+
+    // ========================================
+    // DEPRECATED METHODS (For backwards compatibility)
+    // ========================================
+    
+    // @deprecated Use getAvailableAuthorIdentities() instead
+    async getDisplayOptionsForAddress(address) {
+      console.warn("getDisplayOptionsForAddress is deprecated, use getAvailableAuthorIdentities()");
+      const names = await this.fetchNamesByDestination(address);
+      const options = [address];
+      names.forEach(name => {
+        if (name !== address) {
+          options.push(name);
+        }
+      });
+      return options;
+    },
+
+    // @deprecated Use getAuthorIdentity() instead
+    getSelectedNameForAddress(address) {
+      console.warn("getSelectedNameForAddress is deprecated, use getAuthorIdentity()");
+      return this.selectedAuthorIdentity || address;
+    },
+
+    // @deprecated Use setAuthorIdentity() instead
+    setSelectedNameForAddress(address, selectedName) {
+      console.warn("setSelectedNameForAddress is deprecated, use setAuthorIdentity()");
+      this.selectedAuthorIdentity = selectedName;
+    },
+
+    // @deprecated Use getDisplayTextForIdentity() instead
+    getDisplayTextForOption(option, address) {
+      console.warn("getDisplayTextForOption is deprecated, use getDisplayTextForIdentity()");
+      return this.getDisplayTextForIdentity(option);
     },
 
     // Utilities
@@ -187,24 +469,6 @@ document.addEventListener("alpine:init", () => {
       });
     },
 
-    async connectNamedCosmJsWallet(name, password) {
-      const walletData = this.localCosmJsWallets.find((w) => w.name === name);
-      if (!walletData) throw new Error(`No local wallet named "${name}".`);
-      if (!password.trim()) throw new Error("Password required to unlock wallet.");
-
-      const kdfConf = extractKdfConfiguration(walletData.encrypted);
-      const encryptionKey = await executeKdf(password, kdfConf);
-      const wallet = await DirectSecp256k1HdWallet.deserializeWithEncryptionKey(walletData.encrypted, encryptionKey);
-      const address = (await wallet.getAccounts())[0].address;
-
-      this.activeWalletMeta = {
-        name,
-        address,
-        type: COSMJS_WALLET_TYPE,
-      };
-      this.activeWalletInstance = wallet;
-    },
-
     removeNamedCosmJsWallet(name) {
       const idx = this.localCosmJsWallets.findIndex((w) => w.name === name);
       if (idx === -1) throw new Error(`Wallet "${name}" not found.`);
@@ -215,26 +479,6 @@ document.addEventListener("alpine:init", () => {
       }
 
       this.localCosmJsWallets.splice(idx, 1);
-    },
-
-    // Extension methods
-    async connectExtension(type) {
-      const provider = type === "keplr" ? window.keplr : null;
-      if (!provider) {
-        throw new Error(`Extension not found: ${type}`);
-      }
-      await this.loadChainIdFromApi();
-      await this.suggestChainIfNeeded(provider);
-
-      const offlineSigner = provider.getOfflineSigner(this.chainId);
-      let { name, bech32Address: address } = await provider.getKey(this.chainId);
-      this.activeWalletMeta = { name: String(name), address: String(address), type: String(type) };
-      this.activeWalletInstance = offlineSigner;
-    },
-
-    disconnectWallet() {
-      this.activeWalletMeta = null;
-      this.activeWalletInstance = null;
     },
 
     getWallet() {

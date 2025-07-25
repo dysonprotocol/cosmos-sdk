@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"strings"
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/store"
@@ -25,6 +24,9 @@ var (
 
 	// ParamsKey is the key for parameters
 	ParamsKey = collections.NewPrefix(4)
+
+	// NameDestinationsKey is the key for reverse name->destination mappings
+	NameDestinationsKey = collections.NewPrefix(5)
 )
 
 // Keeper defines the nameservice keeper
@@ -45,6 +47,10 @@ type Keeper struct {
 	commitments collections.Map[string, nameservicev1.Commitment]
 	params      collections.Item[nameservicev1.Params]
 
+	// nameDestinations stores reverse mappings: (destination_address, source_name) -> source_name
+	// This allows efficient querying of all names pointing to a destination address
+	nameDestinations collections.Map[collections.Pair[string, string], string]
+
 	authority string // the address that is authorized to update module parameters
 }
 
@@ -62,29 +68,7 @@ func NewKeeper(
 	// Create schema builder
 	sb := collections.NewSchemaBuilder(storeService)
 
-	// Create map for commitments
-	commitments := collections.NewMap(
-		sb,
-		CommitmentsKey,
-		"commitments",
-		collections.StringKey,
-		codec.CollValue[nameservicev1.Commitment](cdc),
-	)
-
-	// Create item for params
-	params := collections.NewItem(
-		sb,
-		ParamsKey,
-		"params",
-		codec.CollValue[nameservicev1.Params](cdc),
-	)
-
-	schema, err := sb.Build()
-	if err != nil {
-		panic(err)
-	}
-
-	return Keeper{
+	k := &Keeper{
 		cdc:                 cdc,
 		storeService:        storeService,
 		bankKeeper:          bankKeeper,
@@ -92,11 +76,59 @@ func NewKeeper(
 		communityPoolKeeper: communityPoolKeeper,
 		nftKeeper:           nftKeeper,
 		Logger:              logger,
-		Schema:              schema,
-		commitments:         commitments,
-		params:              params,
 		authority:           authority,
+		commitments:         collections.NewMap(sb, CommitmentsKey, "commitments", collections.StringKey, codec.CollValue[nameservicev1.Commitment](cdc)),
+		params:              collections.NewItem(sb, ParamsKey, "params", codec.CollValue[nameservicev1.Params](cdc)),
+		nameDestinations:    collections.NewMap(sb, NameDestinationsKey, "name_destinations", collections.PairKeyCodec(collections.StringKey, collections.StringKey), collections.StringValue),
 	}
+
+	schema, err := sb.Build()
+	if err != nil {
+		panic(err)
+	}
+
+	k.Schema = schema
+
+	return *k
+}
+
+// SetNameDestinationMapping adds a reverse mapping from destination address to source name
+func (k Keeper) SetNameDestinationMapping(ctx context.Context, destination string, sourceName string) error {
+	key := collections.Join(destination, sourceName)
+	return k.nameDestinations.Set(ctx, key, sourceName)
+}
+
+// RemoveNameDestinationMapping removes a reverse mapping from destination address to source name
+func (k Keeper) RemoveNameDestinationMapping(ctx context.Context, destination string, sourceName string) error {
+	key := collections.Join(destination, sourceName)
+	return k.nameDestinations.Remove(ctx, key)
+}
+
+// GetNamesByDestination returns all names pointing to the given destination address
+// Uses prefix iteration to efficiently find all names for a destination
+func (k Keeper) GetNamesByDestination(ctx context.Context, destination string) ([]string, error) {
+	var names []string
+
+	// Create prefix range for the destination address
+	rng := collections.NewPrefixedPairRange[string, string](destination)
+
+	// Iterate over all entries with the destination prefix
+	iter, err := k.nameDestinations.Iterate(ctx, rng)
+	if err != nil {
+		return nil, err
+	}
+	defer iter.Close()
+
+	// Collect all the source names
+	for ; iter.Valid(); iter.Next() {
+		kv, err := iter.KeyValue()
+		if err != nil {
+			return nil, err
+		}
+		names = append(names, kv.Value)
+	}
+
+	return names, nil
 }
 
 // GetParams returns the current module parameters
@@ -352,36 +384,43 @@ func (k Keeper) GetAuthority() string {
 
 // ResolveNameOrAddress takes a string that could be either a nameservice name or an address
 // and returns the corresponding address. If it's an address, it returns it directly.
-// If it's a nameservice name, it resolves it to an address.
+// If it's a nameservice name, it resolves it to an address iteratively following name chains.
 func (k Keeper) ResolveNameOrAddress(ctx context.Context, nameOrAddress string) (string, error) {
-	// Check if the input is already a valid address
-	_, err := sdk.AccAddressFromBech32(nameOrAddress)
-	if err == nil {
-		// It's a valid address, return it as is
-		return nameOrAddress, nil
+	current := nameOrAddress
+	visited := make(map[string]bool)
+	maxDepth := 10 // Prevent infinite loops
+
+	for i := 0; i < maxDepth; i++ {
+		// Check if we've already visited this name to detect cycles
+		if visited[current] {
+			return "", cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("circular name resolution detected for: %s", current))
+		}
+
+		// Check if the current value is already a valid address
+		_, err := sdk.AccAddressFromBech32(current)
+		if err == nil {
+			// It's a valid address, return it as the final result
+			return current, nil
+		}
+
+		// Mark this name as visited
+		visited[current] = true
+
+		// Try to resolve it as a nameservice name NFT
+		nft, found := k.nftKeeper.GetNFT(ctx, NamesClassID, current)
+		if !found {
+			return "", cosmossdkerrors.Wrap(sdkerrors.ErrNotFound,
+				fmt.Sprintf("name not found: %s", current))
+		}
+
+		// Update current to the resolved destination
+		current = nft.Uri
 	}
 
-	// Check if it has a .dys suffix (nameservice name)
-	if !strings.HasSuffix(nameOrAddress, ".dys") {
-		return "", cosmossdkerrors.Wrap(sdkerrors.ErrInvalidAddress,
-			fmt.Sprintf("input must be either a valid bech32 address or a name ending in .dys: got %s", nameOrAddress))
-	}
-
-	// Try to resolve it as a nameservice name NFT
-	nft, found := k.nftKeeper.GetNFT(ctx, NamesClassID, nameOrAddress)
-	if !found {
-		return "", cosmossdkerrors.Wrap(sdkerrors.ErrNotFound,
-			fmt.Sprintf("name not found: %s", nameOrAddress))
-	}
-
-	// Validate that the URI is a valid address
-	_, err = sdk.AccAddressFromBech32(nft.Uri)
-	if err != nil {
-		return "", cosmossdkerrors.Wrap(sdkerrors.ErrInvalidAddress,
-			fmt.Sprintf("name %s has invalid destination address: %s", nameOrAddress, nft.Uri))
-	}
-
-	return nft.Uri, nil
+	// If we've reached max depth without resolving to an address
+	return "", cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+		fmt.Sprintf("name resolution exceeded maximum depth of %d for: %s", maxDepth, nameOrAddress))
 }
 
 // ExportGenesis returns the exported genesis state as raw bytes for the gov

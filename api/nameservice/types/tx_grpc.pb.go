@@ -42,6 +42,7 @@ const (
 	Msg_BurnNFT_FullMethodName                 = "/dysonprotocol.nameservice.v1.Msg/BurnNFT"
 	Msg_MoveCoins_FullMethodName               = "/dysonprotocol.nameservice.v1.Msg/MoveCoins"
 	Msg_MoveNft_FullMethodName                 = "/dysonprotocol.nameservice.v1.Msg/MoveNft"
+	Msg_CreateExternalName_FullMethodName      = "/dysonprotocol.nameservice.v1.Msg/CreateExternalName"
 )
 
 // MsgClient is the client API for Msg service.
@@ -79,6 +80,7 @@ type MsgClient interface {
 	BurnNFT(ctx context.Context, in *MsgBurnNFT, opts ...grpc.CallOption) (*MsgBurnNFTResponse, error)
 	MoveCoins(ctx context.Context, in *MsgMoveCoins, opts ...grpc.CallOption) (*MsgMoveCoinsResponse, error)
 	MoveNft(ctx context.Context, in *MsgMoveNft, opts ...grpc.CallOption) (*MsgMoveNftResponse, error)
+	CreateExternalName(ctx context.Context, in *MsgCreateExternalName, opts ...grpc.CallOption) (*MsgCreateExternalNameResponse, error)
 }
 
 type msgClient struct {
@@ -319,6 +321,16 @@ func (c *msgClient) MoveNft(ctx context.Context, in *MsgMoveNft, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *msgClient) CreateExternalName(ctx context.Context, in *MsgCreateExternalName, opts ...grpc.CallOption) (*MsgCreateExternalNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgCreateExternalNameResponse)
+	err := c.cc.Invoke(ctx, Msg_CreateExternalName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility.
@@ -354,6 +366,7 @@ type MsgServer interface {
 	BurnNFT(context.Context, *MsgBurnNFT) (*MsgBurnNFTResponse, error)
 	MoveCoins(context.Context, *MsgMoveCoins) (*MsgMoveCoinsResponse, error)
 	MoveNft(context.Context, *MsgMoveNft) (*MsgMoveNftResponse, error)
+	CreateExternalName(context.Context, *MsgCreateExternalName) (*MsgCreateExternalNameResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -432,6 +445,9 @@ func (UnimplementedMsgServer) MoveCoins(context.Context, *MsgMoveCoins) (*MsgMov
 }
 func (UnimplementedMsgServer) MoveNft(context.Context, *MsgMoveNft) (*MsgMoveNftResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MoveNft not implemented")
+}
+func (UnimplementedMsgServer) CreateExternalName(context.Context, *MsgCreateExternalName) (*MsgCreateExternalNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateExternalName not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 func (UnimplementedMsgServer) testEmbeddedByValue()             {}
@@ -868,6 +884,24 @@ func _Msg_MoveNft_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_CreateExternalName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateExternalName)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateExternalName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_CreateExternalName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateExternalName(ctx, req.(*MsgCreateExternalName))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -966,6 +1000,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MoveNft",
 			Handler:    _Msg_MoveNft_Handler,
+		},
+		{
+			MethodName: "CreateExternalName",
+			Handler:    _Msg_CreateExternalName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

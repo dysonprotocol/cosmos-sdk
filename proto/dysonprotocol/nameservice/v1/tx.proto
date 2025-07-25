@@ -47,6 +47,8 @@ service Msg {
   rpc BurnNFT(MsgBurnNFT) returns (MsgBurnNFTResponse);
   rpc MoveCoins(MsgMoveCoins) returns (MsgMoveCoinsResponse);
   rpc MoveNft(MsgMoveNft) returns (MsgMoveNftResponse);
+  rpc CreateExternalName(MsgCreateExternalName)
+      returns (MsgCreateExternalNameResponse);
 }
 
 message MsgCommit {
@@ -64,6 +66,16 @@ message MsgReveal {
   string salt = 3;
 }
 message MsgRevealResponse {}
+
+message MsgCreateExternalName {
+  option (cosmos.msg.v1.signer) = "authority";
+  // authority is the address that controls the module (defaults to x/gov unless
+  // overwritten)
+  string authority = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // name is the external name to create (e.g. "example.com", "sub.domain.org")
+  string name = 2;
+}
+message MsgCreateExternalNameResponse {}
 
 message MsgSetValuation {
   option (cosmos.msg.v1.signer) = "owner";
@@ -136,7 +148,7 @@ message MsgSetDestination {
   option (cosmos.msg.v1.signer) = "owner";
   string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   string name = 2;
-  string destination = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string destination = 3;
 }
 message MsgSetDestinationResponse {}
 

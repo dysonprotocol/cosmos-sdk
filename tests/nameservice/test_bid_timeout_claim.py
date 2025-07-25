@@ -27,9 +27,8 @@ def poll_until_proposal_passes(dysond_bin, proposal_id: str, timeout: int = 60):
 
 def register_name(chainnet, generate_account, faucet):
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account('alice')
-    faucet(alice_address, denom="udys", amount="1000")
-    name = f"testname{alice_address[:6]}.dys"
+    [alice_name, alice_address] = generate_account('alice', 1000)
+    name = f"testname{alice_address[:10]}.dys"
     salt = "testsalt"
     # Compute hash
     query_result = dysond_bin("query", "nameservice", "compute-hash", "--name", name, "--salt", salt, "--committer", alice_address)
