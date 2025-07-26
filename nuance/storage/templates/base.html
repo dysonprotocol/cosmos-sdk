@@ -830,13 +830,13 @@
         <a href="/"><h1 class="logo">Nuance</h1> <span class="text-xs text-gray-500">v{{script_version}}</span></a>
       </div>
       <div>
-        <a href="/recent">Recent Posts</a> - The newest posts Nuance has to offer<br> 
-        <a href="/active">Active Posts</a> - The busiest posts with active replies<br> 
+        <a href="/recent">Recent Posts</a> - The freshest posts Nuance has to offer<br> 
+        <a href="/active">Active Posts</a> - The busiest posts with active replies across all topics<br> 
         <a href="/topics">Topics</a> - The best posts grouped by topic<br> 
-        <a href="/blog">Blog</a> - Read the official  blog<br> 
-        <a href="/publish">Publish</a> - Share your thoughts with us<br> 
+        <a href="/blog">Blog</a> - Read the official Nuance blog<br> 
+        <a href="/publish">Publish</a> - Share your best ideas with us<br> 
         <!-- Show "Manage Wallets" if there's no active wallet and store is loaded -->
-        <a href="/wallet">Manage Wallet</a> - Control who you are on Nuance<br>
+        <a href="/wallet">Manage Wallet</a> - Control who you are<br>
         <!-- Show wallet info if connected and store is loaded -->
         <div x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta?.address" 
              x-data="walletMenu()" 
@@ -863,8 +863,8 @@
             <span x-show="identityLoading" class="text-sm text-gray-500">Updating...</span>
             <br>
             
-            <a :href="`/authors/${currentAuthorIdentity}`">View Profile</a> - What people see when they click your name<br>
-            <a :href="`/edit-author/${currentAuthorIdentity}`">Edit Profile</a> - Change what your profile says<br>
+            <a :href="`/authors/${currentAuthorIdentity}`">View Profile</a> - Your personal page and the posts people see when they click your name<br>
+            <a :href="`/edit-author/${currentAuthorIdentity}`">Edit Profile</a> - Edit your personal page<br>
             
             Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
             | Chain: <span x-text="$store.walletStore.chainId"></span> 

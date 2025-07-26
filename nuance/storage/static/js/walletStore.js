@@ -167,8 +167,7 @@ document.addEventListener("alpine:init", () => {
      * @returns {string}
      */
     getDisplayTextForIdentity(identity) {
-      return identity;
-
+      
       const address = this.getSignerAddress();
       
       // If the identity is the address itself, truncate it
