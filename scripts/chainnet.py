@@ -365,6 +365,7 @@ def setup(config_file, force):
                 app_toml = tomlkit.parse(app_toml_path.read_text())
                 cast(dict, app_toml.setdefault('api', tomlkit.table()))['address'] = f"tcp://localhost:{node_ports['api']}"
                 cast(dict, app_toml.setdefault('api', tomlkit.table()))['enable'] = True
+                cast(dict, app_toml.setdefault('api', tomlkit.table()))['enabled-unsafe-cors'] = True
                 cast(dict, app_toml.setdefault('grpc', tomlkit.table()))['address'] = f"localhost:{node_ports['grpc']}"
                 cast(dict, app_toml.setdefault('grpc', tomlkit.table()))['enable'] = True
                 cast(dict, app_toml.setdefault('grpc-web', tomlkit.table()))['enable'] = True
