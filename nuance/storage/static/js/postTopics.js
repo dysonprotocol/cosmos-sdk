@@ -1,26 +1,21 @@
 function createPostTopicsData(postId) {
   return {
     tagName: '',
-    amount: Alpine.$persist(0),
-    contributor: Alpine.$persist(''),
     isSubmitting: false,
     error: '',
     
+    // Get the current author identity from wallet store
+    get currentAuthor() {
+      try {
+        return this.$store.walletStore.getAuthorIdentity();
+      } catch (error) {
+        return '';
+      }
+    },
+    
     get isFormValid() {
       // Tag name is required and must be non-empty after trimming
-      if (!this.tagName.trim()) {
-        return false;
-      }
-      
-      // Amount validation: if provided, must be a valid positive number
-      if (this.amount !== '' && this.amount !== null && this.amount !== undefined) {
-        const numAmount = parseFloat(this.amount);
-        if (isNaN(numAmount) || numAmount < 0) {
-          return false;
-        }
-      }
-      
-      return true;
+      return this.tagName.trim() !== '';
     },
     
     async addTag() {
@@ -32,17 +27,13 @@ function createPostTopicsData(postId) {
         const scriptAddress = window.scriptAddress; // Set in base.html
         
         const attachedMsg = [];
-        if (this.amount) {
-          const amountInUdys = Math.round(parseFloat(this.amount) * 1000000);
-          if (amountInUdys > 0) {
-              attachedMsg.push({
-                  '@type': '/cosmos.bank.v1beta1.MsgSend',
-                  from_address: Alpine.store('walletStore').getWallet().address,
-                  to_address: scriptAddress,
-                  amount: [{ denom: 'udys', amount: String(amountInUdys) }]
-              });
-          }
-        }
+        // Hardcoded amount: 1 udys
+        attachedMsg.push({
+            '@type': '/cosmos.bank.v1beta1.MsgSend',
+            from_address: Alpine.store('walletStore').getWallet().address,
+            to_address: scriptAddress,
+            amount: [{ denom: 'udys', amount: '1' }]
+        });
         
         const result = await Alpine.store('walletStore').runDysonScript({
           scriptAddress,
@@ -51,7 +42,7 @@ function createPostTopicsData(postId) {
             tag_name: this.tagName, 
             post_id: postId, 
             rate: 'up', 
-            contributor: this.contributor 
+            contributor: this.currentAuthor 
           }),
           attachedMsg,
           gasLimit: "auto"

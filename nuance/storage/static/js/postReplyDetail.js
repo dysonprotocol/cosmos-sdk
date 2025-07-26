@@ -233,9 +233,9 @@ function createPostReplyDetailData(postId, replyPostId, earliestClaimTime, up, d
           console.log("rate_reply", rate, this.postId, this.replyPostId);
           
           htmx.ajax("GET", "/" + this.postId + "/replies/" + this.replyPostId + "?cacheBuset=" + result.rawSendMsgsResponse.raw.tx_response.txhash, {
-            target: htmx.closest(event.target, "form"),
+            target: htmx.closest(event.target, ".reply-detail-container"),
             swap: "outerHTML",
-            select: "form",
+            select: ".reply-detail-container",
           });
         } else {
           let errorMsg = 'Transaction failed';

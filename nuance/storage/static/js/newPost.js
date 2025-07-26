@@ -38,7 +38,7 @@ function createNewPostData() {
     },
     
     embedPosts(contentText, depth) {
-      return contentText.replace(/(?:^\n*?|\n+?)\/(\d+)(#[^\s]+)?(?:\n*?$|\n+?)/gm, (match, p1, p2) => {
+      return contentText.replace(/(?:^\n*?|\n+?)\/(\d+)(#[^\s]+)?(?:\s*\n*?$|\n+?)/gm, (match, p1, p2) => {
         return `
           <div
             hx-trigger="load"
@@ -66,7 +66,11 @@ function createNewPostData() {
           preview.classList.add('markdown'); // the markdown class is used to render the markdown and is removed after rendering
           renderMarkdownAndHighlight(preview).then(() => {
             console.log('htmx.process(preview)', preview);
-            htmx.process(preview);
+            if (typeof htmx !== 'undefined') {
+              htmx.process(preview);
+            }
+          }).catch(error => {
+            console.error('Error rendering markdown:', error);
           });
         }
       });

@@ -40,7 +40,9 @@ function topicsData() {
     
     async loadFeaturedTags() {
       try {
-        const { dataList } = await listData('available_rewards/tags/udys/');
+        const { dataList } = await listData('available_rewards/tags/udys/', { 
+          pagination: { reverse: true } 
+        });
         this.featuredTags = dataList;
         
         // Normalize amounts for all featured tags

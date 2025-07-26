@@ -277,7 +277,7 @@ document.addEventListener("alpine:init", () => {
             const address = this.getSignerAddress();
             if (identity === address) {
                 if (identity.length <= 13) return identity;
-                return identity.slice(0, 8) + '...' + identity.slice(-5);
+                return identity.slice(0, 10) + '...' + identity.slice(-5);
             }
             return identity;
         },

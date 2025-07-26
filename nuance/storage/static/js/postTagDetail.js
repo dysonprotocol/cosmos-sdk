@@ -1,4 +1,4 @@
-function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, earned, bestRating) {
+function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, earned, bestRating, postAuthor) {
   return {
     tagName: tagName,
     postId: postId,
@@ -6,12 +6,29 @@ function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, e
     earnedRewards: '',
     timeLeft: 0,
     earliestClaimTime: earliestClaimTime,
-    author: null,
-    amount: Alpine.$persist(0),
-    contributor: Alpine.$persist(''),
+    author: postAuthor || null,
+    amount: Alpine.$persist(1), // Default to 1 DYS
     error: '',
     isSubmitting: false,
     isClaiming: false,
+    
+    // Get the current author identity from wallet store
+    get currentAuthor() {
+      try {
+        return this.$store.walletStore.getAuthorIdentity();
+      } catch (error) {
+        return '';
+      }
+    },
+    
+    // Validate amount field
+    get isAmountValid() {
+      if (this.amount === '' || this.amount === null || this.amount === undefined) {
+        return false;
+      }
+      const numAmount = parseFloat(this.amount);
+      return !isNaN(numAmount) && numAmount > 0;
+    },
     
     init() {
       this.calculateAvailableRewards();
@@ -25,11 +42,11 @@ function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, e
       });
       
       // Clear errors when form fields change
-      this.$watch('amount', () => {
+      this.$watch('tagName', () => {
         this.clearError();
       });
       
-      this.$watch('contributor', () => {
+      this.$watch('amount', () => {
         this.clearError();
       });
     },
@@ -74,7 +91,13 @@ function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, e
     
     get isAuthor() {
       if (!this.author || !this.$store.walletStore.activeWalletMeta) return false;
-      return this.$store.walletStore.activeWalletMeta.address === this.author;
+      
+      // Compare both the current author identity and wallet address
+      const currentAuthorIdentity = this.currentAuthor;
+      const walletAddress = this.$store.walletStore.activeWalletMeta.address;
+      
+      // The post author matches if it equals either the selected author identity or wallet address
+      return this.author === currentAuthorIdentity || this.author === walletAddress;
     },
     
     async calculateAvailableRewards() {
@@ -102,7 +125,10 @@ function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, e
           return;
         }
         
-        this.author = post.author;
+        // Only set author if not already provided (for backwards compatibility)
+        if (!this.author && post.author) {
+          this.author = post.author;
+        }
         console.log('tagName', this.tagName);
         console.log('postId', this.postId);
 
@@ -181,11 +207,8 @@ function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, e
         });
         
         if (result.success) {
-          htmx.ajax('GET', '/' + this.postId + '/topics/' + this.tagName + "?cacheBuset=" + result.rawSendMsgsResponse.raw.tx_response.txhash, {
-            target: htmx.closest(event.target, 'form'),
-            swap: 'outerHTML',
-            select: 'form',
-          });
+          // Navigate to refresh the tag detail page
+          location.href = `/${this.postId}/topics/${this.tagName}`;
         } else {
           let errorMsg = 'Transaction failed';
           if (result.scriptResponse?.exception?.msg) {
@@ -214,16 +237,15 @@ function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, e
         const scriptAddress = window.scriptAddress;
         
         const attachedMsg = [];
-        if (this.amount) {
-          const amountInUdys = Math.round(parseFloat(this.amount) * 1000000);
-          if (amountInUdys > 0) {
-            attachedMsg.push({
-              '@type': '/cosmos.bank.v1beta1.MsgSend',
-              from_address: Alpine.store('walletStore').getWallet().address,
-              to_address: scriptAddress,
-              amount: [{ denom: 'udys', amount: String(amountInUdys) }]
-            });
-          }
+        // Convert DYS to udys (1 DYS = 1,000,000 udys)
+        const amountInUdys = Math.round(parseFloat(this.amount) * 1000000);
+        if (amountInUdys > 0) {
+          attachedMsg.push({
+            '@type': '/cosmos.bank.v1beta1.MsgSend',
+            from_address: Alpine.store('walletStore').getWallet().address,
+            to_address: scriptAddress,
+            amount: [{ denom: 'udys', amount: String(amountInUdys) }]
+          });
         }
         
         const result = await Alpine.store('walletStore').runDysonScript({
@@ -233,18 +255,15 @@ function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, e
             tag_name: this.tagName, 
             post_id: this.postId, 
             rate, 
-            contributor: this.contributor 
+            contributor: this.currentAuthor 
           }),
           attachedMsg,
           gasLimit: "auto"
         });
         
         if (result.success) {
-          htmx.ajax('GET', '/' + this.postId + '/topics/' + this.tagName + "?cacheBuset=" + result.rawSendMsgsResponse.raw.tx_response.txhash, {
-            target: htmx.closest(event.target, 'form'),
-            swap: 'outerHTML',
-            select: 'form',
-          });
+          // Navigate to refresh the tag detail page
+          location.href = `/${this.postId}/topics/${this.tagName}`;
         } else {
           let errorMsg = 'Transaction failed';
           if (result.scriptResponse?.exception?.msg) {

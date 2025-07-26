@@ -173,7 +173,7 @@ document.addEventListener("alpine:init", () => {
       // If the identity is the address itself, truncate it
       if (identity === address) {
         if (identity.length <= 13) return identity;
-        return identity.slice(0, 8) + '...' + identity.slice(-5);
+        return identity.slice(0, 10) + '...' + identity.slice(-5);
       }
       
       // If it's a name, show it in full
@@ -282,9 +282,9 @@ document.addEventListener("alpine:init", () => {
       };
       this.activeWalletInstance = wallet;
       
-      // Clear cached names and reset author identity to new wallet address when switching wallets
+      // Clear cached names and restore author identity for new wallet
       this.addressNames = {};
-      this.selectedAuthorIdentity = address;
+      await this.restoreAuthorIdentity();
     },
 
     async connectExtension(type) {
@@ -300,9 +300,9 @@ document.addEventListener("alpine:init", () => {
       this.activeWalletMeta = { name: String(name), address: String(address), type: String(type) };
       this.activeWalletInstance = offlineSigner;
       
-      // Clear cached names and reset author identity to new wallet address when switching wallets
+      // Clear cached names and restore author identity for new wallet
       this.addressNames = {};
-      this.selectedAuthorIdentity = address;
+      await this.restoreAuthorIdentity();
     },
 
     disconnectWallet() {

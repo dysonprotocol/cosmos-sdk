@@ -736,9 +736,7 @@
     body:not(.walletConnected) .showWithWallet {
       display: none;
     }
-    header {
-      overflow: hidden;
-    }
+  
     .logo {
       margin: 0;
       display: inline;
@@ -826,9 +824,8 @@
 <body x-data hx-boost="true" hx-target="main" hx-swap="morph" hx-select="main"  hx-inherit="hx-select hx-target hx-swap hx-boost" class="min-h-screen bg-base-100 latex-dark-auto" x-cloak>
 
     <header class="nuance">
-      <div>
-        <a href="/"><h1 class="logo">Nuance</h1> <span class="text-xs text-gray-500">v{{script_version}}</span></a>
-      </div>
+
+        <a href="/" class=""><h1 class="logo">Nuance</h1> <span class="text-xs text-gray-500">v{{script_version}}</span></a>
       <div>
         <a href="/recent">Recent Posts</a> - The freshest posts Nuance has to offer<br> 
         <a href="/active">Active Posts</a> - The busiest posts with active replies across all topics<br> 
@@ -838,7 +835,7 @@
         <!-- Show "Manage Wallets" if there's no active wallet and store is loaded -->
         <a href="/wallet">Manage Wallet</a> - Control who you are<br>
         <!-- Show wallet info if connected and store is loaded -->
-        <div x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta?.address" 
+        <span x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta?.address" 
              x-data="walletMenu()" 
              x-init="init()"
              x-cloak>
@@ -854,23 +851,34 @@
           
           <!-- Wallet info -->
           <div x-show="!loading && !error">
+           
+            
+            <template x-if="currentAuthorIdentity">
+              <div>
+                <a :href="`/authors/${currentAuthorIdentity}`">View Profile</a> - Your personal page and the posts people see when they click your name<br>
+                <a :href="`/edit-author/${currentAuthorIdentity}`">Edit Profile</a> - Edit your personal page<br>
+              </div>
+            </template>
+            
+            Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
+            | Chain: <strong x-text="$store.walletStore.chainId"></strong> 
+            | <a @click="$store.walletStore.disconnectWallet()" href="#" >Disconnect</a> 
+            <br>
+            <div class="py-2">
             Hello, 
+
+            <span x-show="identityLoading" class="text-sm text-gray-500">Updating...</span>
+            
+            <strong>
             <select @change="handleIdentityChange" x-model="currentAuthorIdentity" :disabled="identityLoading">
               <template x-for="identity in availableIdentities" :key="identity">
                 <option :value="identity" x-text="$store.walletStore.getDisplayTextForIdentity(identity)"></option>
               </template>
             </select>
-            <span x-show="identityLoading" class="text-sm text-gray-500">Updating...</span>
-            <br>
-            
-            <a :href="`/authors/${currentAuthorIdentity}`">View Profile</a> - Your personal page and the posts people see when they click your name<br>
-            <a :href="`/edit-author/${currentAuthorIdentity}`">Edit Profile</a> - Edit your personal page<br>
-            
-            Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
-            | Chain: <span x-text="$store.walletStore.chainId"></span> 
-            | <a @click="$store.walletStore.disconnectWallet()" href="#" >Disconnect</a> 
+          </strong>
           </div>
-        </div>
+          </div>
+        </span>
        
       </div>
     </header>

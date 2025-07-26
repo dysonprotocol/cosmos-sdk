@@ -33,7 +33,7 @@ except ImportError as e:
 TEXTAREA = typing.Annotated[str, '{"format":"textarea"}']
 
 # Regex to idetify an embedded post as /post_id on it's own line
-POST_RE = r"(?:^\n*?|\n+?)/(\d+)(#[^\s]+)?(?:\n*?$|\n+?)"
+POST_RE = r"(?:^\n*?|\n+?)/(\d+)(#[^\s]+)?(?:\n*?$|\s*\n+?)"
 
 # The soonest a post rewards can be claimed again for a specific tag
 CLAIM_WAIT_SEC = 60 * 60 * 24  # 24hrs
@@ -1768,7 +1768,7 @@ def handle_post_replies(environ, start_response, post_id):
   <div
     href="/{post_id}/replies/{reply['id']}"
     hx-get="/{post_id}/replies/{reply['id']}"
-    hx-select="form"
+    hx-select=".reply-detail-container"
     hx-trigger="revealed once"
     hx-swap="innerHTML"
     hx-target="this"
@@ -1813,7 +1813,7 @@ def handle_post_replies(environ, start_response, post_id):
     # Return only the replies items and load more element
 
     content = (
-        f'<h2>Replies to <a href="/{post_id}"> post {post_id}</a></h2><div id="reply-content">'
+        f'<h2 class="text-2xl font-bold text-gray-900 py-4">Replies to <a href="/{post_id}"> Post #{post_id}</a></h2><div id="reply-content">'
         + replies_items_html
         + load_more_html
         + "</div>"
@@ -1838,6 +1838,20 @@ def handle_post_tag_detail(environ, start_response, post_id, tag_name):
         html_content = _render_base(content, title="404 Not Found")
         return [html_content]
 
+    # Get the post data to access the author information
+    try:
+        post_data = _get_data(_get_post_index(post_id))
+        post_author = post_data.get("author", "")
+    except Exception as e:
+        print(f"Could not find post {post_id}: {e}")
+        start_response("404 Not Found", [CONTENT_TYPE_HTML])
+        error_template = SafeTemplate(fetch_template("error.html"))
+        content = error_template.substitute(
+            {"message": f"Post {post_id} not found."}
+        )
+        html_content = _render_base(content, title="404 Not Found")
+        return [html_content]
+
     claimed = tag["metadata"].get("claimed", {})
     earliest_claim_time = tag["metadata"].get("earliest_claim_time", 0)
     earned = claimed.get("udys", 0)
@@ -1850,6 +1864,7 @@ def handle_post_tag_detail(environ, start_response, post_id, tag_name):
             "percent": int(tag["best_rating"] * 100),
             "earned": earned,
             "earliest_claim_time": earliest_claim_time,
+            "post_author": SafeString(post_author),
             **tag,
         }
     )
@@ -1871,6 +1886,14 @@ def handle_post_reply_detail(environ, start_response, post_id, reply_post_id):
 
     reply = _get_post_reply(post_id, reply_post_id)
 
+    # Get the reply post data to access the author information
+    try:
+        reply_post_data = _get_data(_get_post_index(reply_post_id))
+        reply_author = reply_post_data.get("author", "")
+    except Exception as e:
+        print(f"Could not find reply post {reply_post_id}: {e}")
+        reply_author = ""
+
     claimed = reply["metadata"].get("claimed", {})
     earliest_claim_time = reply["metadata"].get("earliest_claim_time", 0)
     earned = claimed.get("udys", 0)
@@ -1885,6 +1908,7 @@ def handle_post_reply_detail(environ, start_response, post_id, reply_post_id):
             "percent": int(reply["best_rating"] * 100),
             "post_id": post_id,
             "reply_post_id": reply_post_id,
+            "reply_author": reply_author,
             "earned": earned,
             "earliest_claim_time": earliest_claim_time,
             **reply,
@@ -1913,12 +1937,8 @@ def handle_post_topics(environ, start_response, post_id):
 <li><a
     title="{tag['tag_name']}"
     href="/{post_id}/topics/{tag['tag_name']}"
-    hx-get="/{post_id}/topics/{tag['tag_name']}"
-    hx-target="next span"
-    hx-select="form"
-    hx-swap="innerHTML"
-    >{tag['tag_name']}</a
-  ><span></span></li>
+    class="text-blue-600 hover:text-blue-800 transition-colors"
+    >{tag['tag_name']}</a></li>
 """
             for tag in tags
         ]
@@ -1931,7 +1951,7 @@ def handle_post_topics(environ, start_response, post_id):
         items_html = "<li>No tags found</li>"
 
     if pagination.get("next_key"):
-        # create the 'load more' placeholder
+        # create the 'load more' link
         load_more_html = f"""
 <li
   hx-get="/{post_id}/topics?limit={req_pagination['limit']}&key={pagination['next_key']}"

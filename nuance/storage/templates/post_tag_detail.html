@@ -1,70 +1,147 @@
 
-<div>
-  <h3>
-    <a href="/{{id}}">Post #{{id}}</a> <a href="/{{id}}/topics">tags</a>: <a href="/topics/{{tag_name}}">{{tag_name}}</a>
-  </h3>
+<div class="max-w-4xl mx-auto py-6 space-y-6" x-data="createPostTagDetailData({{id}}, '{{tag_name}}', {{earliest_claim_time}}, {{up}}, {{down}}, {{earned}}, {{best_rating}}, '{{post_author}}')">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">
+      <a href="/{{id}}" class="text-blue-600 hover:text-blue-800 transition-colors">Post #{{id}}</a> &gt;  
+      <a href="/{{id}}/topics" class="text-blue-600 hover:text-blue-800 transition-colors">tags</a> &gt;
+      <a href="/topics/{{tag_name}}" class="text-blue-600 hover:text-blue-800 transition-colors">{{tag_name}}</a>
+    </h1>
+  </div>
 
-  <form x-data="createPostTagDetailData({{id}}, '{{tag_name}}', {{earliest_claim_time}}, {{up}}, {{down}}, {{earned}}, {{best_rating}})"
-    >
-    <!-- Error display -->
-    <div x-show="error" class="error" style="color: red; background: #ffebee; padding: 10px; margin: 10px 0; border-radius: 4px; border: 1px solid #ffcdd2;">
-      <strong>Error:</strong> <span x-text="error"></span>
+  <!-- Error display -->
+  <div x-show="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+    <div class="flex items-center">
+      <svg class="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+      </svg>
+      <div>
+        <strong class="text-red-800">Error:</strong> 
+        <span class="text-red-700" x-text="error"></span>
+      </div>
+    </div>
+  </div>
+  
+
+
+  <!-- Rating Actions -->
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Rate This Tag</h2>
+    
+    <!-- Community Rating -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm font-medium text-gray-700">Community Rating</span>
+        <span class="text-sm text-gray-500" x-text="`${Number({{up}}).toFixed(0)} up • ${Number({{down}}).toFixed(0)} down`"></span>
+      </div>
+      <div class="w-full bg-gray-200 h-3 flex">
+        <div class="h-3 bg-green-500" 
+             :style="`width: ${{{up}} + {{down}} > 0 ? ({{up}} / ({{up}} + {{down}})) * 100 : 50}%`"></div>
+        <div class="h-3 bg-red-500" 
+             :style="`width: ${{{up}} + {{down}} > 0 ? ({{down}} / ({{up}} + {{down}})) * 100 : 50}%`"></div>
+      </div>
     </div>
     
-    <meter value="{{best_rating}}" min="0" max="1" low=".33" high=".66" optimum=".9">
-      {{up}} up and {{down}} down
-    </meter>
-    <ul class="stats">
-      <li>Topic: <a href="/topics/{{tag_name}}">{{tag_name}}</a></li>
-      <li>Up: <strong>{{up}}</strong></li>
-      <li>Down: <strong>{{down}}</strong></li>
-      <li>Earned: <strong x-text="earnedRewards + ' DYS'">Loading...</strong></li>
-      <li>
-        Claimable: <strong class="claimable" x-text="availableRewards + ' DYS'">Loading...</strong>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+      <button
+        class="btn px-4 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        @click="rateTag('up', $event)"
+        :disabled="!hasAccount || isSubmitting || !isAmountValid"
+      >
+        <span x-show="!isSubmitting">
+          <span class="block text-sm">👍 Post #{{id}} is <strong>more</strong> {{tag_name}}</span>
+        </span>
+        <span x-show="isSubmitting" class="flex items-center justify-center">
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Submitting...
+        </span>
+      </button>
 
-        <button
-          class="claim-btn"
-          :disabled="!canClaim || isClaiming"
-          @click="claim($event)"
-          x-text="isClaiming ? 'Claiming...' : claimButtonText"
-        >
-          Claim
-        </button>
-      </li>
+      <!-- Amount Input -->
+      <div>
+        <label for="ratingAmount" class="block text-sm font-medium text-gray-700 mb-2">
+          Amount in DYS
+        </label>
+        <input 
+          id="ratingAmount"
+          name="ratingAmount" 
+          type="number" 
+          x-model="amount" 
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          :class="{'border-red-300 focus:ring-red-500 focus:border-red-500': amount !== '' && amount !== null && amount !== undefined && (isNaN(parseFloat(amount)) || parseFloat(amount) <= 0)}"
+          placeholder="1.00"
+          step="0.000001"
+          min="0.000001"
+        />
+        <div x-show="amount !== '' && amount !== null && amount !== undefined && (isNaN(parseFloat(amount)) || parseFloat(amount) <= 0)" class="mt-1 text-sm text-red-600">
+          Amount must be a positive number
+        </div>
+      </div>
 
-      <li>
-        <button
-          class="up-btn"
-          @click="rateTag('up', $event)"
-          :disabled="!hasAccount || isSubmitting"
-          x-text="isSubmitting ? 'Submitting...' : '#{{id}} is stronger {{tag_name}}'"
-        >
-          #{{id}} is <strong>more</strong> {{tag_name}}
-        </button>
-        <button
-          class="down-btn"
-          @click="rateTag('down', $event)"
-          :disabled="!hasAccount || isSubmitting"
-          x-text="isSubmitting ? 'Submitting...' : '#{{id}} is weaker {{tag_name}}'"
-        >
-          #{{id}} is <strong>less</strong> {{tag_name}}
-        </button>
-        <input
-          name="amount"
-          type="number"
-          min="0"
-          placeholder="Amount in DYS"
-          class="auto-save"
-          x-model="amount"
-        />
-        <input
-          name="name"
-          placeholder="(Optional) Your Dys Name"
-          size="30"
-          class="auto-save"
-          x-model="contributor"
-        />
-      </li>
-    </ul>
-  </form>
+      <button
+        class="btn px-4 py-3 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        @click="rateTag('down', $event)"
+        :disabled="!hasAccount || isSubmitting || !isAmountValid"
+      >
+        <span x-show="!isSubmitting">
+          <span class="block text-sm">👎 Post #{{id}} is <strong>less</strong> {{tag_name}}</span>
+        </span>
+        <span x-show="isSubmitting" class="flex items-center justify-center">
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Submitting...
+        </span>
+      </button>
+    </div>
+
+    <!-- Hidden fields for amount and contributor -->
+    <input type="hidden" :value="currentAuthor" />
+  </div>
+
+
+  <!-- Rewards Section -->
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Claimable Rewards</h2>
+    <div class="flex items-center justify-between">
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <div class="text-2xl font-bold text-green-600" x-text="availableRewards + ' DYS'">Loading...</div>
+          <div class="text-sm text-gray-500">Available to claim</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-gray-900" x-text="earnedRewards + ' DYS'">Loading...</div>
+          <div class="text-sm text-gray-500">Total earned</div>
+        </div>
+      </div>
+      <button
+        class="px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        :disabled="!canClaim || isClaiming"
+        @click="claim($event)"
+      >
+        <span x-show="!isClaiming" x-text="claimButtonText">Claim</span>
+        <span x-show="isClaiming" class="flex items-center">
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Claiming...
+        </span>
+      </button>
+    </div>
+    <div class="mt-3 text-sm text-gray-600">
+      <span class="inline-flex items-center">
+        <svg class="w-4 h-4 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+        Only the author of post #{{id}} can claim rewards: <strong>{{post_author}}</strong>
+      </span>
+    </div>
+  </div>
+
+
 </div> 
