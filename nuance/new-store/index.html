@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Wallet Demo</title>
+
+    <script type="importmap">{
+    "imports": {
+      "@cosmjs/proto-signing": "https://esm.sh/@cosmjs/proto-signing@0.33.0",
+      "@cosmjs/encoding": "https://esm.sh/@cosmjs/encoding@0.28.0/es2022/encoding.mjs",
+      "cosmjs-types/cosmos/tx/v1beta1/tx.js": "https://esm.sh/cosmjs-types@0.9.0/cosmos/tx/v1beta1/tx.js",
+      "cosmjs-types/google/protobuf/any.js": "https://esm.sh/cosmjs-types@0.9.0/google/protobuf/any.js",
+      "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js": "https://esm.sh/cosmjs-types@0.9.0/cosmos/tx/signing/v1beta1/signing.js"
+    },
+    "integrity": {
+      "https://esm.sh/@cosmjs/proto-signing@0.33.0": "sha384-kH5cTgrrLZEnuDXwudrLGCLtoU41NPOYfdthnMUYTh2jaoe9ys5VxFDlfgCK+mYA",
+      "https://esm.sh/@cosmjs/encoding@0.28.0/es2022/encoding.mjs": "sha384-AvdvLuZGaIX0aHGlggL5+V2fbBGyAL/DKuxFhfMODNze9ySTAhIK5M0by+I5uTS4",
+      "https://esm.sh/cosmjs-types@0.9.0/cosmos/tx/v1beta1/tx.js": "sha384-APDjDlHft/+PGpqkVnNR5O9i8LqcIDYF3CufWQ3wzKw/Wt0Gz1YjIYiC509PoNRo",
+      "https://esm.sh/cosmjs-types@0.9.0/google/protobuf/any.js": "sha384-95FOvwJ5HMsm66L+WA8PVB6GgNWIs4uC0abcIA1JsI6u1BdzIniizitFmKO8UZbB",
+      "https://esm.sh/cosmjs-types@0.9.0/cosmos/tx/signing/v1beta1/signing.js": "sha384-ZWcZr6BAoiOXdvEMvh1o2QiN6FQTdHx0bO4r4y3zHhOHidHMY08ePjn9S35o8Jo7"
+    }
+  }</script>
+
+
+
+    <!-- AlpineJS plugins must be loaded BEFORE Alpine.js and before walletStore.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
+
+
+    <!-- Include dysonTxUtils.js here or as external -->
+    <script src="/static/js/dysonTxUtils.js" type="module"></script>
+    <!-- Include walletStore.js here -->
+    <script src="/static/js/walletStore.js" type="module"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body x-data x-init="$store.walletStore.init()">
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-4">Wallet Demo</h1>
+
+        <!-- Wallet Connection -->
+        <div class="card bg-base-100 shadow-xl mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Wallet</h2>
+                <template x-if="!$store.walletStore.isWalletConnected()">
+                    <div>
+                        <button class="btn btn-primary" @click="$store.walletStore.connectExtension('keplr')">Connect
+                            Keplr</button>
+                        <!-- Local wallets list -->
+                        <template x-for="wallet in $store.walletStore.listLocalCosmJsWallets()" :key="wallet.name">
+                            <button class="btn btn-secondary ml-2"
+                                @click="prompt('Password:', '').then(pass => pass && $store.walletStore.connectNamedCosmJsWallet(wallet.name, pass))"
+                                x-text="`Connect ${wallet.name}`">
+                            </button>
+                        </template>
+                    </div>
+                </template>
+                <template x-if="$store.walletStore.isWalletConnected()">
+                    <div>
+                        <p>Connected: <span x-text="$store.walletStore.getSignerAddress()"></span></p>
+                        <button class="btn btn-error" @click="$store.walletStore.disconnectWallet()">Disconnect</button>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Author Identity -->
+        <div class="card bg-base-100 shadow-xl mb-4" x-show="$store.walletStore.isWalletConnected()">
+            <div class="card-body">
+                <h2 class="card-title">Author Identity</h2>
+                <select class="select select-bordered"
+                    @change="$store.walletStore.setAuthorIdentity($event.target.value)">
+                    <template x-for="id in $store.walletStore.getAvailableAuthorIdentities()">
+                        <option :value="id" x-text="$store.walletStore.getDisplayTextForIdentity(id)"
+                            :selected="id === $store.walletStore.getAuthorIdentity()"></option>
+                    </template>
+                </select>
+            </div>
+        </div>
+
+        <!-- Send Msg Demo -->
+        <div class="card bg-base-100 shadow-xl mb-4" x-data="{ 
+      rawJson: Alpine.$persist('{}'), 
+      memo: Alpine.$persist(''), 
+      gasLimit: Alpine.$persist(null),
+      sendMessage() {
+        try {
+          const msg = JSON.parse(this.rawJson);
+          $store.walletStore.sendMsg({msg, gasLimit: this.gasLimit, memo: this.memo});
+        } catch(e) {
+          alert('Invalid JSON: ' + e.message);
+        }
+      }
+    }" x-show="$store.walletStore.isWalletConnected()">
+            <div class="card-body">
+                <h2 class="card-title">Send Raw Message</h2>
+                <textarea class="textarea textarea-bordered" x-model="rawJson"
+                    placeholder="Enter JSON message"></textarea>
+                <input type="text" class="input input-bordered mt-2" x-model="memo" placeholder="Memo">
+                <input type="number" class="input input-bordered mt-2" x-model.number="gasLimit"
+                    placeholder="Gas Limit (optional)">
+                <button class="btn btn-primary mt-2" @click="sendMessage()">Send Tx</button>
+            </div>
+        </div>
+
+        <!-- Pending Transactions (Highlighted) -->
+        <div class="card bg-warning text-warning-content shadow-xl mb-4"
+            x-show="$store.walletStore.getPendingTxHistory().length > 0">
+            <div class="card-body">
+                <h2 class="card-title">
+                    <span class="loading loading-spinner loading-sm"></span>
+                    Pending Transactions (<span x-text="$store.walletStore.getPendingTxHistory().length"></span>)
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Status</th>
+                                <th>Age</th>
+                                <th>Hash/Result</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="tx in $store.walletStore.getPendingTxHistory()">
+                                <tr class="hover">
+                                    <td>
+                                        <span class="badge badge-warning" x-text="tx.txId"></span>
+                                    </td>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <span class="loading loading-spinner loading-xs"></span>
+                                            <span x-text="tx.status" class="capitalize"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-xs cursor-help"
+                                            x-text="$store.walletStore.getRelativeTime(tx.timestamp)"
+                                            :title="tx.timestamp.toLocaleString()"></span>
+                                    </td>
+                                    <td>
+                                        <div x-show="tx.txHash">
+                                            <span x-text="tx.txHash" class="font-mono text-xs cursor-pointer block"
+                                                @click="navigator.clipboard.writeText(tx.txHash)"
+                                                title="Click to copy hash"></span>
+                                        </div>
+                                        <div x-show="!tx.txHash">
+                                            <span class="text-gray-400 text-xs">Submitting...</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-xs opacity-70"
+                                            x-text="$store.walletStore.getTxTypeDisplay(tx)"></span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Transaction History -->
+        <div class="card bg-base-100 shadow-xl mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Transaction History</h2>
+                <div class="stats stats-horizontal shadow mb-4">
+                    <div class="stat">
+                        <div class="stat-title">Total</div>
+                        <div class="stat-value text-sm" x-text="$store.walletStore.getTxHistory().length"></div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Pending</div>
+                        <div class="stat-value text-sm text-warning"
+                            x-text="$store.walletStore.getPendingTxHistory().length"></div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Success</div>
+                        <div class="stat-value text-sm text-success"
+                            x-text="$store.walletStore.getSuccessfulTxHistory().length"></div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Failed</div>
+                        <div class="stat-value text-sm text-error"
+                            x-text="$store.walletStore.getFailedTxHistory().length"></div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Status</th>
+                                <th>Age</th>
+                                <th>Hash/Result</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="tx in $store.walletStore.getTxHistory()">
+                                <tr>
+                                    <td>
+                                        <span :class="{
+                      'badge': true,
+                      'badge-warning': tx.status === 'pending',
+                      'badge-success': tx.status === 'success' || tx.status === 'included',
+                      'badge-error': tx.status === 'failed',
+                      'badge-ghost': !['pending', 'success', 'included', 'failed'].includes(tx.status)
+                    }" x-text="tx.txId"></span>
+                                    </td>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <span x-show="tx.status === 'pending'"
+                                                class="loading loading-spinner loading-xs"></span>
+                                            <span x-text="tx.status" class="capitalize"></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-sm cursor-help"
+                                            x-text="$store.walletStore.getRelativeTime(tx.timestamp)"
+                                            :title="tx.timestamp.toLocaleString()"></span>
+                                    </td>
+                                    <td class="max-w-xs">
+                                        <div x-show="tx.txHash">
+                                            <span x-text="tx.txHash"
+                                                class="font-mono text-xs cursor-pointer block truncate"
+                                                @click="navigator.clipboard.writeText(tx.txHash)"
+                                                title="Click to copy hash"></span>
+                                        </div>
+                                        <div x-show="tx.error || (tx.result && tx.result.rawLog)">
+                                            <span x-text="tx.error || tx.result?.rawLog"
+                                                class="text-xs text-error block truncate"
+                                                :title="tx.error || tx.result?.rawLog"></span>
+                                        </div>
+                                        <div x-show="!tx.txHash && !tx.error && !(tx.result && tx.result.rawLog)">
+                                            <span class="text-gray-400 text-xs">-</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-xs opacity-70"
+                                            x-text="$store.walletStore.getTxTypeDisplay(tx)"></span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-warning" @click="$store.walletStore.clearTxHistory()">Clear History</button>
+                    <button class="btn btn-primary" @click="$store.walletStore.refreshPendingTxs()">Refresh
+                        Pending</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toasts -->
+        <div class="toast toast-top toast-end">
+            <template x-for="toast in $store.walletStore.toasts">
+                <div :class="`alert alert-${toast.type}`">
+                    <span x-text="toast.message"></span>
+                </div>
+            </template>
+        </div>
+    </div>
+</body>
+
+</html>
