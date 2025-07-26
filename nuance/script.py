@@ -1370,7 +1370,7 @@ def handle_active(environ, start_response):
 <div>
   <div class="active-info">
     <a href="/{int(post['tag_name'])}">Post #{int(post['tag_name'])}</a> has
-    <strong>{post['amount']} {post['denom'].upper()}</strong> available to be
+    <strong>{post['amount'] // 1000000} DYS</strong> available to be
     claimed by top replies.
   </div>
   <article
@@ -1380,7 +1380,7 @@ def handle_active(environ, start_response):
     hx-target="closest article"
     hx-swap="outerHTML ignoreTitle:true"
   >
-    <div class="card border">Loading: ...</div>
+    <div class="">Loading post: #{int(post['tag_name'])}...</div>
   </article>
 </div>
             """
@@ -1526,7 +1526,7 @@ def handle_post_detail(environ, start_response, post_id):
             "author": SafeString(author),  # Already HTML-escaped
             "content": SafeString(content_text),  # Already HTML-escaped with HTML added
             "created_time": post["created_time"],
-            "claimed": post.get("claimed", {}).get("dys", 0),
+            "claimed": post.get("claimed", {}).get("udys", 0) // 1000000,
         }
     )
 
@@ -1624,7 +1624,7 @@ def handle_author_posts(environ, start_response, author):
     author_posts_template = SafeTemplate(fetch_template("author_posts.html"))
     content = author_posts_template.substitute({
         "author": author,
-        "claimed_dys": profile_data.get("claimed", {}).get("dys", 0),
+        "claimed_dys": profile_data.get("claimed", {}).get("udys", 0) // 1000000,
         "profile_content": SafeString(profile_content),
         "posts_html": SafeString(posts_html),
     })
@@ -1782,7 +1782,7 @@ def handle_post_replies(environ, start_response, post_id):
     hx-swap="innerHTML ignoreTitle:true"
     hx-target="this"
   >
-    <div class="card border">Loading: {reply['id']} ...</div>
+    <div class="">Loading: {reply['id']} ...</div>
   </div>
 </div>
             """

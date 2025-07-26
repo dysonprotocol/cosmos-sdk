@@ -10,6 +10,7 @@ function createPostReplyDetailData(postId, replyPostId, earliestClaimTime, up, d
     error: '',
     isSubmitting: false,
     isClaiming: false,
+    showDetails: false,
     
     init() {
       console.log("PostReplyDetail init() called for post", this.postId, "reply", this.replyPostId);

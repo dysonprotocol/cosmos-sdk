@@ -6,7 +6,7 @@
   <div x-show="!$store.walletStore.isWalletConnected()" style="color: red;">
     <p>Please connect your wallet to edit your profile.</p>
   </div>
-  <textarea id="profile-content" name="content" rows="10" :disabled="!$store.walletStore.isWalletConnected()">{{content}}</textarea>
+  <textarea class="textarea" id="profile-content" name="content" rows="10" :disabled="!$store.walletStore.isWalletConnected()">{{content}}</textarea>
   <button id="saveButton" :disabled="$store.walletStore.isLoading || !$store.walletStore.isWalletConnected()">Save Profile</button>
 </div>
 

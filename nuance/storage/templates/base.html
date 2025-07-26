@@ -831,9 +831,9 @@
         <a href="/active">Active Posts</a> - The busiest posts with active replies across all topics<br> 
         <a href="/topics">Topics</a> - The best posts grouped by topic<br> 
         <a href="/blog">Blog</a> - Read the official Nuance blog<br> 
-        <a href="/publish">Publish</a> - Share your best ideas with us<br> 
+        <a href="/publish">Publish</a> - Share your best ideas<br> 
         <!-- Show "Manage Wallets" if there's no active wallet and store is loaded -->
-        <a href="/wallet">Manage Wallet</a> - Control who you are<br>
+        <a href="/wallet">Manage Wallet</a> - Organize your identities<br>
         <!-- Show wallet info if connected and store is loaded -->
         <span x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta?.address" 
              x-data="walletMenu()" 
@@ -855,8 +855,8 @@
             
             <template x-if="currentAuthorIdentity">
               <div>
-                <a :href="`/authors/${currentAuthorIdentity}`">View Profile</a> - Your personal page and the posts people see when they click your name<br>
-                <a :href="`/edit-author/${currentAuthorIdentity}`">Edit Profile</a> - Edit your personal page<br>
+                <a :href="`/authors/${currentAuthorIdentity}`">View Profile</a> - Your custom page and the posts people see when they click your name<br>
+                <a :href="`/edit-author/${currentAuthorIdentity}`">Edit Profile</a> - Manage how you are perceived<br>
               </div>
             </template>
             

@@ -7,7 +7,8 @@
   </h1>
 </div>
 
-  <div class="reply-detail-container max-w-4xl mx-auto py-6 space-y-6" x-data="createPostReplyDetailData({{post_id}}, {{reply_post_id}}, {{earliest_claim_time}}, {{up}}, {{down}}, {{earned}}, {{best_rating}})">
+
+<div :class="{'space-y-6': showDetails}" class="pt-6 reply-detail-container max-w-4xl mx-auto" x-data="createPostReplyDetailData({{post_id}}, {{reply_post_id}}, {{earliest_claim_time}}, {{up}}, {{down}}, {{earned}}, {{best_rating}})">
 
   <!-- Error display -->
   <div x-show="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
@@ -24,20 +25,27 @@
 
   <!-- Rating Actions -->
   <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-    <h2 class="text-lg font-semibold text-gray-900 mb-4">Rate This Reply</h2>
+
     
-    <!-- Community Rating -->
-    <div class="mb-6">
+    <div class="reply-summary-toggle-bar cursor-pointer flex items-center justify-between" @click="showDetails = !showDetails">
+      <div class="w-full bg-gray-200 h-3 flex">
+        <div class="h-3 bg-green-500" 
+             :style="`width: ${({{up}} + {{down}}) > 0 ? ({{up}} / ({{up}} + {{down}})) * 100 : 50}%`"></div>
+        <div class="h-3 bg-red-500" 
+             :style="`width: ${{{up}} + {{down}} > 0 ? ({{down}} / ({{up}} + {{down}})) * 100 : 50}%`"></div>
+      </div>
+
+    </div>
+    
+    <div x-show="showDetails">
+      <!-- Community Rating -->
+      <div class="">
       <div class="flex items-center justify-between mb-2">
         <span class="text-sm font-medium text-gray-700">Community Rating</span>
         <span class="text-sm text-gray-500" x-text="`${Number({{up}}).toFixed(0)} up • ${Number({{down}}).toFixed(0)} down`"></span>
       </div>
-      <div class="w-full bg-gray-200 h-3 flex">
-        <div class="h-3 bg-green-500" 
-             :style="`width: ${{{up}} + {{down}} > 0 ? ({{up}} / ({{up}} + {{down}})) * 100 : 50}%`"></div>
-        <div class="h-3 bg-red-500" 
-             :style="`width: ${{{up}} + {{down}} > 0 ? ({{down}} / ({{up}} + {{down}})) * 100 : 50}%`"></div>
-      </div>
+      
+
     </div>
     
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
@@ -68,7 +76,7 @@
           name="ratingAmount" 
           type="number" 
           x-model="amount" 
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="input"
           :class="{'border-red-300 focus:ring-red-500 focus:border-red-500': amount !== '' && amount !== null && amount !== undefined && (isNaN(parseFloat(amount)) || parseFloat(amount) <= 0)}"
           placeholder="1.00"
           step="0.000001"
@@ -97,13 +105,14 @@
       </button>
     </div>
 
-    <!-- Hidden fields for amount and contributor -->
-    <input type="hidden" :value="currentAuthor" />
+      <!-- Hidden fields for amount and contributor -->
+      <input type="hidden" :value="currentAuthor" />
+    </div>
   </div>
 
 
   <!-- Rewards Section -->
-  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+  <div x-show="showDetails" class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
     <h2 class="text-lg font-semibold text-gray-900 mb-4">Claimable Rewards</h2>
     <div class="flex items-center justify-between">
       <div class="grid grid-cols-2 gap-6">
