@@ -6,6 +6,7 @@ from dys import (
     get_block_info,
     get_attached_messages,
     DysQueryException,
+    get_script_version,
 )
 from datetime import datetime
 from decimal import Decimal
@@ -2135,6 +2136,7 @@ def _render_base(body: str, title: str, head_extra: str = "", **kwargs) -> bytes
                 "title": title,
                 "head_extra": head_extra,
                 "script_address": get_script_address(),
+                "script_version": get_script_version(),
                 **kwargs,
             }
         )

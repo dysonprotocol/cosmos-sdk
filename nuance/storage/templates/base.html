@@ -595,6 +595,83 @@
         throw error;
       }
     }
+    
+    // Wallet menu component factory function
+    function walletMenu() {
+      return {
+        availableIdentities: [],
+        currentAuthorIdentity: '',
+        currentWalletAddress: '',
+        loading: false,
+        identityLoading: false,
+        error: null,
+        
+        async init() {
+          await this.loadIdentities();
+          
+          // Watch for wallet address changes with debouncing
+          this.$watch('$store.walletStore.activeWalletMeta?.address', 
+            debounce(300, async (newAddress, oldAddress) => {
+              if (newAddress !== oldAddress && newAddress) {
+                await this.loadIdentities();
+              }
+            })
+          );
+        },
+        
+        async loadIdentities() {
+          if (this.loading) return; // Prevent concurrent loading
+          
+          this.loading = true;
+          this.error = null;
+          
+          try {
+            this.currentWalletAddress = this.$store.walletStore.activeWalletMeta?.address || '';
+            
+            if (!this.currentWalletAddress) {
+              this.availableIdentities = [];
+              this.currentAuthorIdentity = '';
+              return;
+            }
+            
+            this.availableIdentities = await this.$store.walletStore.getAvailableAuthorIdentities();
+            this.currentAuthorIdentity = this.$store.walletStore.getAuthorIdentity();
+            
+          } catch (error) {
+            console.error('[WalletMenu] Failed to load identities:', error);
+            this.error = 'Failed to load author identities';
+            this.availableIdentities = [];
+            this.currentAuthorIdentity = '';
+          } finally {
+            this.loading = false;
+          }
+        },
+        
+        async handleIdentityChange(event) {
+          const selectedIdentity = event.target.value;
+          
+          if (this.identityLoading) return; // Prevent concurrent changes
+          
+          this.identityLoading = true;
+          
+          try {
+            await this.$store.walletStore.setAuthorIdentity(selectedIdentity);
+            this.currentAuthorIdentity = selectedIdentity;
+          } catch (error) {
+            console.error('[WalletMenu] Failed to set author identity:', error);
+            // Reset to current value on error
+            event.target.value = this.currentAuthorIdentity;
+            this.error = 'Failed to update author identity';
+          } finally {
+            this.identityLoading = false;
+          }
+        },
+        
+        async retry() {
+          await this.loadIdentities();
+        }
+      };
+    }
   </script>
 
 
@@ -750,81 +827,50 @@
 
     <header class="nuance">
       <div>
-        <a href="/"><h1 class="logo">Nuance</h1></a>
+        <a href="/"><h1 class="logo">Nuance</h1> <span class="text-xs text-gray-500">v{{script_version}}</span></a>
       </div>
       <div>
-        <a href="/recent">Recent Posts</a> | <a href="/active">Active Posts</a> | <a href="/topics">Topics</a> | <a href="/blog">Blog</a>  <br> 
-        <a href="/publish">Publish</a>
-        <!-- Show loading spinner while wallet store is initializing -->
-        <span x-show="$store.walletStore.isLoading" x-effect="console.log('[Header] Loading spinner visible:', $store.walletStore.isLoading)">| Loading wallet...</span>
-        
+        <a href="/recent">Recent Posts</a> - The newest posts Nuance has to offer<br> 
+        <a href="/active">Active Posts</a> - The busiest posts with active replies<br> 
+        <a href="/topics">Topics</a> - The best posts grouped by topic<br> 
+        <a href="/blog">Blog</a> - Read the official  blog<br> 
+        <a href="/publish">Publish</a> - Share your thoughts with us<br> 
         <!-- Show "Manage Wallets" if there's no active wallet and store is loaded -->
-        <span x-show="!$store.walletStore.isLoading" x-effect="console.log('[Header] Manage Wallets visible:', !$store.walletStore.isLoading)">
-          | <a href="/wallet">Manage Wallets</a>
-        </span><br>
+        <a href="/wallet">Manage Wallet</a> - Control who you are on Nuance<br>
         <!-- Show wallet info if connected and store is loaded -->
-        <template x-if="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta?.address" x-effect="console.log('[Header] Wallet menu template condition:', {isLoading: $store.walletStore.isLoading, hasWallet: !!$store.walletStore.activeWalletMeta?.address, activeWalletMeta: $store.walletStore.activeWalletMeta})">
-          <span x-data="{
-            availableIdentities: [],
-            currentAuthorIdentity: '',
-            currentWalletAddress: '',
-            componentId: Math.random().toString(36).substr(2, 9),
-            async init() {
-
-             
-              
-              await this.refreshIdentities();
-              
-              // Watch for wallet address changes
-              this.$watch('$store.walletStore.activeWalletMeta?.address', async (newAddress, oldAddress) => {
-                if (newAddress !== oldAddress && newAddress) {
-                  await this.refreshIdentities();
-                }
-              });
-              
-              // Watch for loading state changes
-              this.$watch('$store.walletStore.isLoading', (newLoading, oldLoading) => {
-              });
-              
-            },
-            async refreshIdentities() {
-              try {
-                this.currentWalletAddress = $store.walletStore.activeWalletMeta?.address || '';
-                
-                this.availableIdentities = await $store.walletStore.getAvailableAuthorIdentities();
-                
-                this.currentAuthorIdentity = $store.walletStore.getAuthorIdentity();
-                
-              } catch (error) {
-                console.error('[WalletMenu]', this.componentId, 'Failed to refresh identities:', error);
-                this.availableIdentities = [];
-                this.currentAuthorIdentity = '';
-              }
-            },
-            async onIdentityChange(event) {
-              const selectedIdentity = event.target.value;
-              try {
-                await $store.walletStore.setAuthorIdentity(selectedIdentity);
-                this.currentAuthorIdentity = selectedIdentity;
-              } catch (error) {
-                console.error('[WalletMenu]', this.componentId, 'Failed to set author identity:', error);
-                // Reset to current value on error
-                event.target.value = this.currentAuthorIdentity;
-              }
-            }
-          }" x-init="init()">
-          Author: <select @change="onIdentityChange" x-model="currentAuthorIdentity">
+        <div x-show="!$store.walletStore.isLoading && $store.walletStore.activeWalletMeta?.address" 
+             x-data="walletMenu()" 
+             x-init="init()"
+             x-cloak>
+          
+          <!-- Error state -->
+          <div x-show="error" class="text-red-500 text-sm mb-2">
+            <span x-text="error"></span>
+            <button @click="retry()" class="ml-2 text-blue-500 underline">Retry</button>
+          </div>
+          
+          <!-- Loading state -->
+          <div x-show="loading" class="text-gray-500">Loading identities...</div>
+          
+          <!-- Wallet info -->
+          <div x-show="!loading && !error">
+            Hello, 
+            <select @change="handleIdentityChange" x-model="currentAuthorIdentity" :disabled="identityLoading">
               <template x-for="identity in availableIdentities" :key="identity">
                 <option :value="identity" x-text="$store.walletStore.getDisplayTextForIdentity(identity)"></option>
               </template>
             </select>
-          | <a :href="`/authors/${$store.walletStore.getAuthorIdentity()}`">View Profile</a>
-          | <a :href="`/edit-author/${$store.walletStore.getAuthorIdentity()}`">Edit Profile</a><br>
-          Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
-          | Chain: <span x-text="$store.walletStore.chainId"></span> 
-          | <a @click="$store.walletStore.disconnectWallet()" >Disconnect</a> 
-          </span>
-        </template>
+            <span x-show="identityLoading" class="text-sm text-gray-500">Updating...</span>
+            <br>
+            
+            <a :href="`/authors/${currentAuthorIdentity}`">View Profile</a> - What people see when they click your name<br>
+            <a :href="`/edit-author/${currentAuthorIdentity}`">Edit Profile</a> - Change what your profile says<br>
+            
+            Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
+            | Chain: <span x-text="$store.walletStore.chainId"></span> 
+            | <a @click="$store.walletStore.disconnectWallet()" href="#" >Disconnect</a> 
+          </div>
+        </div>
        
       </div>
     </header>
