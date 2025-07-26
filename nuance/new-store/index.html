@@ -108,63 +108,6 @@
             </div>
         </div>
 
-        <!-- Pending Transactions (Highlighted) -->
-        <div class="card bg-warning text-warning-content shadow-xl mb-4"
-            x-show="$store.walletStore.getPendingTxHistory().length > 0">
-            <div class="card-body">
-                <h2 class="card-title">
-                    <span class="loading loading-spinner loading-sm"></span>
-                    Pending Transactions (<span x-text="$store.walletStore.getPendingTxHistory().length"></span>)
-                </h2>
-                <div class="overflow-x-auto">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Status</th>
-                                <th>Age</th>
-                                <th>Hash/Result</th>
-                                <th>Type</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template x-for="tx in $store.walletStore.getPendingTxHistory()">
-                                <tr class="hover">
-                                    <td>
-                                        <span class="badge badge-warning" x-text="tx.txId"></span>
-                                    </td>
-                                    <td>
-                                        <div class="flex items-center gap-2">
-                                            <span class="loading loading-spinner loading-xs"></span>
-                                            <span x-text="tx.status" class="capitalize"></span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="text-xs cursor-help"
-                                            x-text="$store.walletStore.getRelativeTime(tx.timestamp)"
-                                            :title="tx.timestamp.toLocaleString()"></span>
-                                    </td>
-                                    <td>
-                                        <div x-show="tx.txHash">
-                                            <span x-text="tx.txHash" class="font-mono text-xs cursor-pointer block"
-                                                @click="navigator.clipboard.writeText(tx.txHash)"
-                                                title="Click to copy hash"></span>
-                                        </div>
-                                        <div x-show="!tx.txHash">
-                                            <span class="text-gray-400 text-xs">Submitting...</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="text-xs opacity-70"
-                                            x-text="$store.walletStore.getTxTypeDisplay(tx)"></span>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
 
         <!-- All Transaction History -->
         <div class="card bg-base-100 shadow-xl mb-4">
@@ -195,36 +138,40 @@
                     <table class="table table-zebra">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Status</th>
-                                <th>Age</th>
-                                <th>Hash/Result</th>
+                                <th>#</th>
                                 <th>Type</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th>Hash/Result</th>
                             </tr>
                         </thead>
                         <tbody>
                             <template x-for="tx in $store.walletStore.getTxHistory()">
                                 <tr>
                                     <td>
-                                        <span :class="{
-                      'badge': true,
-                      'badge-warning': tx.status === 'pending',
-                      'badge-success': tx.status === 'success' || tx.status === 'included',
-                      'badge-error': tx.status === 'failed',
-                      'badge-ghost': !['pending', 'success', 'included', 'failed'].includes(tx.status)
-                    }" x-text="tx.txId"></span>
+                                        <span x-text="tx.txId"></span>
+                                    </td>
+                                    <td>
+                                        <span class="text-xs opacity-70"
+                                            x-html="$store.walletStore.getTxTypeDisplay(tx)"></span>
                                     </td>
                                     <td>
                                         <div class="flex items-center gap-2">
-                                            <span x-show="tx.status === 'pending'"
+                                            <span x-show="tx.status === 'pending' || tx.status === 'awaiting-approval'"
                                                 class="loading loading-spinner loading-xs"></span>
-                                            <span x-text="tx.status" class="capitalize"></span>
+                                            <span :class="{
+                      'badge': true,
+                      'badge-warning': tx.status === 'pending',
+                      'badge-info': tx.status === 'awaiting-approval',
+                      'badge-success': tx.status === 'success' || tx.status === 'included',
+                      'badge-error': tx.status === 'failed',
+                      'badge-ghost': !['pending', 'awaiting-approval', 'success', 'included', 'failed'].includes(tx.status)
+                    }" x-text="tx.status === 'awaiting-approval' ? 'awaiting approval' : tx.status" class="capitalize"></span>
                                         </div>
                                     </td>
                                     <td>
                                         <span class="text-sm cursor-help"
-                                            x-text="$store.walletStore.getRelativeTime(tx.timestamp)"
-                                            :title="tx.timestamp.toLocaleString()"></span>
+                                            x-text="new Date(tx.timestamp).toLocaleString()"></span>
                                     </td>
                                     <td class="max-w-xs">
                                         <div x-show="tx.txHash">
@@ -241,10 +188,6 @@
                                         <div x-show="!tx.txHash && !tx.error && !(tx.result && tx.result.rawLog)">
                                             <span class="text-gray-400 text-xs">-</span>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <span class="text-xs opacity-70"
-                                            x-text="$store.walletStore.getTxTypeDisplay(tx)"></span>
                                     </td>
                                 </tr>
                             </template>

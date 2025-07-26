@@ -30,6 +30,23 @@ document.addEventListener("alpine:init", () => {
         txHistory: Alpine.$persist([]), // [{txId, txHash, status, progress:0-100, timestamp, msgs, memo, fee, result, error}]
         lastTxChoices: Alpine.$persist({ gasPrice: 0.00000, memo: '', authorIdentity: null }), // Persist choices
         toasts: [], // For demo: [{id, message, type: 'info/success/error', timeoutId}]
+        
+        // Reactive computed properties
+        get pendingTxs() {
+            return this.txHistory.filter(tx => tx.status === 'pending' || tx.status === 'awaiting-approval').sort((a, b) => b.timestamp - a.timestamp);
+        },
+        
+        get successfulTxs() {
+            return this.txHistory.filter(tx => tx.status === 'success' || tx.status === 'included');
+        },
+        
+        get failedTxs() {
+            return this.txHistory.filter(tx => tx.status === 'failed');
+        },
+        
+        get sortedTxHistory() {
+            return this.txHistory.sort((a, b) => b.txId - a.txId);
+        },
 
         async init() {
             console.log('WalletStore: Initializing...');
@@ -87,10 +104,91 @@ document.addEventListener("alpine:init", () => {
 
                 // Start automatic pending transaction refresh
                 this.startPendingTxRefreshTimer();
+                
+                // Cleanup stuck awaiting-approval transactions from previous sessions
+                this.cleanupStuckTransactions();
             } catch (error) {
                 console.error('WalletStore: Initialization failed:', error);
                 this.isLoading = false;
                 throw error;
+            }
+        },
+        
+        cleanupStuckTransactions() {
+            console.log('WalletStore: Cleaning up awaiting-approval transactions from previous session...');
+            const stuckTxs = this.txHistory.filter(tx => tx.status === 'awaiting-approval');
+            
+            stuckTxs.forEach(tx => {
+                console.warn('WalletStore: Marking abandoned transaction as failed:', tx.txId);
+                tx.status = 'failed';
+                tx.error = 'Transaction abandoned - page was refreshed before approval';
+                tx.timestamp = new Date(); // Update timestamp to reflect failure time
+            });
+            
+            if (stuckTxs.length > 0) {
+                console.log('WalletStore: Cleaned up', stuckTxs.length, 'abandoned transactions');
+            }
+        },
+        
+        // Reactive error handling utility
+        handleTransactionError(entry, error) {
+            entry.status = 'failed';
+            
+            if (error.message.includes('Request rejected') || error.message.includes('rejected')) {
+                entry.error = 'Transaction rejected by user';
+                console.log('WalletStore: User rejected transaction in wallet');
+                return { success: false, code: -1, rawLog: entry.error };
+            } else if (error.message.includes('Insufficient funds')) {
+                entry.error = 'Insufficient funds';
+            } else if (error.message.includes('gas')) {
+                entry.error = 'Gas estimation failed';
+            } else {
+                entry.error = error.message || 'Transaction failed';
+            }
+            
+            // Return gracefully for user rejections, throw for others
+            if (error.message.includes('Request rejected') || error.message.includes('rejected')) {
+                return { success: false, code: -1, rawLog: entry.error };
+            }
+            
+            throw error;
+        },
+        
+        // Reactive transaction status updater
+        async updateTxStatus(tx) {
+            if (!tx.txHash) return;
+            
+            try {
+                const txRes = await fetch(`${this.restUrl}/cosmos/tx/v1beta1/txs/${tx.txHash}`);
+                if (txRes.ok) {
+                    const txData = await txRes.json();
+                    const height = txData.tx_response?.height;
+                    const code = txData.tx_response?.code || 0;
+
+                    if (height && height !== "0") {
+                        console.log('WalletStore: Transaction included in block:', tx.txHash, 'height:', height);
+                        tx.status = code === 0 ? 'included' : 'failed';
+                        tx.progress = 100;
+                        tx.result = txData;
+                        tx.timestamp = new Date();
+                        if (code !== 0) {
+                            tx.error = txData.tx_response?.raw_log || 'Transaction failed on chain';
+                        }
+                        return true; // Status changed
+                    } else {
+                        console.log('WalletStore: Transaction still pending:', tx.txHash);
+                        return false; // Still pending
+                    }
+                } else if (txRes.status === 404) {
+                    console.log('WalletStore: Transaction not found (404):', tx.txHash);
+                    return false;
+                } else {
+                    console.warn('WalletStore: Error checking transaction status:', txRes.status);
+                    return false;
+                }
+            } catch (error) {
+                console.warn('WalletStore: Transaction check error:', error);
+                return false;
             }
         },
 
@@ -545,8 +643,8 @@ document.addEventListener("alpine:init", () => {
             this.txHistory.push({
                 txId,
                 txHash: null,
-                status: 'pending',
-                progress: null, // Start with null progress to show activity
+                status: 'awaiting-approval', // User needs to approve in wallet
+                progress: null,
                 timestamp: new Date(),
                 msgs: [msg],
                 memo,
@@ -582,8 +680,8 @@ document.addEventListener("alpine:init", () => {
                 console.log('WalletStore: Transaction hash received:', entry.txHash);
 
                 if (result.success) {
-                    console.log('WalletStore: Transaction successful');
-                    entry.status = 'success';
+                    console.log('WalletStore: Transaction broadcast successful');
+                    entry.status = 'pending'; // Now actually pending inclusion in blockchain
                     entry.result = result;
                     await this.watchMempoolAndUpdateProgress(txId); // Poll for inclusion
                 } else {
@@ -605,28 +703,7 @@ document.addEventListener("alpine:init", () => {
                 }
             } catch (error) {
                 console.error('WalletStore: Exception during sendMsg:', error);
-
-                // Update the transaction entry with error details
-                entry.status = 'failed';
-
-                // Provide user-friendly error messages
-                if (error.message.includes('Request rejected') || error.message.includes('rejected')) {
-                    entry.error = 'Transaction rejected by user';
-                    console.log('WalletStore: User rejected transaction in wallet');
-                } else if (error.message.includes('Insufficient funds')) {
-                    entry.error = 'Insufficient funds';
-                } else if (error.message.includes('gas')) {
-                    entry.error = 'Gas estimation failed';
-                } else {
-                    entry.error = error.message || 'Transaction failed';
-                }
-
-                // Don't re-throw for user rejections, return gracefully
-                if (error.message.includes('Request rejected') || error.message.includes('rejected')) {
-                    return { success: false, code: -1, rawLog: entry.error };
-                }
-
-                throw error; // Re-throw for other errors
+                return this.handleTransactionError(entry, error);
             }
 
             this.updateLastTxChoices({ gasPrice: this.gasPrice, memo });
@@ -704,8 +781,8 @@ document.addEventListener("alpine:init", () => {
             this.txHistory.push({
                 txId,
                 txHash: null,
-                status: 'pending',
-                progress: null, // Start with null progress to show activity
+                status: 'awaiting-approval', // User needs to approve in wallet
+                progress: null,
                 timestamp: new Date(),
                 msgs: [{ scriptAddress, functionName, args, kwargs, extraCode, attachedMsg }],
                 memo,
@@ -746,8 +823,8 @@ document.addEventListener("alpine:init", () => {
                 console.log('WalletStore: Script transaction hash:', entry.txHash);
 
                 if (result.success) {
-                    console.log('WalletStore: Script execution successful');
-                    entry.status = 'success';
+                    console.log('WalletStore: Script broadcast successful');
+                    entry.status = 'pending'; // Now actually pending inclusion in blockchain
                     entry.result = result;
                     if (!simulate) await this.watchMempoolAndUpdateProgress(txId);
                 } else {
@@ -769,30 +846,12 @@ document.addEventListener("alpine:init", () => {
                 }
             } catch (error) {
                 console.error('WalletStore: Exception during runDysonScript:', error);
-
-                // Update the transaction entry with error details
-                entry.status = 'failed';
-
-                // Provide user-friendly error messages
-                if (error.message.includes('Request rejected') || error.message.includes('rejected')) {
-                    entry.error = 'Script transaction rejected by user';
-                    console.log('WalletStore: User rejected script transaction in wallet');
-                } else if (error.message.includes('Insufficient funds')) {
-                    entry.error = 'Insufficient funds for script execution';
-                } else if (error.message.includes('gas')) {
-                    entry.error = 'Gas estimation failed for script';
-                } else if (error.message.includes('script')) {
-                    entry.error = `Script error: ${error.message}`;
-                } else {
-                    entry.error = error.message || 'Script execution failed';
+                const result = this.handleTransactionError(entry, error);
+                // Convert response format for script calls
+                if (result && !result.success) {
+                    return { success: false, rawSendMsgsResponse: { code: -1, rawLog: result.rawLog } };
                 }
-
-                // Don't re-throw for user rejections, return gracefully
-                if (error.message.includes('Request rejected') || error.message.includes('rejected')) {
-                    return { success: false, rawSendMsgsResponse: { code: -1, rawLog: entry.error } };
-                }
-
-                throw error; // Re-throw for other errors
+                return result;
             }
 
             this.updateLastTxChoices({ gasPrice: this.gasPrice, memo });
@@ -829,33 +888,10 @@ document.addEventListener("alpine:init", () => {
                             return;
                         }
                     } else {
-                        // Check if transaction has been included in a block
-                        const txRes = await fetch(`${this.restUrl}/cosmos/tx/v1beta1/txs/${entry.txHash}`);
-                        if (txRes.ok) {
-                            const txData = await txRes.json();
-                            const height = txData.tx_response?.height;
-                            const code = txData.tx_response?.code || 0;
-
-                            if (height && height !== "0") {
-                                console.log('WalletStore: Transaction included in block, height:', height);
-                                entry.status = code === 0 ? 'included' : 'failed';
-                                entry.progress = 100;
-                                entry.result = txData;
-                                entry.timestamp = new Date(); // Update timestamp to reflect completion time
-                                if (code !== 0) {
-                                    entry.error = txData.tx_response?.raw_log || 'Transaction failed on chain';
-                                }
-                                return; // Stop watching
-                            } else {
-                                // Still in mempool, keep progress null for animated bar
-                                console.log('WalletStore: Transaction still pending in mempool');
-                            }
-                        } else if (txRes.status === 404) {
-                            // Transaction not found - might have been dropped or not yet propagated
-                            console.log('WalletStore: Transaction not found (404), might be dropped or not yet propagated');
-                            // Keep progress null for animated bar
-                        } else {
-                            console.warn('WalletStore: Error checking transaction status:', txRes.status);
+                        // Use reactive status updater
+                        const statusChanged = await this.updateTxStatus(entry);
+                        if (statusChanged) {
+                            return; // Stop watching if status changed to completed/failed
                         }
                     }
 
@@ -894,112 +930,65 @@ document.addEventListener("alpine:init", () => {
             this.lastTxChoices.memo = memo;
         },
 
+        // Legacy methods for backward compatibility (now delegate to reactive getters)
         getTxHistory() {
-            return this.txHistory.sort((a, b) => b.txId - a.txId); // Highest ID first
+            return this.sortedTxHistory;
         },
 
         getPendingTxHistory() {
-            return this.txHistory.filter(tx => tx.status === 'pending').sort((a, b) => b.timestamp - a.timestamp);
+            return this.pendingTxs;
         },
 
         getSuccessfulTxHistory() {
-            return this.txHistory.filter(tx => tx.status === 'success' || tx.status === 'included');
+            return this.successfulTxs;
         },
 
         getFailedTxHistory() {
-            return this.txHistory.filter(tx => tx.status === 'failed');
+            return this.failedTxs;
         },
-
-        getRelativeTime(timestamp) {
-            if (!timestamp) return 'Unknown';
-
-            // Ensure timestamp is a Date object
-            const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
-
-            // Check if the date is valid
-            if (isNaN(date.getTime())) {
-                console.warn('WalletStore: Invalid timestamp:', timestamp);
-                return 'Invalid date';
-            }
-
-            const now = new Date();
-            const diff = now - date;
-            const seconds = Math.floor(diff / 1000);
-            const minutes = Math.floor(diff / (1000 * 60));
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-            if (seconds < 60) return `${seconds}s ago`;
-            if (minutes < 60) return `${minutes}m ago`;
-            if (hours < 24) return `${hours}h ago`;
-            return `${days}d ago`;
-        },
-
+        
         getTxTypeDisplay(tx) {
             if (!tx.msgs || !tx.msgs.length) return 'Unknown';
 
-            const msg = tx.msgs[0];
-            if (typeof msg === 'object' && msg['@type']) {
-                const type = msg['@type'];
-                if (type.includes('MsgExec')) return 'Script Execution';
-                if (type.includes('MsgSend')) return 'Token Transfer';
-                if (type.includes('MsgDelegate')) return 'Delegate';
-                if (type.includes('MsgUndelegate')) return 'Undelegate';
-                if (type.includes('storage')) return 'Storage';
-                if (type.includes('nameservice')) return 'Name Service';
-                return type.split('.').pop().replace('Msg', '');
-            }
+            const types = tx.msgs.map(msg => {
+                if (typeof msg === 'object' && msg['@type']) {
+                    return msg['@type'];
+                }
+                // Handle script transactions
+                if (msg.scriptAddress || msg.functionName) {
+                    return 'Script';
+                }
+                return 'Unknown';
+            });
 
-            // Handle script transactions
-            if (msg.scriptAddress) return 'Script';
-            if (msg.functionName) return `Script: ${msg.functionName}`;
-
-            return 'Transaction';
+            return types.join('<br>');
         },
+
+
+
+
 
         async refreshPendingTxs() {
             console.log('WalletStore: Manually refreshing pending transactions...');
-            const pendingTxs = this.getPendingTxHistory();
+            const pendingTxs = this.pendingTxs; // Use reactive getter
             console.log('WalletStore: Found pending transactions:', pendingTxs.length);
 
             for (const tx of pendingTxs) {
                 if (tx.txHash) {
                     console.log('WalletStore: Checking status for tx:', tx.txHash);
-                    try {
-                        const txRes = await fetch(`${this.restUrl}/cosmos/tx/v1beta1/txs/${tx.txHash}`);
-                        if (txRes.ok) {
-                            const txData = await txRes.json();
-                            const height = txData.tx_response?.height;
-                            const code = txData.tx_response?.code || 0;
-
-                            if (height && height !== "0") {
-                                console.log('WalletStore: Transaction included in block:', tx.txHash, 'height:', height);
-                                tx.status = 'included';
-                                tx.progress = 100;
-                                tx.result = txData;
-                                tx.timestamp = new Date(); // Update timestamp to reflect completion time
-                            } else if (code !== 0) {
-                                console.log('WalletStore: Transaction failed:', tx.txHash, 'code:', code);
-                                tx.status = 'failed';
-                                tx.error = txData.tx_response?.raw_log || 'Transaction failed';
-                                tx.timestamp = new Date(); // Update timestamp to reflect failure time
-                            } else {
-                                console.log('WalletStore: Transaction still pending:', tx.txHash);
-                                // Keep progress null for animated bar
-                            }
-                        }
-                    } catch (error) {
-                        console.warn('WalletStore: Error checking transaction status:', error);
-                    }
+                    await this.updateTxStatus(tx); // Use reactive status updater
                 } else {
-                    // No hash yet, probably still submitting
-                    const elapsed = Date.now() - tx.timestamp.getTime();
-                    if (elapsed > 30000) { // 30 seconds without hash = likely failed
-                        console.warn('WalletStore: Transaction timeout without hash:', tx.txId);
-                        tx.status = 'failed';
-                        tx.error = 'Submission timeout';
-                        tx.timestamp = new Date(); // Update timestamp to reflect failure time
+                    // No hash yet - check if pending transaction is stuck in broadcast
+                    if (tx.status === 'pending') {
+                        const elapsed = Date.now() - new Date(tx.timestamp).getTime();
+                        if (elapsed > 30000) { // 30 seconds timeout for broadcast
+                            console.warn('WalletStore: Broadcast timeout:', tx.txId);
+                            tx.status = 'failed';
+                            tx.error = 'Broadcast timeout - transaction may have failed to submit';
+                            tx.timestamp = new Date();
+                        }
                     }
+                    // awaiting-approval transactions are only cleaned up on page load, not during runtime
                 }
             }
 
