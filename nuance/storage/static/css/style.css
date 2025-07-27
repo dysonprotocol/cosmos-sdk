@@ -75,7 +75,7 @@
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
 
-  .nuance p {
+  .nuance  p {
     margin-top: 1rem;
   }
 
@@ -511,7 +511,7 @@
 }
 
 /* Dark theme variations */
-.nuance.latex-dark {
+.nuance .latex-dark {
   --body-color: hsl(0, 0%, 86%);
   --body-bg-color: hsl(0, 0%, 16%);
   --link-visited: hsl(196 80% 77%);
@@ -526,7 +526,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .nuance.latex-dark-auto {
+  .nuance .latex-dark-auto {
     --body-color: hsl(0, 0%, 86%);
     --body-bg-color: hsl(0, 0%, 16%);
     --link-visited: hsl(196 80% 77%);
@@ -542,42 +542,43 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .nuance html {
+  .nuance  html {
     scroll-behavior: smooth;
   }
 }
 
-.nuance.libertinus {
+
+.nuance  .libertinus {
   font-family: 'Libertinus', Georgia, Cambria, 'Times New Roman', Times, serif;
 }
 
-.nuance.text-justify {
+.nuance .text-justify {
   text-align: justify;
 }
 
 /* Indents paragraphs like in LaTeX documents*/
-.nuance.indent-pars p {
+.nuance .indent-pars p {
   text-indent: var(--text-indent-size);
 }
 
-.nuance.indent-pars p.no-indent,
-.nuance p.no-indent {
+.nuance .indent-pars p.no-indent,
+.nuance  p.no-indent {
   text-indent: 0;
 }
 
-.nuance.indent-pars ol p,
-.nuance.indent-pars ul p {
+.nuance .indent-pars ol p,
+.nuance .indent-pars ul p {
   text-indent: 0;
 }
 
-.nuance.indent-pars h2 + p,
-.nuance.indent-pars h3 + p,
-.nuance.indent-pars h4 + p {
+.nuance .indent-pars h2 + p,
+.nuance .indent-pars h3 + p,
+.nuance .indent-pars h4 + p {
   text-indent: 0;
 }
 
 /* Allow line breaks between any two characters */
-.nuance.break-all {
+.nuance .break-all {
   /*
     NOTE: Whith `break-all` value no hyphens are shown, even if the word breaks
     at a hyphenation point
@@ -586,30 +587,30 @@
 }
 
 /* allow scroll on the x-axis */
-.nuance .scroll-wrapper {
+.nuance  .scroll-wrapper {
   overflow-x: auto;
 }
 
 /* if a table is wrapped in a scroll wrapper,
   the table cells shouldn't wrap */
-.nuance .scroll-wrapper > table td {
+.nuance  .scroll-wrapper > table td {
   white-space: nowrap;
 }
 
 /* Justify all sidenotes for wide screens when `text-justify` class is used */
-.nuance.text-justify .sidenote,
-.nuance.text-justify .sidenote.left {
+.nuance .text-justify .sidenote,
+.nuance .text-justify .sidenote.left {
     text-align: justify;
 }
 
 @media (max-width: 1050px) {
-  .nuance label.sidenote-toggle:not(.sidenote-number) {
+  .nuance  label.sidenote-toggle:not(.sidenote-number) {
     display: inline;
   }
-  .nuance .sidenote {
+  .nuance  .sidenote {
     display: none;
   }
-  .nuance .sidenote-toggle:checked + .sidenote {
+  .nuance  .sidenote-toggle:checked + .sidenote {
     display: block;
     margin: 0.5rem 1.25rem 1rem 0.5rem;
     float: left;
@@ -619,82 +620,82 @@
   }
 
   /* All sidenotes explicitly aligned to left for narrow screens */
-  .nuance .sidenote-toggle:checked + .sidenote.left {
+  .nuance  .sidenote-toggle:checked + .sidenote.left {
     text-align: left;
   }
 
   /* Justify all sidenotes for narrow screens when `text-justify` class is used */
-  .nuance.text-justify .sidenote-toggle:checked + .sidenote.left {
+  .nuance .text-justify .sidenote-toggle:checked + .sidenote.left {
     text-align: justify;
   }
 
   /* tweak indentation of sidenote inside a blockquote */
-  .nuance blockquote .sidenote {
+  .nuance  blockquote .sidenote {
     margin-right: -25vw;
     width: 16vw;
   }
 }
 
 /* Heading typography - keeping existing nuance-post-content namespace */
-.nuance h1 {
+.nuance  h1 {
   font-size: 2.5rem;
   line-height: 3.25rem;
   margin-bottom: 1.625rem;
 }
 
-.nuance h2 {
+.nuance  h2 {
   font-size: 1.7rem;
   line-height: 2rem;
   margin-top: 3rem;
 }
 
-.nuance h3 {
+.nuance  h3 {
   font-size: 1.4rem;
   margin-top: 2.5rem;
 }
 
-.nuance h4 {
+.nuance  h4 {
   font-size: 1.2rem;
   margin-top: 2rem;
 }
 
-.nuance h5 {
+.nuance  h5 {
   font-size: 1rem;
   margin-top: 1.8rem;
 }
 
-.nuance h6 {
+.nuance  h6 {
   font-size: 1rem;
   font-style: italic;
   font-weight: normal;
   margin-top: 2.5rem;
 }
 
-.nuance h3,
-.nuance h4,
-.nuance h5,
-.nuance h6 {
+.nuance  h3,
+.nuance  h4,
+.nuance  h5,
+.nuance  h6 {
   line-height: 1.625rem;
 }
 
-.nuance h1 + h2 {
+.nuance  h1 + h2 {
   margin-top: 1.625rem;
 }
 
-.nuance h2 + h3,
-.nuance h3 + h4,
-.nuance h4 + h5 {
+.nuance  h2 + h3,
+.nuance  h3 + h4,
+.nuance  h4 + h5 {
   margin-top: 0.8rem;
 }
 
-.nuance h5 + h6 {
+.nuance  h5 + h6 {
   margin-top: -0.8rem;
 }
 
-.nuance h2,
-.nuance h3,
-.nuance h4,
-.nuance h5,
-.nuance h6 {
+.nuance  h2,
+.nuance  h3,
+.nuance  h4,
+.nuance  h5,
+.nuance  h6 {
   margin-bottom: 0.8rem;
 }

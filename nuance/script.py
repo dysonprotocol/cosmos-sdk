@@ -306,7 +306,7 @@ def edit_author_profile(content: TEXTAREA, author: str = ""):
     _store_data(_get_author_profile_index(author), profile_data)
 
 
-def link_page(path: str, title: str, post_id: int, author: str = ""):
+def link_page(path: str, post_id: int, author: str, title: str = ""):
     """Link a custom page to a post for an author.
     
     Creates a custom author page that displays the specified post at the given path.
@@ -314,16 +314,14 @@ def link_page(path: str, title: str, post_id: int, author: str = ""):
     
     Args:
         path (str): The custom path for the page (e.g., "about", "contact")
-        title (str): The display title for the custom page
         post_id (int): The ID of the post to display at this path
-        author (str): The author name or address (defaults to caller)
-        
+        author (str): The author name or address
+        title (str): The title of the page (optional)
     Raises:
         Exception: If caller is not authorized for the author
         AssertionError: If post doesn't exist or path is invalid
     """
-    path = path.strip()
-    title = title.strip()
+    path = path.strip().strip("/")
     author = author.strip()
     
     # Validate path
@@ -333,25 +331,20 @@ def link_page(path: str, title: str, post_id: int, author: str = ""):
     for c in path:
         assert c in allowed_chars, "Path must contain only letters, numbers, hyphens, and underscores"
     
-    # Validate title
-    assert title and len(title) <= 100, "Title must be 1-100 characters"
+    # Validate author is non-falsey and resolves to caller
+    assert author, "Author must be provided and non-empty"
     
-    # Validate author authorization
-    if get_caller() and author:
-        try:
-            name_resp = _query(
-                {
-                    "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
-                    "name_or_address": author,
-                }
-            )
-            destination_address = name_resp["address"]
-            assert get_caller() == destination_address
-        except Exception as e:
-            raise Exception(f'[{get_caller()}] is not authorized for "{author}": {e}')
-    
-    # Set author to caller if not specified
-    author = author or get_caller()
+    try:
+        name_resp = _query(
+            {
+                "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
+                "name_or_address": author,
+            }
+        )
+        destination_address = name_resp["address"]
+        assert get_caller() == destination_address, f'Author "{author}" does not resolve to caller address'
+    except Exception as e:
+        raise Exception(f'[{get_caller()}] is not authorized for "{author}": {e}')
     
     # Validate post exists
     try:
@@ -361,9 +354,10 @@ def link_page(path: str, title: str, post_id: int, author: str = ""):
     
     # Store the page link
     page_data = {
-        "title": title,
         "post_id": post_id,
         "author": author,
+        "title": title,
+        "path": path,
         "created_time": get_block_info()["time"]
     }
     
@@ -1503,16 +1497,24 @@ def handle_post_detail(environ, start_response, post_id):
             POST_RE,
             rf"""
 
-            <div data-fragment="\2">
-                    <a
+            <div class="post" data-fragment="\2">
+              <div style="border: 1px solid; margin: 1em 0;
+    overflow: auto;
+    word-wrap: break-word;
+    padding: 1em 1.5em;">
+                <header>
+                    <button
+                        class="btn text-center"
                         hx-trigger="click once"
                         hx-get="/\1?depth={depth}"
                         hx-select="article"
                         hx-swap="innerHTML ignoreTitle:true"
-                        hx-target="closest div"
+                        hx-target="closest div.post"
                     >
-                    /\1\2
-                    </a>
+                    Load Post #\1\2
+                    </button>
+                </header>
+                </div>
             </div>
 
 """,
@@ -1645,9 +1647,9 @@ def handle_edit_author(environ, start_response, author):
         custom_pages, _ = _list_data(_get_author_page_prefix(author))
         custom_pages_data = [
             {
-                "path": page["_index"].split("/")[-1],
-                "title": page["title"],
-                "post_id": page["post_id"]
+                "path": page.get("path", page["_index"].split("/")[-1]),
+                "post_id": page["post_id"],
+                "title": page.get("title", "")
             }
             for page in custom_pages
         ]
@@ -1668,7 +1670,7 @@ def handle_edit_author(environ, start_response, author):
     return [html_content]
 
 
-@route(r"^/authors/(?P<author>[^/]+)/(?P<path>[^/]+)/?$")
+@route(r"^/authors/(?P<author>[^/]+)/(?P<path>.*[^/])/?$")
 def handle_author_page(environ, start_response, author, path):
     """Handle custom author page display"""
     try:
@@ -1686,7 +1688,7 @@ def handle_author_page(environ, start_response, author, path):
 
         post_id = post["post_id"]
         content_text = html.escape(post["content"])
-        custom_title = html.escape(page_data["title"])
+        custom_title = html.escape(page_data.get("title", ""))
         
         # Handle post references in content (same as post detail)
         if depth > 0:
