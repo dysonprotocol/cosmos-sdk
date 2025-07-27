@@ -39,7 +39,6 @@
   <button 
     @click="saveProfile()" 
     :disabled="!canSave"
-    :class="{ 'btn-primary': canSave, 'btn-secondary': !canSave }"
     class="btn">
     <span x-show="!isLoading">Save Profile</span>
     <span x-show="isLoading">
@@ -49,7 +48,7 @@
   </button>
   
   <!-- Success/Error Messages -->
-  <div x-show="message" :class="messageType === 'error' ? 'alert alert-danger' : 'alert alert-success'" class="mt-3">
+  <div x-show="message" :class="messageType === 'error' ? 'alert ' : 'alert '" class="mt-3">
     <span x-text="message"></span>
   </div>
 </div>

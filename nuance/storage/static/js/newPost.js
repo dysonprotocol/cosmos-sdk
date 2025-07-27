@@ -38,7 +38,8 @@ function createNewPostData() {
     },
     
     embedPosts(contentText, depth) {
-      return contentText.replace(/(?:^\n*?|\n+?)\/(\d+)(#[^\s]+)?(?:\s*\n*?$|\n+?)/gm, (match, p1, p2) => {
+      //"(?:^\n*?|\n+?)/(\d+)(#[^\s]+)?(?:\n*?$|\n+?)"
+      return contentText.replace(/(?:^\n*?|\n+?)\/(\d+)(#[^\s]+)?(?:\n*?$|\n+?)/gm, (match, p1, p2) => {
         return `
           <div
             hx-trigger="load"

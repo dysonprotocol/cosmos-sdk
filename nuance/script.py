@@ -24,6 +24,13 @@ from typing import Callable, Iterable, List, Tuple
 
 BASE_DOMAIN = "http://dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:1317"
 
+
+WHITELABEL = False
+name = get_script_name()
+if name:
+    WHITELABEL = True
+
+
 try:
     import re2 as re  # Only re2 is available onchain
 except ImportError as e:
@@ -35,7 +42,7 @@ except ImportError as e:
 TEXTAREA = typing.Annotated[str, '{"format":"textarea"}']
 
 # Regex to idetify an embedded post as /post_id on it's own line
-POST_RE = r"(?:^\n*?|\n+?)/(\d+)(#[^\s]+)?(?:\n*?$|\s*\n+?)"
+POST_RE = r"(?:^\n*?|\n+?)/(\d+)(#[^\s]+)?(?:\n*?$|\n+?)"
 
 # The soonest a post rewards can be claimed again for a specific tag
 CLAIM_WAIT_SEC = 60 * 60 * 24  # 24hrs
@@ -158,6 +165,15 @@ def route(pattern):
 
     return decorator
 
+whitelabel_routes = []
+
+
+def whitelabel_route(pattern, **kwargs):
+    def decorator(f):
+        whitelabel_routes.append((pattern, f, kwargs))
+        return f
+
+    return decorator
 
 def get_coins_sent():
     """Parse coins from attached messages (v2 API replacement for old get_coins_sent)."""
@@ -214,6 +230,10 @@ def publish_post(content: TEXTAREA, author: str = ""):
     # find all replies to other posts in the content using regular expression
     replies_to = {}
     replied_to_posts = re.findall(POST_RE, content)
+    if len(replied_to_posts) > 5:
+        raise ValueError(
+            f"Too many replies, max 5 allowed, you have {len(replied_to_posts)}"
+        )
     for replied_to_post_id, anchor_text in replied_to_posts:
         reply = replies_to.get(
             replied_to_post_id,
@@ -1340,6 +1360,12 @@ def wsgi(environ, start_response):
         return [b'']
 
     path_info = environ["PATH_INFO"]
+    if WHITELABEL:
+        for pattern, func, kwargs in whitelabel_routes:
+            m = re.match(pattern, path_info)
+            if m:
+                return func(environ, start_response, **m.groupdict(), **kwargs)
+
     for pattern, func in routes:
         m = re.match(pattern, path_info)
         if m:
@@ -1351,9 +1377,6 @@ def wsgi(environ, start_response):
 @route(r"^/$")
 def handle_root(environ, start_response):
     """Handle root redirect to /recent"""
-    name = get_script_name()
-    if name:
-        return handle_author_posts(environ, start_response, name, whitelabel=True)
 
     start_response("302 Moved", [
         ("Location", "/recent"),
@@ -1363,6 +1386,9 @@ def handle_root(environ, start_response):
     ])
     return []
 
+@whitelabel_route(r"^/$", name=name)
+def handle_whitelabel_root(environ, start_response, name):
+    return handle_author_posts(environ, start_response, name, whitelabel=True)
 
 @route(r"^/blog/?$")
 def handle_blog(environ, start_response):
@@ -1700,7 +1726,7 @@ def handle_edit_author(environ, start_response, author):
     html_content = _render_base(content, title=f"Edit profile: {author}")
     return [html_content]
 
-
+@whitelabel_route(r"^/(?P<path>.*[^/])/?$", author=name)
 @route(r"^/authors/(?P<author>[^/]+)/(?P<path>.*[^/])/?$")
 def handle_author_page(environ, start_response, author, path):
     """Handle custom author page display"""
@@ -1765,11 +1791,22 @@ def handle_author_page(environ, start_response, author, path):
             "author": author,
             "post_id": post_id,
             "content_text": SafeString(content_text),
+            "path": path
         })
 
         start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
-
-        html_content = _render_base(content, title=custom_title)
+        if WHITELABEL:
+            head_extra=SafeString('''
+<style>
+    body > header {
+        display: none;
+    }
+    .powered-by {
+        display: block;
+    }
+</style>
+''')       
+        html_content = _render_base(content, title=custom_title, head_extra=head_extra)
         return [html_content]
         
     except Exception as e:
@@ -2116,7 +2153,7 @@ def handle_topic_stats(environ, start_response, tag_name):
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
     return [html_content]
 
-
+@whitelabel_route(r"^/static/(?P<file_path>.+)$")
 @route(r"^/static/(?P<file_path>.+)$")
 def handle_static(environ, start_response, file_path):
     """Handle static file serving"""
@@ -2153,6 +2190,9 @@ def handle_static(environ, start_response, file_path):
         print(f"Error serving static file {file_path}: {e}")
         start_response("404 Not Found", [("Content-Type", "text/plain")])
         return [b"File Not Found"]
+
+# Must be regitsted after statick because is a wildcard route
+whitelabel_route(r"^/(?P<path>.*[^/])/?$", author=name)(handle_author_page)
 
 
 @route(r"^/sw\.min\.js$")

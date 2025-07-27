@@ -1,9 +1,8 @@
 <div id="content">
   <h1>{{ custom_title }}</h1>
-  <p>By <a class="author" href="/authors/{{ author }}">{{ author }}</a> | 
-     <a href="/{{ post_id }}">View original post #{{ post_id }}</a></p>
+  <p><a class="author" href="/authors/{{ author }}">{{ author }}</a> &gt; {{path}} &gt; <a href="/{{ post_id }}">View original post #{{ post_id }}</a></p>
   <article class="">
-    <div class="markdown">{{ content_text }}</div>
+    <div class="markdown nuance">{{ content_text }}</div>
     <script>
       renderMarkdownAndHighlight(
         document.currentScript.previousElementSibling,

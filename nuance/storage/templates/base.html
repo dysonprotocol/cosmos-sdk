@@ -34,8 +34,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basecoat-css@0.2.8/dist/basecoat.cdn.min.css">
     
   <script src="https://esm.sh/@tailwindcss/browser@4" defer type="module"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
   
   <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.2.8/dist/js/all.min.js" defer></script>
   <link
@@ -845,11 +843,10 @@
 <body x-data hx-boost="true" hx-target="main" hx-swap="morph ignoreTitle:false" hx-select="main"  hx-inherit="hx-select hx-target hx-swap hx-boost" class="min-h-screen  latex-dark-auto" x-cloak>
 
     <header class="powered-by text-xs text-gray-500">
-        Powered by <a href="/">Nuance</a> v{{script_version}}
+        Powered by <a href="/">Nuance</a>
     </header>
     <header id="navbar" class="nuance">
-
-        <a href="/" class=""><h1 class="logo">Nuance</h1> <span class="text-xs text-gray-500">v{{script_version}}</span></a>
+      <a href="/" ><div><h1 class="logo">Nuance</h1> <span class="text-xs text-gray-500">v{{script_version}}</span></div></a>
       <div>
         <a href="/recent">Recent Posts</a> - The freshest posts Nuance has to offer<br> 
         <a href="/active">Active Posts</a> - The busiest posts with active replies across all topics<br> 

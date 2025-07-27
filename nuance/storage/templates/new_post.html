@@ -1,10 +1,6 @@
 <div x-data="createNewPostData()">
   <h1 class="text-2xl font-bold p-4">Publish a New Post</h1>
-  <!-- Error display -->
-  <div x-show="error" class="error" style="color: red; background: #ffebee; padding: 10px; margin: 10px 0; border-radius: 4px; border: 1px solid #ffcdd2;">
-    <strong>Error:</strong> <span x-text="error"></span>
-  </div>
-
+  
   <div class="flex flex-col gap-4">
   <form id="postForm" action="post" target="#">
     <h2 class="text-center p-4">Content</h2>
@@ -40,7 +36,11 @@
     <div x-show="!hasAccount" class="mb-4" style="color: red;">
       Please connect your wallet to publish posts.
     </div>
-    
+    <!-- Error display -->
+  <div x-show="error" class="error" style="color: red; background: #ffebee; padding: 10px; margin: 10px 0; border-radius: 4px; border: 1px solid #ffcdd2;">
+    <strong>Error:</strong> <span x-text="error"></span>
+  </div>
+
     <button 
       type="button" 
       id="postButton" 
@@ -51,5 +51,6 @@
     >
       Post Content
     </button>
+    
   </div>
 </div>
