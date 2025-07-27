@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <base href="{{ BASE_DOMAIN }}" />
   <title>{{title}}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
@@ -33,6 +34,9 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basecoat-css@0.2.8/dist/basecoat.cdn.min.css">
     
   <script src="https://esm.sh/@tailwindcss/browser@4" defer type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  
   <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.2.8/dist/js/all.min.js" defer></script>
   <link
     rel="stylesheet"
@@ -43,8 +47,14 @@
   <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
   <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
 
+<script>
+  window.BASE_DOMAIN = "{{ BASE_DOMAIN }}";
+  document.addEventListener('htmx:configRequest', (evt) => {
+    evt.detail.headers = [];
+});
+</script>
 
-  <script>
+<script>
     
     // Fix for Alpine Morph with HTMX history
     // Remove all alpine ifs and fors from main that have been x-morph'd
@@ -65,9 +75,14 @@
     });
     
   </script>
+<style>
+.powered-by {
+  display: none;
+}
 
- 
-  {{head_extra}}
+</style>
+
+{{head_extra}}
   <script>
     async function setupTorrentLinks(inputString) {
       //var magnetRegex = /magnet:\?xt=urn:btih:([a-zA-Z0-9]+)/g;
@@ -823,12 +838,16 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.439 0 0);
 }
+
   </style>
 <meta name="htmx-config" content='{"disableInheritance":true}'>
 </head>
-<body x-data hx-boost="true" hx-target="main" hx-swap="morph" hx-select="main"  hx-inherit="hx-select hx-target hx-swap hx-boost" class="min-h-screen bg-base-100 latex-dark-auto" x-cloak>
+<body x-data hx-boost="true" hx-target="main" hx-swap="morph ignoreTitle:false" hx-select="main"  hx-inherit="hx-select hx-target hx-swap hx-boost" class="min-h-screen  latex-dark-auto" x-cloak>
 
-    <header class="nuance">
+    <header class="powered-by text-xs text-gray-500">
+        Powered by <a href="/">Nuance</a> v{{script_version}}
+    </header>
+    <header id="navbar" class="nuance">
 
         <a href="/" class=""><h1 class="logo">Nuance</h1> <span class="text-xs text-gray-500">v{{script_version}}</span></a>
       <div>
@@ -858,12 +877,13 @@
           <div x-show="!loading && !error">
            
             
-            <template x-if="currentAuthorIdentity">
-              <div>
+
+              <template x-if="currentAuthorIdentity">
+                <div>
                 <a :href="`/authors/${currentAuthorIdentity}`">View Profile</a> - Your custom page and the posts people see when they click your name<br>
-                <a :href="`/edit-author/${currentAuthorIdentity}`">Edit Profile</a> - Manage how you are perceived<br>
+                <a :href="`/edit-author/${currentAuthorIdentity}`">Edit Profile!</a> - Manage how you are perceived<br>
               </div>
-            </template>
+              </template>
             
             Wallet: <strong x-text="$store.walletStore.activeWalletMeta?.name"></strong> 
             | Chain: <strong x-text="$store.walletStore.chainId"></strong> 
@@ -877,7 +897,7 @@
             <strong>
             <select @change="handleIdentityChange" x-model="currentAuthorIdentity" :disabled="identityLoading">
               <template x-for="identity in availableIdentities" :key="identity">
-                <option :value="identity" x-text="$store.walletStore.getDisplayTextForIdentity(identity)"></option>
+                <option :id="identity" :value="identity" x-text="$store.walletStore.getDisplayTextForIdentity(identity)"></option>
               </template>
             </select>
           </strong>
@@ -888,6 +908,6 @@
       </div>
     </header>
 
-    <main>{{body}}</main>
+    <main hx-history-elt>{{body}}</main>
   </body>
 </html> 

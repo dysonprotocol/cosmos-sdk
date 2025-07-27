@@ -44,7 +44,7 @@
     <button 
       type="button" 
       id="postButton" 
-      class="btn btn-primary"
+      class="btn"
       :disabled="!hasAccount || isSubmitting || !currentAuthor" 
       @click="postContent()"
       x-text="isSubmitting ? 'Posting...' : 'Post Content'"

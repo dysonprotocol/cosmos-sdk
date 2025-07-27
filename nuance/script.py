@@ -7,6 +7,7 @@ from dys import (
     get_attached_messages,
     DysQueryException,
     get_script_version,
+    get_script_name,
 )
 from datetime import datetime
 from decimal import Decimal
@@ -21,6 +22,7 @@ import re
 import hashlib
 from typing import Callable, Iterable, List, Tuple
 
+BASE_DOMAIN = "http://dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:1317"
 
 try:
     import re2 as re  # Only re2 is available onchain
@@ -1193,6 +1195,8 @@ def _set_rewards_indexes(namespace, rewards):
 CONTENT_TYPE_HTML = ("Content-Type", "text/html; charset=UTF-8")
 CONTENT_TYPE_JS = ("Content-Type", "application/javascript; charset=utf-8")
 HEADERS = [
+    ("Access-Control-Allow-Methods", "HEAD, GET, POST, OPTIONS"),
+    ("Access-Control-Allow-Headers", "*"),
     #("Cache-Control", "max-age=60, public"),
     ("Service-Worker-Allowed", "/"),
     # /("Content-Security-Policy-Report-Only", "default-src 'none'"),
@@ -1327,6 +1331,14 @@ def wsgi(environ, start_response):
     This is the entry point for serving the website.
     It handles routing and serves data based on the request path.
     """
+    if environ['REQUEST_METHOD'] == 'OPTIONS':
+        start_response('200 OK', [
+            ('Access-Control-Allow-Origin', '*'),
+            ('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'),
+            ('Access-Control-Allow-Headers', '*'),
+        ])
+        return [b'']
+
     path_info = environ["PATH_INFO"]
     for pattern, func in routes:
         m = re.match(pattern, path_info)
@@ -1339,7 +1351,16 @@ def wsgi(environ, start_response):
 @route(r"^/$")
 def handle_root(environ, start_response):
     """Handle root redirect to /recent"""
-    start_response("302 Moved", [("Location", "/recent")])
+    name = get_script_name()
+    if name:
+        return handle_author_posts(environ, start_response, name, whitelabel=True)
+
+    start_response("302 Moved", [
+        ("Location", "/recent"),
+            ('Access-Control-Allow-Origin', '*'),
+            ('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'),
+            ('Access-Control-Allow-Headers', '*'),
+    ])
     return []
 
 
@@ -1577,7 +1598,7 @@ def handle_wallet(environ, start_response):
 
 
 @route(r"^/authors/(?P<author>[^/]+)/?$")
-def handle_author_posts(environ, start_response, author):
+def handle_author_posts(environ, start_response, author, whitelabel=False):
     """Handle author posts list page"""
     profile_data = _get_profile(author)
 
@@ -1620,7 +1641,18 @@ def handle_author_posts(environ, start_response, author):
 """,
             profile_content,
         )
-   
+    head_extra = ""
+    if whitelabel:
+        head_extra=SafeString('''
+<style>
+    body > header {
+        display: none;
+    }
+    .powered-by {
+        display: block;
+    }
+</style>
+''')
 
     # Use the new author_posts.html template
     author_posts_template = SafeTemplate(fetch_template("author_posts.html"))
@@ -1632,8 +1664,7 @@ def handle_author_posts(environ, start_response, author):
     })
 
     start_response("200 OK", [CONTENT_TYPE_HTML] + HEADERS)
-
-    html_content = _render_base(content, title="Author Post List")
+    html_content = _render_base(content, title=f"{author}", head_extra=head_extra)
     return [html_content]
 
 
@@ -2144,6 +2175,7 @@ def _render_base(body: str, title: str, head_extra: str = "", **kwargs) -> bytes
         .substitute(
             {
                 "body": SafeString(body),
+                "BASE_DOMAIN": BASE_DOMAIN,
                 "static_scripts": render_script_tags(),
                 "importmap_json": SafeString(
                     _query(

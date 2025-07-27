@@ -282,14 +282,14 @@
               id="import-wallet-btn"
               @click="importCosmJsWallet()"
               :disabled="!walletName || !password || !mnemonic || !mnemonicSaved"
-              class="btn-primary"
+              class="btn"
             >
               Import Wallet
             </button>
             <button 
               id="clear-mnemonic-btn"
               @click="mnemonic = ''; clearImportStatus()"
-              class="btn-secondary"
+              class="btn"
             >
               Clear Mnemonic
             </button>
