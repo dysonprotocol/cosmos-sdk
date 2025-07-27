@@ -428,7 +428,7 @@ function showTransactionModal(msgs, memo, fee, chainId, address) {
               white-space: pre-wrap;
               font-family: 'Courier New', monospace;
               font-size: 12px;
-            "><code>${escapeHTML(JSON.stringify(msgs, null, 2))}</code></pre>
+            ">${escapeHTML(JSON.stringify(msgs, null, 2))}</pre>
           </div>
           
           <div style="margin-bottom: 20px;">
@@ -442,7 +442,7 @@ function showTransactionModal(msgs, memo, fee, chainId, address) {
               white-space: pre-wrap;
               font-family: 'Courier New', monospace;
               font-size: 12px;
-            "><code>${escapeHTML(JSON.stringify(fee || { amount: [], gas_limit: "200000" }, null, 2))}</code></pre>
+            ">${escapeHTML(JSON.stringify(fee || { amount: [], gas_limit: "200000" }, null, 2))}</pre>
           </div>
           
           <div style="margin-bottom: 15px;">

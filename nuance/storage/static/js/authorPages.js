@@ -174,10 +174,32 @@ export function initProfileEditor() {
     return; // Not on profile edit page
   }
   
+  // Check if already initialized to prevent duplicate listeners
+  if (saveButton.hasAttribute('data-initialized')) {
+    return;
+  }
+  saveButton.setAttribute('data-initialized', 'true');
+  
   saveButton.addEventListener("click", async () => {
     try {
       const content = profileContent.value;
-      const authorName = getAuthorIdentityFromWalletStore();
+      
+      // Get author identity from Alpine store
+      let authorName;
+      try {
+        authorName = Alpine.store('walletStore').getAuthorIdentity();
+      } catch (error) {
+        console.error('Failed to get author identity from wallet store:', error);
+        
+        // Fallback: try to get from page context or URL
+        const authorElement = document.querySelector('[data-author-name]');
+        if (authorElement) {
+          authorName = authorElement.getAttribute('data-author-name');
+        } else {
+          const pathMatch = window.location.pathname.match(/\/edit-author\/([^/]+)/);
+          authorName = pathMatch ? pathMatch[1] : '';
+        }
+      }
       
       if (!authorName) {
         throw new Error('Could not determine author identity. Please connect your wallet and select an identity.');
