@@ -41,7 +41,7 @@ def get_base_domain():
 
 WHITELABEL = False
 name = get_script_name()
-if name:
+if name and name != "nuance.dys":
     WHITELABEL = True
 
 
