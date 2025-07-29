@@ -12,6 +12,9 @@ Examples:
   # Generate network config with 2 chains, 1 node each, and Hermes TOML
   ./scripts/chainnet.py generate --chains 2 --nodes 1 --hermes-config
 
+  # Generate with custom base config overrides
+  ./scripts/chainnet.py generate --chains 2 --base-config custom-config.json
+
   # Setup the network (init, gentx, genesis) from default config
   ./scripts/chainnet.py setup --config-file /tmp/dysonchains/chains.json --force
 
@@ -20,6 +23,51 @@ Examples:
 
   # Create IBC channels between chains
   ./scripts/chainnet.py ibc --config-file /tmp/dysonchains/chains.json
+
+Base Config Format (custom-config.json):
+  cat > custom-config.json <<EOF
+{
+  "global_genesis_overrides": {
+    "governance_params": {
+      "max_deposit_period": "172800s",
+      "voting_period": "604800s",
+      "quorum": "0.334000000000000000",
+      "threshold": "0.500000000000000000",
+      "expedited_voting_period": "86400s",
+      "expedited_threshold": "0.667000000000000000"
+    },
+    "distribution_params": {
+      "community_tax": "0.500000000000000000"
+    },
+    "mint_params": {
+      "inflation": "0.010000000000000000",
+      "inflation_max": "0.100000000000000000",
+      "inflation_min": "0.010000000000000000",
+      "blocks_per_year": "10512000"
+    },
+    "nameservice_params": {
+      "bid_timeout": "2592000s"
+    },
+    "slashing_params": {
+      "downtime_jail_duration": "600s"
+    },
+    "staking_params": {
+      "unbonding_time": "2592000s"
+    },
+    "storage_params": {
+      "storage_stake_multiple": "100"
+    }
+  },
+  "accounts": [
+    {
+      "name": "test-user",
+      "address": "dys21customaddress...",
+      "mnemonic": "custom mnemonic words...",
+      "initial_balance": "2000000000000udys"
+    }
+  ]
+}
+EOF
 """
 import json
 import os
@@ -53,6 +101,209 @@ MAX_CHAINNET_OFFSET = 10
 MAX_NODES_PER_CHAIN = 10
 
 # --- Helpers for generation ---
+def deep_merge_config(base: dict, override: dict) -> dict:
+    """Deep merge override config into base config.
+    
+    Special handling for 'chains' array: merge by chain_id.
+    Special handling for 'accounts' array: merge by name.
+    
+    Args:
+        base: Base configuration dictionary
+        override: Override configuration dictionary
+        
+    Returns:
+        Merged configuration dictionary
+    """
+    result = base.copy()
+    
+    for key, value in override.items():
+        if key == 'chains' and isinstance(value, list) and key in result and isinstance(result[key], list):
+            # Merge chains by chain_id
+            result[key] = merge_chains_array(result[key], value)
+        elif key == 'accounts' and isinstance(value, list) and key in result and isinstance(result[key], list):
+            # Merge accounts by name  
+            result[key] = merge_accounts_array(result[key], value)
+        elif key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = deep_merge_config(result[key], value)
+        else:
+            result[key] = value
+    
+    return result
+
+def merge_chains_array(base_chains: list, override_chains: list) -> list:
+    """Merge chains arrays by chain_id."""
+    result = base_chains.copy()
+    
+    for override_chain in override_chains:
+        override_id = override_chain.get('chain_id')
+        if not override_id:
+            # No chain_id, just append
+            result.append(override_chain)
+            continue
+            
+        # Find matching base chain
+        found = False
+        for i, base_chain in enumerate(result):
+            if base_chain.get('chain_id') == override_id:
+                # Merge this chain
+                result[i] = deep_merge_config(base_chain, override_chain)
+                found = True
+                break
+        
+        if not found:
+            # New chain, append it
+            result.append(override_chain)
+    
+    return result
+
+def merge_accounts_array(base_accounts: list, override_accounts: list) -> list:
+    """Merge accounts arrays by name."""
+    result = base_accounts.copy()
+    
+    for override_account in override_accounts:
+        override_name = override_account.get('name')
+        if not override_name:
+            # No name, just append
+            result.append(override_account)
+            continue
+            
+        # Find matching base account
+        found = False
+        for i, base_account in enumerate(result):
+            if base_account.get('name') == override_name:
+                # Replace this account entirely
+                result[i] = override_account
+                found = True
+                break
+        
+        if not found:
+            # New account, append it
+            result.append(override_account)
+    
+    return result
+
+def get_genesis_defaults():
+    """Get default genesis parameters."""
+    return {
+        "governance_params": {
+            "voting_period": "3s",
+            "expedited_voting_period": "1s",
+            "expedited_threshold": "0.0001",
+            "min_deposit": 1,
+            "quorum": "0.00001",
+            "threshold": "0.00001"
+        },
+        "nameservice_params": {
+            "reject_bid_valuation_fee_percent": "0.03",
+            "bid_timeout": "2s"
+        }
+    }
+
+def apply_genesis_overrides(genesis_data: dict, app_state: dict, global_overrides: dict, denom: str):
+    """Apply global genesis parameter overrides to genesis data."""
+    defaults = get_genesis_defaults()
+    
+    # Merge defaults with overrides
+    merged_genesis = deep_merge_config(defaults, global_overrides)
+    
+    # Gov params
+    if 'governance_params' in merged_genesis:
+        gov_params = merged_genesis['governance_params']
+        app_state_gov = app_state.setdefault('gov', {})
+        app_state_gov_params = app_state_gov.setdefault('params', {})
+        for key, value in gov_params.items():
+            if key == 'min_deposit' and isinstance(value, (int, float)):
+                app_state_gov_params[key] = [{'denom': denom, 'amount': str(int(value))}]
+            else:
+                app_state_gov_params[key] = str(value)
+    
+    # Distribution params
+    if 'distribution_params' in merged_genesis:
+        dist_params = merged_genesis['distribution_params']
+        app_state_dist = app_state.setdefault('distribution', {})
+        app_state_dist_params = app_state_dist.setdefault('params', {})
+        for key, value in dist_params.items():
+            app_state_dist_params[key] = str(value)
+    
+    # Mint params
+    if 'mint_params' in merged_genesis:
+        mint_params = merged_genesis['mint_params']
+        # Minter section
+        if 'inflation' in mint_params:
+            app_state_mint = app_state.setdefault('mint', {})
+            minter = app_state_mint.setdefault('minter', {})
+            minter['inflation'] = str(mint_params['inflation'])
+        # Params section
+        app_state_mint = app_state.setdefault('mint', {})
+        app_state_mint_params = app_state_mint.setdefault('params', {})
+        for key, value in mint_params.items():
+            if key != 'inflation':  # Skip inflation as it goes in minter
+                app_state_mint_params[key] = str(value)
+    
+    # Nameservice params  
+    if 'nameservice_params' in merged_genesis:
+        ns_params = merged_genesis['nameservice_params']
+        app_state_ns = app_state.setdefault('nameservice', {})
+        app_state_ns_params = app_state_ns.setdefault('params', {})
+        for key, value in ns_params.items():
+            app_state_ns_params[key] = str(value)
+    
+    # Slashing params
+    if 'slashing_params' in merged_genesis:
+        slash_params = merged_genesis['slashing_params']
+        app_state_slash = app_state.setdefault('slashing', {})
+        app_state_slash_params = app_state_slash.setdefault('params', {})
+        for key, value in slash_params.items():
+            app_state_slash_params[key] = str(value)
+    
+    # Staking params
+    if 'staking_params' in merged_genesis:
+        stake_params = merged_genesis['staking_params']
+        app_state_stake = app_state.setdefault('staking', {})
+        app_state_stake_params = app_state_stake.setdefault('params', {})
+        for key, value in stake_params.items():
+            app_state_stake_params[key] = str(value)
+    
+    # Storage params
+    if 'storage_params' in merged_genesis:
+        storage_params = merged_genesis['storage_params']
+        app_state_storage = app_state.setdefault('storage', {})
+        app_state_storage_params = app_state_storage.setdefault('params', {})
+        for key, value in storage_params.items():
+            app_state_storage_params[key] = str(value)
+    
+    # Set bank denom metadata for dys/udys with 6 exponent
+    app_state_bank = app_state.setdefault('bank', {})
+    app_state_bank['denom_metadata'] = [
+        {
+            "description": "The native staking and governance token of the Dyson Protocol",
+            "denom_units": [
+                {
+                    "denom": 'udys',
+                    "exponent": 0,
+                    "aliases": []
+                },
+                {
+                    "denom": 'dys2',
+                    "exponent": 6,
+                    "aliases": []
+                }
+            ],
+            "base": 'udys',
+            "display": 'dys2',
+            "name": "Dys2",
+            "symbol": "DYS2"
+        }
+    ]
+    
+    # Set consensus params for evidence and block size limits
+    consensus_params = genesis_data.setdefault('consensus_params', {})
+    evidence_params = consensus_params.setdefault('evidence', {})
+    evidence_params['max_bytes'] = "204800"  # 200KB
+    block_params = consensus_params.setdefault('block', {})
+    block_params['max_bytes'] = "3145728"  # 3MB
+    block_params['max_gas'] = "10000000000"  # 10T gas
+
 def generate_ports(port_offset: int, chainnet_offset: int) -> dict:
     """Generate port mappings for a node with given offsets.
     
@@ -85,20 +336,6 @@ def generate_ports(port_offset: int, chainnet_offset: int) -> dict:
 
 def generate_chain_structure(chainnet_offset: int, idx: int, num_chains: int, nodes_per_chain: int, base_dir: Path) -> dict:
     chain_id = f"chain-{chr(ord('a')+idx)}"
-    genesis = {
-        "governance_params": {
-            "voting_period": "3s",
-            "expedited_voting_period": "1s",
-            "expedited_threshold": "0.0001",
-            "min_deposit": 1,
-            "quorum": "0.00001",
-            "threshold": "0.00001"
-        },
-        "nameservice_params": {
-            "reject_bid_valuation_fee_percent": "0.03",
-            "bid_timeout": "2s"
-        }
-    }
     nodes = []
     for j in range(nodes_per_chain):
         nid = idx * nodes_per_chain + j + 1
@@ -111,7 +348,7 @@ def generate_chain_structure(chainnet_offset: int, idx: int, num_chains: int, no
             "ports": ports,
             "validator": {"gentx_amount": DEFAULT_GENTX_AMOUNT, "initial_balance": DEFAULT_INITIAL_BALANCE}
         })
-    return {"chain_id": chain_id, "genesis": genesis, "nodes": nodes}
+    return {"chain_id": chain_id, "nodes": nodes}
 
 
 def generate_accounts() -> list:
@@ -194,13 +431,26 @@ def chainnet():
 @click.option('--denom', default=DEFAULT_DENOM, show_default=True)
 @click.option('--dysond-bin', default='dysond')
 @click.option('--hermes-config', is_flag=True)
+@click.option('--base-config', type=click.Path(exists=True), help='Base config JSON file to use as template/override defaults')
 @click.option('--output', type=click.Path(), help='JSON output path')
-def generate(base_dir, num_chains, chainnet_offset, nodes_per_chain, denom, dysond_bin, hermes_config, output):
+def generate(base_dir, num_chains, chainnet_offset, nodes_per_chain, denom, dysond_bin, hermes_config, base_config, output):
     """Generate and persist network config JSON (and optional Hermes TOML)."""
     base = Path(base_dir); base.mkdir(parents=True, exist_ok=True)
-    cfg = {"dysond_bin": dysond_bin, "default_denom": denom, "base_dir": str(base), "chains": [], "accounts": generate_accounts()}
+    
+    # Load base config if provided
+    if base_config:
+        base_cfg = json.loads(Path(base_config).read_text())
+        click.echo(f"Loaded base config from {base_config}")
+    else:
+        base_cfg = {}
+    
+    # Generate default configuration
+    default_cfg = {"dysond_bin": dysond_bin, "default_denom": denom, "base_dir": str(base), "chains": [], "accounts": generate_accounts()}
     for i in range(num_chains):
-        cfg["chains"].append(generate_chain_structure(chainnet_offset=chainnet_offset, idx=i, num_chains=num_chains, nodes_per_chain=nodes_per_chain, base_dir=base))
+        default_cfg["chains"].append(generate_chain_structure(chainnet_offset=chainnet_offset, idx=i, num_chains=num_chains, nodes_per_chain=nodes_per_chain, base_dir=base))
+    
+    # Merge base config with defaults (base config takes precedence)
+    cfg = deep_merge_config(default_cfg, base_cfg)
     path = Path(output) if output else DEFAULT_CONFIG_PATH
     path.write_text(json.dumps(cfg, indent=2))
     # print contents of path
@@ -393,51 +643,11 @@ def setup(config_file, force):
             current_genesis_path = cfg_dir / 'genesis.json'
             gdata = json.loads(current_genesis_path.read_text())
             app_state = gdata.setdefault('app_state', {})
-            # Gov params
-            gov_params = chain['genesis']['governance_params']
-            app_state_gov = app_state.setdefault('gov', {})
-            app_state_gov_params = app_state_gov.setdefault('params', {})
-            for key, value in gov_params.items():
-                if key == 'min_deposit' and isinstance(value, (int, float)):
-                    app_state_gov_params[key] = [{'denom': denom, 'amount': str(int(value))}]
-                else:
-                    app_state_gov_params[key] = str(value)
-            # Nameservice params
-            ns_params = chain['genesis']['nameservice_params']
-            app_state_ns = app_state.setdefault('nameservice', {})
-            app_state_ns_params = app_state_ns.setdefault('params', {})
-            for key, value in ns_params.items():
-                app_state_ns_params[key] = str(value)
-            # Set bank denom metadata for dys/udys with 6 exponent
-            app_state_bank = app_state.setdefault('bank', {})
-            app_state_bank['denom_metadata'] = [
-                {
-                    "description": "The native staking and governance token of the Dyson Protocol",
-                    "denom_units": [
-                        {
-                            "denom": 'udys',
-                            "exponent": 0,
-                            "aliases": []
-                        },
-                        {
-                            "denom": 'dys2',
-                            "exponent": 6,
-                            "aliases": []
-                        }
-                    ],
-                    "base": 'udys',
-                    "display": 'dys2',
-                    "name": "Dys2",
-                    "symbol": "DYS2"
-                }
-            ]
-            # Set consensus params for evidence and block size limits
-            consensus_params = gdata.setdefault('consensus_params', {})
-            evidence_params = consensus_params.setdefault('evidence', {})
-            evidence_params['max_bytes'] = "204800"  # 200KB
-            block_params = consensus_params.setdefault('block', {})
-            block_params['max_bytes'] = "3145728"  # 3MB
-            block_params['max_gas'] = "10000000000"  # 10T gas
+            
+            # Apply global genesis overrides
+            global_overrides = cfg.get('global_genesis_overrides', {})
+            apply_genesis_overrides(gdata, app_state, global_overrides, denom)
+            
             current_genesis_path.write_text(json.dumps(gdata, indent=2))
 
             # Add user accounts to this node's genesis
