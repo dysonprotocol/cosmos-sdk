@@ -60,10 +60,16 @@ Base Config Format (custom-config.json):
   },
   "accounts": [
     {
-      "name": "test-user",
-      "address": "dys21customaddress...",
-      "mnemonic": "custom mnemonic words...",
-      "initial_balance": "2000000000000udys"
+      "name": "alice",
+      "address": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
+      "mnemonic": "public feature teach face federal matrix throw legend bridge brass diary beach typical doll evoke weapon among crane regret trust enact swarm brother outside",
+      "initial_balance": "5000000000000udys"
+    },
+    {
+      "name": "custom-user",
+      "address": "dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el",
+      "mnemonic": "aerobic creek copper rice disagree become brass elegant century elegant apology position infant saddle metal brain gain loud alpha add boy balance truth cherry",
+      "initial_balance": "10000000000000udys"
     }
   ]
 }
@@ -105,7 +111,7 @@ def deep_merge_config(base: dict, override: dict) -> dict:
     """Deep merge override config into base config.
     
     Special handling for 'chains' array: merge by chain_id.
-    Special handling for 'accounts' array: merge by name.
+    Special handling for 'accounts' array: completely replace base accounts.
     
     Args:
         base: Base configuration dictionary
@@ -120,9 +126,9 @@ def deep_merge_config(base: dict, override: dict) -> dict:
         if key == 'chains' and isinstance(value, list) and key in result and isinstance(result[key], list):
             # Merge chains by chain_id
             result[key] = merge_chains_array(result[key], value)
-        elif key == 'accounts' and isinstance(value, list) and key in result and isinstance(result[key], list):
-            # Merge accounts by name  
-            result[key] = merge_accounts_array(result[key], value)
+        elif key == 'accounts' and isinstance(value, list):
+            # Replace accounts entirely if provided in override
+            result[key] = value
         elif key in result and isinstance(result[key], dict) and isinstance(value, dict):
             result[key] = deep_merge_config(result[key], value)
         else:
@@ -156,31 +162,7 @@ def merge_chains_array(base_chains: list, override_chains: list) -> list:
     
     return result
 
-def merge_accounts_array(base_accounts: list, override_accounts: list) -> list:
-    """Merge accounts arrays by name."""
-    result = base_accounts.copy()
-    
-    for override_account in override_accounts:
-        override_name = override_account.get('name')
-        if not override_name:
-            # No name, just append
-            result.append(override_account)
-            continue
-            
-        # Find matching base account
-        found = False
-        for i, base_account in enumerate(result):
-            if base_account.get('name') == override_name:
-                # Replace this account entirely
-                result[i] = override_account
-                found = True
-                break
-        
-        if not found:
-            # New account, append it
-            result.append(override_account)
-    
-    return result
+
 
 def get_genesis_defaults():
     """Get default genesis parameters."""
