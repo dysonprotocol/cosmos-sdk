@@ -28,7 +28,7 @@ document.addEventListener("alpine:init", () => {
 
     // Call this somewhere (e.g. <body x-init="$store.walletStore.init()">
     async init() {      
-      
+      console.log("walletStore init");
       await this.loadChainIdFromApi();
       
       // Attempt to reconnect if activeWalletMeta is set

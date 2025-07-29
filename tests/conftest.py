@@ -289,7 +289,7 @@ def chainnet(worker_id, test_base_dir, test_config_path):
         "--config-file", str(config_path),
         "--block-speed", "100ms",
         "--no-blocks-timeout", "10", 
-        #"--logs"
+        "--logs"
     ], preexec_fn=os.setsid)
 
     # Track processes for cleanup
@@ -492,13 +492,13 @@ import json
 def _patch_crontask_notebook():
     """Ensure the notebook waits for both SCHEDULED and PENDING statuses.
 
-    The docs/crontask_guide.ipynb was originally written to poll only for
+    The notebooks/crontask_guide.ipynb was originally written to poll only for
     tasks in the PENDING state. Recent refactors changed the state flow so that
     tasks remain in SCHEDULED until execution, causing a KeyError when the
     notebook tries to access msg_results too early. We patch the affected cell
     at test-time to wait for either SCHEDULED or PENDING before proceeding.
     """
-    nb_path = Path(__file__).parent.parent / "docs" / "crontask_guide.ipynb"
+    nb_path = Path(__file__).parent.parent / "notebooks" / "crontask_guide.ipynb"
     if not nb_path.exists():
         return  # Nothing to patch
 
@@ -535,7 +535,7 @@ def _patch_crontask_notebook():
             # Write back the patched notebook JSON
             with nb_path.open("w", encoding="utf-8") as fh:
                 json.dump(nb_data, fh, indent=1)
-            print("[Notebook patch] Patched docs/crontask_guide.ipynb for updated status handling.")
+            print("[Notebook patch] Patched notebooks/crontask_guide.ipynb for updated status handling.")
         except Exception as exc:
             print(f"[Notebook patch] Failed to write patched notebook: {exc}")
 

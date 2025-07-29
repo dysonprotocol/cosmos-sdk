@@ -84,9 +84,8 @@ export function customPagesManager() {
         throw new Error('Path must contain only letters, numbers, hyphens, and underscores');
       }
       
-      if (this.pages.some(page => page.path === path)) {
-        throw new Error('A page with this path already exists');
-      }
+      // Remove the check - we'll handle updates in addPage
+      // Allow paths to be replaced/updated
     },
     
     async addPage() {
@@ -116,9 +115,20 @@ export function customPagesManager() {
         });
         
         if (result.success) {
-          this.pages.push({ path, post_id: postId, title: title || '' });
+          // Check if this was an update or a new page
+          const existingPageIndex = this.pages.findIndex(page => page.path === path);
+          
+          if (existingPageIndex >= 0) {
+            // Update existing page
+            this.pages[existingPageIndex] = { path, post_id: postId, title: title || '' };
+            this.showMessage("Custom page updated successfully!");
+          } else {
+            // Add new page
+            this.pages.push({ path, post_id: postId, title: title || '' });
+            this.showMessage("Custom page added successfully!");
+          }
+          
           this.resetForm();
-          this.showMessage("Custom page added successfully!");
         } else {
           throw new Error(result.rawLog || 'Transaction failed');
         }
@@ -296,9 +306,19 @@ export function profileEditor() {
         
         if (result.success) {
           this.showMessage("Profile updated successfully!");
-          // Redirect after short delay to show success message
+          // Navigate using HTMX form trigger (URL already set via Alpine binding)
           setTimeout(() => {
-            window.location.href = `/authors/${authorName}`;
+            const navForm = document.getElementById('profile-nav-form');
+            if (navForm && typeof htmx !== 'undefined') {
+              // Process the form with HTMX to ensure bindings are active
+              htmx.process(navForm);
+              // Trigger the form submission
+              navForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            } else {
+              console.error('Navigation form element not found or HTMX not available');
+              // Fallback to direct navigation
+              window.location.href = `/authors/${authorName}`;
+            }
           }, 1500);
         } else {
           throw new Error(result.rawLog || 'Profile update failed');

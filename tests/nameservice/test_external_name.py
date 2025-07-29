@@ -26,8 +26,12 @@ def test_create_external_name_success(chainnet, generate_account):
     authority_address = gov_module_response.get("account", {}).get("value", {}).get("address", "")
     assert authority_address, "Could not get gov module address"
     
-    # Valid external domain name
-    external_name = "example.com"
+    print(f"Gov module response: {json.dumps(gov_module_response, indent=2)}")
+    print(f"Authority address extracted: {authority_address}")
+    
+    # Valid external domain name - make it unique to avoid conflicts
+    unique_suffix = secrets.token_hex(4)
+    external_name = f"example-{unique_suffix}.com"
     
     # Authority cannot directly execute the message without governance proposal
     # So we need to test via governance proposal
@@ -69,14 +73,31 @@ def test_create_external_name_success(chainnet, generate_account):
     vote_result = dysond_bin("tx", "gov", "vote", proposal_id, "yes", "--from", "alice")
     assert vote_result["code"] == 0, f"Vote failed: {vote_result['raw_log']}"
     
-    # Wait for proposal to pass
-    def proposal_passed():
+    # Wait for proposal to finish voting (no longer pending)
+    def proposal_no_longer_pending():
         proposal_info = dysond_bin("query", "gov", "proposal", proposal_id)
         status = proposal_info["proposal"]["status"]
-        return status == "PROPOSAL_STATUS_PASSED"
+        # Proposal is no longer pending when it's in one of these states
+        return status in ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_FAILED", "PROPOSAL_STATUS_REJECTED"]
     
     from tests.utils import poll_until_condition
-    poll_until_condition(proposal_passed, timeout=30, error_message="Proposal did not pass")
+    poll_until_condition(proposal_no_longer_pending, timeout=30, error_message="Proposal voting did not complete")
+    
+    # Now assert that it passed
+    final_proposal = dysond_bin("query", "gov", "proposal", proposal_id)
+    final_status = final_proposal["proposal"]["status"]
+    print(f"Final proposal details: {json.dumps(final_proposal, indent=2)}")
+    
+    # Query proposal tally to see voting results
+    tally_result = dysond_bin("query", "gov", "tally", proposal_id)
+    print(f"Tally result: {json.dumps(tally_result, indent=2)}")
+    
+    # Check if there's a failure_reason or similar field
+    failure_reason = final_proposal.get("proposal", {}).get("failure_reason", "")
+    failed_reason = final_proposal.get("proposal", {}).get("failed_reason", "")
+    print(f"Failure reason: {failure_reason or failed_reason}")
+    
+    assert final_status == "PROPOSAL_STATUS_PASSED", f"Proposal failed with status: {final_status}. Check logs above for details."
     
     # Verify NFT was created
     nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", external_name)
@@ -111,13 +132,14 @@ def test_external_name_format_validation(chainnet, generate_account):
     delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "50000000udys", "--from", "alice")
     assert delegate_result["code"] == 0
     
-    # Test valid external names
+    # Test valid external names - make them unique
+    unique_suffix = secrets.token_hex(4)
     valid_names = [
-        "example.com",
-        "sub.domain.org", 
-        "a.b",
-        "test-site.example.org",
-        "my123.site456.com"
+        f"example-{unique_suffix}.com",
+        f"sub.domain-{unique_suffix}.org", 
+        f"a-{unique_suffix}.b",
+        f"test-site.example-{unique_suffix}.org",
+        f"my123.site456-{unique_suffix}.com"
     ]
     
     for valid_name in valid_names:
@@ -159,7 +181,8 @@ def test_external_name_duplicate_prevention(chainnet, generate_account):
     delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "50000000udys", "--from", "alice")
     assert delegate_result["code"] == 0
     
-    external_name = "duplicate.test.com"
+    unique_suffix = secrets.token_hex(4)
+    external_name = f"duplicate-{unique_suffix}.test.com"
     
     # Create first external name
     proposal1 = {
@@ -191,13 +214,19 @@ def test_external_name_duplicate_prevention(chainnet, generate_account):
     vote_result1 = dysond_bin("tx", "gov", "vote", proposal_id1, "yes", "--from", "alice")
     assert vote_result1["code"] == 0
     
-    # Wait for first proposal to pass
-    def proposal1_passed():
+    # Wait for first proposal to finish voting (no longer pending)
+    def proposal1_no_longer_pending():
         proposal_info = dysond_bin("query", "gov", "proposal", proposal_id1)
-        return proposal_info["proposal"]["status"] == "PROPOSAL_STATUS_PASSED"
+        status = proposal_info["proposal"]["status"]
+        return status in ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_FAILED", "PROPOSAL_STATUS_REJECTED"]
     
     from tests.utils import poll_until_condition
-    poll_until_condition(proposal1_passed, timeout=30, error_message="First proposal did not pass")
+    poll_until_condition(proposal1_no_longer_pending, timeout=30, error_message="First proposal voting did not complete")
+    
+    # Now assert that it passed
+    final_proposal1 = dysond_bin("query", "gov", "proposal", proposal_id1)
+    final_status1 = final_proposal1["proposal"]["status"]
+    assert final_status1 == "PROPOSAL_STATUS_PASSED", f"First proposal failed with status: {final_status1}"
     
     # Verify first NFT was created
     nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", external_name)
@@ -276,7 +305,8 @@ def test_external_name_vs_regular_name_coexistence(chainnet, generate_account, r
     assert delegate_result["code"] == 0
     
     # Create external name via governance
-    external_name = "coexistence.test.com"
+    unique_suffix = secrets.token_hex(4)
+    external_name = f"coexistence-{unique_suffix}.test.com"
     proposal = {
         "messages": [
             {
@@ -306,12 +336,18 @@ def test_external_name_vs_regular_name_coexistence(chainnet, generate_account, r
     vote_result = dysond_bin("tx", "gov", "vote", proposal_id, "yes", "--from", "alice")
     assert vote_result["code"] == 0
     
-    def proposal_passed():
+    def proposal_no_longer_pending():
         proposal_info = dysond_bin("query", "gov", "proposal", proposal_id)
-        return proposal_info["proposal"]["status"] == "PROPOSAL_STATUS_PASSED"
+        status = proposal_info["proposal"]["status"]
+        return status in ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_FAILED", "PROPOSAL_STATUS_REJECTED"]
     
     from tests.utils import poll_until_condition
-    poll_until_condition(proposal_passed, timeout=30, error_message="Proposal did not pass")
+    poll_until_condition(proposal_no_longer_pending, timeout=30, error_message="Proposal voting did not complete")
+    
+    # Now assert that it passed
+    final_proposal = dysond_bin("query", "gov", "proposal", proposal_id)
+    final_status = final_proposal["proposal"]["status"]
+    assert final_status == "PROPOSAL_STATUS_PASSED", f"Proposal failed with status: {final_status}"
     
     # Verify both names exist and have different characteristics
     external_nft = dysond_bin("query", "nft", "nft", "nameservice.dys", external_name)
@@ -349,7 +385,8 @@ def test_external_name_zero_valuation(chainnet, generate_account):
     delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "50000000udys", "--from", "alice")
     assert delegate_result["code"] == 0
     
-    external_name = "zero-valuation.test.com"
+    unique_suffix = secrets.token_hex(4)
+    external_name = f"zero-valuation-{unique_suffix}.test.com"
     
     # Create external name
     proposal = {
@@ -381,12 +418,18 @@ def test_external_name_zero_valuation(chainnet, generate_account):
     vote_result = dysond_bin("tx", "gov", "vote", proposal_id, "yes", "--from", "alice")
     assert vote_result["code"] == 0
     
-    def proposal_passed():
+    def proposal_no_longer_pending():
         proposal_info = dysond_bin("query", "gov", "proposal", proposal_id)
-        return proposal_info["proposal"]["status"] == "PROPOSAL_STATUS_PASSED"
+        status = proposal_info["proposal"]["status"]
+        return status in ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_FAILED", "PROPOSAL_STATUS_REJECTED"]
     
     from tests.utils import poll_until_condition
-    poll_until_condition(proposal_passed, timeout=30, error_message="Proposal did not pass")
+    poll_until_condition(proposal_no_longer_pending, timeout=30, error_message="Proposal voting did not complete")
+    
+    # Now assert that it passed
+    final_proposal = dysond_bin("query", "gov", "proposal", proposal_id)
+    final_status = final_proposal["proposal"]["status"]
+    assert final_status == "PROPOSAL_STATUS_PASSED", f"Proposal failed with status: {final_status}"
     
     # Verify NFT data
     nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", external_name)
@@ -423,7 +466,8 @@ def test_external_name_not_listed_by_default(chainnet, generate_account):
     delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "50000000udys", "--from", "alice")
     assert delegate_result["code"] == 0
     
-    external_name = "not-listed.test.com"
+    unique_suffix = secrets.token_hex(4)
+    external_name = f"not-listed-{unique_suffix}.test.com"
     
     # Create external name
     proposal = {
@@ -455,12 +499,18 @@ def test_external_name_not_listed_by_default(chainnet, generate_account):
     vote_result = dysond_bin("tx", "gov", "vote", proposal_id, "yes", "--from", "alice")
     assert vote_result["code"] == 0
     
-    def proposal_passed():
+    def proposal_no_longer_pending():
         proposal_info = dysond_bin("query", "gov", "proposal", proposal_id)
-        return proposal_info["proposal"]["status"] == "PROPOSAL_STATUS_PASSED"
+        status = proposal_info["proposal"]["status"]
+        return status in ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_FAILED", "PROPOSAL_STATUS_REJECTED"]
     
     from tests.utils import poll_until_condition
-    poll_until_condition(proposal_passed, timeout=30, error_message="Proposal did not pass")
+    poll_until_condition(proposal_no_longer_pending, timeout=30, error_message="Proposal voting did not complete")
+    
+    # Now assert that it passed
+    final_proposal = dysond_bin("query", "gov", "proposal", proposal_id)
+    final_status = final_proposal["proposal"]["status"]
+    assert final_status == "PROPOSAL_STATUS_PASSED", f"Proposal failed with status: {final_status}"
     
     # Verify NFT is not listed
     nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", external_name)

@@ -51,6 +51,17 @@
   <div x-show="message" :class="messageType === 'error' ? 'alert ' : 'alert '" class="mt-3">
     <span x-text="message"></span>
   </div>
+  
+  <!-- Hidden form for HTMX profile navigation after save -->
+  <form 
+    id="profile-nav-form" 
+    style="display: none;"
+    :hx-get="`/authors/${profileAuthor}`"
+    hx-target="body"
+    hx-swap="innerHTML"
+    hx-trigger="submit"
+    hx-push-url="true"
+  ></form>
 </div>
 
 <!-- Hidden data element for JavaScript to access custom_pages -->

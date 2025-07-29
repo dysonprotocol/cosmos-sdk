@@ -88,9 +88,9 @@ assert 'balance' in json_result, "Balance not found in the result"
 print(json.dumps(json_result['balance'], indent=2))
 ```
 
-    {"result":"{\"cumsize\":6050,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":23,\"result\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"995664742940\",\"denom\":\"udys\"}},\"script_gas_consumed\":6785,\"stdout\":\"\"}","attached_message_results":[]}
+    {"result":"{\"cumsize\":6050,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":23,\"result\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"999100000565\",\"denom\":\"udys\"}},\"script_gas_consumed\":6785,\"stdout\":\"\"}","attached_message_results":[]}
     {
-      "amount": "995664742940",
+      "amount": "999100000565",
       "denom": "udys"
     }
 
@@ -152,12 +152,12 @@ assert 'bob_balance' in json_result, "Bob's balance not found in the result"
 print(json.dumps(json_result, indent=2))
 ```
 
-    {"result":"{\"cumsize\":14520,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":39,\"result\":{\"alice_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"995664742940\",\"denom\":\"udys\"}},\"bob_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"1000000000000\",\"denom\":\"udys\"}}},\"script_gas_consumed\":7902,\"stdout\":\"\"}","attached_message_results":[]}
+    {"result":"{\"cumsize\":14520,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":39,\"result\":{\"alice_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"999100000565\",\"denom\":\"udys\"}},\"bob_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"1000000000000\",\"denom\":\"udys\"}}},\"script_gas_consumed\":7902,\"stdout\":\"\"}","attached_message_results":[]}
     {
       "alice_balance": {
         "@type": "/cosmos.bank.v1beta1.QueryBalanceResponse",
         "balance": {
-          "amount": "995664742940",
+          "amount": "999100000565",
           "denom": "udys"
         }
       },
@@ -477,9 +477,9 @@ print(f"- Time: {block_info['time']}")
 ```
 
     Block Information:
-    - Height: 545
+    - Height: 112
     - Chain ID: chain-a
-    - Time: 2025-07-20T14:50:01.833241Z
+    - Time: 2025-07-29T06:42:03.867114Z
 
 
 ## Transaction Data
@@ -577,9 +577,13 @@ with open('/tmp/emit_event.py', 'w') as f:
     f.write(emit_event_script)
 
 
-out = ! dysond tx script exec --script-address {ALICE_ADDRESS} --from {ALICE_ADDRESS} --function-name emit_test_event --extra-code-path /tmp/emit_event.py -y --gas 400000 | dysond q wait-tx -o json
+out = ! dysond tx script exec --script-address {ALICE_ADDRESS} --from {ALICE_ADDRESS} --function-name emit_test_event --extra-code-path /tmp/emit_event.py -y --gas "10000000" | dysond q wait-tx -o json
 out = '\n'.join(out)
-result = json.loads(out)
+try:
+    result = json.loads(out)
+except json.JSONDecodeError:
+    print("Error decoding JSON:", out)
+    raise
 # Quering script run does not emit events
 print(json.dumps(result, indent=2))
 # make the events more readable
@@ -596,16 +600,16 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
 ```
 
     {
-      "height": "547",
-      "txhash": "F1373A7FD6F02B3A7D9CB26D9481AE2802AC1EB4FA040FFC74CFD264597CC17D",
+      "height": "114",
+      "txhash": "64B821F14EAEB9ADE76BC81F7A2B0561A3C14F2DDAA6A9332A073B37917DBC28",
       "codespace": "",
       "code": 0,
-      "data": "12BE010A282F6479736F6E70726F746F636F6C2E7363726970742E76312E4D736745786563526573706F6E73651291010A8E017B2263756D73697A65223A323032372C22657863657074696F6E223A6E756C6C2C226761735F6C696D6974223A3430303030302C226E6F6465735F63616C6C6564223A31372C22726573756C74223A7B226576656E745F656D6974746564223A747275657D2C227363726970745F6761735F636F6E73756D6564223A33373430372C227374646F7574223A22227D",
+      "data": "12C0010A282F6479736F6E70726F746F636F6C2E7363726970742E76312E4D736745786563526573706F6E73651293010A90017B2263756D73697A65223A323032372C22657863657074696F6E223A6E756C6C2C226761735F6C696D6974223A31303030303030302C226E6F6465735F63616C6C6564223A31372C22726573756C74223A7B226576656E745F656D6974746564223A747275657D2C227363726970745F6761735F636F6E73756D6564223A33373431372C227374646F7574223A22227D",
       "raw_log": "",
       "logs": [],
       "info": "",
-      "gas_wanted": "400000",
-      "gas_used": "39434",
+      "gas_wanted": "10000000",
+      "gas_used": "39444",
       "tx": null,
       "timestamp": "",
       "events": [
@@ -614,7 +618,7 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/90",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/29",
               "index": true
             }
           ]
@@ -624,7 +628,7 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
           "attributes": [
             {
               "key": "signature",
-              "value": "K82QA+wst965CfNTSrA0yLAnqjHo0u5Jo+AfqPShWQtVjVo3m85+6VlmXgtFkgKX1e47C2h+Df/mBBQ6kGPbTA==",
+              "value": "fmILMXux+BI9MHz/9E3dYdd6WMWxxo70PlgRkjhPB6tVrutt8MLGJnOjqpJ2H4gL+Yr/0Icu+Hl3MjI557DsCw==",
               "index": true
             }
           ]
@@ -709,12 +713,12 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
           "attributes": [
             {
               "key": "request",
-              "value": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"extra_code\":\"\\nfrom dys import emit_event\\n\\ndef emit_test_event():\\n    # Emit a custom event, none is a success or an exception is raised\\n    emit_event(\\\"payment_processed\\\", \\\"success\\\")\\n    emit_event(\\\"foo\\\", '123123')\\n    return {\\\"event_emitted\\\": True}\\n\",\"function_name\":\"emit_test_event\",\"args\":\"\",\"kwargs\":\"\",\"attached_messages\":[]}",
+              "value": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_name\":\"\",\"extra_code\":\"\\nfrom dys import emit_event\\n\\ndef emit_test_event():\\n    # Emit a custom event, none is a success or an exception is raised\\n    emit_event(\\\"payment_processed\\\", \\\"success\\\")\\n    emit_event(\\\"foo\\\", '123123')\\n    return {\\\"event_emitted\\\": True}\\n\",\"function_name\":\"emit_test_event\",\"args\":\"\",\"kwargs\":\"\",\"attached_messages\":[]}",
               "index": true
             },
             {
               "key": "response",
-              "value": "{\"result\":\"{\\\"cumsize\\\":2027,\\\"exception\\\":null,\\\"gas_limit\\\":400000,\\\"nodes_called\\\":17,\\\"result\\\":{\\\"event_emitted\\\":true},\\\"script_gas_consumed\\\":37407,\\\"stdout\\\":\\\"\\\"}\",\"attached_message_results\":[]}",
+              "value": "{\"result\":\"{\\\"cumsize\\\":2027,\\\"exception\\\":null,\\\"gas_limit\\\":10000000,\\\"nodes_called\\\":17,\\\"result\\\":{\\\"event_emitted\\\":true},\\\"script_gas_consumed\\\":37417,\\\"stdout\\\":\\\"\\\"}\",\"attached_message_results\":[]}",
               "index": true
             },
             {
@@ -728,8 +732,8 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
     }
     {
       "tx": {
-        "acc_seq": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/90",
-        "signature": "K82QA+wst965CfNTSrA0yLAnqjHo0u5Jo+AfqPShWQtVjVo3m85+6VlmXgtFkgKX1e47C2h+Df/mBBQ6kGPbTA=="
+        "acc_seq": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/29",
+        "signature": "fmILMXux+BI9MHz/9E3dYdd6WMWxxo70PlgRkjhPB6tVrutt8MLGJnOjqpJ2H4gL+Yr/0Icu+Hl3MjI557DsCw=="
       },
       "message": {
         "action": "/dysonprotocol.script.v1.MsgExec",
@@ -744,8 +748,8 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
         "msg_index": "0"
       },
       "dysonprotocol.script.v1.EventExecScript": {
-        "request": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"extra_code\":\"\\nfrom dys import emit_event\\n\\ndef emit_test_event():\\n    # Emit a custom event, none is a success or an exception is raised\\n    emit_event(\\\"payment_processed\\\", \\\"success\\\")\\n    emit_event(\\\"foo\\\", '123123')\\n    return {\\\"event_emitted\\\": True}\\n\",\"function_name\":\"emit_test_event\",\"args\":\"\",\"kwargs\":\"\",\"attached_messages\":[]}",
-        "response": "{\"result\":\"{\\\"cumsize\\\":2027,\\\"exception\\\":null,\\\"gas_limit\\\":400000,\\\"nodes_called\\\":17,\\\"result\\\":{\\\"event_emitted\\\":true},\\\"script_gas_consumed\\\":37407,\\\"stdout\\\":\\\"\\\"}\",\"attached_message_results\":[]}",
+        "request": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_name\":\"\",\"extra_code\":\"\\nfrom dys import emit_event\\n\\ndef emit_test_event():\\n    # Emit a custom event, none is a success or an exception is raised\\n    emit_event(\\\"payment_processed\\\", \\\"success\\\")\\n    emit_event(\\\"foo\\\", '123123')\\n    return {\\\"event_emitted\\\": True}\\n\",\"function_name\":\"emit_test_event\",\"args\":\"\",\"kwargs\":\"\",\"attached_messages\":[]}",
+        "response": "{\"result\":\"{\\\"cumsize\\\":2027,\\\"exception\\\":null,\\\"gas_limit\\\":10000000,\\\"nodes_called\\\":17,\\\"result\\\":{\\\"event_emitted\\\":true},\\\"script_gas_consumed\\\":37417,\\\"stdout\\\":\\\"\\\"}\",\"attached_message_results\":[]}",
         "msg_index": "0"
       }
     }
@@ -1010,6 +1014,7 @@ def reset_counter():
 # Save the counter app script
 with open('/tmp/counter_app.py', 'w') as f:
     f.write(counter_app_script)
+    f.close()
 
 print(f"Setting up counter dApp for alice...")
 
@@ -1017,9 +1022,11 @@ print(f"Setting up counter dApp for alice...")
 out = ! dysond tx script update \
     --code-path /tmp/counter_app.py \
     --from alice \
+    --gas "10000000" \
     --output json -y | dysond query wait-tx --output json
 out = '\n'.join(out)
 result = json.loads(out)
+assert result['code'] == 0, f"Error: {result['raw_log']}"
 
 for i in range(3):
     # Now let's test the counter app
@@ -1028,6 +1035,7 @@ for i in range(3):
         --script-address $ALICE_ADDRESS \
         --function-name increment_counter \
         --from alice \
+        --gas "10000000" \
         --output json -y | dysond query wait-tx --output json | python ../scripts/parse_exec_script_tx.py
     out = '\n'.join(out)
     result = json.loads(out)
@@ -1041,6 +1049,7 @@ out = ! dysond tx script exec \
     --script-address $ALICE_ADDRESS \
     --function-name reset_counter \
     --from alice \
+    --extra-code-path /tmp/counter_app.py \
     --output json -y | dysond query wait-tx --output json | python ../scripts/parse_exec_script_tx.py
 out = '\n'.join(out)
 result = json.loads(out)

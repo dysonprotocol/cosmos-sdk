@@ -62,8 +62,8 @@ json.loads('\n'.join(tx))
 
 
 
-    {'height': '565',
-     'txhash': 'D997B70746FBF4D96FDDC965BB848CE65A1C7762E123F07480636F704DC60C40',
+    {'height': '134',
+     'txhash': 'A9668D9408914668A0556C1B20ADE4887DA2BDEA2CA2ED4307D091890980796E',
      'codespace': '',
      'code': 0,
      'data': '12360A302F6479736F6E70726F746F636F6C2E7363726970742E76312E4D7367557064617465536372697074526573706F6E736512020802',
@@ -76,11 +76,11 @@ json.loads('\n'.join(tx))
      'timestamp': '',
      'events': [{'type': 'tx',
        'attributes': [{'key': 'acc_seq',
-         'value': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/96',
+         'value': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/35',
          'index': True}]},
       {'type': 'tx',
        'attributes': [{'key': 'signature',
-         'value': '6+rmm88SoTCrKLqLeumaymo01DC72UEGC+VLQufheRlt3bA7TkEib806ynATuiDrSWd7S3qM6zUm7dWeDdU0BA==',
+         'value': 'b+ejgKnufdKcRDRgBKUjTn0YxjKZj6GpxmURWwFEs5I/KUgEwexK5mwcUI/HhsgQy+z2Aofrq1Hqspbsh/jI7w==',
          'index': True}]},
       {'type': 'message',
        'attributes': [{'key': 'action',
@@ -119,18 +119,18 @@ print(output)
 assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Protocol!' in output, got: " + output
 ```
 
-    Accessing your DWapp at 'http://dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:2417'
+    Accessing your DWapp at 'http://dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:2317'
 
 
-    * Host dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:2417 was resolved.
+    * Host dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:2317 was resolved.
     * IPv6: ::1
     * IPv4: 127.0.0.1
-    *   Trying [::1]:2417...
-    * connect to ::1 port 2417 from ::1 port 53629 failed: Connection refused
-    *   Trying 127.0.0.1:2417...
-    * Connected to dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost (127.0.0.1) port 2417
+    *   Trying [::1]:2317...
+    * connect to ::1 port 2317 from ::1 port 56483 failed: Connection refused
+    *   Trying 127.0.0.1:2317...
+    * Connected to dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost (127.0.0.1) port 2317
     > GET /hi HTTP/1.1
-    > Host: dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:2417
+    > Host: dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:2317
     > User-Agent: curl/8.7.1
     > Accept: */*
     > 
@@ -138,9 +138,9 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Sun, 20 Jul 2025 14:50:11 GMT
+    < Date: Tue, 29 Jul 2025 06:42:13 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1753023011
+    < X-Server-Time: 1753771333
     < 
     { [82 bytes data]
     * Connection #0 to host dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost left intact
@@ -214,7 +214,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/97",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/36",
               "index": true
             }
           ]
@@ -224,7 +224,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "signature",
-              "value": "ASPSlQ0WxePpfWTFAnH7zQ1EzidUwlMwpagF0x7mCu0tIfHS98siJIz8pv2bh+++OU0QKR8i86QxBw33yVANuQ==",
+              "value": "8iYyjZdX0IOkq6feSCpGuWXJdwsBwJ0s3P4kdnZuUOhFJN2aDJD7CGucJvafriI3yzVHG3orZLmEPzfbwiM/OQ==",
               "index": true
             }
           ]
@@ -259,7 +259,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "request",
-              "value": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"extra_code\":\"\",\"function_name\":\"add\",\"args\":\"[5, 7]\",\"kwargs\":\"\",\"attached_messages\":[]}",
+              "value": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_name\":\"\",\"extra_code\":\"\",\"function_name\":\"add\",\"args\":\"[5, 7]\",\"kwargs\":\"\",\"attached_messages\":[]}",
               "index": true
             },
             {
@@ -336,9 +336,9 @@ print(f"Salt: {salt}")
 print(f"Hex Hash: {hex_hash}")
 ```
 
-    Name: alice-9qlju.dys
-    Salt: k11mak0xbx
-    Hex Hash: 377c52490b1f0bcb0968cef45ac30c8f27cc8e4daa50b1e1271b3cc2a9b0826f
+    Name: alice-vtujd.dys
+    Salt: cv0di4hps7
+    Hex Hash: 8bda17c27594946ea118d671f4bbcdf5411a1407ab487bbad843ae91cfe00446
 
 
 
@@ -348,8 +348,8 @@ valuation = '100udys'
 ```
 
     {
-      "height": "570",
-      "txhash": "40D42D1E9CE54F8E6006CCD734429CDF13255D2AC338DE7EA3E294A742AF9872",
+      "height": "139",
+      "txhash": "418642615453CCDC0D70D4CB546AA6CAD667C64AAAF2F97A66DA1BEAF9286B4D",
       "codespace": "",
       "code": 0,
       "data": "12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D7367436F6D6D6974526573706F6E7365",
@@ -357,7 +357,7 @@ valuation = '100udys'
       "logs": [],
       "info": "",
       "gas_wanted": "200000",
-      "gas_used": "39899",
+      "gas_used": "39920",
       "tx": null,
       "timestamp": "",
       "events": [
@@ -366,7 +366,7 @@ valuation = '100udys'
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/98",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/37",
               "index": true
             }
           ]
@@ -376,7 +376,7 @@ valuation = '100udys'
           "attributes": [
             {
               "key": "signature",
-              "value": "AyAsBZvS+TaM1E+ZNJmbG5RY/dBGnxk/MGUSREIE4FdC9qsfo9s1LjPjxbGZ5hZHs3zR+LdWhfhiIGFwz7jLUQ==",
+              "value": "J5MRUIwDgeIEHwJSzg7MC/0Pj9/SEDF5d+7YvUVRV0dN+RES+DBmrap3c2aewQpLtmTJYVw/N1YqApQtdftHmw==",
               "index": true
             }
           ]
@@ -411,7 +411,7 @@ valuation = '100udys'
           "attributes": [
             {
               "key": "hexhash",
-              "value": "\"377c52490b1f0bcb0968cef45ac30c8f27cc8e4daa50b1e1271b3cc2a9b0826f\"",
+              "value": "\"8bda17c27594946ea118d671f4bbcdf5411a1407ab487bbad843ae91cfe00446\"",
               "index": true
             },
             {
@@ -438,8 +438,8 @@ Reveal the name to complete registration.
 ```
 
     {
-      "height": "572",
-      "txhash": "99C68A114220D4E9123FC8B1D9983A90A652BF746AF879943F68C2D9B469D05D",
+      "height": "141",
+      "txhash": "41977D212C81975A295CA78A2F7B7C4E70A2CB7E75263CEE75E6D8E74467748A",
       "codespace": "",
       "code": 0,
       "data": "12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D736752657665616C526573706F6E7365",
@@ -447,7 +447,7 @@ Reveal the name to complete registration.
       "logs": [],
       "info": "",
       "gas_wanted": "200000",
-      "gas_used": "80651",
+      "gas_used": "84925",
       "tx": null,
       "timestamp": "",
       "events": [
@@ -456,7 +456,7 @@ Reveal the name to complete registration.
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/99",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/38",
               "index": true
             }
           ]
@@ -466,7 +466,7 @@ Reveal the name to complete registration.
           "attributes": [
             {
               "key": "signature",
-              "value": "ok46Vi2ZqPfJEWJWePyF8A5S8tHKr007ttZgFWkBUBJQK6KPQl8+lkLTeSV2BScutsg5Uv+Hn5/4o2uPL150NQ==",
+              "value": "uEDO6122u+CGUMcZkd/KNAaY/RwK8v4ye6sPlktkvPVirlEH42IY/4g2HUaRx/7rIGaxNLWq5j4v4mO7tEeC4w==",
               "index": true
             }
           ]
@@ -586,7 +586,7 @@ Reveal the name to complete registration.
             },
             {
               "key": "id",
-              "value": "\"alice-9qlju.dys\"",
+              "value": "\"alice-vtujd.dys\"",
               "index": true
             },
             {
@@ -611,7 +611,7 @@ Reveal the name to complete registration.
             },
             {
               "key": "name",
-              "value": "\"alice-9qlju.dys\"",
+              "value": "\"alice-vtujd.dys\"",
               "index": true
             },
             {
@@ -640,7 +640,7 @@ Set the destination of the registered name to Alice's address.
 
     {
       "height": "0",
-      "txhash": "361C657929263BB7792316554FC21AAF10206F676DCAA6E319625F80DB58A2EF",
+      "txhash": "14B8BA3C1790A9E4C82E420E9C1730546D03206736A4C1B61FAA436300BE6E39",
       "codespace": "",
       "code": 0,
       "data": "",
@@ -672,18 +672,20 @@ print(output)
 assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Protocol!' in output, got: " + output
 ```
 
-    Accessing your DWapp at 'http://alice-9qlju.dys.localhost:2417'
+    Accessing your DWapp at 'http://alice-vtujd.dys.localhost:2317'
+
+    
 
 
-    * Host alice-9qlju.dys.localhost:2417 was resolved.
+    * Host alice-vtujd.dys.localhost:2317 was resolved.
     * IPv6: ::1
     * IPv4: 127.0.0.1
-    *   Trying [::1]:2417...
-    * connect to ::1 port 2417 from ::1 port 56154 failed: Connection refused
-    *   Trying 127.0.0.1:2417...
-    * Connected to alice-9qlju.dys.localhost (127.0.0.1) port 2417
+    *   Trying [::1]:2317...
+    * connect to ::1 port 2317 from ::1 port 58982 failed: Connection refused
+    *   Trying 127.0.0.1:2317...
+    * Connected to alice-vtujd.dys.localhost (127.0.0.1) port 2317
     > GET /hi HTTP/1.1
-    > Host: alice-9qlju.dys.localhost:2417
+    > Host: alice-vtujd.dys.localhost:2317
     > User-Agent: curl/8.7.1
     > Accept: */*
     > 
@@ -691,12 +693,12 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Sun, 20 Jul 2025 14:50:14 GMT
+    < Date: Tue, 29 Jul 2025 06:42:16 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1753023014
+    < X-Server-Time: 1753771337
     < 
     { [82 bytes data]
-    * Connection #0 to host alice-9qlju.dys.localhost left intact
+    * Connection #0 to host alice-vtujd.dys.localhost left intact
     
     <html>
         <body>

@@ -104,7 +104,10 @@ function createNewPostData() {
         if (result.success) {
           const postId = result.scriptResponse.result;
           this.content = '';
-          location = postId;
+          
+          // Use direct navigation for maximum reliability in tests
+          console.log('Navigating to post:', postId);
+          window.location.href = `/${postId}`;
         } else {
           let errorMsg = 'Transaction failed';
           if (result.scriptResponse?.exception?.msg) {

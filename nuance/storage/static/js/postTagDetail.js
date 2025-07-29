@@ -208,7 +208,7 @@ function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, e
         
         if (result.success) {
           // Navigate to refresh the tag detail page
-          location.href = `/${this.postId}/topics/${this.tagName}`;
+          htmx.ajax('GET', `/${this.postId}/topics/${this.tagName}`);
         } else {
           let errorMsg = 'Transaction failed';
           if (result.scriptResponse?.exception?.msg) {
@@ -263,7 +263,7 @@ function createPostTagDetailData(postId, tagName, earliestClaimTime, up, down, e
         
         if (result.success) {
           // Navigate to refresh the tag detail page
-          location.href = `/${this.postId}/topics/${this.tagName}`;
+          htmx.ajax('GET', `/${this.postId}/topics/${this.tagName}`);
         } else {
           let errorMsg = 'Transaction failed';
           if (result.scriptResponse?.exception?.msg) {

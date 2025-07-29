@@ -50,7 +50,7 @@ function createPostTopicsData(postId) {
         
         console.log('rated tag result:', result);
         if (result.success) {
-          location = `/${postId}/topics/${this.tagName}`;
+          htmx.ajax('GET', `/${postId}/topics/${this.tagName}`);
         } else {
           let errorMsg = 'Transaction failed';
           if (result.scriptResponse?.exception?.msg) {

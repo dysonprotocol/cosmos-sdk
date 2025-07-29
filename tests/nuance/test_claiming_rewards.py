@@ -10,11 +10,11 @@ import random
 import string
 from pathlib import Path
 
-# Import the deployed_demo_script fixture from test_e2e
-from tests.nuance.test_e2e import deployed_demo_script
+# Import the nuance_deployed fixture from test_e2e
+from tests.nuance.test_e2e import nuance_deployed
 
 
-def test_claiming_rewards_flow(chainnet, deployed_demo_script, generate_account):
+def test_claiming_rewards_flow(chainnet, nuance_deployed, generate_account):
     """
     Test the complete claiming rewards flow:
     - Create and fund 2 accounts
@@ -24,7 +24,7 @@ def test_claiming_rewards_flow(chainnet, deployed_demo_script, generate_account)
     - Account1 claims rewards for each post of that tag
     """
     dysond = chainnet[0]
-    script_address = deployed_demo_script["address"]
+    script_address = nuance_deployed["address"]
     status_result = dysond("status")
     chain_id = status_result["node_info"]["network"]
     

@@ -22,7 +22,21 @@ import re
 import hashlib
 from typing import Callable, Iterable, List, Tuple
 
-BASE_DOMAIN = "http://dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost:1317"
+def get_base_domain():
+    """Get BASE_DOMAIN from storage settings, with fallback for development."""
+    try:
+        settings_response = _query({
+            "@type": "/dysonprotocol.storage.v1.QueryStorageGetRequest",
+            "owner": get_script_address(),
+            "index": "settings",
+        })
+        if "entry" in settings_response and "data" in settings_response["entry"]:
+            settings = json.loads(settings_response["entry"]["data"])
+            return settings.get("BASE_DOMAIN", "http://localhost:1317")
+    except (KeyError, json.JSONDecodeError, TypeError) as e:
+        print(f"Failed to load BASE_DOMAIN from settings: {e}")
+    # Fallback for development/testing
+    return "http://localhost:1317"
 
 
 WHITELABEL = False
@@ -1651,7 +1665,7 @@ def handle_author_posts(environ, start_response, author, whitelabel=False):
     
     profile_content = re.sub(
             POST_RE,
-            rf"""
+            r"""
 
             <div
                     hx-trigger="intersect once"
@@ -2215,7 +2229,7 @@ def _render_base(body: str, title: str, head_extra: str = "", **kwargs) -> bytes
         .substitute(
             {
                 "body": SafeString(body),
-                "BASE_DOMAIN": BASE_DOMAIN,
+                "BASE_DOMAIN": get_base_domain(),
                 "static_scripts": render_script_tags(),
                 "importmap_json": SafeString(
                     _query(
