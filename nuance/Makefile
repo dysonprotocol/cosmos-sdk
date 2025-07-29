@@ -2,8 +2,10 @@
 
 # Default to Alice's address if none is set in the environment
 ADDRESS ?= $(shell dysond keys show alice --output json | jq -r .address)
+# Default API port
+API_PORT ?= 1317
 
-.PHONY: watch handle-change update-script upload-file create-script update generate-sri hashes publish-lorem publish-lorem-tagged publish-post
+.PHONY: watch handle-change update-script upload-file create-script update generate-sri hashes publish-lorem publish-lorem-tagged publish-post set-settings
 
 watch:
 	@while sleep 1; do \
@@ -78,3 +80,16 @@ generate-sri-hashes:
 	  echo "$$newjson" > storage/static/importmap.json; \
 	done; \
 	echo "Integrity hashes updated successfully."
+
+set-settings:
+	@echo "Setting BASE_DOMAIN in storage for address: $(ADDRESS)"
+	@dysond tx storage set \
+		--gas-adjustment 2 \
+		--gas auto \
+		--from "$(ADDRESS)" \
+		--index "settings" \
+		--data '{"BASE_DOMAIN":"http://$(ADDRESS).localhost:$(API_PORT)"}' \
+		-y -o json \
+	| jq -r .txhash \
+	| xargs dysond q wait-tx -o json \
+	| jq
