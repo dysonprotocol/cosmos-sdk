@@ -41,6 +41,10 @@
                 "minimum_bid_percent_increase": {
                     "type": "string",
                     "description": "minimum_bid_percent_increase defines the minimum percentage increase required for a new bid compared to the previous bid"
+                },
+                "mint_fee_per_coin": {
+                    "type": "string",
+                    "description": "mint_fee_per_coin defines the fee in udys charged per coin minted"
                 }
             },
             "additionalProperties": false,

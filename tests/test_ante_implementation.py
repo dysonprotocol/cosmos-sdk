@@ -205,14 +205,22 @@ def ping():
         # Parse code from broadcast result - assume it's always a dict from dysond
         code = broadcast_result.get("code", 1)
         
-        assert code == 0, f"Transaction failed for account {i}"
+        assert code == 0, f"Transaction failed for account {i}. Broadcast result: {json.dumps(broadcast_result, indent=2)}"
         
-        # Wait for processing
-        import time
-        time.sleep(1)
+        # Get the transaction hash and wait for it to be confirmed
+        txhash = broadcast_result.get("txhash")
+        assert txhash, f"No txhash in broadcast result: {json.dumps(broadcast_result, indent=2)}"
+        
+        # Wait for transaction confirmation
+        wait_result = dysond_bin("query", "wait-tx", txhash)
+        assert wait_result.get("code", 1) == 0, f"Transaction execution failed. Wait result: {json.dumps(wait_result, indent=2)}"
         
         # Verify account exists
         account_data = dysond_bin("query", "auth", "account", account_address)
+        
+        # Handle the case where account_data might be a string (error) instead of dict
+        assert isinstance(account_data, dict), f"Expected account data to be a dict, got: {account_data}"
+        assert "account" in account_data, f"No 'account' field in response: {json.dumps(account_data, indent=2)}"
         assert account_data["account"]["value"]["address"] == account_address
         assert int(account_data["account"]["value"]["sequence"]) == 1
         
@@ -224,6 +232,9 @@ def ping():
     account_numbers = []
     for _, address in accounts:
         account_data = dysond_bin("query", "auth", "account", address)
+        # Handle the case where account_data might be a string (error) instead of dict
+        assert isinstance(account_data, dict), f"Expected account data to be a dict for {address}, got: {account_data}"
+        assert "account" in account_data, f"No 'account' field in response for {address}: {json.dumps(account_data, indent=2)}"
         account_number = int(account_data["account"]["value"]["account_number"])
         assert account_number not in account_numbers
         account_numbers.append(account_number)

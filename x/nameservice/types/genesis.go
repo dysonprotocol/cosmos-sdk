@@ -2,18 +2,12 @@ package types
 
 import (
 	"fmt"
-	"time"
 )
 
 // DefaultGenesis returns default genesis state as raw bytes for the nameservice module
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		Params: Params{
-			BidTimeout:                   time.Hour * 24 * 7, // 7 days
-			AllowedDenoms:                DefaultAllowedDenoms,
-			RejectBidValuationFeePercent: DefaultRejectBidValuationFeePercent, // 3%
-			MinimumBidPercentIncrease:    DefaultMinimumBidPercentIncrease,    // 1%
-		},
+		Params:      DefaultParams(),
 		Commitments: []Commitment{},
 	}
 }

@@ -87,7 +87,8 @@ func (q queryServer) TasksByStatusTimestamp(ctx context.Context, req *crontaskty
 		id := binary.BigEndian.Uint64(key[len(key)-8:])
 		task, err := q.k.GetTask(ctx, id)
 		if err != nil {
-			return nil
+			// Return the error instead of silently skipping the task
+			return err
 		}
 		tasks = append(tasks, &task)
 		return nil
@@ -113,8 +114,8 @@ func (q queryServer) TasksByStatusGasPrice(ctx context.Context, req *crontasktyp
 		id := binary.BigEndian.Uint64(key[len(key)-8:])
 		task, err := q.k.GetTask(ctx, id)
 		if err != nil {
-
-			return nil
+			// Return the error instead of silently skipping the task
+			return err
 		}
 		tasks = append(tasks, &task)
 		return nil
@@ -141,8 +142,8 @@ func (q queryServer) TasksAll(ctx context.Context, req *crontasktypes.QueryAllTa
 		id := binary.BigEndian.Uint64(key[len(key)-8:])
 		task, err := q.k.GetTask(ctx, id)
 		if err != nil {
-			fmt.Println("error getting task", err)
-			return nil
+			// Return the error instead of silently skipping the task
+			return err
 		}
 		tasks = append(tasks, &task)
 		return nil

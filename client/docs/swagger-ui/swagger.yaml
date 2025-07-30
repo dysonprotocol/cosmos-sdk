@@ -2192,6 +2192,11 @@ paths:
                       percentage increase
 
                       required for a new bid compared to the previous bid
+                  mint_fee_per_coin:
+                    type: string
+                    title: >-
+                      mint_fee_per_coin defines the fee in udys charged per coin
+                      minted
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -17326,6 +17331,9 @@ definitions:
         title: |-
           minimum_bid_percent_increase defines the minimum percentage increase
           required for a new bid compared to the previous bid
+      mint_fee_per_coin:
+        type: string
+        title: mint_fee_per_coin defines the fee in udys charged per coin minted
     description: Params defines the parameters for the nameservice module.
   dysonprotocol.nameservice.v1.QueryNamesByDestinationResponse:
     type: object
@@ -17392,6 +17400,9 @@ definitions:
               increase
 
               required for a new bid compared to the previous bid
+          mint_fee_per_coin:
+            type: string
+            title: mint_fee_per_coin defines the fee in udys charged per coin minted
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   dysonprotocol.nameservice.v1.QueryResolveNameResponse:
     type: object

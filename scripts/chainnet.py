@@ -337,7 +337,7 @@ def generate_accounts() -> list:
     return [{"name": n, "address": d["address"], "mnemonic": d["mnemonic"], "initial_balance": DEFAULT_INITIAL_BALANCE} for n, d in USER_KEYS.items()]
 
 
-def generate_hermes_config(chains: list, base_dir: Path, denom: str) -> str:
+def generate_hermes_config(chains: list, base_dir: Path, denom: str, key_name: str = "charlie") -> str:
     """Generate a full Hermes relayer TOML config with chain entries as [[chains]] array of tables."""
     return f"""
 [global]
@@ -377,7 +377,7 @@ event_source = {{ mode = "pull", interval = '100ms' }}
 rpc_timeout = "15s"
 trusted_node = true
 account_prefix = "dys2"
-key_name = "charlie"
+key_name = "{key_name}"
 store_prefix = "ibc"
 gas_price = {{ price = 0.001, denom = "{denom}" }}
 gas_multiplier = 1.2
@@ -443,12 +443,14 @@ def generate(base_dir, num_chains, chainnet_offset, nodes_per_chain, denom, dyso
         (hermes_dir / 'config.toml').write_text(toml)
         click.echo(f"Wrote Hermes TOML to {str(hermes_dir / 'config.toml')}")
 
-def setup_hermes_keys(cfg: dict, force: bool = False):
+def setup_hermes_keys(cfg: dict, force: bool = False, ibc_account: dict = None):
     """Setup Hermes keys for all chains in the configuration.
     
     Args:
         cfg: The configuration dictionary containing chain information
         force: If True, delete existing keys before adding new ones
+        ibc_account: Optional custom IBC account dictionary with 'name', 'address', and 'mnemonic' keys.
+                     If not provided, defaults to using charlie account.
     """
     hermes_config_path = Path(cfg['base_dir']) / 'hermes' / 'config.toml'
     
@@ -461,10 +463,17 @@ def setup_hermes_keys(cfg: dict, force: bool = False):
         click.echo("Warning: Hermes config not found, skipping Hermes key setup.")
         return
     
-    # Use charlie account for Hermes operations
-    hermes_key_name = "charlie"
-    hermes_mnemonic = USER_KEYS[hermes_key_name]["mnemonic"]
-    expected_address = USER_KEYS[hermes_key_name]["address"]
+    # Use provided IBC account or default to charlie
+    if ibc_account:
+        hermes_key_name = ibc_account["name"]
+        hermes_mnemonic = ibc_account["mnemonic"]
+        expected_address = ibc_account["address"]
+        click.echo(f"Using custom IBC account: {hermes_key_name} ({expected_address})")
+    else:
+        # Use charlie account for Hermes operations
+        hermes_key_name = "charlie"
+        hermes_mnemonic = USER_KEYS[hermes_key_name]["mnemonic"]
+        expected_address = USER_KEYS[hermes_key_name]["address"]
     
     # Create temporary mnemonic file
     mnemonic_file = Path(cfg['base_dir']) / 'hermes' / f'{hermes_key_name}_mnemonic.txt'
@@ -885,7 +894,10 @@ Stopping all nodes!
 
 @chainnet.command()
 @click.option('--config-file', default=DEFAULT_CONFIG_PATH, type=click.Path(exists=True))
-def ibc(config_file):
+@click.option('--ibc-account-name', default=None, help='Name of the IBC account to use')
+@click.option('--ibc-account-address', default=None, help='Address of the IBC account to use')
+@click.option('--ibc-account-mnemonic', default=None, help='Mnemonic of the IBC account to use')
+def ibc(config_file, ibc_account_name, ibc_account_address, ibc_account_mnemonic):
     """Create IBC channels between consecutive chains."""
     cfg = json.loads(Path(config_file).read_text())
     if not cfg['chains'] or len(cfg['chains']) < 2:
@@ -893,18 +905,32 @@ def ibc(config_file):
         return
 
     chains_ids = [c['chain_id'] for c in cfg['chains']]
-    hcfg = Path(cfg['base_dir']) / 'hermes' / 'config.toml'
-    if not hcfg.exists():
-        click.echo("Hermes config missing, cannot create IBC channels.")
-        raise RuntimeError("Hermes config missing")
+    hcfg = Path(cfg['base_dir']) / "hermes" / "config.toml"
 
     if not shutil.which('hermes'):
         click.echo("Hermes binary not found in PATH, skipping IBC setup.")
         return
     
+    # Prepare custom IBC account if provided
+    ibc_account = None
+    key_name = "charlie"  # default key name
+    if ibc_account_name and ibc_account_address and ibc_account_mnemonic:
+        ibc_account = {
+            "name": ibc_account_name,
+            "address": ibc_account_address,
+            "mnemonic": ibc_account_mnemonic
+        }
+        key_name = ibc_account_name
+        
+        # Regenerate Hermes config with the custom key name
+        click.echo(f"Regenerating Hermes config with custom key name: {key_name}")
+        hermes_toml = generate_hermes_config(cfg['chains'], Path(cfg['base_dir']), DEFAULT_DENOM, key_name)
+        hcfg.write_text(hermes_toml)
+        click.echo(f"Updated Hermes config at {hcfg}")
+    
     # Ensure Hermes keys are set up before attempting to create channels
     click.echo("Ensuring Hermes keys are properly configured...")
-    setup_hermes_keys(cfg, force=False)
+    setup_hermes_keys(cfg, force=False, ibc_account=ibc_account)
     
     # verify both chains are making blocks within the timeout
     some_node_not_ready = True

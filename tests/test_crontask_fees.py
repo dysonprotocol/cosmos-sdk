@@ -2,7 +2,7 @@ import pytest
 import json
 import time
 import datetime
-from test_crontask_cli import TASK_SCHEDULED_DELAY, TASK_TIMEOUT
+from test_crontask_cli import TASK_SCHEDULED_DELAY, TASK_WAIT_TIMEOUT
 from typing import Dict, Any, List
 from tests.utils import poll_until_condition
 
@@ -71,7 +71,7 @@ def test_fee_deduction_success(chainnet, generate_account):
     # Poll until task is executed
     poll_until_condition(
         check_task_executed,
-        timeout=TASK_TIMEOUT,
+        timeout=TASK_SCHEDULED_DELAY + TASK_WAIT_TIMEOUT,  # Need to wait for scheduled time + execution
         error_message="Task was not executed within timeout"
     )
     print(f"Task {task_id} executed successfully")
@@ -179,7 +179,7 @@ def test_fee_deduction_insufficient_funds(chainnet, generate_account):
     # Poll until task status is updated to FAILED
     poll_until_condition(
         check_task_failed,
-        timeout=TASK_TIMEOUT,
+        timeout=TASK_SCHEDULED_DELAY + TASK_WAIT_TIMEOUT,  # Need to wait for scheduled time + execution
         error_message="Task did not fail as expected within timeout"
     )
     print("Successfully verified task execution fails with insufficient funds") 

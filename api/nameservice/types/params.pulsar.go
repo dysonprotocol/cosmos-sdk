@@ -67,6 +67,7 @@ var (
 	fd_Params_allowed_denoms                   protoreflect.FieldDescriptor
 	fd_Params_reject_bid_valuation_fee_percent protoreflect.FieldDescriptor
 	fd_Params_minimum_bid_percent_increase     protoreflect.FieldDescriptor
+	fd_Params_mint_fee_per_coin                protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -76,6 +77,7 @@ func init() {
 	fd_Params_allowed_denoms = md_Params.Fields().ByName("allowed_denoms")
 	fd_Params_reject_bid_valuation_fee_percent = md_Params.Fields().ByName("reject_bid_valuation_fee_percent")
 	fd_Params_minimum_bid_percent_increase = md_Params.Fields().ByName("minimum_bid_percent_increase")
+	fd_Params_mint_fee_per_coin = md_Params.Fields().ByName("mint_fee_per_coin")
 }
 
 var _ protoreflect.Message = (*fastReflection_Params)(nil)
@@ -167,6 +169,12 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 			return
 		}
 	}
+	if x.MintFeePerCoin != "" {
+		value := protoreflect.ValueOfString(x.MintFeePerCoin)
+		if !f(fd_Params_mint_fee_per_coin, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -190,6 +198,8 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.RejectBidValuationFeePercent != ""
 	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
 		return x.MinimumBidPercentIncrease != ""
+	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
+		return x.MintFeePerCoin != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -214,6 +224,8 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 		x.RejectBidValuationFeePercent = ""
 	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
 		x.MinimumBidPercentIncrease = ""
+	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
+		x.MintFeePerCoin = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -245,6 +257,9 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
 		value := x.MinimumBidPercentIncrease
 		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
+		value := x.MintFeePerCoin
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -275,6 +290,8 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 		x.RejectBidValuationFeePercent = value.Interface().(string)
 	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
 		x.MinimumBidPercentIncrease = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
+		x.MintFeePerCoin = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -310,6 +327,8 @@ func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protore
 		panic(fmt.Errorf("field reject_bid_valuation_fee_percent of message dysonprotocol.nameservice.v1.Params is not mutable"))
 	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
 		panic(fmt.Errorf("field minimum_bid_percent_increase of message dysonprotocol.nameservice.v1.Params is not mutable"))
+	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
+		panic(fmt.Errorf("field mint_fee_per_coin of message dysonprotocol.nameservice.v1.Params is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -332,6 +351,8 @@ func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protor
 	case "dysonprotocol.nameservice.v1.Params.reject_bid_valuation_fee_percent":
 		return protoreflect.ValueOfString("")
 	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
 		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
@@ -420,6 +441,10 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		l = len(x.MintFeePerCoin)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -448,6 +473,13 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.MintFeePerCoin) > 0 {
+			i -= len(x.MintFeePerCoin)
+			copy(dAtA[i:], x.MintFeePerCoin)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MintFeePerCoin)))
+			i--
+			dAtA[i] = 0x32
 		}
 		if len(x.MinimumBidPercentIncrease) > 0 {
 			i -= len(x.MinimumBidPercentIncrease)
@@ -667,6 +699,38 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 				}
 				x.MinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
+			case 6:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MintFeePerCoin", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MintFeePerCoin = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -733,6 +797,8 @@ type Params struct {
 	// minimum_bid_percent_increase defines the minimum percentage increase
 	// required for a new bid compared to the previous bid
 	MinimumBidPercentIncrease string `protobuf:"bytes,5,opt,name=minimum_bid_percent_increase,json=minimumBidPercentIncrease,proto3" json:"minimum_bid_percent_increase,omitempty"`
+	// mint_fee_per_coin defines the fee in udys charged per coin minted
+	MintFeePerCoin string `protobuf:"bytes,6,opt,name=mint_fee_per_coin,json=mintFeePerCoin,proto3" json:"mint_fee_per_coin,omitempty"`
 }
 
 func (x *Params) Reset() {
@@ -783,6 +849,13 @@ func (x *Params) GetMinimumBidPercentIncrease() string {
 	return ""
 }
 
+func (x *Params) GetMintFeePerCoin() string {
+	if x != nil {
+		return x.MintFeePerCoin
+	}
+	return ""
+}
+
 var File_dysonprotocol_nameservice_v1_params_proto protoreflect.FileDescriptor
 
 var file_dysonprotocol_nameservice_v1_params_proto_rawDesc = []byte{
@@ -795,7 +868,7 @@ var file_dysonprotocol_nameservice_v1_params_proto_rawDesc = []byte{
 	0x1e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
 	0x2f, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a,
 	0x19, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x63, 0x6f,
-	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xa2, 0x03, 0x0a, 0x06, 0x50,
+	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xf9, 0x03, 0x0a, 0x06, 0x50,
 	0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x5a, 0x0a, 0x0b, 0x62, 0x69, 0x64, 0x5f, 0x74, 0x69, 0x6d,
 	0x65, 0x6f, 0x75, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f,
 	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72,
@@ -821,10 +894,16 @@ var file_dysonprotocol_nameservice_v1_params_proto_rawDesc = []byte{
 	0x5f, 0x62, 0x69, 0x64, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x6e, 0x63,
 	0x72, 0x65, 0x61, 0x73, 0x65, 0x22, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
 	0x2e, 0x44, 0x65, 0x63, 0x52, 0x19, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64,
-	0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x42,
-	0x27, 0x5a, 0x25, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69,
-	0x63, 0x65, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x12,
+	0x55, 0x0a, 0x11, 0x6d, 0x69, 0x6e, 0x74, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x65, 0x72, 0x5f,
+	0x63, 0x6f, 0x69, 0x6e, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x42, 0x2a, 0xf2, 0xde, 0x1f, 0x18,
+	0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x69, 0x6e, 0x74, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70,
+	0x65, 0x72, 0x5f, 0x63, 0x6f, 0x69, 0x6e, 0x22, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d,
+	0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x0e, 0x6d, 0x69, 0x6e, 0x74, 0x46, 0x65, 0x65, 0x50,
+	0x65, 0x72, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x27, 0x5a, 0x25, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61,
+	0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (

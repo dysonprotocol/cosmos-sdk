@@ -35,4 +35,10 @@ message Params {
     (cosmos_proto.scalar) = "cosmos.Dec",
     (gogoproto.moretags) = "yaml:\"minimum_bid_percent_increase\""
   ];
+
+  // mint_fee_per_coin defines the fee in udys charged per coin minted
+  string mint_fee_per_coin = 6 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.moretags) = "yaml:\"mint_fee_per_coin\""
+  ];
 }

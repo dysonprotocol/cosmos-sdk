@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	cosmossdkerrors "cosmossdk.io/errors"
+	"cosmossdk.io/math"
 	nameservice "dysonprotocol.com/x/nameservice"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -44,22 +45,51 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 		}
 	}
 
-	// 4. Mint the coins to the module account
+	// 4. Calculate and collect minting fee
+	params := k.GetParams(ctx)
+	mintFeePerCoin, err := params.GetMintFeePerCoinAsDec()
+	if err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to parse mint fee per coin")
+	}
+
+	var feeCharged sdk.Coins
+	if !mintFeePerCoin.IsZero() {
+		// Calculate total fee: number_of_coins × mint_fee_per_coin
+		numCoins := math.NewInt(int64(len(msg.Amount)))
+		totalFeeAmount := mintFeePerCoin.MulInt(numCoins).TruncateInt()
+		
+		if !totalFeeAmount.IsZero() {
+			feeCharged = sdk.NewCoins(sdk.NewCoin("udys", totalFeeAmount))
+			
+			// Collect fee to community pool before minting
+			if err := k.communityPoolKeeper.FundCommunityPool(ctx, feeCharged, ownerAddr); err != nil {
+				return nil, cosmossdkerrors.Wrap(err, "failed to fund community pool with minting fee")
+			}
+			
+			k.Logger.Info("MintCoins: Collected minting fee", 
+				"owner", msg.Owner, 
+				"coins_minted", len(msg.Amount), 
+				"fee_charged", feeCharged.String())
+		}
+	}
+
+	// 5. Mint the coins to the module account
 	err = k.bankKeeper.MintCoins(ctx, nameservice.ModuleName, msg.Amount)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to mint coins")
 	}
 
-	// 5. Send the minted coins from the module to the owner
+	// 6. Send the minted coins from the module to the owner
 	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, nameservice.ModuleName, ownerAddr, msg.Amount)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to send minted coins to owner")
 	}
 
-	// 6. Emit event
+	// 7. Emit event with fee information
 	if evErr := sdk.UnwrapSDKContext(ctx).EventManager().EmitTypedEvent(
 		&nameservicev1.EventCoinsMinted{
-			Amount: msg.Amount,
+			Amount:     msg.Amount,
+			FeeCharged: feeCharged,
 		},
 	); evErr != nil {
 		k.Logger.Error("failed to emit coins minted event", "error", evErr)

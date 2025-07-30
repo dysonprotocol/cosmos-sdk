@@ -23,18 +23,23 @@ var DefaultRejectBidValuationFeePercent = "0.03" // 3%
 // DefaultMinimumBidPercentIncrease is the default percentage increase required for a new bid compared to the previous bid
 var DefaultMinimumBidPercentIncrease = "0.01" // 1%
 
+// DefaultMintFeePerCoin is the default fee in udys charged per coin minted
+var DefaultMintFeePerCoin = "1.0" // 1 udys
+
 // NewParams creates a new Params instance with given values
 func NewParams(
 	bidTimeout time.Duration,
 	allowedDenoms []string,
 	rejectBidValuationFeePercent string,
 	minimumBidPercentIncrease string,
+	mintFeePerCoin string,
 ) Params {
 	return Params{
 		BidTimeout:                   bidTimeout,
 		AllowedDenoms:                allowedDenoms,
 		RejectBidValuationFeePercent: rejectBidValuationFeePercent,
 		MinimumBidPercentIncrease:    minimumBidPercentIncrease,
+		MintFeePerCoin:               mintFeePerCoin,
 	}
 }
 
@@ -45,6 +50,7 @@ func DefaultParams() Params {
 		DefaultAllowedDenoms,
 		DefaultRejectBidValuationFeePercent,
 		DefaultMinimumBidPercentIncrease,
+		DefaultMintFeePerCoin,
 	)
 }
 
@@ -63,6 +69,10 @@ func (p Params) Validate() error {
 	}
 
 	if err := validateMinimumBidPercentIncrease(p.MinimumBidPercentIncrease); err != nil {
+		return err
+	}
+
+	if err := validateMintFeePerCoin(p.MintFeePerCoin); err != nil {
 		return err
 	}
 
@@ -159,4 +169,22 @@ func (p Params) GetMinimumBidPercentIncreaseAsDec() (math.LegacyDec, error) {
 // SetMinimumBidPercentIncreaseFromDec sets the minimum bid percent increase from a math.Dec
 func (p *Params) SetMinimumBidPercentIncreaseFromDec(increasePercent math.LegacyDec) {
 	p.MinimumBidPercentIncrease = increasePercent.String()
+}
+
+func validateMintFeePerCoin(mintFeePerCoinStr string) error {
+	mintFeePerCoin, err := math.LegacyNewDecFromStr(mintFeePerCoinStr)
+	if err != nil {
+		return fmt.Errorf("invalid mint fee per coin: %s", err)
+	}
+
+	if mintFeePerCoin.IsNegative() {
+		return fmt.Errorf("mint fee per coin cannot be negative: %s", mintFeePerCoinStr)
+	}
+
+	return nil
+}
+
+// GetMintFeePerCoinAsDec returns the mint fee per coin as a math.LegacyDec
+func (p Params) GetMintFeePerCoinAsDec() (math.LegacyDec, error) {
+	return math.LegacyNewDecFromStr(p.MintFeePerCoin)
 }

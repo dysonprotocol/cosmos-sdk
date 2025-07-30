@@ -157,8 +157,8 @@ def make_run_command(dysond_bin, node_home):
                 stdout = "None"
                 stderr = "None"
                 if "--timeout" not in args:
-                    commands += ["--timeout", "2s"]
-                for i in range(5,0,-1):
+                    commands += ["--timeout", "1s"]
+                for i in range(10,0,-1):
                     out = subprocess.run(commands, capture_output=True, text=True)
                     stdout = out.stdout
                     stderr = out.stderr
@@ -194,7 +194,7 @@ def make_run_command(dysond_bin, node_home):
                     tx_response = json.loads(original_out.stdout)
                     if tx_response.get("code") == 0:
                         # Use longer timeout for script update transactions as they may take more time
-                        timeout = "2s" if len(args) >= 2 and args[1] == "script" else "500ms"
+                        timeout = "1s" if len(args) >= 2 and args[1] == "script" else "500ms"
                         wait_tx_response = run_command("query", "wait-tx", tx_response["txhash"], "--timeout", timeout)
                         return wait_tx_response
                     else:
@@ -288,7 +288,7 @@ def chainnet(worker_id, test_base_dir, test_config_path):
         "python3", CHAINNET_SCRIPT, "start",
         "--config-file", str(config_path),
         "--block-speed", "100ms",
-        "--no-blocks-timeout", "10", 
+        "--no-blocks-timeout", "20", 
         "--logs"
     ], preexec_fn=os.setsid)
 
@@ -317,7 +317,7 @@ def chainnet(worker_id, test_base_dir, test_config_path):
         except Exception as e:
             return False
         
-    poll_until_condition(_ready, timeout=5, poll_interval=1, error_message="Node did not produce blocks")
+    poll_until_condition(_ready, timeout=20, poll_interval=1, error_message="Node did not produce blocks")
 
 
     yield run_commands
@@ -361,24 +361,34 @@ def generate_account(chainnet, faucet):
     """Fixture that returns a function to create new accounts."""
     created = []
     default_dysond_bin = chainnet[0]
-    def _gen(name_prefix, faucet_amount=100_000_000, dysond_bin=default_dysond_bin):
+    def _gen(name_prefix, faucet_amount=100_000_000, dysond_bin=default_dysond_bin, return_mnemonic=False):
         """
         Create a new account.
         Args:
             name_prefix: The prefix for the account name.
             dysond_bin: The dysond binary to use. If not provided, the default dysond binary is used.
+            return_mnemonic: If True, also return the mnemonic phrase
         Returns:
-            A tuple of the name and address of the account.
+            If return_mnemonic is False: A tuple of the name and address of the account.
+            If return_mnemonic is True: A tuple of the name, address, and mnemonic of the account.
         """
         name = name_prefix + '_' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-        dysond_bin("keys", "add", name, "--keyring-backend", "test")
+        # Create key and capture output including mnemonic
+        out = dysond_bin("keys", "add", name, "--keyring-backend", "test", "--output", "json")
         dysond_bin("config", "set", "client", "output", "json")
-        out = dysond_bin("keys", "show", name)
+        
+        # Extract address and mnemonic from the output
         address = out["address"]
+        mnemonic = out.get("mnemonic", "")
+        
         created.append(name)
         if faucet_amount:
             faucet(address, amount=faucet_amount) 
-        return [name, address]
+        
+        if return_mnemonic:
+            return [name, address, mnemonic]
+        else:
+            return [name, address]
     return _gen
 
 
@@ -441,14 +451,38 @@ def project_root() -> Path:
 
 
 @pytest.fixture(scope="session")
-def ibc_setup(chainnet, test_config_path):
+def ibc_setup(chainnet, test_config_path, generate_account, worker_id, faucet, test_base_dir):
     """Fixture to set up IBC connections between chains. Use this fixture when your test needs IBC functionality."""
     config_path = test_config_path
     
-    print(f"Starting IBC setup in background")
+    # Create a unique IBC account for this worker to avoid sequence conflicts
+    ibc_name, ibc_address, ibc_mnemonic = generate_account(f"ibc_{worker_id}", return_mnemonic=True)
+    print(f"Created unique IBC account for worker {worker_id}: {ibc_name} ({ibc_address})")
+    
+    # Also fund the account on the second chain if it exists
+    if len(chainnet) > 1:
+        dysond_bin2 = chainnet[1]
+        # Create a temporary mnemonic file
+        mnemonic_file = test_base_dir / f"{ibc_name}_mnemonic.txt"
+        mnemonic_file.write_text(ibc_mnemonic)
+        
+        # Import the key on the second chain using the mnemonic file
+        dysond_bin2("keys", "add", ibc_name, "--recover", "--source", str(mnemonic_file), 
+                   "--keyring-backend", "test")
+        
+        # Clean up the mnemonic file
+        mnemonic_file.unlink()
+        
+        # Fund the account on the second chain
+        faucet(ibc_address, dysond_bin=dysond_bin2, amount=100_000_000)
+    
+    print(f"Starting IBC setup in background with account {ibc_name}")
     ibc_proc = subprocess.Popen([
         "python3", CHAINNET_SCRIPT, "ibc",
         "--config-file", str(config_path),
+        "--ibc-account-name", ibc_name,
+        "--ibc-account-address", ibc_address,
+        "--ibc-account-mnemonic", ibc_mnemonic
     ], preexec_fn=os.setsid)
 
     # Poll until IBC setup is complete
@@ -460,7 +494,12 @@ def ibc_setup(chainnet, test_config_path):
         return ibc_proc.poll() is not None
     poll_until_condition(_ibc_setup_ready, timeout=25, poll_interval=1, error_message="IBC setup did not complete")
     
-
+    # Check if IBC setup was successful
+    if ibc_proc.returncode != 0:
+        # Get the process output to understand what went wrong
+        _, stderr = ibc_proc.communicate()
+        raise Exception(f"IBC setup failed with exit code {ibc_proc.returncode}")
+    
     yield chainnet
     
     # Cleanup IBC process

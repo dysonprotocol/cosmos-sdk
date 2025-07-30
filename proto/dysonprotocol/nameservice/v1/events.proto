@@ -111,6 +111,9 @@ message EventNFTListedUpdated {
 message EventCoinsMinted {
   repeated cosmos.base.v1beta1.Coin amount = 2
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  // Fee charged to the community pool for minting coins
+  repeated cosmos.base.v1beta1.Coin fee_charged = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // EventCoinsBurned is emitted when coins are burned

@@ -88,8 +88,9 @@ class TestStorageStakingParameters:
         """Test updating storage_stake_multiple via governance proposals."""
         dysond = chainnet[0]
         
-        # Create proposer account
-        [proposer_name, proposer_addr] = generate_account('param_proposer', faucet_amount=50_000_000)
+        # Use alice instead of creating a new proposer account
+        # alice has the necessary staked tokens for governance voting
+        proposer_name = "alice"
         
         # Get governance module address
         gov_module_result = dysond("query", "auth", "module-account", "gov")
