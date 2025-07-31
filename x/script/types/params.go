@@ -5,7 +5,7 @@ import (
 )
 
 // DefaultMaxRelativeHistoricalBlocks is the default value for the max relative historical blocks parameter
-const DefaultMaxRelativeHistoricalBlocks = int64(1024)
+const DefaultMaxRelativeHistoricalBlocks = int64(10)
 
 // MinMaxRelativeHistoricalBlocks is the minimum allowed value for the max relative historical blocks parameter
 const MinMaxRelativeHistoricalBlocks = int64(0)
