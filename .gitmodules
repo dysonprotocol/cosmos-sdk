@@ -22,6 +22,3 @@
 [submodule "ibc-go"]
 	path = ibc-go
 	url = https://github.com/cosmos/ibc-go.git
-[submodule "cometbft"]
-	path = cometbft
-	url = https://github.com/cometbft/cometbft
