@@ -19,9 +19,6 @@ const DefaultAbsoluteHistoricalBlockCutoff = int64(1)
 // MinAbsoluteHistoricalBlockCutoff is the minimum allowed value for the absolute historical block cutoff parameter
 const MinAbsoluteHistoricalBlockCutoff = int64(1)
 
-// MaxAbsoluteHistoricalBlockCutoff is the maximum allowed value for the absolute historical block cutoff parameter
-const MaxAbsoluteHistoricalBlockCutoff = int64(1000000) // 1 million blocks
-
 // NewParams creates a new Params instance with given values
 func NewParams(maxRelativeHistoricalBlocks int64, absoluteHistoricalBlockCutoff int64) Params {
 	return Params{
@@ -61,10 +58,6 @@ func validateMaxRelativeHistoricalBlocks(maxRelativeHistoricalBlocks int64) erro
 func validateAbsoluteHistoricalBlockCutoff(absoluteHistoricalBlockCutoff int64) error {
 	if absoluteHistoricalBlockCutoff < MinAbsoluteHistoricalBlockCutoff {
 		return fmt.Errorf("absolute historical block cutoff must be at least %d, got: %d", MinAbsoluteHistoricalBlockCutoff, absoluteHistoricalBlockCutoff)
-	}
-
-	if absoluteHistoricalBlockCutoff > MaxAbsoluteHistoricalBlockCutoff {
-		return fmt.Errorf("absolute historical block cutoff must be at most %d, got: %d", MaxAbsoluteHistoricalBlockCutoff, absoluteHistoricalBlockCutoff)
 	}
 
 	return nil
