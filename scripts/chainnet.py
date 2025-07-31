@@ -567,14 +567,18 @@ def setup(config_file, force):
             home.mkdir(parents=True)
 
             # Init node
-            init_proc = subprocess.run([
+            subprocess.run([
                 bin_path, 'init', moniker, '--chain-id', cid, '--default-denom', denom,
                 '-o', '--home', str(home)
+            ], check=True, capture_output=True, text=True)
+            
+            # Get node ID using comet show-node-id
+            node_id_proc = subprocess.run([
+                bin_path, 'comet', 'show-node-id', '--home', str(home)
             ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
-            init_output = init_proc.stdout.strip() or init_proc.stderr.strip()
-            node_info = json.loads(init_output)
-            peer_map[moniker] = f"{node_info['node_id']}@127.0.0.1:{node_ports['p2p']}"
-            node_config_data['node_id'] = node_info['node_id'] # Store node_id for later use if needed
+            node_id = node_id_proc.stdout.strip()
+            peer_map[moniker] = f"{node_id}@127.0.0.1:{node_ports['p2p']}"
+            node_config_data['node_id'] = node_id # Store node_id for later use if needed
 
             # Configure config.toml for this node
             cfg_dir = home / 'config'
@@ -610,6 +614,9 @@ def setup(config_file, force):
                 cast(dict, app_toml.setdefault('grpc', tomlkit.table()))['address'] = f"localhost:{node_ports['grpc']}"
                 cast(dict, app_toml.setdefault('grpc', tomlkit.table()))['enable'] = True
                 cast(dict, app_toml.setdefault('grpc-web', tomlkit.table()))['enable'] = True
+                # Configure state-sync snapshots
+                cast(dict, app_toml.setdefault('state-sync', tomlkit.table()))['snapshot-interval'] = 10
+                cast(dict, app_toml.setdefault('state-sync', tomlkit.table()))['snapshot-keep-recent'] = 2
                 app_toml_path.write_text(tomlkit.dumps(app_toml))
             else:
                 click.echo(f"Warning: app.toml not found at {app_toml_path}, skipping its port configuration.")
@@ -652,16 +659,7 @@ def setup(config_file, force):
                 node_config_data['validator']['initial_balance'], '--home', str(home)
             ], check=True, capture_output=True, text=True)
 
-        # Now that all nodes in this chain are initialized, set persistent_peers for each
-        for node_config_data_for_peers in chain['nodes']:
-            home = Path(node_config_data_for_peers['home'])
-            moniker = node_config_data_for_peers['moniker']
-            peers_for_this_node = [p_str for m, p_str in peer_map.items() if m != moniker]
-            
-            toml_conf_path = home / 'config' / 'config.toml'
-            toml_conf = tomlkit.parse(toml_conf_path.read_text())
-            cast(dict, toml_conf.setdefault('p2p', tomlkit.table()))['persistent_peers'] = ",".join(peers_for_this_node)
-            toml_conf_path.write_text(tomlkit.dumps(toml_conf))
+        # NOTE: Will set persistent_peers AFTER collect-gentxs to avoid being overwritten
 
         # Step 2: Generate Gentx for each node using its own prepared genesis
         for node_config_data in chain['nodes']:
@@ -703,6 +701,17 @@ def setup(config_file, force):
         for i in range(1, len(chain['nodes'])): # Distribute to other nodes
             other_node_home = Path(chain['nodes'][i]['home'])
             (other_node_home / 'config' / 'genesis.json').write_text(final_genesis_content)
+
+        # NOW set persistent_peers for each node (after collect-gentxs which may overwrite config)
+        for node_config_data_for_peers in chain['nodes']:
+            home = Path(node_config_data_for_peers['home'])
+            moniker = node_config_data_for_peers['moniker']
+            peers_for_this_node = [p_str for m, p_str in peer_map.items() if m != moniker]
+            
+            toml_conf_path = home / 'config' / 'config.toml'
+            toml_conf = tomlkit.parse(toml_conf_path.read_text())
+            cast(dict, toml_conf.setdefault('p2p', tomlkit.table()))['persistent_peers'] = ",".join(peers_for_this_node)
+            toml_conf_path.write_text(tomlkit.dumps(toml_conf))
     
     # Setup Hermes keys after all chains are initialized
     click.echo("\nSetting up Hermes keys...")
