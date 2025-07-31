@@ -615,8 +615,8 @@ def setup(config_file, force):
                 cast(dict, app_toml.setdefault('grpc', tomlkit.table()))['enable'] = True
                 cast(dict, app_toml.setdefault('grpc-web', tomlkit.table()))['enable'] = True
                 # Configure state-sync snapshots
-                cast(dict, app_toml.setdefault('state-sync', tomlkit.table()))['snapshot-interval'] = 10
-                cast(dict, app_toml.setdefault('state-sync', tomlkit.table()))['snapshot-keep-recent'] = 2
+                cast(dict, app_toml.setdefault('state-sync', tomlkit.table()))['snapshot-interval'] = 1
+                cast(dict, app_toml.setdefault('state-sync', tomlkit.table()))['snapshot-keep-recent'] = 2000
                 app_toml_path.write_text(tomlkit.dumps(app_toml))
             else:
                 click.echo(f"Warning: app.toml not found at {app_toml_path}, skipping its port configuration.")
