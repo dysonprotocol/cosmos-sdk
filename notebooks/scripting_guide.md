@@ -62,7 +62,7 @@ json.loads('\n'.join(tx))
 
 
 
-    {'height': '218',
+    {'height': '214',
      'txhash': '1C5D7242142A0EEC7FBC049CF6B7B5C88200F5707784FED84A1677D3A4D4093F',
      'codespace': '',
      'code': 0,
@@ -126,7 +126,7 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     * IPv6: ::1
     * IPv4: 127.0.0.1
     *   Trying [::1]:5317...
-    * connect to ::1 port 5317 from ::1 port 51815 failed: Connection refused
+    * connect to ::1 port 5317 from ::1 port 55968 failed: Connection refused
     *   Trying 127.0.0.1:5317...
     * Connected to dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost (127.0.0.1) port 5317
     > GET /hi HTTP/1.1
@@ -138,9 +138,9 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Wed, 30 Jul 2025 14:02:09 GMT
+    < Date: Thu, 31 Jul 2025 21:42:01 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1753884130
+    < X-Server-Time: 1753998123
     < 
     { [82 bytes data]
     * Connection #0 to host dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost left intact
@@ -336,9 +336,9 @@ print(f"Salt: {salt}")
 print(f"Hex Hash: {hex_hash}")
 ```
 
-    Name: alice-nqqb4.dys
-    Salt: j7kngiq270
-    Hex Hash: 0754b9468195c06b352080c502ecad9830a2fe2193debab9047744a991de0917
+    Name: alice-gkxd4.dys
+    Salt: zxffckex9q
+    Hex Hash: 713fd2c9185612cd9e2fe1092966ccaf7990a7e8b4a4ed7bf9a33a6e2bed9ed6
 
 
 
@@ -348,8 +348,8 @@ valuation = '100udys'
 ```
 
     {
-      "height": "224",
-      "txhash": "CEFBDB662EF29CB51E9747BEE738BA468DC00B3B1039D27261CA739CDFF6B767",
+      "height": "219",
+      "txhash": "399AFCF1F74864F91BC0CB89358EF520CD49C99DE9CFCBFA90A31CA84EB19114",
       "codespace": "",
       "code": 0,
       "data": "12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D7367436F6D6D6974526573706F6E7365",
@@ -376,7 +376,7 @@ valuation = '100udys'
           "attributes": [
             {
               "key": "signature",
-              "value": "Ba/qMVsockCdlRC9zhdKJyLtb5cQ33FbqGVcmk5jDCEdsHvbo+iom9HcBPADCZDXIpY3d1Axjz3vD8AcFYxaPg==",
+              "value": "nGDoLteG6QDXXOkHos8Ldwkz0xMvuZ8VyrNfEL20YllESmhAHGm7e4P4bjtuZ1amF8Sm5WaaRIBYYw8ASGqWNQ==",
               "index": true
             }
           ]
@@ -411,7 +411,7 @@ valuation = '100udys'
           "attributes": [
             {
               "key": "hexhash",
-              "value": "\"0754b9468195c06b352080c502ecad9830a2fe2193debab9047744a991de0917\"",
+              "value": "\"713fd2c9185612cd9e2fe1092966ccaf7990a7e8b4a4ed7bf9a33a6e2bed9ed6\"",
               "index": true
             },
             {
@@ -438,8 +438,8 @@ Reveal the name to complete registration.
 ```
 
     {
-      "height": "226",
-      "txhash": "7C1CD23D2D0203CE58F5C383364950C386AF27A11658E2F87DA282D1630509E0",
+      "height": "221",
+      "txhash": "C9932502F82C56CD616C1ABCEF9C05A6CA9EA8374403FE7B8974FDF59D29BCE3",
       "codespace": "",
       "code": 0,
       "data": "12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D736752657665616C526573706F6E7365",
@@ -447,7 +447,7 @@ Reveal the name to complete registration.
       "logs": [],
       "info": "",
       "gas_wanted": "200000",
-      "gas_used": "84907",
+      "gas_used": "84910",
       "tx": null,
       "timestamp": "",
       "events": [
@@ -466,9 +466,7 @@ Reveal the name to complete registration.
           "attributes": [
             {
               "key": "signature",
-              "value": "Z+R6sVZp/zeF0IRW77qq71xem0NSVfNZuZV51eUe99IUccnPX5o4NA1l4XBxEXk5XO4JYXUTaaLv4gpVNrD+eA==",
-
-
+              "value": "kTfEKulFuFs1PjxpBI7ty2Te2WUxDbfiIt+TySJuYrRgyu1B/ACKqrYaS9KajbdkZF6J4sy6B/OctNhRVYcyZQ==",
               "index": true
             }
           ]
@@ -588,7 +586,7 @@ Reveal the name to complete registration.
             },
             {
               "key": "id",
-              "value": "\"alice-nqqb4.dys\"",
+              "value": "\"alice-gkxd4.dys\"",
               "index": true
             },
             {
@@ -613,7 +611,7 @@ Reveal the name to complete registration.
             },
             {
               "key": "name",
-              "value": "\"alice-nqqb4.dys\"",
+              "value": "\"alice-gkxd4.dys\"",
               "index": true
             },
             {
@@ -642,7 +640,7 @@ Set the destination of the registered name to Alice's address.
 
     {
       "height": "0",
-      "txhash": "414E38886939DB46A0BC598BF1BE073C2A3F57EF286B82F2556B164042600007",
+      "txhash": "2EA6F701485ACDF1230E7D05F93E0F14B1F9425681F75B2B93B5DAD7DD5C851D",
       "codespace": "",
       "code": 0,
       "data": "",
@@ -674,18 +672,18 @@ print(output)
 assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Protocol!' in output, got: " + output
 ```
 
-    Accessing your DWapp at 'http://alice-nqqb4.dys.localhost:5317'
+    Accessing your DWapp at 'http://alice-gkxd4.dys.localhost:5317'
 
 
-    * Host alice-nqqb4.dys.localhost:5317 was resolved.
+    * Host alice-gkxd4.dys.localhost:5317 was resolved.
     * IPv6: ::1
     * IPv4: 127.0.0.1
     *   Trying [::1]:5317...
-    * connect to ::1 port 5317 from ::1 port 51120 failed: Connection refused
+    * connect to ::1 port 5317 from ::1 port 49959 failed: Connection refused
     *   Trying 127.0.0.1:5317...
-    * Connected to alice-nqqb4.dys.localhost (127.0.0.1) port 5317
+    * Connected to alice-gkxd4.dys.localhost (127.0.0.1) port 5317
     > GET /hi HTTP/1.1
-    > Host: alice-nqqb4.dys.localhost:5317
+    > Host: alice-gkxd4.dys.localhost:5317
     > User-Agent: curl/8.7.1
     > Accept: */*
     > 
@@ -693,12 +691,12 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Wed, 30 Jul 2025 14:02:15 GMT
+    < Date: Thu, 31 Jul 2025 21:42:07 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1753884136
+    < X-Server-Time: 1753998128
     < 
     { [82 bytes data]
-    * Connection #0 to host alice-nqqb4.dys.localhost left intact
+    * Connection #0 to host alice-gkxd4.dys.localhost left intact
     
     <html>
         <body>

@@ -88,9 +88,9 @@ assert 'balance' in json_result, "Balance not found in the result"
 print(json.dumps(json_result['balance'], indent=2))
 ```
 
-    {"result":"{\"cumsize\":6050,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":23,\"result\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"998897001397\",\"denom\":\"udys\"}},\"script_gas_consumed\":6785,\"stdout\":\"\"}","attached_message_results":[]}
+    {"result":"{\"cumsize\":6050,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":23,\"result\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"998897001348\",\"denom\":\"udys\"}},\"script_gas_consumed\":6785,\"stdout\":\"\"}","attached_message_results":[]}
     {
-      "amount": "998897001397",
+      "amount": "998897001348",
       "denom": "udys"
     }
 
@@ -152,12 +152,12 @@ assert 'bob_balance' in json_result, "Bob's balance not found in the result"
 print(json.dumps(json_result, indent=2))
 ```
 
-    {"result":"{\"cumsize\":14520,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":39,\"result\":{\"alice_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"998897001397\",\"denom\":\"udys\"}},\"bob_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"1000000000000\",\"denom\":\"udys\"}}},\"script_gas_consumed\":7902,\"stdout\":\"\"}","attached_message_results":[]}
+    {"result":"{\"cumsize\":14520,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":39,\"result\":{\"alice_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"998897001348\",\"denom\":\"udys\"}},\"bob_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"1000000000000\",\"denom\":\"udys\"}}},\"script_gas_consumed\":7902,\"stdout\":\"\"}","attached_message_results":[]}
     {
       "alice_balance": {
         "@type": "/cosmos.bank.v1beta1.QueryBalanceResponse",
         "balance": {
-          "amount": "998897001397",
+          "amount": "998897001348",
           "denom": "udys"
         }
       },
@@ -477,9 +477,9 @@ print(f"- Time: {block_info['time']}")
 ```
 
     Block Information:
-    - Height: 196
+    - Height: 194
     - Chain ID: chain-a
-    - Time: 2025-07-30T14:01:52.458051Z
+    - Time: 2025-07-31T21:41:43.324285Z
 
 
 ## Transaction Data
@@ -600,7 +600,7 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
 ```
 
     {
-      "height": "199",
+      "height": "197",
       "txhash": "19D4D7ECC680AB1F8EB8AE7652EA299C5773525D63A712A785235A8F0E9C1B72",
       "codespace": "",
       "code": 0,
