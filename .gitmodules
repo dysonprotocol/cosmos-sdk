@@ -1,6 +1,4 @@
-[submodule "cosmos-sdk"]
-	path = cosmos-sdk
-	url = https://github.com/cosmos/cosmos-sdk.git
+
 [submodule "python-build-standalone"]
 	path = dysvm/python-build-standalone
 	url = https://github.com/astral-sh/python-build-standalone.git
@@ -19,6 +17,4 @@
 [submodule "dysvm/python-build-standalone"]
 	path = dysvm/python-build-standalone
 	url = https://github.com/astral-sh/python-build-standalone.git
-[submodule "ibc-go"]
-	path = ibc-go
-	url = https://github.com/cosmos/ibc-go.git
+
