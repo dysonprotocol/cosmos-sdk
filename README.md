@@ -79,32 +79,22 @@ dysond version --long | tail
     
 
 
-### 2. Create new accounts
+### 2. Join the testnet
 
+Initialize your node and join the Dyson Protocol testnet:
 
 ```bash
-%%bash
-dysond keys add alice 
+dysond init your_node_name                                                                            
+dysond join https://dys2-testnet-rpc.dysonprotocol.com
 ```
 
-    
+### 3. Create new accounts
+```bash
+dysond keys add alice
+dysond keys add bob
+```
 
-
-    - address: dys21ldyd2ngz4ttkmvud40pshksz9g0yx9lzjy9py5
-      name: alice
-      pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"AjenBZPnfrfFQtvFT1KiGI5YFfKAENEfPLOZafBlPwuN"}'
-      type: local
-    
-
-
-    
-    **Important** write this mnemonic phrase in a safe place.
-    It is the only way to recover your account if you ever forget your password.
-    
-    useful garbage divorce found surface like jump oven bitter maze ranch switch stomach rough head soap front infant camera twin renew casino olive spot
-
-
-### 2. Update the On-chain Python Script
+### 4. Update the On-chain Python Script
 
 This example uploads a Python script that demonstrates storage operations. The full script is available at [examples/storage_example.py](examples/storage_example.py).
 
@@ -222,7 +212,7 @@ dysond tx script update --from alice -y -o json --gas 500000 --code "$(cat examp
     }
 
 
-### 3. Execute the Script Function
+### 5. Execute the Script Function
 
 Invoke the `save_message` function using Bob's account, passing `"my name is bob"` as an argument:
 
@@ -341,7 +331,7 @@ dysond tx script exec --from alice --script-address $ALICE_ADDRESS --function-na
     }
 
 
-### 4. Query the WSGI Endpoint
+### 6. Query the WSGI Endpoint
 
 Finally, confirm the data is stored and accessible via an HTTP request to the script's WSGI endpoint:
 
