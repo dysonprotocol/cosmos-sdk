@@ -13,12 +13,13 @@ var (
 	ErrEmptyIndex = errors.Register("storage", 2, "index cannot be empty")
 
 	// ErrInsufficientStake is returned when the account doesn't have sufficient delegated stake for storage
-	ErrInsufficientStake = errors.Register("storage", 3, "insufficient stake for storage operation")
+	ErrInsufficientStake = errors.Register("storage", 3, "insufficient delegated stake for storage operation")
 )
 
 // NewInsufficientStakeError creates a detailed insufficient stake error message
-func NewInsufficientStakeError(have, need math.Int, bytes uint64) error {
+func NewInsufficientStakeError(account string, have, need math.Int, bytes uint64) error {
+	ratio := need.Quo(math.NewIntFromUint64(bytes))
 	return errors.Wrapf(ErrInsufficientStake,
-		"insufficient stake: have %s udys, need %s udys for %d bytes of storage",
-		have.String(), need.String(), bytes)
+		"insufficient delegated stake: account [%s] has %s udys staked, need %s udys staked for %d bytes of storage (ratio: %s udys per byte)",
+		account, have.String(), need.String(), bytes, ratio.String())
 }

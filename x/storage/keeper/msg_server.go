@@ -95,7 +95,7 @@ func (k Keeper) StorageSet(ctx context.Context, msg *storagetypes.MsgStorageSet)
 
 		// Check if current stake is sufficient
 		if currentStake.LT(requiredStake) {
-			return nil, storage.NewInsufficientStakeError(currentStake, requiredStake, newTotalBytes)
+			return nil, storage.NewInsufficientStakeError(msg.Owner, currentStake, requiredStake, newTotalBytes)
 		}
 	}
 

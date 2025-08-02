@@ -292,7 +292,7 @@ class TestStorageStakingValidation:
         # Test insufficient stake scenario
         insufficient_data = "a" * 1000  # 1000 bytes = 1000 udys required
         
-        with pytest.raises(Exception, match="insufficient stake"):
+        with pytest.raises(Exception, match="insufficient delegated stake"):
             dysond("tx", "storage", "set",
                   "--index", "test_insufficient_stake",
                   "--data", insufficient_data,
@@ -585,17 +585,18 @@ class TestStorageStakingErrorHandling:
         
         # This test documents expected error patterns
         expected_patterns = [
-            "insufficient stake",
-            "have .* udys", 
-            "need .* udys",
-            "bytes of storage"
+            "insufficient delegated stake",
+            "account \\[.*\\] has .* udys staked", 
+            "need .* udys staked",
+            "bytes of storage",
+            "ratio: .* udys per byte"
         ]
         
         print("Expected error message patterns for insufficient stake:")
         for pattern in expected_patterns:
             print(f"  - {pattern}")
         
-        print("Expected format: insufficient stake: have X udys, need Y udys for Z bytes of storage")
+        print("Expected format: insufficient delegated stake: account [ADDRESS] has X udys staked, need Y udys staked for Z bytes of storage (ratio: R udys per byte)")
         
         # When stake validation is enabled, errors should match these patterns
         print("✅ Error format requirements documented")
@@ -610,7 +611,7 @@ def test_stake_validation_requirements_documentation():
         "bypass_condition": "storage_stake_multiple = '0' disables validation",
         "calculation": "required_stake = new_total_bytes × storage_stake_multiple",
         "error_condition": "current_delegated_stake < required_stake",
-        "error_message_format": "insufficient stake: have X udys, need Y udys for Z bytes of storage",
+        "error_message_format": "insufficient delegated stake: account [ADDRESS] has X udys staked, need Y udys staked for Z bytes of storage (ratio: R udys per byte)",
         "deletion_behavior": "StorageDelete never blocked by insufficient stake",
         "governance_control": "storage_stake_multiple parameter can be updated via governance",
         "metrics_integration": "QueryMetrics includes current_stake_amount from staking module"
