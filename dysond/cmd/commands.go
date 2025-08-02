@@ -349,6 +349,7 @@ This command configures your local node to join an existing chain by:
 2. Getting network status to extract node ID and latest block info  
 3. Configuring state sync in config.toml with appropriate settings
 4. Setting up p2p.seeds to connect to the remote node
+5. Updating client.toml with the chain ID
 
 Example:
   dysond join https://dys2-testnet-rpc.dysonprotocol.com
@@ -386,6 +387,11 @@ Prerequisites:
 			// Configure state sync
 			if err := configureStateSync(homeDir, rpcEndpoint, statusInfo); err != nil {
 				return fmt.Errorf("failed to configure state sync: %w", err)
+			}
+
+			// Configure client settings
+			if err := configureClient(homeDir, rpcEndpoint, statusInfo); err != nil {
+				return fmt.Errorf("failed to configure client: %w", err)
 			}
 
 			fmt.Println("\n🎉 Node configuration complete!")
@@ -569,6 +575,37 @@ func updateConfigValue(config, key, value string) string {
 	}
 
 	return config
+}
+
+// configureClient modifies client.toml to set up chain ID and node endpoint
+func configureClient(homeDir, rpcEndpoint string, statusInfo *StatusInfo) error {
+	clientConfigPath := filepath.Join(homeDir, "config", "client.toml")
+	fmt.Printf("Configuring client settings in %s...\n", clientConfigPath)
+
+	// Read existing client config
+	clientConfigData, err := os.ReadFile(clientConfigPath)
+	if err != nil {
+		return fmt.Errorf("failed to read client config file: %w", err)
+	}
+
+	clientConfigStr := string(clientConfigData)
+
+	// Configure chain ID
+	clientConfigStr = updateConfigValue(clientConfigStr, "chain-id", statusInfo.Network)
+	fmt.Printf("Set chain-id = %s\n", statusInfo.Network)
+
+	// TODO: maybe prompt to set node endpoint
+	// Configure node endpoint
+	//clientConfigStr = updateConfigValue(clientConfigStr, "node", rpcEndpoint)
+	//fmt.Printf("Set node = %s\n", rpcEndpoint)
+
+	// Write updated client config
+	if err := os.WriteFile(clientConfigPath, []byte(clientConfigStr), 0644); err != nil {
+		return fmt.Errorf("failed to write client config file: %w", err)
+	}
+
+	fmt.Println("Client configuration updated successfully!")
+	return nil
 }
 
 /*

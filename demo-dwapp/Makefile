@@ -44,10 +44,9 @@ upload-file:
 		--gas auto \
 		--from "$(ADDRESS)" \
 		--index "$$index" \
-		--data "$$(cat "$$FILE")" \
+		--data-path "$$FILE" \
 		-y -o json \
-	| jq -r .txhash \
-	| xargs dysond q wait-tx -o json \
+	| dysond q wait-tx -o json \
 	| jq
 
 update-all:
