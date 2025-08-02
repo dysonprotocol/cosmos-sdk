@@ -283,8 +283,36 @@ Feel free to adapt the `save_message` function or the WSGI application for more 
 
 For more detailed information about specific modules, please refer to the following documentation:
 
-- [Script Module](docs/SCRIPT.md): Comprehensive guide to the Script module for on-chain Python execution
-- [Storage Module](docs/STORAGE.md): Detailed documentation on the Storage module for on-chain data persistence
-- [Crontask Module](docs/CRONTASK.md): Complete guide to the Crontask module for scheduled transaction execution
-- [Nameservice Module](docs/NAMESERVICE.md): Guide to the Nameservice module for registering names and creating NFTs
+### Module Guides
+
+- [Script Module](notebooks/scripting_guide.md): Comprehensive guide to the Script module for on-chain Python execution
+- [Storage Module](notebooks/storage_guide.md): Detailed documentation on the Storage module for on-chain data persistence
+- [Crontask Module](notebooks/crontask_guide.md): Complete guide to the Crontask module for scheduled transaction execution
+- [Nameservice Module](notebooks/nameservice_guide.md): Guide to the Nameservice module for registering names and creating NFTs
+- [DysLang Guide](notebooks/dyslang_guide.md): Complete programming reference for the Dyson Language
+
+### Interactive Notebooks
+
+The same guides are also available as interactive Jupyter notebooks in the `notebooks/` directory:
+
+- [Script Module Notebook](notebooks/scripting_guide.ipynb)
+- [Storage Module Notebook](notebooks/storage_guide.ipynb)
+- [Crontask Module Notebook](notebooks/crontask_guide.ipynb)
+- [Nameservice Module Notebook](notebooks/nameservice_guide.ipynb)
+- [DysLang Guide Notebook](notebooks/dyslang_guide.ipynb)
+
+### Code Examples
+
+Explore practical examples in the `examples/` directory:
+
+- [Storage Example](examples/storage_example.py): Basic storage operations and WSGI endpoint
+- [Crontask Example](examples/crontask_countdown.py): Scheduled task countdown implementation
+- [Crontask Script](examples/crontask_script.py): Advanced scheduled transaction execution
+- [DysLang Example](examples/dyslang_example.py): Comprehensive language feature demonstration
+- [Balance Example](examples/balance_example.py): Account balance querying
+- [WSGI Example](examples/simple_wsgi_example.py): Simple web application server
+- [AST Explorer](examples/ast_explorer.py): Python Abstract Syntax Tree exploration
+- [ICA Example](examples/ica_e2e.py): Inter-Chain Account end-to-end example
+- [ICA Module](examples/ica.py): Inter-Chain Account implementation
+- [Script Query Height](examples/script_query_height.py): Query blockchain height from scripts
 
