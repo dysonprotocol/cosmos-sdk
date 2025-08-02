@@ -138,18 +138,13 @@ test: install
 ###                                Scripts                                  ###
 ###############################################################################
 
-init:
-	@echo "--> Running reset_dev script (Python version)"
-	./scripts/chainnet.py generate --chains 1 --nodes 2 
-	./scripts/chainnet.py setup --config-file /tmp/dysonchains/chains.json --force
-	
 
 start: install
-	@echo "--> Starting dyson"
-	./scripts/chainnet.py start --config-file /tmp/dysonchains/chains.json --block-speed 500ms --logs --no-blocks-timeout 10
+	@echo "--> Installing and then Starting dyson"
+	dysond start
 
 
-# The 'watch' target monitors .go files and restarts the application on changes.
+# The 'watch' target monitors .go files then installs and restarts the application on changes.
 watch:
 	@echo "Watching for changes in Go files..."
 	@while sleep 1; do \
@@ -157,13 +152,13 @@ watch:
 	done
 
 init-localnet: 
-	@echo "--> Initializing dyson chain net"
-	./scripts/chainnet.py generate --chains 2 --nodes 1 --hermes-config
+	@echo "--> Initializing dyson local chain"
+	./scripts/chainnet.py generate --chains 1 --nodes 2 --hermes-config
 	./scripts/chainnet.py setup --force
 
 
 start-localnet: install
-	@echo "--> Starting dyson chain net"
+	@echo "--> Starting dyson local net"
 	./scripts/chainnet.py start --config-file /tmp/dysonchains/chains.json --block-speed 500ms  --logs --no-blocks-timeout 10
 
 ###############################################################################
