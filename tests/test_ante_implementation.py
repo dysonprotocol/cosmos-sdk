@@ -16,7 +16,9 @@ def test_new_account_with_zero_account_number(chainnet, generate_account):
     dysond_bin = chainnet[0]
     
     # First, create a script owner account to deploy the hello world script
-    [script_owner_name, script_owner_address] = generate_account('script_owner', faucet_amount=1000)
+    # faucet amount must be 0 to test properly, if faucet amount is not 0, the account will be funded and
+    # the account number will not be 0
+    [script_owner_name, script_owner_address] = generate_account('script_owner', faucet_amount=0) 
     
     # Create a simple hello world script
     hello_world_code = """

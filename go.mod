@@ -243,12 +243,6 @@ require (
 // 	<temporary replace>
 // )
 
-replace (
-	cosmossdk.io/client/v2 => ./cosmos-sdk/client/v2
-	cosmossdk.io/x/circuit => ./cosmos-sdk/x/circuit
-//github.com/cosmos/ibc-go/v10 => ./ibc-go
-)
-
 // Below are the long-lived replace of the SimApp
 replace (
 	// use cosmos fork of keyring
