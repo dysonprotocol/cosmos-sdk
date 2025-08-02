@@ -58,7 +58,7 @@ document.addEventListener("alpine:init", () => {
         }
       }
       // TODO: remove this
-      if (this.localCosmJsWallets.length === 0) {
+      if (this.localCosmJsWallets.length === 0 && this.chainId === 'cahin-a') {
         // TODO: remove this
         const seed = "public feature teach face federal matrix throw legend bridge brass diary beach typical doll evoke weapon among crane regret trust enact swarm brother outside"; 
         console.log("creating default wallet");
