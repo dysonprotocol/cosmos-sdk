@@ -157,7 +157,7 @@ init-localnet:
 	./scripts/chainnet.py setup --force
 
 
-start-localnet: install
+start-localnet: 
 	@echo "--> Starting dyson local net"
 	./scripts/chainnet.py start --config-file /tmp/dysonchains/chains.json --block-speed 500ms  --logs --no-blocks-timeout 10
 

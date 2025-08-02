@@ -5,7 +5,7 @@
 .git
 .gitignore
 .gitmodules
-
+!.git/modules
 # Build artifacts
 build/
 dist/
