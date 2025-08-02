@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import pytest
-import tempfile
-import os
 import json
 
 
@@ -36,10 +34,21 @@ def wsgi(environ, start_response):
     update_result = dysond_bin(
         "tx", "script", "update", 
         "--code", hello_world_code, 
-        "--from", script_owner_name
+        "--from", script_owner_name,
+        "--fees", "0udys",
+        "--gas", "100000",
+        "--offline",
+        "--account-number", "0",
+        "--sequence", "0",
+        "--chain-id", "chain-a",
+        "-y",
     )
     assert update_result.get("code", 1) == 0, "Failed to update script"
     
+    # wait-tx
+    wait_result = dysond_bin("query", "wait-tx", update_result.get("txhash"))
+    assert wait_result.get("code", 1) == 0, f"Transaction execution failed. Wait result: {wait_result.get('raw_log', 'No raw log available')}"
+
     # Verify script was created
     script_info = dysond_bin("query", "script", "script-info", "--address", script_owner_address)
     assert script_info.get("script", {}).get("address") == script_owner_address, "Script address doesn't match"
@@ -51,65 +60,30 @@ def wsgi(environ, start_response):
     account_query = dysond_bin("query", "auth", "account", test_account_address, raw=True)
     assert "account" in account_query and "not found" in account_query
     
-    # Step 1: Generate unsigned transaction with account-number 0 and sequence 0
-    # Use raw=True to get the actual transaction JSON
-    unsigned_tx_result = dysond_bin(
+    # Execute transaction using offline mode with account-number 0 and sequence 0
+    # This should trigger the ante handler to create the account automatically
+    tx_result = dysond_bin(
         "tx", "script", "exec",
         "--script-address", script_owner_address,
         "--function-name", "hello",
         "--from", test_account_name,
-        "--fees", "0udys",
         "--gas", "100000",
-        "--generate-only",
-        "--account-number", "0",
-        "--sequence", "0",
-        raw=True
-    )
-    
-    # Convert to JSON string - assume it's always a dict from dysond
-    unsigned_tx = json.dumps(unsigned_tx_result, indent=2)
-    
-    # Create temporary file for unsigned transaction
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-        f.write(unsigned_tx)
-        unsigned_tx_path = f.name
-    
-    # Step 2: Sign the transaction offline with account-number 0 and sequence 0
-    signed_tx_result = dysond_bin(
-        "tx", "sign", unsigned_tx_path,
-        "--from", test_account_name,
-        "--chain-id", "chain-a",  # Use the test chain ID
-        "--account-number", "0",
-        "--sequence", "0",
         "--offline",
-        raw=True
+        "--account-number", "0",
+        "--sequence", "0",
+        "--chain-id", "chain-a",
+        "-y",
     )
-    
-    # Convert to JSON string - assume it's always a dict from dysond
-    signed_tx = json.dumps(signed_tx_result, indent=2)
-    
-    # Create temporary file for signed transaction
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-        f.write(signed_tx)
-        signed_tx_path = f.name
-    
-    # Step 3: Broadcast the signed transaction
-    broadcast_result = dysond_bin(
-        "tx", "broadcast", signed_tx_path,
-        raw=True
-    )
-    
-    # Parse the broadcast result - assume it's always a dict from dysond
-    code = broadcast_result.get("code", 1)
-    txhash = broadcast_result.get("txhash")
     
     # Verify transaction succeeded
-    assert code == 0, f"Transaction failed with code {code}: {broadcast_result}"
-    assert txhash is not None, f"No txhash found in broadcast result: {broadcast_result}"
+    assert tx_result.get("code", 1) == 0, f"Transaction failed with code {tx_result.get('code')}: {tx_result.get('raw_log', 'No raw log available')}"
     
-    # Wait a moment for the transaction to be processed
-    import time
-    time.sleep(2)
+    txhash = tx_result.get("txhash")
+    assert txhash is not None, f"No txhash found in transaction result: {tx_result}"
+    
+    # Wait for transaction to be processed
+    wait_result = dysond_bin("query", "wait-tx", txhash)
+    assert wait_result.get("code", 1) == 0, f"Transaction execution failed. Wait result: {wait_result.get('raw_log', 'No raw log available')}"
     
     # Verify the account was created on-chain
     account_data = dysond_bin("query", "auth", "account", test_account_address)
@@ -122,25 +96,15 @@ def wsgi(environ, start_response):
     account_number = int(account_data["account"]["value"]["account_number"])
     assert account_number > 0
     
-    # Verify the transaction was included in a block
-    tx_data = dysond_bin("query", "tx", txhash)
-    assert tx_data["code"] == 0, f"Transaction failed on chain: {tx_data}"
-    
-    # Verify script execution was successful
-    exec_events = [e for e in tx_data.get("events", []) if e.get("type") == "dysonprotocol.script.v1.EventExecScript"]
+    # Verify script execution was successful by checking the wait result
+    exec_events = [e for e in wait_result.get("events", []) if e.get("type") == "dysonprotocol.script.v1.EventExecScript"]
     assert exec_events, "Script execution event not found"
     
     print(f"✅ SUCCESS: New account {test_account_address} created and transaction executed!")
-    
-    # Clean up signed transaction file
-    os.unlink(signed_tx_path)
-    
-    # Clean up unsigned transaction file
-    os.unlink(unsigned_tx_path)
 
 
-def test_multiple_new_accounts_sequential_manual(chainnet, generate_account):
-    """Test that multiple new accounts can be created sequentially using the manual signing approach."""
+def test_multiple_new_accounts_sequential_offline(chainnet, generate_account):
+    """Test that multiple new accounts can be created sequentially using the offline approach."""
     dysond_bin = chainnet[0]
     
     # Create script owner and deploy script first
@@ -164,58 +128,31 @@ def ping():
         [account_name, account_address] = generate_account(f'multi_test_{i}', faucet_amount=0)
         accounts.append((account_name, account_address))
         
-        # Use the manual signing approach with raw=True
-        unsigned_tx_result = dysond_bin(
+        # Use the offline approach with account-number 0 and sequence 0
+        tx_result = dysond_bin(
             "tx", "script", "exec",
             "--script-address", script_owner_address,
             "--function-name", "ping",
             "--from", account_name,
             "--fees", "0udys",
             "--gas", "100000",
-            "--generate-only",
-            "--account-number", "0",
-            "--sequence", "0",
-            raw=True
-        )
-        
-        # Convert to JSON string - assume it's always a dict from dysond
-        unsigned_tx = json.dumps(unsigned_tx_result, indent=2)
-        
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-            f.write(unsigned_tx)
-            unsigned_tx_path = f.name
-        
-        signed_tx_result = dysond_bin(
-            "tx", "sign", unsigned_tx_path,
-            "--from", account_name,
-            "--chain-id", "chain-a",
-            "--account-number", "0",
-            "--sequence", "0",
             "--offline",
-            raw=True
+            "--account-number", "0",
+            "--sequence", "0",
+            "--chain-id", "chain-a",
+            "-y",
         )
         
-        # Convert to JSON string - assume it's always a dict from dysond
-        signed_tx = json.dumps(signed_tx_result, indent=2)
-        
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-            f.write(signed_tx)
-            signed_tx_path = f.name
-        
-        broadcast_result = dysond_bin("tx", "broadcast", signed_tx_path, raw=True)
-        
-        # Parse code from broadcast result - assume it's always a dict from dysond
-        code = broadcast_result.get("code", 1)
-        
-        assert code == 0, f"Transaction failed for account {i}. Broadcast result: {json.dumps(broadcast_result, indent=2)}"
+        # Verify transaction succeeded
+        assert tx_result.get("code", 1) == 0, f"Transaction failed for account {i}. Result: {tx_result.get('raw_log', 'No raw log available')}"
         
         # Get the transaction hash and wait for it to be confirmed
-        txhash = broadcast_result.get("txhash")
-        assert txhash, f"No txhash in broadcast result: {json.dumps(broadcast_result, indent=2)}"
+        txhash = tx_result.get("txhash")
+        assert txhash, f"No txhash in transaction result: {tx_result}"
         
         # Wait for transaction confirmation
         wait_result = dysond_bin("query", "wait-tx", txhash)
-        assert wait_result.get("code", 1) == 0, f"Transaction execution failed. Wait result: {json.dumps(wait_result, indent=2)}"
+        assert wait_result.get("code", 1) == 0, f"Transaction execution failed. Wait result: {wait_result.get('raw_log', 'No raw log available')}"
         
         # Verify account exists
         account_data = dysond_bin("query", "auth", "account", account_address)
@@ -225,10 +162,6 @@ def ping():
         assert "account" in account_data, f"No 'account' field in response: {json.dumps(account_data, indent=2)}"
         assert account_data["account"]["value"]["address"] == account_address
         assert int(account_data["account"]["value"]["sequence"]) == 1
-        
-        # Clean up files
-        os.unlink(signed_tx_path)
-        os.unlink(unsigned_tx_path)
     
     # Verify all accounts have different account numbers
     account_numbers = []

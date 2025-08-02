@@ -289,7 +289,7 @@ def chainnet(worker_id, test_base_dir, test_config_path):
         "--config-file", str(config_path),
         "--block-speed", "100ms",
         "--no-blocks-timeout", "20", 
-        "--logs"
+        #"--logs"
     ], preexec_fn=os.setsid)
 
     # Track processes for cleanup
