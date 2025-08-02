@@ -64,8 +64,8 @@ def test_query_tasks_by_status_timestamp(chainnet, generate_account):
     [alice_name, alice_address] = generate_account('alice')
     
     # Create tasks and track their IDs
-    task_id1 = create_task_for_test_with_timestamp(dysond_bin, alice_name, alice_address, time_offset=3)
-    task_id2 = create_task_for_test_with_timestamp(dysond_bin, alice_name, alice_address, time_offset=6)
+    task_id1 = create_task_for_test_with_timestamp(dysond_bin, alice_name, alice_address, time_offset=TASK_SCHEDULED_DELAY + 3)
+    task_id2 = create_task_for_test_with_timestamp(dysond_bin, alice_name, alice_address, time_offset=TASK_SCHEDULED_DELAY + 6)
     created_task_ids = {int(task_id1), int(task_id2)}
     
     tasks_result = dysond_bin("query", "crontask", "tasks-by-status-timestamp", "--status", "SCHEDULED")
@@ -367,7 +367,7 @@ def test_query_tasks_by_status_timestamp_pagination(chainnet, generate_account):
     # Create tasks and track their IDs
     created_task_ids = []
     for off in (1, 2, 3, 4):
-        task_id = create_task_for_test_with_timestamp(dysond_bin, name, addr, time_offset=off + 5)
+        task_id = create_task_for_test_with_timestamp(dysond_bin, name, addr, time_offset=TASK_SCHEDULED_DELAY + off + 5)
         created_task_ids.append(task_id)
 
     # Query all scheduled tasks to verify our tasks exist

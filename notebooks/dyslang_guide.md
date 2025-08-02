@@ -88,9 +88,9 @@ assert 'balance' in json_result, "Balance not found in the result"
 print(json.dumps(json_result['balance'], indent=2))
 ```
 
-    {"result":"{\"cumsize\":6050,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":23,\"result\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"998897001348\",\"denom\":\"udys\"}},\"script_gas_consumed\":6785,\"stdout\":\"\"}","attached_message_results":[]}
+    {"result":"{\"cumsize\":6050,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":23,\"result\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"998799979899\",\"denom\":\"udys\"}},\"script_gas_consumed\":6785,\"stdout\":\"\"}","attached_message_results":[]}
     {
-      "amount": "998897001348",
+      "amount": "998799979899",
       "denom": "udys"
     }
 
@@ -152,12 +152,12 @@ assert 'bob_balance' in json_result, "Bob's balance not found in the result"
 print(json.dumps(json_result, indent=2))
 ```
 
-    {"result":"{\"cumsize\":14520,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":39,\"result\":{\"alice_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"998897001348\",\"denom\":\"udys\"}},\"bob_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"1000000000000\",\"denom\":\"udys\"}}},\"script_gas_consumed\":7902,\"stdout\":\"\"}","attached_message_results":[]}
+    {"result":"{\"cumsize\":14520,\"exception\":null,\"gas_limit\":18446744073709551615,\"nodes_called\":39,\"result\":{\"alice_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"998799979899\",\"denom\":\"udys\"}},\"bob_balance\":{\"@type\":\"/cosmos.bank.v1beta1.QueryBalanceResponse\",\"balance\":{\"amount\":\"1000000000000\",\"denom\":\"udys\"}}},\"script_gas_consumed\":7902,\"stdout\":\"\"}","attached_message_results":[]}
     {
       "alice_balance": {
         "@type": "/cosmos.bank.v1beta1.QueryBalanceResponse",
         "balance": {
-          "amount": "998897001348",
+          "amount": "998799979899",
           "denom": "udys"
         }
       },
@@ -477,9 +477,9 @@ print(f"- Time: {block_info['time']}")
 ```
 
     Block Information:
-    - Height: 194
+    - Height: 125
     - Chain ID: chain-a
-    - Time: 2025-07-31T21:41:43.324285Z
+    - Time: 2025-08-02T08:23:52.576275Z
 
 
 ## Transaction Data
@@ -600,8 +600,8 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
 ```
 
     {
-      "height": "197",
-      "txhash": "19D4D7ECC680AB1F8EB8AE7652EA299C5773525D63A712A785235A8F0E9C1B72",
+      "height": "128",
+      "txhash": "EFCD69B63B2A7CC650F06FD76A89ECEA5DC38BF0602C6B31A3252E74109228C8",
       "codespace": "",
       "code": 0,
       "data": "12C0010A282F6479736F6E70726F746F636F6C2E7363726970742E76312E4D736745786563526573706F6E73651293010A90017B2263756D73697A65223A323032372C22657863657074696F6E223A6E756C6C2C226761735F6C696D6974223A31303030303030302C226E6F6465735F63616C6C6564223A31372C22726573756C74223A7B226576656E745F656D6974746564223A747275657D2C227363726970745F6761735F636F6E73756D6564223A33373431372C227374646F7574223A22227D",
@@ -618,7 +618,7 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/53",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/16",
               "index": true
             }
           ]
@@ -628,7 +628,7 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
           "attributes": [
             {
               "key": "signature",
-              "value": "YExlPj8bEMLtAGR3HTwivHSZ1C8LgHeGTpGASI6ASRgoeuO3cTNFwn4gt0RIcsoTJptOfj2bOsMZmyssc5ecEw==",
+              "value": "Zn4YDE+TJqaiQG485DYfgYqlildzbNz041RHyvnfrBF74CwFbgXvT7UCcK6O/SlIBIdh/6jQSFAIwYGPqR6/zA==",
               "index": true
             }
           ]
@@ -732,8 +732,8 @@ assert events['dysonprotocol.script.v1.EventScriptEvent']['value'] == '"123123"'
     }
     {
       "tx": {
-        "acc_seq": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/53",
-        "signature": "YExlPj8bEMLtAGR3HTwivHSZ1C8LgHeGTpGASI6ASRgoeuO3cTNFwn4gt0RIcsoTJptOfj2bOsMZmyssc5ecEw=="
+        "acc_seq": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/16",
+        "signature": "Zn4YDE+TJqaiQG485DYfgYqlildzbNz041RHyvnfrBF74CwFbgXvT7UCcK6O/SlIBIdh/6jQSFAIwYGPqR6/zA=="
       },
       "message": {
         "action": "/dysonprotocol.script.v1.MsgExec",

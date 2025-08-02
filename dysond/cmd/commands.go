@@ -1,8 +1,16 @@
 package cmd
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 
 	cmtcfg "github.com/cometbft/cometbft/config"
 	dbm "github.com/cosmos/cosmos-db"
@@ -29,6 +37,8 @@ import (
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
+
+	scripttypes "dysonprotocol.com/x/script/types"
 )
 
 // initCometBFTConfig helps to override default CometBFT Config values.
@@ -85,6 +95,11 @@ func initAppConfig() (string, interface{}) {
 	// In dysapp, we set the min gas prices to 0.
 	srvCfg.MinGasPrices = "0udys"
 	// srvCfg.BaseConfig.IAVLDisableFastNode = true // disable fastnode by default
+
+	// Set a sensible default for min-retain-blocks based on script module requirements
+	// The script module needs access to historical blocks for execution context
+	// We set it to DefaultMaxRelativeHistoricalBlocks + 1 to ensure adequate retention
+	srvCfg.MinRetainBlocks = uint64(scripttypes.DefaultMaxRelativeHistoricalBlocks + 1)
 
 	// Set API Swagger to be enabled by default
 	srvCfg.API.Swagger = true
@@ -151,6 +166,7 @@ func initRootCmd(
 		queryCommand(),
 		txCommand(),
 		keys.Commands(),
+		joinCommand(),
 	)
 }
 
@@ -298,6 +314,261 @@ func appExport(
 
 	// Export application state and validators
 	return dysApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
+}
+
+// RPC response structs for parsing status and genesis responses
+type RPCStatusResponse struct {
+	Result struct {
+		NodeInfo struct {
+			ID         string `json:"id"`
+			Network    string `json:"network"`
+			ListenAddr string `json:"listen_addr"`
+		} `json:"node_info"`
+		SyncInfo struct {
+			LatestBlockHash   string `json:"latest_block_hash"`
+			LatestBlockHeight string `json:"latest_block_height"`
+		} `json:"sync_info"`
+	} `json:"result"`
+}
+
+type RPCGenesisResponse struct {
+	Result struct {
+		Genesis interface{} `json:"genesis"`
+	} `json:"result"`
+}
+
+// joinCommand creates the 'join' command for joining an existing chain via state sync
+func joinCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "join [rpc-endpoint]",
+		Short: "Join an existing chain using state sync",
+		Long: `Join an existing Dyson Protocol chain using state sync.
+
+This command configures your local node to join an existing chain by:
+1. Fetching the genesis file from the remote RPC
+2. Getting network status to extract node ID and latest block info  
+3. Configuring state sync in config.toml with appropriate settings
+4. Setting up p2p.seeds to connect to the remote node
+
+Example:
+  dysond join https://dys2-testnet-rpc.dysonprotocol.com
+
+Prerequisites:
+  - Local node must be initialized: dysond init <moniker>
+`,
+		Args: cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			rpcEndpoint := args[0]
+
+			// Get client context for home directory
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			homeDir := clientCtx.HomeDir
+
+			// Validate that node is initialized
+			configDir := filepath.Join(homeDir, "config")
+			if _, err := os.Stat(configDir); os.IsNotExist(err) {
+				return fmt.Errorf("node not initialized. Please run: dysond init <moniker>")
+			}
+
+			fmt.Printf("Using home directory: %s\n", homeDir)
+
+			// Fetch genesis file
+			if err := fetchGenesis(rpcEndpoint, homeDir); err != nil {
+				return fmt.Errorf("failed to fetch genesis: %w", err)
+			}
+
+			// Get RPC status
+			statusInfo, err := getRPCStatus(rpcEndpoint)
+			if err != nil {
+				return fmt.Errorf("failed to get RPC status: %w", err)
+			}
+
+			// Configure state sync
+			if err := configureStateSync(homeDir, rpcEndpoint, statusInfo); err != nil {
+				return fmt.Errorf("failed to configure state sync: %w", err)
+			}
+
+			fmt.Println("\n🎉 Node configuration complete!")
+			fmt.Println("\nNext steps:")
+			fmt.Println("1. Start your node: dysond start")
+			fmt.Println("2. Wait for state sync to complete")
+			fmt.Println("3. Your node should sync to the latest block height")
+			fmt.Printf("\nNetwork: %s\n", statusInfo.Network)
+			fmt.Printf("Target height: ~%s\n", statusInfo.LatestBlockHeight)
+
+			return nil
+		},
+	}
+
+	return cmd
+}
+
+// StatusInfo holds the parsed status information from RPC
+type StatusInfo struct {
+	NodeID            string
+	Network           string
+	ListenAddr        string
+	LatestBlockHash   string
+	LatestBlockHeight string
+}
+
+// fetchGenesis fetches the genesis file from RPC endpoint and saves it
+func fetchGenesis(rpcEndpoint, homeDir string) error {
+	genesisURL := strings.TrimSuffix(rpcEndpoint, "/") + "/genesis"
+	fmt.Printf("Fetching genesis from %s...\n", genesisURL)
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Get(genesisURL)
+	if err != nil {
+		return fmt.Errorf("failed to fetch genesis: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("genesis request failed with status: %d", resp.StatusCode)
+	}
+
+	var genesisResp RPCGenesisResponse
+	if err := json.NewDecoder(resp.Body).Decode(&genesisResp); err != nil {
+		return fmt.Errorf("failed to parse genesis response: %w", err)
+	}
+
+	// Write genesis to file
+	genesisPath := filepath.Join(homeDir, "config", "genesis.json")
+	genesisFile, err := os.Create(genesisPath)
+	if err != nil {
+		return fmt.Errorf("failed to create genesis file: %w", err)
+	}
+	defer genesisFile.Close()
+
+	encoder := json.NewEncoder(genesisFile)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(genesisResp.Result.Genesis); err != nil {
+		return fmt.Errorf("failed to write genesis file: %w", err)
+	}
+
+	fmt.Printf("Genesis saved to %s\n", genesisPath)
+	return nil
+}
+
+// getRPCStatus fetches and parses the RPC status response
+func getRPCStatus(rpcEndpoint string) (*StatusInfo, error) {
+	statusURL := strings.TrimSuffix(rpcEndpoint, "/") + "/status"
+	fmt.Printf("Fetching status from %s...\n", statusURL)
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Get(statusURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch status: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status request failed with status: %d", resp.StatusCode)
+	}
+
+	var statusResp RPCStatusResponse
+	if err := json.NewDecoder(resp.Body).Decode(&statusResp); err != nil {
+		return nil, fmt.Errorf("failed to parse status response: %w", err)
+	}
+
+	result := statusResp.Result
+	statusInfo := &StatusInfo{
+		NodeID:            result.NodeInfo.ID,
+		Network:           result.NodeInfo.Network,
+		ListenAddr:        result.NodeInfo.ListenAddr,
+		LatestBlockHash:   result.SyncInfo.LatestBlockHash,
+		LatestBlockHeight: result.SyncInfo.LatestBlockHeight,
+	}
+
+	fmt.Printf("Node ID: %s\n", statusInfo.NodeID)
+	fmt.Printf("Network: %s\n", statusInfo.Network)
+	fmt.Printf("Listen address: %s\n", statusInfo.ListenAddr)
+	fmt.Printf("Latest block height: %s\n", statusInfo.LatestBlockHeight)
+	fmt.Printf("Latest block hash: %s\n", statusInfo.LatestBlockHash)
+
+	return statusInfo, nil
+}
+
+// configureStateSync modifies config.toml to set up state sync
+func configureStateSync(homeDir, rpcEndpoint string, statusInfo *StatusInfo) error {
+	configPath := filepath.Join(homeDir, "config", "config.toml")
+	fmt.Printf("Configuring state sync in %s...\n", configPath)
+
+	// Read existing config
+	configData, err := os.ReadFile(configPath)
+	if err != nil {
+		return fmt.Errorf("failed to read config file: %w", err)
+	}
+
+	configStr := string(configData)
+
+	// Configure p2p seeds
+	seeds := fmt.Sprintf("%s@%s", statusInfo.NodeID, statusInfo.ListenAddr)
+	configStr = updateConfigValue(configStr, "seeds", seeds)
+	fmt.Printf("Set p2p.seeds = %s\n", seeds)
+
+	// Configure state sync
+	configStr = updateConfigValue(configStr, "enable", "true")
+	fmt.Println("Set statesync.enable = true")
+
+	// Set RPC servers
+	rpcServers := fmt.Sprintf("%s,%s", rpcEndpoint, rpcEndpoint)
+	configStr = updateConfigValue(configStr, "rpc_servers", rpcServers)
+	fmt.Printf("Set statesync.rpc_servers = %s\n", rpcServers)
+
+	// Set trust height and hash (use latest block from status)
+	height, err := strconv.ParseInt(statusInfo.LatestBlockHeight, 10, 64)
+	if err != nil {
+		return fmt.Errorf("failed to parse block height: %w", err)
+	}
+
+	configStr = updateConfigValue(configStr, "trust_height", strconv.FormatInt(height, 10))
+	configStr = updateConfigValue(configStr, "trust_hash", fmt.Sprintf(`"%s"`, statusInfo.LatestBlockHash))
+	fmt.Printf("Set statesync.trust_height = %d\n", height)
+	fmt.Printf("Set statesync.trust_hash = %s\n", statusInfo.LatestBlockHash)
+
+	// Write updated config
+	if err := os.WriteFile(configPath, []byte(configStr), 0644); err != nil {
+		return fmt.Errorf("failed to write config file: %w", err)
+	}
+
+	fmt.Println("Configuration updated successfully!")
+	return nil
+}
+
+// updateConfigValue updates a TOML config value in a string
+func updateConfigValue(config, key, value string) string {
+	replacement := fmt.Sprintf(`%s = %s`, key, value)
+
+	// Special handling for quoted values
+	if !strings.HasPrefix(value, `"`) && key != "enable" && key != "trust_height" {
+		replacement = fmt.Sprintf(`%s = "%s"`, key, value)
+	}
+
+	if strings.Contains(config, key+" =") || strings.Contains(config, key+"=") {
+		// Use simple string replacement for now
+		lines := strings.Split(config, "\n")
+		for i, line := range lines {
+			trimmed := strings.TrimSpace(line)
+			if strings.HasPrefix(trimmed, key+" =") || strings.HasPrefix(trimmed, key+"=") {
+				// Preserve indentation
+				indent := ""
+				for _, char := range line {
+					if char == ' ' || char == '\t' {
+						indent += string(char)
+					} else {
+						break
+					}
+				}
+				lines[i] = indent + replacement
+				break
+			}
+		}
+		config = strings.Join(lines, "\n")
+	}
+
+	return config
 }
 
 /*

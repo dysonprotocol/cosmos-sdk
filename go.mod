@@ -2,8 +2,6 @@ module dysonprotocol.com
 
 go 1.24
 
-replace dysonprotocol.com/x/nft => ./x/nft
-
 require (
 	cosmossdk.io/api v0.9.2
 	cosmossdk.io/client/v2 v2.0.0-beta.11
@@ -24,7 +22,7 @@ require (
 	// this version is not used as it is always replaced by the latest Cosmos SDK version
 	github.com/cosmos/cosmos-sdk v0.53.0
 	github.com/cosmos/gogoproto v1.7.0
-	github.com/cosmos/ibc-go/v10 v10.0.0-00010101000000-000000000000
+	github.com/cosmos/ibc-go/v10 v10.3.0
 	github.com/spf13/cast v1.9.2
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.7
@@ -67,7 +65,7 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.48.1 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.48.1 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
-	github.com/aws/aws-sdk-go v1.44.224 // indirect
+	github.com/aws/aws-sdk-go v1.49.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.2.0 // indirect
@@ -87,7 +85,6 @@ require (
 	github.com/cockroachdb/redact v1.1.6 // indirect
 	github.com/cockroachdb/tokenbucket v0.0.0-20230807174530-cc333fc44b06 // indirect
 	github.com/cometbft/cometbft-db v1.0.4 // indirect
-	github.com/cometbft/cometbft/api v1.0.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect
@@ -125,7 +122,7 @@ require (
 	github.com/gogo/googleapis v1.4.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
-	github.com/golang/snappy v0.0.5-0.20220116011046-fa5810519dcb // indirect
+	github.com/golang/snappy v0.0.5-0.20231225225746-43d5d4cd4e0e // indirect
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/flatbuffers v25.1.24+incompatible // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
@@ -174,7 +171,6 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/oasisprotocol/curve25519-voi v0.0.0-20230904125328-1f23a7beb09a // indirect
 	github.com/oklog/run v1.1.0 // indirect
-	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.36.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/petermattis/goid v0.0.0-20240813172612-4fcff4a6cae7 // indirect
@@ -211,7 +207,7 @@ require (
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/detectors/gcp v1.34.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.58.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.58.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.59.0 // indirect
 	go.opentelemetry.io/otel v1.34.0 // indirect
 	go.opentelemetry.io/otel/metric v1.34.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.34.0 // indirect
@@ -250,7 +246,7 @@ require (
 replace (
 	cosmossdk.io/client/v2 => ./cosmos-sdk/client/v2
 	cosmossdk.io/x/circuit => ./cosmos-sdk/x/circuit
-	github.com/cosmos/ibc-go/v10 => ./ibc-go
+//github.com/cosmos/ibc-go/v10 => ./ibc-go
 )
 
 // Below are the long-lived replace of the SimApp
@@ -264,23 +260,26 @@ replace (
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 )
 
+replace dysonprotocol.com/x/nft => ./x/nft
+
 // Use local cosmos-sdk fork
-replace github.com/cosmos/cosmos-sdk => ./cosmos-sdk
 
-replace cosmossdk.io/api => ./cosmos-sdk/api
+//replace github.com/cosmos/cosmos-sdk => ./cosmos-sdk
 
-replace cosmossdk.io/errors => ./cosmos-sdk/errors
+//replace cosmossdk.io/api => ./cosmos-sdk/api
 
-replace cosmossdk.io/core => ./cosmos-sdk/core
+//replace cosmossdk.io/errors => ./cosmos-sdk/errors
 
-replace cosmossdk.io/store => ./cosmos-sdk/store
+//replace cosmossdk.io/core => ./cosmos-sdk/core
 
-replace cosmossdk.io/collections => ./cosmos-sdk/collections
+//replace cosmossdk.io/store => ./cosmos-sdk/store
 
-replace cosmossdk.io/log => ./cosmos-sdk/log
+//replace cosmossdk.io/collections => ./cosmos-sdk/collections
 
-replace cosmossdk.io => cosmossdk.io v0.53.0-rc.4
+//replace cosmossdk.io/log => ./cosmos-sdk/log
 
-replace github.com/cometbft/cometbft => github.com/cometbft/cometbft v0.38.17
+//replace cosmossdk.io => cosmossdk.io v0.53.4
+
+//replace github.com/cometbft/cometbft => github.com/cometbft/cometbft v0.38.17
 
 replace github.com/kluctl/go-embed-python => ./dysvm/go-embed-python

@@ -55,22 +55,41 @@ func (k Keeper) validateHistoricalBlocks(ctx sdk.Context, params scripttypes.Par
 	if err != nil {
 		// This is a critical error - the node doesn't have required historical blocks
 		// Log the error instead of panicking
+		warningMsg := fmt.Sprintf(`
+## CRITICAL WARNING: Missing Historical Blocks ##
+
+This node is likely STATE-SYNCing to join the network and is missing initial historical blocks.
+This error _could_ prevent the this node from joining the network. 
+
+Normally if you let the node accumulate blocks this warning will resolve itself without any action required.
+
+REQUIREMENT:
+- config.toml min-retain-blocks MUST be > max-relative-historical-blocks (%d)
+
+STATE-SYNC RECOVERY OPTIONS:
+A. WAIT - Let the node accumulate blocks naturally (safest)
+B. REQUEST missing blocks from other validators
+   and use "dysond snapshots load <block snapshot>.gz" to load the missing blocks and continue with state-sync.
+C. FALLBACK to block-sync from genesis (time-consuming)
+
+TECHNICAL DETAILS:
+- Script module requires access to %d historical blocks
+- Missing blocks: height %d
+`,
+			params.MaxRelativeHistoricalBlocks, // The script parameter
+			params.MaxRelativeHistoricalBlocks, // Script requirement
+			oldestRequiredHeight,               // Missing block height
+		)
+
 		k.Logger(ctx).Error(
-			"CRITICAL: Node missing required historical blocks - this will cause a consensus error",
+			warningMsg,
 			"current_height", currentHeight,
 			"oldest_required_height", oldestRequiredHeight,
 			"max_relative_historical_blocks", params.MaxRelativeHistoricalBlocks,
 			"absolute_historical_block_cutoff", params.AbsoluteHistoricalBlockCutoff,
 			"error", err,
-			"message", fmt.Sprintf(
-				"WARNING: This error will cause a consensus failure. "+
-					"Please ensure your node is configured to retain at least %d historical blocks. "+
-					"Check your app.toml `min-retain-blocks=%d`",
-				params.MaxRelativeHistoricalBlocks,
-				params.MaxRelativeHistoricalBlocks+1,
-			),
 		)
-		return err
+		// return err
 	}
 
 	// Log successful validation for monitoring
