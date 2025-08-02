@@ -254,6 +254,14 @@ def apply_genesis_overrides(genesis_data: dict, app_state: dict, global_override
         for key, value in storage_params.items():
             app_state_storage_params[key] = str(value)
     
+    # script params
+    if 'script_params' in merged_genesis:
+        script_params = merged_genesis['script_params']
+        app_state_script = app_state.setdefault('script', {})
+        app_state_script_params = app_state_script.setdefault('params', {})
+        for key, value in script_params.items():
+            app_state_script_params[key] = str(value)
+
     # Set bank denom metadata for dys/udys with 6 exponent
     app_state_bank = app_state.setdefault('bank', {})
     app_state_bank['denom_metadata'] = [
