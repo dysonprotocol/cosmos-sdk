@@ -33,7 +33,6 @@
 
 
 ### 0. Build the dysvm dependencies
-Only do this once.
 
 
 ```bash
@@ -213,80 +212,14 @@ dysond tx script update --from alice -y -o json --gas 500000 --code "$(cat examp
 
 ```
 
-    Usage:
-      dysond tx script update [--code <code> | --code-path <path to source code>] [flags]
-    
-    Flags:
-      -a, --account-number uint         The account number of the signing account (offline mode only)
-          --aux                         Generate aux signer data instead of sending a tx
-      -b, --broadcast-mode string       Transaction broadcasting mode (sync|async) (default "sync")
-          --chain-id string             The network chain ID
-          --code string                 Source code as a string
-          --code-path string            Path to the source code file
-          --dry-run                     ignore the --gas flag and perform a simulation of a transaction, but don't broadcast it (when enabled, the local Keybase is not accessible)
-          --fee-granter string          Fee granter grants fees for the transaction
-          --fee-payer string            Fee payer pays fees for the transaction instead of deducting from the signer
-          --fees string                 Fees to pay along with transaction; eg: 10uatom
-          --from string                 Name or address of private key with which to sign
-          --gas string                  gas limit to set per-transaction; set to "auto" to calculate sufficient gas automatically. Note: "auto" option doesn't always report accurate results. Set a valid coin value to adjust the result. Can be used instead of "fees". (default 200000)
-          --gas-adjustment float        adjustment factor to be multiplied against the estimate returned by the tx simulation; if the gas limit is set manually this flag is ignored  (default 1)
-          --gas-prices string           Gas prices in decimal format to determine the transaction fee (e.g. 0.1uatom)
-          --generate-only               Build an unsigned transaction and write it to STDOUT (when enabled, the local Keybase only accessed when providing a key name)
-      -h, --help                        help for update
-          --keyring-backend string      Select keyring's backend (os|file|kwallet|pass|test|memory) (default "os")
-          --keyring-dir string          The client Keyring directory; if omitted, the default 'home' directory will be used
-          --ledger                      Use a connected Ledger device
-          --node string                 <host>:<port> to CometBFT rpc interface for this chain (default "tcp://localhost:26657")
-          --note string                 Note to add a description to the transaction (previously --memo)
-          --offline                     Offline mode (does not allow any online functionality)
-      -o, --output string               Output format (text|json) (default "json")
-      -s, --sequence uint               The sequence number of the signing account (offline mode only)
-          --sign-mode string            Choose sign mode (direct|amino-json|direct-aux|textual), this is an advanced feature
-          --timeout-duration duration   TimeoutDuration is the duration the transaction will be considered valid in the mempool. The transaction's unordered nonce will be set to the time of transaction creation + the duration value passed. If the transaction is still in the mempool, and the block time has passed the time of submission + TimeoutTimestamp, the transaction will be rejected.
-          --timeout-height uint         DEPRECATED: Please use --timeout-duration instead. Set a block timeout height to prevent the tx from being committed past a certain height
-          --tip string                  Tip is the amount that is going to be transferred to the fee payer on the target chain. This flag is only valid when used with --aux, and is ignored if the target chain didn't enable the TipDecorator
-          --unordered                   Enable unordered transaction delivery; must be used in conjunction with --timeout-duration
-      -y, --yes                         Skip tx broadcasting prompt confirmation
-    
-    Global Flags:
-          --home string         directory for config and data (default "/Users/user/.dysonprotocol")
-          --log_format string   The logging format (json|plain) (default "plain")
-          --log_level string    The logging level (trace|debug|info|warn|error|fatal|panic|disabled or '*:<level>,<key>:<level>') (default "info")
-          --log_no_color        Disable colored logs
-          --trace               print out full stack trace on errors
-    
-    rpc error: code = NotFound desc = rpc error: code = NotFound desc = account dys21ldyd2ngz4ttkmvud40pshksz9g0yx9lzjy9py5 not found: key not found
-    Usage:
-      dysond query wait-tx [hash] [flags]
-    
-    Aliases:
-      wait-tx, event-query-tx-for
-    
-    Examples:
-    By providing the transaction hash:
-    $ dysond q wait-tx [hash]
-    
-    Or, by piping a "tx" command:
-    $ dysond tx [flags] | dysond q wait-tx
-    
-    
-    Flags:
-          --grpc-addr string   the gRPC endpoint to use for this chain
-          --grpc-insecure      allow gRPC over insecure channels, if not the server must use TLS
-          --height int         Use a specific height to query state at (this can error if the node is pruning state)
-      -h, --help               help for wait-tx
-          --node string        <host>:<port> to CometBFT RPC interface for this chain (default "tcp://localhost:26657")
-      -o, --output string      Output format (text|json) (default "text")
-          --timeout duration   The maximum time to wait for the transaction to be included in a block (default 15s)
-    
-    Global Flags:
-          --home string         directory for config and data (default "/Users/user/.dysonprotocol")
-          --log_format string   The logging format (json|plain) (default "plain")
-          --log_level string    The logging level (trace|debug|info|warn|error|fatal|panic|disabled or '*:<level>,<key>:<level>') (default "info")
-          --log_no_color        Disable colored logs
-          --trace               print out full stack trace on errors
-    
-    txhash not found
+    {
+      "height": "4805",
+      "txhash": "5005A9043FEBC44D68A3F63E82417DE6385F0232ED969E509865EE5CEF4B6197",
+      "code": 0,
+      "gas_wanted": "500000",
+      "gas_used": "118062",
+      "script_version": "\"9\""
+    }
 
 
 ### 3. Execute the Script Function
@@ -298,101 +231,114 @@ Invoke the `save_message` function using Bob's account, passing `"my name is bob
 %%bash
 ALICE_ADDRESS=$(dysond keys show -a alice)
 # Save the message to the storage
-dysond tx script exec-script --from bob --script-address $ALICE_ADDRESS --function-name save_message --args '["my name is <b>bob</b>"]' -y  | dysond query wait-tx -o json | ./scripts/parse_exec_script_tx.py | jq 
+dysond tx script exec --from alice --script-address $ALICE_ADDRESS --function-name save_message --args '["my name is <b>bob</b>"]' -y  | dysond query wait-tx -o json | ./scripts/parse_exec_script_tx.py | jq 
 ```
 
-    Usage:
-      dysond query wait-tx [hash] [flags]
-    
-    Aliases:
-      wait-tx, event-query-tx-for
-    
-    Examples:
-    By providing the transaction hash:
-    $ dysond q wait-tx [hash]
-    
-    Or, by piping a "tx" command:
-    $ dysond tx [flags] | dysond q wait-tx
-    
-    
-    Flags:
-          --grpc-addr string   the gRPC endpoint to use for this chain
-          --grpc-insecure      allow gRPC over insecure channels, if not the server must use TLS
-          --height int         Use a specific height to query state at (this can error if the node is pruning state)
-      -h, --help               help for wait-tx
-          --node string        <host>:<port> to CometBFT RPC interface for this chain (default "tcp://localhost:26657")
-      -o, --output string      Output format (text|json) (default "text")
-          --timeout duration   The maximum time to wait for the transaction to be included in a block (default 15s)
-    
-    Global Flags:
-          --home string         directory for config and data (default "/Users/user/.dysonprotocol")
-          --log_format string   The logging format (json|plain) (default "plain")
-          --log_level string    The logging level (trace|debug|info|warn|error|fatal|panic|disabled or '*:<level>,<key>:<level>') (default "info")
-          --log_no_color        Disable colored logs
-          --trace               print out full stack trace on errors
-    
-    dial tcp [::1]:26657: connect: connection refused
-    Usage:
-      dysond tx script [flags]
-      dysond tx script [command]
-    
-    Available Commands:
-      create-new-script Creates a new script with a deterministic address derived from creator and code
-      exec              Executes a script at a given address with optional input data and parameters
-      grant-exec        Grant a custom ScriptExecAuthorization to a grantee (via authz)
-      update            Updates the script at the sender's address with new code and increments the version
-    
-    Flags:
-      -h, --help   help for script
-    
-    Global Flags:
-          --home string         directory for config and data (default "/Users/user/.dysonprotocol")
-          --log_format string   The logging format (json|plain) (default "plain")
-          --log_level string    The logging level (trace|debug|info|warn|error|fatal|panic|disabled or '*:<level>,<key>:<level>') (default "info")
-          --log_no_color        Disable colored logs
-          --trace               print out full stack trace on errors
-    
-    Use "dysond tx script [command] --help" for more information about a command.
-    
-    unknown command "exec-script" for "script"
-    jq: parse error: Invalid numeric literal at line 1, column 6
-
-
-
-    ---------------------------------------------------------------------------
-
-    CalledProcessError                        Traceback (most recent call last)
-
-    Cell In[13], line 1
-    ----> 1 get_ipython().run_cell_magic('bash', '', 'ALICE_ADDRESS=$(dysond keys show -a alice)\n# Save the message to the storage\ndysond tx script exec-script --from bob --script-address $ALICE_ADDRESS --function-name save_message --args \'["my name is <b>bob</b>"]\' -y  | dysond query wait-tx -o json | ./scripts/parse_exec_script_tx.py | jq \n')
-
-
-    File ~/.pyenv/versions/3.12.11/lib/python3.12/site-packages/IPython/core/interactiveshell.py:2549, in InteractiveShell.run_cell_magic(self, magic_name, line, cell)
-       2547 with self.builtin_trap:
-       2548     args = (magic_arg_s, cell)
-    -> 2549     result = fn(*args, **kwargs)
-       2551 # The code below prevents the output from being displayed
-       2552 # when using magics with decorator @output_can_be_silenced
-       2553 # when the last Python token in the expression is a ';'.
-       2554 if getattr(fn, magic.MAGIC_OUTPUT_CAN_BE_SILENCED, False):
-
-
-    File ~/.pyenv/versions/3.12.11/lib/python3.12/site-packages/IPython/core/magics/script.py:159, in ScriptMagics._make_script_magic.<locals>.named_script_magic(line, cell)
-        157 else:
-        158     line = script
-    --> 159 return self.shebang(line, cell)
-
-
-    File ~/.pyenv/versions/3.12.11/lib/python3.12/site-packages/IPython/core/magics/script.py:336, in ScriptMagics.shebang(self, line, cell)
-        331 if args.raise_error and p.returncode != 0:
-        332     # If we get here and p.returncode is still None, we must have
-        333     # killed it but not yet seen its return code. We don't wait for it,
-        334     # in case it's stuck in uninterruptible sleep. -9 = SIGKILL
-        335     rc = p.returncode or -9
-    --> 336     raise CalledProcessError(rc, cell)
-
-
-    CalledProcessError: Command 'b'ALICE_ADDRESS=$(dysond keys show -a alice)\n# Save the message to the storage\ndysond tx script exec-script --from bob --script-address $ALICE_ADDRESS --function-name save_message --args \'["my name is <b>bob</b>"]\' -y  | dysond query wait-tx -o json | ./scripts/parse_exec_script_tx.py | jq \n'' returned non-zero exit status 5.
+    {
+      "code": 0,
+      "script_result": {
+        "result": {
+          "cumsize": 15409,
+          "exception": null,
+          "gas_limit": 200000,
+          "nodes_called": 40,
+          "result": {
+            "@type": "/dysonprotocol.storage.v1.MsgStorageSetResponse"
+          },
+          "script_gas_consumed": 37673,
+          "stdout": ""
+        },
+        "attached_message_results": []
+      },
+      "raw_log": "",
+      "events": [
+        {
+          "type": "tx",
+          "attributes": [
+            {
+              "key": "acc_seq",
+              "value": "dys219e7k3qjn4che6r3n7cmew2pkfa8mph49ekwchk/61",
+              "index": true
+            }
+          ]
+        },
+        {
+          "type": "tx",
+          "attributes": [
+            {
+              "key": "signature",
+              "value": "VYrj3ptFc7OZVhxtBWyq/1YpzHP9DGMQ7InVAePPC3hkpaVXq6WNMhnRM3ek0AJ18LdhhS+R9k90hv3eA0Qtug==",
+              "index": true
+            }
+          ]
+        },
+        {
+          "type": "message",
+          "attributes": [
+            {
+              "key": "action",
+              "value": "/dysonprotocol.script.v1.MsgExec",
+              "index": true
+            },
+            {
+              "key": "sender",
+              "value": "dys219e7k3qjn4che6r3n7cmew2pkfa8mph49ekwchk",
+              "index": true
+            },
+            {
+              "key": "module",
+              "value": "script",
+              "index": true
+            },
+            {
+              "key": "msg_index",
+              "value": "0",
+              "index": true
+            }
+          ]
+        },
+        {
+          "type": "dysonprotocol.storage.v1.EventStorageUpdated",
+          "attributes": [
+            {
+              "key": "address",
+              "value": "\"dys219e7k3qjn4che6r3n7cmew2pkfa8mph49ekwchk\"",
+              "index": true
+            },
+            {
+              "key": "index",
+              "value": "\"greetings/dys219e7k3qjn4che6r3n7cmew2pkfa8mph49ekwchk\"",
+              "index": true
+            },
+            {
+              "key": "msg_index",
+              "value": "0",
+              "index": true
+            }
+          ]
+        },
+        {
+          "type": "dysonprotocol.script.v1.EventExecScript",
+          "attributes": [
+            {
+              "key": "request",
+              "value": "{\"executor_address\":\"dys219e7k3qjn4che6r3n7cmew2pkfa8mph49ekwchk\",\"script_address\":\"dys219e7k3qjn4che6r3n7cmew2pkfa8mph49ekwchk\",\"script_name\":\"\",\"extra_code\":\"\",\"function_name\":\"save_message\",\"args\":\"[\\\"my name is \\u003cb\\u003ebob\\u003c/b\\u003e\\\"]\",\"kwargs\":\"\",\"attached_messages\":[]}",
+              "index": true
+            },
+            {
+              "key": "response",
+              "value": "{\"result\":\"{\\\"cumsize\\\":15409,\\\"exception\\\":null,\\\"gas_limit\\\":200000,\\\"nodes_called\\\":40,\\\"result\\\":{\\\"@type\\\":\\\"/dysonprotocol.storage.v1.MsgStorageSetResponse\\\"},\\\"script_gas_consumed\\\":37673,\\\"stdout\\\":\\\"\\\"}\",\"attached_message_results\":[]}",
+              "index": true
+            },
+            {
+              "key": "msg_index",
+              "value": "0",
+              "index": true
+            }
+          ]
+        }
+      ]
+    }
 
 
 ### 4. Query the WSGI Endpoint
