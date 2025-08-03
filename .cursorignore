@@ -8,3 +8,5 @@ proto_vendor
 .cursorignore
 .cursorrules
 node_modules
+!delivery
+!cosoms-sdk
