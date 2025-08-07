@@ -1,7 +1,8 @@
 # Makefile
 
 # Default to Alice's address if none is set in the environment
-ADDRESS ?= $(shell dysond keys show alice --output json | jq -r .address)
+NAME ?= "alice"
+ADDRESS ?= $(shell dysond keys show $NAME --output json | jq -r .address)
 # Default API port
 API_PORT ?= 1317
 
@@ -27,9 +28,9 @@ else
 endif
 
 update-script:
-	@echo "Updating script at address: $(ADDRESS)"
+	@echo "Updating script [$(NAME)] at address: $(ADDRESS)"
 	@dysond tx script update \
-		--from "$(ADDRESS)" \
+		--from "$$NAME" \
 		--gas-adjustment 2 \
 		--gas auto \
 		-y -o json \
@@ -44,7 +45,7 @@ upload-file:
 	dysond tx storage set \
 		--gas-adjustment 2 \
 		--gas auto \
-		--from "$(ADDRESS)" \
+		--from "$$NAME" \
 		--index "$$index" \
 		--data "$$(cat "$$FILE")" \
 		-y -o json \
@@ -86,7 +87,7 @@ set-settings:
 	@dysond tx storage set \
 		--gas-adjustment 2 \
 		--gas auto \
-		--from "$(ADDRESS)" \
+		--from "$$NAME" \
 		--index "settings" \
 		--data '{"BASE_DOMAIN":"http://$(ADDRESS).localhost:$(API_PORT)"}' \
 		-y -o json \
