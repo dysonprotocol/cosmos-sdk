@@ -73,25 +73,34 @@ func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	// If no address found in TXT records, fall back to regex pattern matching
+	// If no address or name found in TXT records, fall back to regex pattern with named captures
 	if queryReq.ScriptAddress == "" && queryReq.ScriptName == "" {
-		// split the host and use the first part as the address
 		match := h.scriptAddressOrNameRe.FindStringSubmatch(req.Host)
-
-		if len(match) <= 1 {
-			errorMsg := fmt.Sprintf("No address found for host: `%s` using ScriptAddressOrNamePattern: `%s`  match: %v", req.Host, h.scriptAddressOrNameRe.String(), match)
+		if len(match) == 0 {
+			errorMsg := fmt.Sprintf("No match for host: `%s` using ScriptAddressOrNamePattern: `%s`", req.Host, h.scriptAddressOrNameRe.String())
 			http.Error(w, errorMsg, http.StatusNotFound)
 			return
-		} else {
-			addressOrName := match[1]
-			fmt.Printf("Found address from regex pattern: %s\n", addressOrName)
+		}
 
-			// Simple heuristic: if it starts with "dys", treat as address, otherwise as name
-			if strings.HasPrefix(addressOrName, "dys21") {
-				queryReq.ScriptAddress = addressOrName
-			} else {
-				queryReq.ScriptName = addressOrName
+		names := h.scriptAddressOrNameRe.SubexpNames()
+		for i := 1; i < len(match) && i < len(names); i++ {
+			if match[i] == "" {
+				continue
 			}
+			switch names[i] {
+			case "address":
+				queryReq.ScriptAddress = match[i]
+				fmt.Printf("Found script address from regex: %s\n", queryReq.ScriptAddress)
+			case "name":
+				queryReq.ScriptName = match[i] + ".dys"
+				fmt.Printf("Found script name from regex: %s\n", queryReq.ScriptName)
+			}
+		}
+
+		if queryReq.ScriptAddress == "" && queryReq.ScriptName == "" {
+			errorMsg := fmt.Sprintf("No named capture (address/name) extracted for host: `%s` using pattern: `%s`, raw match: %v", req.Host, h.scriptAddressOrNameRe.String(), match)
+			http.Error(w, errorMsg, http.StatusNotFound)
+			return
 		}
 	}
 

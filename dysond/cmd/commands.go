@@ -123,8 +123,25 @@ func initAppConfig() (string, interface{}) {
 	customAppTemplate := serverconfig.DefaultConfigTemplate + `
 
 [dwapp]
-# Regular expression pattern for extracting script address or name from hostname.
-# This pattern must be a valid TOML string literal
+# Regex used to extract a Dyson script identifier from the HTTP Host header.
+# 
+# Use named capture groups so the server can tell what was matched:
+#   - (?P<address>...) matches a dys2 script address (e.g. dys21abcd...)
+#   - (?P<name>...)    matches a script name (WITHOUT the .dys suffix)
+#
+# Behavior:
+#   - If 'address' matches, it is used as the script address.
+#   - If 'name' matches, the server automatically appends '.dys' before querying.
+#
+# Defaults match either a dys2 address or a simple subdomain name anywhere in the host.
+#   - Default: '{{ .Custom.DwApp.ScriptAddressOrNamePattern }}'
+# Examples:
+#   - Host: dys21xyz.example.com   -> address = dys21xyz
+#   - Host: myapp.example.com  -> name    = myapp (server uses 'myapp.dys')
+#
+# Notes:
+#   - This must be a valid TOML string literal.
+#   - If you customize the pattern, remember to escape backslashes for TOML where needed.
 script-address-or-name-pattern = '{{ .Custom.DwApp.ScriptAddressOrNamePattern }}'
 `
 
