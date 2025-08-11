@@ -159,7 +159,7 @@ init-localnet:
 
 start-localnet: 
 	@echo "--> Starting dyson local net"
-	./scripts/chainnet.py start --config-file /tmp/dysonchains/chains.json --block-speed 500ms  --logs --no-blocks-timeout 10
+	./scripts/chainnet.py start --block-speed 500ms  --logs --no-blocks-timeout 10
 
 ###############################################################################
 ###                                Protobuf                                 ###

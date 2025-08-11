@@ -94,7 +94,7 @@ from datetime import datetime, timezone
 
 # --- Defaults & Constants ---
 DEFAULT_DENOM = "udys"
-DEFAULT_BASE_DIR = Path("/tmp/dysonchains")
+DEFAULT_BASE_DIR = Path(os.path.expanduser("~/.dysonchains"))
 DEFAULT_CONFIG_PATH = DEFAULT_BASE_DIR / "chains.json"
 DEFAULT_GENTX_AMOUNT = f"1000000000000{DEFAULT_DENOM}"
 DEFAULT_INITIAL_BALANCE = f"1000000000000{DEFAULT_DENOM}"
