@@ -13,10 +13,11 @@ import (
 )
 
 var (
-	md_Script         protoreflect.MessageDescriptor
-	fd_Script_address protoreflect.FieldDescriptor
-	fd_Script_version protoreflect.FieldDescriptor
-	fd_Script_code    protoreflect.FieldDescriptor
+	md_Script               protoreflect.MessageDescriptor
+	fd_Script_address       protoreflect.FieldDescriptor
+	fd_Script_version       protoreflect.FieldDescriptor
+	fd_Script_code          protoreflect.FieldDescriptor
+	fd_Script_update_height protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -25,6 +26,7 @@ func init() {
 	fd_Script_address = md_Script.Fields().ByName("address")
 	fd_Script_version = md_Script.Fields().ByName("version")
 	fd_Script_code = md_Script.Fields().ByName("code")
+	fd_Script_update_height = md_Script.Fields().ByName("update_height")
 }
 
 var _ protoreflect.Message = (*fastReflection_Script)(nil)
@@ -110,6 +112,12 @@ func (x *fastReflection_Script) Range(f func(protoreflect.FieldDescriptor, proto
 			return
 		}
 	}
+	if x.UpdateHeight != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.UpdateHeight)
+		if !f(fd_Script_update_height, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -131,6 +139,8 @@ func (x *fastReflection_Script) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.Version != uint64(0)
 	case "dysonprotocol.script.v1.Script.code":
 		return x.Code != ""
+	case "dysonprotocol.script.v1.Script.update_height":
+		return x.UpdateHeight != uint64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.Script"))
@@ -153,6 +163,8 @@ func (x *fastReflection_Script) Clear(fd protoreflect.FieldDescriptor) {
 		x.Version = uint64(0)
 	case "dysonprotocol.script.v1.Script.code":
 		x.Code = ""
+	case "dysonprotocol.script.v1.Script.update_height":
+		x.UpdateHeight = uint64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.Script"))
@@ -178,6 +190,9 @@ func (x *fastReflection_Script) Get(descriptor protoreflect.FieldDescriptor) pro
 	case "dysonprotocol.script.v1.Script.code":
 		value := x.Code
 		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.script.v1.Script.update_height":
+		value := x.UpdateHeight
+		return protoreflect.ValueOfUint64(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.Script"))
@@ -204,6 +219,8 @@ func (x *fastReflection_Script) Set(fd protoreflect.FieldDescriptor, value proto
 		x.Version = value.Uint()
 	case "dysonprotocol.script.v1.Script.code":
 		x.Code = value.Interface().(string)
+	case "dysonprotocol.script.v1.Script.update_height":
+		x.UpdateHeight = value.Uint()
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.Script"))
@@ -230,6 +247,8 @@ func (x *fastReflection_Script) Mutable(fd protoreflect.FieldDescriptor) protore
 		panic(fmt.Errorf("field version of message dysonprotocol.script.v1.Script is not mutable"))
 	case "dysonprotocol.script.v1.Script.code":
 		panic(fmt.Errorf("field code of message dysonprotocol.script.v1.Script is not mutable"))
+	case "dysonprotocol.script.v1.Script.update_height":
+		panic(fmt.Errorf("field update_height of message dysonprotocol.script.v1.Script is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.Script"))
@@ -249,6 +268,8 @@ func (x *fastReflection_Script) NewField(fd protoreflect.FieldDescriptor) protor
 		return protoreflect.ValueOfUint64(uint64(0))
 	case "dysonprotocol.script.v1.Script.code":
 		return protoreflect.ValueOfString("")
+	case "dysonprotocol.script.v1.Script.update_height":
+		return protoreflect.ValueOfUint64(uint64(0))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.Script"))
@@ -329,6 +350,9 @@ func (x *fastReflection_Script) ProtoMethods() *protoiface.Methods {
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		if x.UpdateHeight != 0 {
+			n += 1 + runtime.Sov(uint64(x.UpdateHeight))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -357,6 +381,11 @@ func (x *fastReflection_Script) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.UpdateHeight != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.UpdateHeight))
+			i--
+			dAtA[i] = 0x20
 		}
 		if len(x.Code) > 0 {
 			i -= len(x.Code)
@@ -509,6 +538,25 @@ func (x *fastReflection_Script) ProtoMethods() *protoiface.Methods {
 				}
 				x.Code = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
+			case 4:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field UpdateHeight", wireType)
+				}
+				x.UpdateHeight = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.UpdateHeight |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -565,6 +613,8 @@ type Script struct {
 	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 	Version uint64 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
 	Code    string `protobuf:"bytes,3,opt,name=code,proto3" json:"code,omitempty"`
+	// Block height at which this script was last updated
+	UpdateHeight uint64 `protobuf:"varint,4,opt,name=update_height,json=updateHeight,proto3" json:"update_height,omitempty"`
 }
 
 func (x *Script) Reset() {
@@ -608,6 +658,13 @@ func (x *Script) GetCode() string {
 	return ""
 }
 
+func (x *Script) GetUpdateHeight() uint64 {
+	if x != nil {
+		return x.UpdateHeight
+	}
+	return 0
+}
+
 var File_dysonprotocol_script_v1_script_proto protoreflect.FileDescriptor
 
 var file_dysonprotocol_script_v1_script_proto_rawDesc = []byte{
@@ -615,14 +672,17 @@ var file_dysonprotocol_script_v1_script_proto_rawDesc = []byte{
 	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x17, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x22,
-	0x50, 0x0a, 0x06, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x64, 0x64,
+	0x75, 0x0a, 0x06, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x64, 0x64,
 	0x72, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x64, 0x64, 0x72,
 	0x65, 0x73, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x02,
 	0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a,
 	0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x63, 0x6f, 0x64,
-	0x65, 0x42, 0x22, 0x5a, 0x20, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f,
-	0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x12, 0x23, 0x0a, 0x0d, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x5f, 0x68, 0x65, 0x69, 0x67,
+	0x68, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0c, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x48, 0x65, 0x69, 0x67, 0x68, 0x74, 0x42, 0x22, 0x5a, 0x20, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x73, 0x63,
+	0x72, 0x69, 0x70, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (

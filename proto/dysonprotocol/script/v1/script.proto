@@ -8,4 +8,6 @@ message Script {
   string address = 1;
   uint64 version = 2;
   string code = 3;
+  // Block height at which this script was last updated
+  uint64 update_height = 4;
 }

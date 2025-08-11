@@ -5,8 +5,9 @@ import pytest
 import subprocess
 from pathlib import Path
 
-# Import the script directly
-script_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
+# Import the script directly (repo root /scripts)
+repo_root = Path(__file__).resolve().parents[2]
+script_path = str(repo_root / "scripts")
 sys.path.append(script_path)
 import parse_exec_script_tx
 

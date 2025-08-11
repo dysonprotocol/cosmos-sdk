@@ -391,6 +391,10 @@ paths:
                     format: uint64
                   code:
                     type: string
+                  update_height:
+                    type: string
+                    format: uint64
+                    title: Block height at which this script was last updated
             description: QueryScriptInfoResponse is the Query/ScriptInfo response type.
         default:
           description: An unexpected error response.
@@ -16570,6 +16574,10 @@ definitions:
             format: uint64
           code:
             type: string
+          update_height:
+            type: string
+            format: uint64
+            title: Block height at which this script was last updated
     description: QueryScriptInfoResponse is the Query/ScriptInfo response type.
   dysonprotocol.script.v1.QueryVerifyTxResponse:
     type: object
@@ -16665,6 +16673,10 @@ definitions:
         format: uint64
       code:
         type: string
+      update_height:
+        type: string
+        format: uint64
+        title: Block height at which this script was last updated
   dysonprotocol.script.v1.WebRequest:
     type: object
     properties:

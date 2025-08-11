@@ -1368,12 +1368,12 @@ class DysEval(object):
 
         if isinstance(node, ast.ListComp):
             to_return = list()
+        elif isinstance(node, ast.GeneratorExp):
+            to_return = list()
         elif isinstance(node, ast.DictComp):
             to_return = dict()
         elif isinstance(node, ast.SetComp):
             to_return = set()
-        elif isinstance(node, ast.GeneratorExp):
-            raise NotImplementedError("Generator expressions are not supported, use a list comprehension instead")
         else:  # pragma: no cover
             raise Exception("should never happen")
 
@@ -1401,6 +1401,8 @@ class DysEval(object):
                         do_generator(gi + 1)
                     else:
                         if isinstance(node, ast.ListComp):
+                            to_return.append(self._eval(node.elt))
+                        if isinstance(node, ast.GeneratorExp):
                             to_return.append(self._eval(node.elt))
                         elif isinstance(node, ast.DictComp):
                             to_return[self._eval(node.key)] = self._eval(node.value)

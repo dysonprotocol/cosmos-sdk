@@ -8,6 +8,7 @@ import (
 	cosmossdkerrors "cosmossdk.io/errors"
 	storetypes "cosmossdk.io/store/types"
 	scriptv1 "dysonprotocol.com/api/script/types"
+	"dysonprotocol.com/dysvm"
 	"dysonprotocol.com/x/script"
 	scripttypes "dysonprotocol.com/x/script/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -39,14 +40,16 @@ func (k Keeper) UpdateScript(ctx context.Context, msg *scripttypes.MsgUpdateScri
 	}
 
 	// Format the code with black before setting it
-	//formattedCode, err := dysvm.DysFormat(msg.Code)
-	//if err != nil {
-	//	k.Logger(sdkCtx).Error("failed to format code with dys_format", "error", err)
-	//	formattedCode = msg.Code
-	//}
+	formattedCode, err := dysvm.DysFormat(msg.Code)
+	if err != nil {
+		k.Logger(sdkCtx).Error("failed to format code with dys_format", "error", err)
+		return nil, cosmossdkerrors.Wrapf(err, "failed to format code: %s")
+	}
 
-	script.Code = msg.Code
+	script.Code = formattedCode
 	script.Version = script.Version + 1
+	// Set update metadata
+	script.UpdateHeight = uint64(sdkCtx.BlockHeight())
 
 	err = k.ScriptMap.Set(ctx, msg.Address, script)
 	if err != nil {
@@ -96,8 +99,8 @@ func (k Keeper) ExecScript(ctx context.Context, msg *scripttypes.MsgExec) (*scri
 
 		// Validate they match
 		if scriptAddr != nameAddr {
-			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, 
-				fmt.Sprintf("script_address '%s' does not match resolved script_name '%s' (resolves to '%s') - they must be the same address", 
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+				fmt.Sprintf("script_address '%s' does not match resolved script_name '%s' (resolves to '%s') - they must be the same address",
 					scriptAddr, msg.ScriptName, nameAddr))
 		}
 
@@ -170,8 +173,12 @@ func (k Keeper) ExecScript(ctx context.Context, msg *scripttypes.MsgExec) (*scri
 		evtCtx := sdk.UnwrapSDKContext(cacheCtx)
 		evterr := evtCtx.EventManager().EmitTypedEvent(
 			&scripttypes.EventExecScript{
-				Request:  msg,
-				Response: resp,
+				Request:         msg,
+				Response:        resp,
+				ExecutorAddress: msg.ExecutorAddress,
+				ScriptAddress:   addr,
+				ScriptName:      msg.ScriptName,
+				FunctionName:    msg.FunctionName,
 			})
 		if evterr != nil {
 			k.Logger(sdkCtx).Error("failed to emit event", "error", evterr)

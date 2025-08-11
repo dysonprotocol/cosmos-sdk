@@ -421,9 +421,13 @@ func (x *fastReflection_EventUpdateScript) ProtoMethods() *protoiface.Methods {
 }
 
 var (
-	md_EventExecScript          protoreflect.MessageDescriptor
-	fd_EventExecScript_request  protoreflect.FieldDescriptor
-	fd_EventExecScript_response protoreflect.FieldDescriptor
+	md_EventExecScript                  protoreflect.MessageDescriptor
+	fd_EventExecScript_request          protoreflect.FieldDescriptor
+	fd_EventExecScript_response         protoreflect.FieldDescriptor
+	fd_EventExecScript_executor_address protoreflect.FieldDescriptor
+	fd_EventExecScript_script_address   protoreflect.FieldDescriptor
+	fd_EventExecScript_script_name      protoreflect.FieldDescriptor
+	fd_EventExecScript_function_name    protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -431,6 +435,10 @@ func init() {
 	md_EventExecScript = File_dysonprotocol_script_v1_events_proto.Messages().ByName("EventExecScript")
 	fd_EventExecScript_request = md_EventExecScript.Fields().ByName("request")
 	fd_EventExecScript_response = md_EventExecScript.Fields().ByName("response")
+	fd_EventExecScript_executor_address = md_EventExecScript.Fields().ByName("executor_address")
+	fd_EventExecScript_script_address = md_EventExecScript.Fields().ByName("script_address")
+	fd_EventExecScript_script_name = md_EventExecScript.Fields().ByName("script_name")
+	fd_EventExecScript_function_name = md_EventExecScript.Fields().ByName("function_name")
 }
 
 var _ protoreflect.Message = (*fastReflection_EventExecScript)(nil)
@@ -510,6 +518,30 @@ func (x *fastReflection_EventExecScript) Range(f func(protoreflect.FieldDescript
 			return
 		}
 	}
+	if x.ExecutorAddress != "" {
+		value := protoreflect.ValueOfString(x.ExecutorAddress)
+		if !f(fd_EventExecScript_executor_address, value) {
+			return
+		}
+	}
+	if x.ScriptAddress != "" {
+		value := protoreflect.ValueOfString(x.ScriptAddress)
+		if !f(fd_EventExecScript_script_address, value) {
+			return
+		}
+	}
+	if x.ScriptName != "" {
+		value := protoreflect.ValueOfString(x.ScriptName)
+		if !f(fd_EventExecScript_script_name, value) {
+			return
+		}
+	}
+	if x.FunctionName != "" {
+		value := protoreflect.ValueOfString(x.FunctionName)
+		if !f(fd_EventExecScript_function_name, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -529,6 +561,14 @@ func (x *fastReflection_EventExecScript) Has(fd protoreflect.FieldDescriptor) bo
 		return x.Request != nil
 	case "dysonprotocol.script.v1.EventExecScript.response":
 		return x.Response != nil
+	case "dysonprotocol.script.v1.EventExecScript.executor_address":
+		return x.ExecutorAddress != ""
+	case "dysonprotocol.script.v1.EventExecScript.script_address":
+		return x.ScriptAddress != ""
+	case "dysonprotocol.script.v1.EventExecScript.script_name":
+		return x.ScriptName != ""
+	case "dysonprotocol.script.v1.EventExecScript.function_name":
+		return x.FunctionName != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.EventExecScript"))
@@ -549,6 +589,14 @@ func (x *fastReflection_EventExecScript) Clear(fd protoreflect.FieldDescriptor) 
 		x.Request = nil
 	case "dysonprotocol.script.v1.EventExecScript.response":
 		x.Response = nil
+	case "dysonprotocol.script.v1.EventExecScript.executor_address":
+		x.ExecutorAddress = ""
+	case "dysonprotocol.script.v1.EventExecScript.script_address":
+		x.ScriptAddress = ""
+	case "dysonprotocol.script.v1.EventExecScript.script_name":
+		x.ScriptName = ""
+	case "dysonprotocol.script.v1.EventExecScript.function_name":
+		x.FunctionName = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.EventExecScript"))
@@ -571,6 +619,18 @@ func (x *fastReflection_EventExecScript) Get(descriptor protoreflect.FieldDescri
 	case "dysonprotocol.script.v1.EventExecScript.response":
 		value := x.Response
 		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.script.v1.EventExecScript.executor_address":
+		value := x.ExecutorAddress
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.script.v1.EventExecScript.script_address":
+		value := x.ScriptAddress
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.script.v1.EventExecScript.script_name":
+		value := x.ScriptName
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.script.v1.EventExecScript.function_name":
+		value := x.FunctionName
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.EventExecScript"))
@@ -595,6 +655,14 @@ func (x *fastReflection_EventExecScript) Set(fd protoreflect.FieldDescriptor, va
 		x.Request = value.Message().Interface().(*MsgExec)
 	case "dysonprotocol.script.v1.EventExecScript.response":
 		x.Response = value.Message().Interface().(*MsgExecResponse)
+	case "dysonprotocol.script.v1.EventExecScript.executor_address":
+		x.ExecutorAddress = value.Interface().(string)
+	case "dysonprotocol.script.v1.EventExecScript.script_address":
+		x.ScriptAddress = value.Interface().(string)
+	case "dysonprotocol.script.v1.EventExecScript.script_name":
+		x.ScriptName = value.Interface().(string)
+	case "dysonprotocol.script.v1.EventExecScript.function_name":
+		x.FunctionName = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.EventExecScript"))
@@ -625,6 +693,14 @@ func (x *fastReflection_EventExecScript) Mutable(fd protoreflect.FieldDescriptor
 			x.Response = new(MsgExecResponse)
 		}
 		return protoreflect.ValueOfMessage(x.Response.ProtoReflect())
+	case "dysonprotocol.script.v1.EventExecScript.executor_address":
+		panic(fmt.Errorf("field executor_address of message dysonprotocol.script.v1.EventExecScript is not mutable"))
+	case "dysonprotocol.script.v1.EventExecScript.script_address":
+		panic(fmt.Errorf("field script_address of message dysonprotocol.script.v1.EventExecScript is not mutable"))
+	case "dysonprotocol.script.v1.EventExecScript.script_name":
+		panic(fmt.Errorf("field script_name of message dysonprotocol.script.v1.EventExecScript is not mutable"))
+	case "dysonprotocol.script.v1.EventExecScript.function_name":
+		panic(fmt.Errorf("field function_name of message dysonprotocol.script.v1.EventExecScript is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.EventExecScript"))
@@ -644,6 +720,14 @@ func (x *fastReflection_EventExecScript) NewField(fd protoreflect.FieldDescripto
 	case "dysonprotocol.script.v1.EventExecScript.response":
 		m := new(MsgExecResponse)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.script.v1.EventExecScript.executor_address":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.script.v1.EventExecScript.script_address":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.script.v1.EventExecScript.script_name":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.script.v1.EventExecScript.function_name":
+		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.EventExecScript"))
@@ -721,6 +805,22 @@ func (x *fastReflection_EventExecScript) ProtoMethods() *protoiface.Methods {
 			l = options.Size(x.Response)
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		l = len(x.ExecutorAddress)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ScriptAddress)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ScriptName)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.FunctionName)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -749,6 +849,34 @@ func (x *fastReflection_EventExecScript) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.FunctionName) > 0 {
+			i -= len(x.FunctionName)
+			copy(dAtA[i:], x.FunctionName)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.FunctionName)))
+			i--
+			dAtA[i] = 0x32
+		}
+		if len(x.ScriptName) > 0 {
+			i -= len(x.ScriptName)
+			copy(dAtA[i:], x.ScriptName)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ScriptName)))
+			i--
+			dAtA[i] = 0x2a
+		}
+		if len(x.ScriptAddress) > 0 {
+			i -= len(x.ScriptAddress)
+			copy(dAtA[i:], x.ScriptAddress)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ScriptAddress)))
+			i--
+			dAtA[i] = 0x22
+		}
+		if len(x.ExecutorAddress) > 0 {
+			i -= len(x.ExecutorAddress)
+			copy(dAtA[i:], x.ExecutorAddress)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ExecutorAddress)))
+			i--
+			dAtA[i] = 0x1a
 		}
 		if x.Response != nil {
 			encoded, err := options.Marshal(x.Response)
@@ -898,6 +1026,134 @@ func (x *fastReflection_EventExecScript) ProtoMethods() *protoiface.Methods {
 				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Response); err != nil {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ExecutorAddress", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ExecutorAddress = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ScriptAddress", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ScriptAddress = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 5:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ScriptName", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ScriptName = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 6:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field FunctionName", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.FunctionName = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
@@ -2075,6 +2331,11 @@ type EventExecScript struct {
 	// The result of the script execution.
 	Request  *MsgExec         `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	Response *MsgExecResponse `protobuf:"bytes,2,opt,name=response,proto3" json:"response,omitempty"`
+	// Executor and target identifiers for indexing
+	ExecutorAddress string `protobuf:"bytes,3,opt,name=executor_address,json=executorAddress,proto3" json:"executor_address,omitempty"`
+	ScriptAddress   string `protobuf:"bytes,4,opt,name=script_address,json=scriptAddress,proto3" json:"script_address,omitempty"`
+	ScriptName      string `protobuf:"bytes,5,opt,name=script_name,json=scriptName,proto3" json:"script_name,omitempty"`
+	FunctionName    string `protobuf:"bytes,6,opt,name=function_name,json=functionName,proto3" json:"function_name,omitempty"`
 }
 
 func (x *EventExecScript) Reset() {
@@ -2109,6 +2370,34 @@ func (x *EventExecScript) GetResponse() *MsgExecResponse {
 		return x.Response
 	}
 	return nil
+}
+
+func (x *EventExecScript) GetExecutorAddress() string {
+	if x != nil {
+		return x.ExecutorAddress
+	}
+	return ""
+}
+
+func (x *EventExecScript) GetScriptAddress() string {
+	if x != nil {
+		return x.ScriptAddress
+	}
+	return ""
+}
+
+func (x *EventExecScript) GetScriptName() string {
+	if x != nil {
+		return x.ScriptName
+	}
+	return ""
+}
+
+func (x *EventExecScript) GetFunctionName() string {
+	if x != nil {
+		return x.FunctionName
+	}
+	return ""
 }
 
 // EventScriptEvent is an event emitted by the script itself.
@@ -2239,7 +2528,7 @@ var file_dysonprotocol_script_v1_events_proto_rawDesc = []byte{
 	0x22, 0x2d, 0x0a, 0x11, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53,
 	0x63, 0x72, 0x69, 0x70, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x22,
-	0x93, 0x01, 0x0a, 0x0f, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x45, 0x78, 0x65, 0x63, 0x53, 0x63, 0x72,
+	0xab, 0x02, 0x0a, 0x0f, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x45, 0x78, 0x65, 0x63, 0x53, 0x63, 0x72,
 	0x69, 0x70, 0x74, 0x12, 0x3a, 0x0a, 0x07, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x4d,
@@ -2248,23 +2537,33 @@ var file_dysonprotocol_script_v1_events_proto_rawDesc = []byte{
 	0x0b, 0x32, 0x28, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
 	0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x45,
 	0x78, 0x65, 0x63, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x08, 0x72, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x54, 0x0a, 0x10, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x63,
-	0x72, 0x69, 0x70, 0x74, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x64, 0x64, 0x72,
-	0x65, 0x73, 0x73, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x03,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x80, 0x01, 0x0a, 0x14,
-	0x45, 0x76, 0x65, 0x6e, 0x74, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x65, 0x77, 0x53, 0x63,
-	0x72, 0x69, 0x70, 0x74, 0x12, 0x25, 0x0a, 0x0e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x5f, 0x61,
-	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x73, 0x63,
-	0x72, 0x69, 0x70, 0x74, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x27, 0x0a, 0x0f, 0x63,
-	0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x41, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18,
-	0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x42, 0x22,
-	0x5a, 0x20, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
-	0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x74, 0x79, 0x70,
-	0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x29, 0x0a, 0x10, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x6f,
+	0x72, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0f, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x6f, 0x72, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
+	0x12, 0x25, 0x0a, 0x0e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65,
+	0x73, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
+	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x63, 0x72, 0x69, 0x70,
+	0x74, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x73, 0x63,
+	0x72, 0x69, 0x70, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x23, 0x0a, 0x0d, 0x66, 0x75, 0x6e, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0c, 0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x54, 0x0a,
+	0x10, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x45, 0x76, 0x65, 0x6e,
+	0x74, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x10, 0x0a, 0x03, 0x6b,
+	0x65, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x22, 0x80, 0x01, 0x0a, 0x14, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x4e, 0x65, 0x77, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x12, 0x25, 0x0a, 0x0e,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x41, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x12, 0x27, 0x0a, 0x0f, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x5f, 0x61,
+	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x72,
+	0x65, 0x61, 0x74, 0x6f, 0x72, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x18, 0x0a, 0x07,
+	0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x76,
+	0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x42, 0x22, 0x5a, 0x20, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x73, 0x63,
+	0x72, 0x69, 0x70, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (

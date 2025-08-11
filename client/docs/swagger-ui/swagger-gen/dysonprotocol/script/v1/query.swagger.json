@@ -431,6 +431,11 @@
         },
         "code": {
           "type": "string"
+        },
+        "update_height": {
+          "type": "string",
+          "format": "uint64",
+          "title": "Block height at which this script was last updated"
         }
       }
     },

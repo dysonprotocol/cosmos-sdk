@@ -19,13 +19,20 @@ if __name__ == "__main__":
     
     elif sys.argv[1] == "dys_format":
         import black
+        from . import DysEval, DysRuntimeError
+
         code = sys.stdin.read()
+
+        try:
+            DysEval(code).validate(code)
+        except Exception as e:
+            print(f"Error validating code: {e} type={type(e)}")
+            sys.exit(1)
+
         try:
             formatted_code = black.format_str(code, mode=black.Mode())
-            #import ast
-            #formatted_code = ast.unparse(ast.parse(code))
             print(formatted_code)
         except Exception as e:
-            print(f"Error formatting code: {e}", file=sys.stderr)
+            print(f"Error formatting code: {e}")
             sys.exit(1)
 
