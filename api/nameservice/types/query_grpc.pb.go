@@ -23,6 +23,7 @@ const (
 	Query_ResolveName_FullMethodName             = "/dysonprotocol.nameservice.v1.Query/ResolveName"
 	Query_Params_FullMethodName                  = "/dysonprotocol.nameservice.v1.Query/Params"
 	Query_QueryNamesByDestination_FullMethodName = "/dysonprotocol.nameservice.v1.Query/QueryNamesByDestination"
+	Query_QueryNFTClassesByName_FullMethodName   = "/dysonprotocol.nameservice.v1.Query/QueryNFTClassesByName"
 )
 
 // QueryClient is the client API for Query service.
@@ -40,6 +41,8 @@ type QueryClient interface {
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 	// QueryNamesByDestination queries all names pointing to a destination address
 	QueryNamesByDestination(ctx context.Context, in *QueryNamesByDestinationRequest, opts ...grpc.CallOption) (*QueryNamesByDestinationResponse, error)
+	// QueryNFTClassesByName lists NFT class IDs under a given root name
+	QueryNFTClassesByName(ctx context.Context, in *QueryNFTClassesByNameRequest, opts ...grpc.CallOption) (*QueryNFTClassesByNameResponse, error)
 }
 
 type queryClient struct {
@@ -90,6 +93,16 @@ func (c *queryClient) QueryNamesByDestination(ctx context.Context, in *QueryName
 	return out, nil
 }
 
+func (c *queryClient) QueryNFTClassesByName(ctx context.Context, in *QueryNFTClassesByNameRequest, opts ...grpc.CallOption) (*QueryNFTClassesByNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryNFTClassesByNameResponse)
+	err := c.cc.Invoke(ctx, Query_QueryNFTClassesByName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -105,6 +118,8 @@ type QueryServer interface {
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 	// QueryNamesByDestination queries all names pointing to a destination address
 	QueryNamesByDestination(context.Context, *QueryNamesByDestinationRequest) (*QueryNamesByDestinationResponse, error)
+	// QueryNFTClassesByName lists NFT class IDs under a given root name
+	QueryNFTClassesByName(context.Context, *QueryNFTClassesByNameRequest) (*QueryNFTClassesByNameResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -126,6 +141,9 @@ func (UnimplementedQueryServer) Params(context.Context, *QueryParamsRequest) (*Q
 }
 func (UnimplementedQueryServer) QueryNamesByDestination(context.Context, *QueryNamesByDestinationRequest) (*QueryNamesByDestinationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryNamesByDestination not implemented")
+}
+func (UnimplementedQueryServer) QueryNFTClassesByName(context.Context, *QueryNFTClassesByNameRequest) (*QueryNFTClassesByNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryNFTClassesByName not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -220,6 +238,24 @@ func _Query_QueryNamesByDestination_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_QueryNFTClassesByName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNFTClassesByNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).QueryNFTClassesByName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_QueryNFTClassesByName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).QueryNFTClassesByName(ctx, req.(*QueryNFTClassesByNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +278,10 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryNamesByDestination",
 			Handler:    _Query_QueryNamesByDestination_Handler,
+		},
+		{
+			MethodName: "QueryNFTClassesByName",
+			Handler:    _Query_QueryNFTClassesByName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

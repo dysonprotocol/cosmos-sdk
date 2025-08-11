@@ -2148,6 +2148,101 @@ paths:
           type: boolean
       tags:
         - Query
+  /dysonprotocol/nameservice/v1/nftclasses_by_name/{name}:
+    get:
+      summary: QueryNFTClassesByName lists NFT class IDs under a given root name
+      operationId: dysonprotocol.nameservice.v1.QueryQueryNFTClassesByNameRequest
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              class_ids:
+                type: array
+                items:
+                  type: string
+                title: >-
+                  class_ids is the list of NFT class IDs under the provided root
+                  name
+              pagination:
+                description: pagination defines the pagination in the response.
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+            description: |-
+              QueryNFTClassesByNameResponse is response type for the
+              Query/QueryNFTClassesByName RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: name
+          description: name is the root name to list classes for
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /dysonprotocol/nameservice/v1/params:
     get:
       summary: Params queries the nameservice module parameters
@@ -17335,6 +17430,36 @@ definitions:
         type: string
         title: mint_fee_per_coin defines the fee in udys charged per coin minted
     description: Params defines the parameters for the nameservice module.
+  dysonprotocol.nameservice.v1.QueryNFTClassesByNameResponse:
+    type: object
+    properties:
+      class_ids:
+        type: array
+        items:
+          type: string
+        title: class_ids is the list of NFT class IDs under the provided root name
+      pagination:
+        description: pagination defines the pagination in the response.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    description: |-
+      QueryNFTClassesByNameResponse is response type for the
+      Query/QueryNFTClassesByName RPC method.
   dysonprotocol.nameservice.v1.QueryNamesByDestinationResponse:
     type: object
     properties:

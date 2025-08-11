@@ -13,6 +13,18 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 			EnhanceCustomCommand: true,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
+					RpcMethod: "QueryNFTClassesByName",
+					Use:       "nftclasses-by-name",
+					Short:     "List NFT class IDs by root name",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"name": {
+							Name:         "name",
+							Usage:        "The root name (e.g. example.dys)",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
 					RpcMethod: "ComputeHash",
 					Use:       "compute-hash",
 					Short:     "Compute the hash for a name, salt, and committer address",

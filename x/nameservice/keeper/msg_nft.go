@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"regexp"
 	"strings"
 	"time"
 
@@ -12,59 +11,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
-
-var (
-	// validClassIDPattern defines the regex for valid NFT class ID strings
-	// Must match the same pattern used for coin denominations
-	validClassIDPattern = regexp.MustCompile(`^[A-Za-z0-9.\-_]+\.dys(?:/[0-9A-Za-z:\-_]+)*$`)
-
-	// validNFTIDPattern defines the regex for valid NFT ID strings
-	// Must be printable ASCII characters
-	validNFTIDPattern = regexp.MustCompile(`^[\x20-\x7E]+$`)
-)
-
-// Helper function to get the root name of a class ID
-func getClassIDRootName(classID string) string {
-	parts := strings.Split(classID, "/")
-	return parts[0]
-}
-
-// verifyClassIDOwner checks if the provided owner is the owner of the root name in the class ID
-func (k Keeper) verifyClassIDOwner(ctx context.Context, classID string, owner string) error {
-	// 1. Validate the class ID format
-	if !validClassIDPattern.MatchString(classID) {
-		return cosmossdkerrors.Wrapf(
-			sdkerrors.ErrInvalidRequest,
-			"invalid class ID format: %s (must be alphanumeric with optional hyphens/underscores, ending in .dys, optionally followed by /path)",
-			classID,
-		)
-	}
-
-	// 2. Extract the root name from the class ID
-	rootName := getClassIDRootName(classID)
-
-	// 3. Verify the owner owns the root name
-	rootOwner, found := k.GetNameOwner(ctx, rootName)
-	if !found {
-		return cosmossdkerrors.Wrapf(
-			sdkerrors.ErrNotFound,
-			"root name not found: %s",
-			rootName,
-		)
-	}
-
-	// 4. Check if the owner matches
-	if rootOwner != owner {
-		return cosmossdkerrors.Wrapf(
-			sdkerrors.ErrUnauthorized,
-			"only the owner of the root name (%s) can perform this action on class %s",
-			rootOwner,
-			classID,
-		)
-	}
-
-	return nil
-}
 
 // SaveClass implements the MsgServer.SaveClass method
 func (k Keeper) SaveClass(ctx context.Context, msg *nameservicev1.MsgSaveClass) (*nameservicev1.MsgSaveClassResponse, error) {
@@ -109,6 +55,12 @@ func (k Keeper) SaveClass(ctx context.Context, msg *nameservicev1.MsgSaveClass) 
 			return nil, cosmossdkerrors.Wrap(err, "failed to update NFT class")
 		}
 
+		// Maintain reverse index for this class under its root name
+		root := extractRootName(msg.ClassId)
+		if err := k.SetClassByRootName(ctx, root, msg.ClassId); err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to update reverse index for class root name")
+		}
+
 		// Emit event
 		sdkCtx := sdk.UnwrapSDKContext(ctx)
 		if evErr := sdkCtx.EventManager().EmitTypedEvent(
@@ -143,6 +95,12 @@ func (k Keeper) SaveClass(ctx context.Context, msg *nameservicev1.MsgSaveClass) 
 
 	if err := k.nftKeeper.SaveClass(ctx, class); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to save NFT class")
+	}
+
+	// Maintain reverse index for this class under its root name
+	root := extractRootName(msg.ClassId)
+	if err := k.SetClassByRootName(ctx, root, msg.ClassId); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to set reverse index for class root name")
 	}
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)

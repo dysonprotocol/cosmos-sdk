@@ -27,6 +27,9 @@ var (
 
 	// NameDestinationsKey is the key for reverse name->destination mappings
 	NameDestinationsKey = collections.NewPrefix(5)
+
+	// ClassesByRootNameKey is the key for reverse root-name -> class id mappings
+	ClassesByRootNameKey = collections.NewPrefix(6)
 )
 
 // Keeper defines the nameservice keeper
@@ -50,6 +53,10 @@ type Keeper struct {
 	// nameDestinations stores reverse mappings: (destination_address, source_name) -> source_name
 	// This allows efficient querying of all names pointing to a destination address
 	nameDestinations collections.Map[collections.Pair[string, string], string]
+
+	// classesByRootName stores reverse mappings: (root_name, class_id) -> class_id
+	// Enables listing all class IDs that belong to a root name
+	classesByRootName collections.Map[collections.Pair[string, string], string]
 
 	authority string // the address that is authorized to update module parameters
 }
@@ -80,6 +87,7 @@ func NewKeeper(
 		commitments:         collections.NewMap(sb, CommitmentsKey, "commitments", collections.StringKey, codec.CollValue[nameservicev1.Commitment](cdc)),
 		params:              collections.NewItem(sb, ParamsKey, "params", codec.CollValue[nameservicev1.Params](cdc)),
 		nameDestinations:    collections.NewMap(sb, NameDestinationsKey, "name_destinations", collections.PairKeyCodec(collections.StringKey, collections.StringKey), collections.StringValue),
+		classesByRootName:   collections.NewMap(sb, ClassesByRootNameKey, "classes_by_root_name", collections.PairKeyCodec(collections.StringKey, collections.StringKey), collections.StringValue),
 	}
 
 	schema, err := sb.Build()
@@ -102,6 +110,18 @@ func (k Keeper) SetNameDestinationMapping(ctx context.Context, destination strin
 func (k Keeper) RemoveNameDestinationMapping(ctx context.Context, destination string, sourceName string) error {
 	key := collections.Join(destination, sourceName)
 	return k.nameDestinations.Remove(ctx, key)
+}
+
+// SetClassByRootName adds or updates a reverse mapping from root name to class ID
+func (k Keeper) SetClassByRootName(ctx context.Context, rootName string, classID string) error {
+	key := collections.Join(rootName, classID)
+	return k.classesByRootName.Set(ctx, key, classID)
+}
+
+// RemoveClassByRootName removes a reverse mapping from root name to class ID
+func (k Keeper) RemoveClassByRootName(ctx context.Context, rootName string, classID string) error {
+	key := collections.Join(rootName, classID)
+	return k.classesByRootName.Remove(ctx, key)
 }
 
 // GetNamesByDestination returns all names pointing to the given destination address

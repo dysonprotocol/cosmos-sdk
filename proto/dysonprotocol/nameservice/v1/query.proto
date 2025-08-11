@@ -39,6 +39,13 @@ service Query {
     option (google.api.http).get =
         "/dysonprotocol/nameservice/v1/names_by_destination/{destination}";
   }
+
+  // QueryNFTClassesByName lists NFT class IDs under a given root name
+  rpc QueryNFTClassesByName(QueryNFTClassesByNameRequest)
+      returns (QueryNFTClassesByNameResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/nameservice/v1/nftclasses_by_name/{name}";
+  }
 }
 
 // ComputeHashRequest is a request to compute the hash for a name and salt
@@ -93,6 +100,24 @@ message QueryNamesByDestinationRequest {
 message QueryNamesByDestinationResponse {
   // names is the list of name strings pointing to the destination address
   repeated string names = 1;
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryNFTClassesByNameRequest is request type for the
+// Query/QueryNFTClassesByName RPC method.
+message QueryNFTClassesByNameRequest {
+  // name is the root name to list classes for
+  string name = 1;
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryNFTClassesByNameResponse is response type for the
+// Query/QueryNFTClassesByName RPC method.
+message QueryNFTClassesByNameResponse {
+  // class_ids is the list of NFT class IDs under the provided root name
+  repeated string class_ids = 1;
   // pagination defines the pagination in the response.
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

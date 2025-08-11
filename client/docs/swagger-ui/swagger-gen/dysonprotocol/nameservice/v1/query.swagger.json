@@ -122,6 +122,71 @@
         ]
       }
     },
+    "/dysonprotocol/nameservice/v1/nftclasses_by_name/{name}": {
+      "get": {
+        "summary": "QueryNFTClassesByName lists NFT class IDs under a given root name",
+        "operationId": "dysonprotocol.nameservice.v1.QueryQueryNFTClassesByNameRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.QueryNFTClassesByNameResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "name is the root name to list classes for",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
     "/dysonprotocol/nameservice/v1/params": {
       "get": {
         "summary": "Params queries the nameservice module parameters",
@@ -263,6 +328,23 @@
         }
       },
       "description": "Params defines the parameters for the nameservice module."
+    },
+    "dysonprotocol.nameservice.v1.QueryNFTClassesByNameResponse": {
+      "type": "object",
+      "properties": {
+        "class_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "class_ids is the list of NFT class IDs under the provided root name"
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse",
+          "description": "pagination defines the pagination in the response."
+        }
+      },
+      "description": "QueryNFTClassesByNameResponse is response type for the\nQuery/QueryNFTClassesByName RPC method."
     },
     "dysonprotocol.nameservice.v1.QueryNamesByDestinationResponse": {
       "type": "object",

@@ -111,6 +111,7 @@
       {"type":"file","name":"dysonprotocol.crontask.v1.QueryTasksByStatusGasPriceRequest.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.QueryTasksByStatusTimestampRequest.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.ComputeHashRequest.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.QueryNFTClassesByNameRequest.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.QueryNamesByDestinationRequest.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.QueryParamsRequest.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.QueryResolveNameRequest.json"},
@@ -317,5 +318,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":311}
+  {"type":"report","directories":3,"files":312}
 ]
