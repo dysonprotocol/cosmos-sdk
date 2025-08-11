@@ -16,7 +16,7 @@ import (
 
 const (
 	ServerName          = "dwapp"
-	DefaultDwAppPattern = `(?P<address>dys21[a-z0-9]+)|((?P<name>[a-z0-9-]+).dys)`
+	DefaultDwAppPattern = `(?P<address>dys21[a-z0-9]+)|((?P<name>[a-z0-9-]+))`
 )
 
 // CfgOption defines a function to modify the configuration.
@@ -30,6 +30,7 @@ type DwAppConfig struct {
 	// Additional fields specific to dwapp
 	Enable                     bool   `mapstructure:"enable"`
 	ScriptAddressOrNamePattern string `mapstructure:"script-address-or-name-pattern"`
+	PublicHostTemplate         string `mapstructure:"public-host-template"`
 }
 
 // Combined explicit server configuration
@@ -43,6 +44,7 @@ func DefaultConfig() *DwAppConfig {
 		Config:                     *serverconfig.DefaultConfig(),
 		Enable:                     true,
 		ScriptAddressOrNamePattern: DefaultDwAppPattern,
+		PublicHostTemplate:         "{id}.localhost:1317",
 	}
 }
 
@@ -158,6 +160,10 @@ func New(
 		srv.config.ScriptAddressOrNamePattern = viperConfig.GetString("dwapp.script-address-or-name-pattern")
 		srv.logger.Info("Overriding default pattern with config value", "pattern", srv.config.ScriptAddressOrNamePattern)
 	}
+	if viperConfig.IsSet("dwapp.public-host-template") {
+		srv.config.PublicHostTemplate = viperConfig.GetString("dwapp.public-host-template")
+		srv.logger.Info("Overriding default public host template with config value", "public_host_template", srv.config.PublicHostTemplate)
+	}
 
 	srv.httpServer = &http.Server{
 
@@ -169,7 +175,7 @@ func New(
 
 		"pattern", srv.config.ScriptAddressOrNamePattern)
 
-	srv.router.Handle("/", NewDefaultHandler(clientCtx, srv.config.ScriptAddressOrNamePattern))
+	srv.router.Handle("/", NewDefaultHandler(clientCtx, srv.config.ScriptAddressOrNamePattern, srv.config.PublicHostTemplate))
 	// Pass the server to APIHandler
 	APIHandler(srv.router, srv)
 

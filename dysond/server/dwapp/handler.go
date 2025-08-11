@@ -29,21 +29,52 @@ type DysonTxtRecords struct {
 	ScriptAddress string
 }
 
-func NewDefaultHandler(clientCtx client.Context, ScriptAddressOrNamePattern string) http.Handler {
+func NewDefaultHandler(clientCtx client.Context, ScriptAddressOrNamePattern string, publicHostTemplate string) http.Handler {
 	fmt.Println("ScriptAddressOrNamePattern: ", ScriptAddressOrNamePattern)
 	scriptAddressOrNameRe := regexp.MustCompile(ScriptAddressOrNamePattern)
 	return &DefaultHandler{
 		clientCtx:             clientCtx,
 		scriptAddressOrNameRe: scriptAddressOrNameRe,
+		publicHostTemplate:    publicHostTemplate,
 	}
 }
 
 type DefaultHandler struct {
 	clientCtx             client.Context
 	scriptAddressOrNameRe *regexp.Regexp
+	publicHostTemplate    string
 }
 
 func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	// New endpoint: /dwapp/{id} -> redirect or return public host
+	if strings.HasPrefix(req.URL.Path, "/redirect-to-dwapp/") {
+		id := strings.TrimPrefix(req.URL.Path, "/redirect-to-dwapp/")
+		id = strings.TrimSpace(id)
+		if id == "" {
+			http.Error(w, "missing id", http.StatusBadRequest)
+			return
+		}
+
+		// If a .dys suffix is provided, strip it for public host mapping
+		if strings.HasSuffix(strings.ToLower(id), ".dys") {
+			id = strings.TrimSuffix(id, ".dys")
+		}
+
+		// Map back to public host using template
+		publicHost := strings.ReplaceAll(h.publicHostTemplate, "{id}", id)
+
+		// If client requests JSON explicitly
+		if req.Header.Get("Accept") == "application/json" || req.URL.Query().Get("format") == "json" {
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, "{\n  \"host\": \"%s\"\n}", publicHost)
+			return
+		}
+
+		// Otherwise, 302 redirect to http://{publicHost}
+		target := "http://" + publicHost
+		http.Redirect(w, req, target, http.StatusFound)
+		return
+	}
 
 	// get the raw request
 	rawRequest, err := getRawRequest(req)

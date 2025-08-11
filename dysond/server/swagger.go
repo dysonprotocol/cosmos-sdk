@@ -44,9 +44,11 @@ func RegisterDysonServer(clientCtx client.Context, rtr *mux.Router, config confi
 	}
 
 	if config.Enable {
+		// Determine public host template (use DWApp defaults here)
+		publicHostTemplate := dwapp.DefaultConfig().PublicHostTemplate
 		// Middleware to check path condition explicitly
 		rtr.Use(func(next http.Handler) http.Handler {
-			dwappHandler := dwapp.NewDefaultHandler(clientCtx, patternString)
+			dwappHandler := dwapp.NewDefaultHandler(clientCtx, patternString, publicHostTemplate)
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if !(strings.HasPrefix(r.URL.Path, "/dysonprotocol/") ||
 					strings.HasPrefix(r.URL.Path, "/cosmos/") ||

@@ -68,6 +68,7 @@ func initAppConfig() (string, interface{}) {
 	type CustomConfig struct {
 		DwApp struct {
 			ScriptAddressOrNamePattern string `mapstructure:"script-address-or-name-pattern"`
+			PublicHostTemplate         string `mapstructure:"public-host-template"`
 		} `mapstructure:"dwapp"`
 	}
 
@@ -111,8 +112,10 @@ func initAppConfig() (string, interface{}) {
 		Custom: CustomConfig{
 			DwApp: struct {
 				ScriptAddressOrNamePattern string `mapstructure:"script-address-or-name-pattern"`
+				PublicHostTemplate         string `mapstructure:"public-host-template"`
 			}{
 				ScriptAddressOrNamePattern: dwapp.DefaultDwAppPattern,
+				PublicHostTemplate:         "{id}.localhost",
 			},
 		},
 	}
@@ -143,6 +146,11 @@ func initAppConfig() (string, interface{}) {
 #   - This must be a valid TOML string literal.
 #   - If you customize the pattern, remember to escape backslashes for TOML where needed.
 script-address-or-name-pattern = '{{ .Custom.DwApp.ScriptAddressOrNamePattern }}'
+# Template for mapping a script id (address or bare name) back to a public host.
+# Use {id} placeholder. Examples:
+#   - "{id}.example.com" -> dys21abc.example.com or myapp.example.com
+#   - "apps.{id}.example.com" -> apps.dys21abc.example.com
+public-host-template = '{{ .Custom.DwApp.PublicHostTemplate }}'
 `
 
 	return customAppTemplate, customAppConfig
