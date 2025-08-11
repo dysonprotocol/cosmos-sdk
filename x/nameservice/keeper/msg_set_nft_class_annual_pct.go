@@ -13,14 +13,10 @@ import (
 
 // SetNFTClassAnnualPct handles a MsgSetNFTClassAnnualPct message
 func (k Keeper) SetNFTClassAnnualPct(ctx context.Context, msg *nameservicev1.MsgSetNFTClassAnnualPct) (*nameservicev1.MsgSetNFTClassAnnualPctResponse, error) {
-	// Verify authorization: only the owner of the root name (class owner) can set annual_pct
-	if err := k.verifyClassIDOwner(ctx, msg.ClassId, msg.Owner); err != nil {
-		return nil, cosmossdkerrors.Wrapf(
-			sdkerrors.ErrUnauthorized,
-			"only the owner [%s] of the class root name can set annual_pct for this NFT class",
-			msg.Owner,
-		)
-	}
+    // Verify authorization: signer must match resolved destination of class root name
+    if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
+        return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "unauthorized to set annual_pct: %v", err)
+    }
 
 	// Parse and validate annual_pct range (0.0 to 1.0)
 	annualPctFloat, err := strconv.ParseFloat(msg.AnnualPct, 64)
@@ -72,10 +68,10 @@ func (k Keeper) SetNFTClassAnnualPct(ctx context.Context, msg *nameservicev1.Msg
 		return nil, cosmossdkerrors.Wrap(evErr, "failed to emit NFT class annual pct updated event")
 	}
 
-	k.Logger.Info("Successfully updated NFT class annual pct",
-		"class_id", msg.ClassId,
-		"owner", msg.Owner,
-		"annual_pct", msg.AnnualPct)
+    k.Logger.Info("Successfully updated NFT class annual pct",
+        "class_id", msg.ClassId,
+        "name_destination", msg.NameDestination,
+        "annual_pct", msg.AnnualPct)
 
 	return &nameservicev1.MsgSetNFTClassAnnualPctResponse{}, nil
 }

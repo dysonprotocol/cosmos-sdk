@@ -4,7 +4,7 @@
     "definitions": {
         "dysonprotocol.nameservice.v1.MsgSaveClass": {
             "properties": {
-                "owner": {
+                "name_destination": {
                     "type": "string"
                 },
                 "class_id": {

@@ -12,13 +12,9 @@ import (
 
 // SetNFTClassAlwaysListed handles a MsgSetNFTClassAlwaysListed message
 func (k Keeper) SetNFTClassAlwaysListed(ctx context.Context, msg *nameservicev1.MsgSetNFTClassAlwaysListed) (*nameservicev1.MsgSetNFTClassAlwaysListedResponse, error) {
-	// Verify authorization: only the owner of the root name (class owner) can set always_listed
-	if err := k.verifyClassIDOwner(ctx, msg.ClassId, msg.Owner); err != nil {
-		return nil, cosmossdkerrors.Wrapf(
-			sdkerrors.ErrUnauthorized,
-			"only the owner [%s] of the class root name can set always_listed for this NFT class",
-			msg.Owner,
-		)
+	// Verify authorization: signer must match resolved destination of class root name
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "unauthorized to set always_listed: %v", err)
 	}
 
 	// Get current NFT class data
@@ -55,7 +51,7 @@ func (k Keeper) SetNFTClassAlwaysListed(ctx context.Context, msg *nameservicev1.
 
 	k.Logger.Info("Successfully updated NFT class always listed",
 		"class_id", msg.ClassId,
-		"owner", msg.Owner,
+		"name_destination", msg.NameDestination,
 		"always_listed", msg.AlwaysListed)
 
 	return &nameservicev1.MsgSetNFTClassAlwaysListedResponse{}, nil

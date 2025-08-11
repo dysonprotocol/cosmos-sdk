@@ -12,24 +12,24 @@ import (
 
 // BurnCoins implements MsgServer.BurnCoins
 func (k Keeper) BurnCoins(ctx context.Context, msg *nameservicev1.MsgBurnCoins) (*nameservicev1.MsgBurnCoinsResponse, error) {
-	k.Logger.Info("BurnCoins: Processing", "owner", msg.Owner, "amount", msg.Amount)
+	k.Logger.Info("BurnCoins: Processing", "name_destination", msg.NameDestination, "amount", msg.Amount)
 
 	// Get SDK context from context.Context
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
-	// Verify the owner exists and is a valid address
-	owner, err := sdk.AccAddressFromBech32(msg.Owner)
+	// Verify the address exists and is a valid address
+	owner, err := sdk.AccAddressFromBech32(msg.NameDestination)
 	if err != nil {
-		k.Logger.Error("BurnCoins: Invalid owner address", "owner", msg.Owner, "error", err)
-		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address: %s", msg.Owner)
+		k.Logger.Error("BurnCoins: Invalid name_destination address", "name_destination", msg.NameDestination, "error", err)
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid name_destination address: %s", msg.NameDestination)
 	}
 
 	// Check that all coins are of valid denom format for burning
 	for _, coin := range msg.Amount {
-		// Verify the sender owns the denom
-		if err := k.VerifyDenomOwner(sdkCtx, coin.Denom, msg.Owner); err != nil {
-			k.Logger.Error("BurnCoins: Invalid denom", "denom", coin.Denom, "owner", msg.Owner, "error", err)
-			return nil, cosmossdkerrors.Wrapf(err, "cannot burn coin with denom %s, not owned by %s", coin.Denom, msg.Owner)
+		// Verify destination authority for the denom
+		if err := k.VerifyDenomDestination(ctx, coin.Denom, msg.NameDestination); err != nil {
+			k.Logger.Error("BurnCoins: Invalid denom", "denom", coin.Denom, "name_destination", msg.NameDestination, "error", err)
+			return nil, cosmossdkerrors.Wrapf(err, "cannot burn coin with denom %s, not controlled by destination %s", coin.Denom, msg.NameDestination)
 		}
 	}
 
@@ -45,7 +45,7 @@ func (k Keeper) BurnCoins(ctx context.Context, msg *nameservicev1.MsgBurnCoins) 
 		return nil, cosmossdkerrors.Wrap(err, "failed to burn coins")
 	}
 
-	k.Logger.Info("BurnCoins: Successfully burned coins", "amount", msg.Amount, "owner", msg.Owner)
+	k.Logger.Info("BurnCoins: Successfully burned coins", "amount", msg.Amount, "name_destination", msg.NameDestination)
 
 	// Emit event
 	if err := sdkCtx.EventManager().EmitTypedEvent(

@@ -12,13 +12,9 @@ import (
 
 // SetNFTClassExtraData handles a MsgSetNFTClassExtraData message
 func (k Keeper) SetNFTClassExtraData(ctx context.Context, msg *nameservicev1.MsgSetNFTClassExtraData) (*nameservicev1.MsgSetNFTClassExtraDataResponse, error) {
-	// Verify authorization: only the owner of the root name (class owner) can set extra data
-	if err := k.verifyClassIDOwner(ctx, msg.ClassId, msg.Owner); err != nil {
-		return nil, cosmossdkerrors.Wrapf(
-			sdkerrors.ErrUnauthorized,
-			"only the owner [%s] of the class root name can set extra data for this NFT class",
-			msg.Owner,
-		)
+	// Verify authorization: signer must match resolved destination of class root name
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "unauthorized to set class extra data: %v", err)
 	}
 
 	// Get current NFT class data
@@ -55,7 +51,7 @@ func (k Keeper) SetNFTClassExtraData(ctx context.Context, msg *nameservicev1.Msg
 
 	k.Logger.Info("Successfully updated NFT class extra data",
 		"class_id", msg.ClassId,
-		"owner", msg.Owner)
+		"name_destination", msg.NameDestination)
 
 	return &nameservicev1.MsgSetNFTClassExtraDataResponse{}, nil
 }

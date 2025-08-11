@@ -32,7 +32,7 @@ func (k Keeper) MoveCoins(ctx context.Context, msg *nameservicev1.MsgMoveCoins) 
 				return nil, err
 			} else {
 				nameSet[root] = struct{}{}
-				if err := k.VerifyDenomOwner(sdk.UnwrapSDKContext(ctx), coin.Denom, msg.Owner); err != nil {
+				if err := k.VerifyDenomDestination(ctx, coin.Denom, msg.NameDestination); err != nil {
 					return nil, err
 				}
 			}
@@ -69,6 +69,6 @@ func (k Keeper) MoveCoins(ctx context.Context, msg *nameservicev1.MsgMoveCoins) 
 		k.Logger.Error("failed to emit coins moved event", "error", evErr)
 	}
 
-	k.Logger.Info("MoveCoins: moved coins", "owner", msg.Owner)
+	k.Logger.Info("MoveCoins: moved coins", "name_destination", msg.NameDestination)
 	return &nameservicev1.MsgMoveCoinsResponse{}, nil
 }

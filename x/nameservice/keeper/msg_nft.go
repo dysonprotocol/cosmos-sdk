@@ -7,8 +7,8 @@ import (
 	"time"
 
 	cosmossdkerrors "cosmossdk.io/errors"
-	"dysonprotocol.com/x/nft"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
+	"dysonprotocol.com/x/nft"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -68,8 +68,8 @@ func (k Keeper) verifyClassIDOwner(ctx context.Context, classID string, owner st
 
 // SaveClass implements the MsgServer.SaveClass method
 func (k Keeper) SaveClass(ctx context.Context, msg *nameservicev1.MsgSaveClass) (*nameservicev1.MsgSaveClassResponse, error) {
-	// Verify the owner owns the root name in the class ID
-	if err := k.verifyClassIDOwner(ctx, msg.ClassId, msg.Owner); err != nil {
+	// Verify destination-based authorization for root name of class ID
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
 		return nil, err
 	}
 
@@ -121,7 +121,7 @@ func (k Keeper) SaveClass(ctx context.Context, msg *nameservicev1.MsgSaveClass) 
 
 		k.Logger.Info("Successfully updated NFT class",
 			"class_id", msg.ClassId,
-			"owner", msg.Owner)
+			"name_destination", msg.NameDestination)
 
 		return &nameservicev1.MsgSaveClassResponse{}, nil
 	}
@@ -154,15 +154,15 @@ func (k Keeper) SaveClass(ctx context.Context, msg *nameservicev1.MsgSaveClass) 
 
 	k.Logger.Info("Successfully created NFT class",
 		"class_id", msg.ClassId,
-		"owner", msg.Owner)
+		"name_destination", msg.NameDestination)
 
 	return &nameservicev1.MsgSaveClassResponse{}, nil
 }
 
 // MintNFT implements the MsgServer.MintNFT method
 func (k Keeper) MintNFT(ctx context.Context, msg *nameservicev1.MsgMintNFT) (*nameservicev1.MsgMintNFTResponse, error) {
-	// Verify the owner owns the root name in the class ID
-	if err := k.verifyClassIDOwner(ctx, msg.ClassId, msg.Owner); err != nil {
+	// Verify destination-based authorization for root name of class ID
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
 		return nil, err
 	}
 
@@ -185,10 +185,10 @@ func (k Keeper) MintNFT(ctx context.Context, msg *nameservicev1.MsgMintNFT) (*na
 		)
 	}
 
-	// Convert owner to account address
-	ownerAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	// Convert signer to account address
+	ownerAddr, err := sdk.AccAddressFromBech32(msg.NameDestination)
 	if err != nil {
-		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address: %s", msg.Owner)
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid name_destination address: %s", msg.NameDestination)
 	}
 
 	// Create the NFT
@@ -233,15 +233,15 @@ func (k Keeper) MintNFT(ctx context.Context, msg *nameservicev1.MsgMintNFT) (*na
 	k.Logger.Info("Successfully minted NFT",
 		"class_id", msg.ClassId,
 		"id", msg.NftId,
-		"owner", msg.Owner)
+		"name_destination", msg.NameDestination)
 
 	return &nameservicev1.MsgMintNFTResponse{}, nil
 }
 
 // BurnNFT implements the MsgServer.BurnNFT method
 func (k Keeper) BurnNFT(ctx context.Context, msg *nameservicev1.MsgBurnNFT) (*nameservicev1.MsgBurnNFTResponse, error) {
-	// Verify the owner owns the root name in the class ID
-	if err := k.verifyClassIDOwner(ctx, msg.ClassId, msg.Owner); err != nil {
+	// Verify destination-based authorization for root name of class ID
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
 		return nil, err
 	}
 
@@ -275,7 +275,7 @@ func (k Keeper) BurnNFT(ctx context.Context, msg *nameservicev1.MsgBurnNFT) (*na
 	k.Logger.Info("Successfully burned NFT",
 		"class_id", msg.ClassId,
 		"id", msg.NftId,
-		"owner", msg.Owner)
+		"name_destination", msg.NameDestination)
 
 	return &nameservicev1.MsgBurnNFTResponse{}, nil
 }

@@ -4,9 +4,9 @@
     "definitions": {
         "dysonprotocol.nameservice.v1.MsgMoveCoins": {
             "properties": {
-                "owner": {
+                "name_destination": {
                     "type": "string",
-                    "description": "Signer must own the root name of each coin denoms in all inputs."
+                    "description": "Signer must be the resolved destination of the root name of each coin denom in all inputs."
                 },
                 "inputs": {
                     "items": {

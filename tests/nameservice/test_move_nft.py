@@ -13,12 +13,12 @@ def test_move_nft_success(chainnet, generate_account, faucet, register_name):
     dysond_bin = chainnet[0]
 
     # accounts
-    owner_name, owner_addr = generate_account("nft_owner")
+    destination_name, destination_addr = generate_account("nft_destination")
     recipient_name, recipient_addr = generate_account("nft_recipient")
-    faucet(owner_addr, denom="udys", amount="25000")
+    faucet(destination_addr, denom="udys", amount="25000")
 
     # register name & derive NFT class ID
-    class_id = register_name(dysond_bin, owner_name, owner_addr)
+    class_id = register_name(dysond_bin, destination_name, destination_addr)
 
     # save nft class
     save_resp = dysond_bin(
@@ -28,7 +28,7 @@ def test_move_nft_success(chainnet, generate_account, faucet, register_name):
         "--class-id",
         class_id,
         "--from",
-        owner_name,
+        destination_name,
     )
     assert save_resp["code"] == 0, save_resp.get("raw_log")
 
@@ -48,12 +48,12 @@ def test_move_nft_success(chainnet, generate_account, faucet, register_name):
         "--uri",
         "https://example.com/n1",
         "--from",
-        owner_name,
+        destination_name,
     )
     assert mint_resp["code"] == 0, mint_resp.get("raw_log")
 
     # ensure ownership
-    assert _nft_owner(dysond_bin, class_id, nft_id) == owner_addr
+    assert _nft_owner(dysond_bin, class_id, nft_id) == destination_addr
 
     # move nft
     tx_resp = dysond_bin(
@@ -67,7 +67,7 @@ def test_move_nft_success(chainnet, generate_account, faucet, register_name):
         "--to-address",
         recipient_addr,
         "--from",
-        owner_name,
+        destination_name,
     )
     assert tx_resp["code"] == 0, tx_resp.get("raw_log")
 
@@ -75,15 +75,15 @@ def test_move_nft_success(chainnet, generate_account, faucet, register_name):
     assert _nft_owner(dysond_bin, class_id, nft_id) == recipient_addr
 
 
-def test_move_nft_non_owner_fails(chainnet, generate_account, faucet, register_name):
+def test_move_nft_non_destination_fails(chainnet, generate_account, faucet, register_name):
     dysond_bin = chainnet[0]
 
-    owner_name, owner_addr = generate_account("nft_owner")
+    destination_name, destination_addr = generate_account("nft_destination")
     attacker_name, attacker_addr = generate_account("nft_attacker")
-    faucet(owner_addr, denom="udys", amount="25000")
+    faucet(destination_addr, denom="udys", amount="25000")
     faucet(attacker_addr, denom="udys", amount="1000")
 
-    class_id = register_name(dysond_bin, owner_name, owner_addr)
+    class_id = register_name(dysond_bin, destination_name, destination_addr)
 
     save_resp = dysond_bin(
         "tx",
@@ -92,7 +92,7 @@ def test_move_nft_non_owner_fails(chainnet, generate_account, faucet, register_n
         "--class-id",
         class_id,
         "--from",
-        owner_name,
+        destination_name,
     )
     assert save_resp["code"] == 0, save_resp.get("raw_log")
 
@@ -106,7 +106,7 @@ def test_move_nft_non_owner_fails(chainnet, generate_account, faucet, register_n
         "--nft-id",
         nft_id,
         "--from",
-        owner_name,
+        destination_name,
     )
     assert mint_resp["code"] == 0, mint_resp.get("raw_log")
 
@@ -124,20 +124,20 @@ def test_move_nft_non_owner_fails(chainnet, generate_account, faucet, register_n
         "--from",
         attacker_name,
     )
-    assert tx_resp["code"] != 0, "non-owner should not be able to move NFT"
+    assert tx_resp["code"] != 0, "non-destination signer should not be able to move NFT"
 
 
 def test_move_nft_module_account_fails(chainnet, generate_account, faucet, register_name):
     dysond_bin = chainnet[0]
 
-    owner_name, owner_addr = generate_account("nft_owner")
-    faucet(owner_addr, denom="udys", amount="25000")
+    destination_name, destination_addr = generate_account("nft_destination")
+    faucet(destination_addr, denom="udys", amount="25000")
 
     # module account destination
     module_info = dysond_bin("query", "auth", "module-account", "distribution")
     module_addr = module_info["account"]["value"]["address"]
 
-    class_id = register_name(dysond_bin, owner_name, owner_addr)
+    class_id = register_name(dysond_bin, destination_name, destination_addr)
     save_resp = dysond_bin(
         "tx",
         "nameservice",
@@ -145,7 +145,7 @@ def test_move_nft_module_account_fails(chainnet, generate_account, faucet, regis
         "--class-id",
         class_id,
         "--from",
-        owner_name,
+        destination_name,
     )
     assert save_resp["code"] == 0, save_resp.get("raw_log")
 
@@ -159,7 +159,7 @@ def test_move_nft_module_account_fails(chainnet, generate_account, faucet, regis
         "--nft-id",
         nft_id,
         "--from",
-        owner_name,
+        destination_name,
     )
     assert mint_resp["code"] == 0, mint_resp.get("raw_log")
 
@@ -175,6 +175,6 @@ def test_move_nft_module_account_fails(chainnet, generate_account, faucet, regis
         "--to-address",
         module_addr,
         "--from",
-        owner_name,
+        destination_name,
     )
     assert tx_resp["code"] != 0, "move to module account should fail" 

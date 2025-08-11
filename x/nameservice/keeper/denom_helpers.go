@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"context"
 	"strings"
 
 	cosmossdkerrors "cosmossdk.io/errors"
@@ -15,12 +16,7 @@ import (
 func (k Keeper) GetDenomOwner(ctx sdk.Context, denom string) (string, string, error) {
 	k.Logger.Info("GetDenomOwner called", "denom", denom)
 
-	// Extract the root name from the denom (everything before the first '/')
-	rootName := denom
-	if idx := strings.Index(denom, "/"); idx > 0 {
-		rootName = denom[:idx]
-	}
-
+	rootName := extractRootName(denom)
 	k.Logger.Info("Extracted root name", "rootName", rootName)
 
 	// Check if it's a valid nameservice name (must end with ".dys")
@@ -75,4 +71,79 @@ func (k Keeper) VerifyDenomOwner(ctx sdk.Context, denom string, address string) 
 
 	k.Logger.Info("Authorization successful", "denom", denom, "address", address)
 	return nil
+}
+
+// VerifyDenomDestination checks if the provided address is the resolved destination
+// of the root name for the given denom. Returns nil if it matches, or an error if not.
+func (k Keeper) VerifyDenomDestination(ctx context.Context, denom string, address string) error {
+	_, rootName, resolvedAddr, err := k.ResolveRootDestination(ctx, denom)
+	if err != nil {
+		return err
+	}
+
+	if resolvedAddr != address {
+		return cosmossdkerrors.Wrapf(
+			sdkerrors.ErrUnauthorized,
+			"you do not control destination for denom %s (root %s). destination: %s, sender: %s",
+			denom,
+			rootName,
+			resolvedAddr,
+			address,
+		)
+	}
+
+	return nil
+}
+
+// VerifyClassRootDestination checks that the provided address equals the resolved
+// destination of the root name from the given classID (e.g. root of "foo.dys/bar").
+func (k Keeper) VerifyClassRootDestination(ctx context.Context, classID string, address string) error {
+	_, rootName, resolvedAddr, err := k.ResolveRootDestination(ctx, classID)
+	if err != nil {
+		return err
+	}
+
+	if resolvedAddr != address {
+		return cosmossdkerrors.Wrapf(
+			sdkerrors.ErrUnauthorized,
+			"you do not control destination for class %s (root %s). destination: %s, sender: %s",
+			classID,
+			rootName,
+			resolvedAddr,
+			address,
+		)
+	}
+
+	return nil
+}
+
+// ResolveRootDestination resolves an identifier's root name (before '/') to its destination address.
+// Returns: owner (if known), rootName, resolvedAddress.
+func (k Keeper) ResolveRootDestination(ctx context.Context, identifier string) (owner string, rootName string, resolvedAddress string, err error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	rootName = extractRootName(identifier)
+
+	// Ensure the name exists and capture the owner when available
+	owner, found := k.GetNameOwner(sdkCtx, rootName)
+	if !found {
+		return "", "", "", cosmossdkerrors.Wrapf(sdkerrors.ErrNotFound, "root name not found: %s", rootName)
+	}
+
+	// Resolve destination
+	resolved, resErr := k.ResolveNameOrAddress(ctx, rootName)
+	if resErr != nil {
+		return "", "", "", cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "failed resolving destination for %s: %v", rootName, resErr)
+	}
+
+	return owner, rootName, resolved, nil
+}
+
+// extractRootName returns the substring before the first '/' in an identifier.
+// If '/' is not present, the identifier itself is returned.
+func extractRootName(identifier string) string {
+	if idx := strings.Index(identifier, "/"); idx > 0 {
+		return identifier[:idx]
+	}
+	return identifier
 }

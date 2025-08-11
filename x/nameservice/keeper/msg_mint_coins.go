@@ -14,10 +14,10 @@ import (
 
 // MintCoins implements the MsgServer.MintCoins method
 func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) (*nameservicev1.MsgMintCoinsResponse, error) {
-	// 1. Validate owner address
-	ownerAddr, err := sdk.AccAddressFromBech32(msg.Owner)
+	// 1. Validate signer address
+	ownerAddr, err := sdk.AccAddressFromBech32(msg.NameDestination)
 	if err != nil {
-		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address: %s", msg.Owner)
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid name_destination address: %s", msg.NameDestination)
 	}
 
 	// 2. Validate coins
@@ -39,8 +39,8 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 			)
 		}
 
-		// Verify the sender owns the denom
-		if err := k.VerifyDenomOwner(sdk.UnwrapSDKContext(ctx), coin.Denom, msg.Owner); err != nil {
+		// Verify the sender controls the destination for the denom's root name
+		if err := k.VerifyDenomDestination(ctx, coin.Denom, msg.NameDestination); err != nil {
 			return nil, err
 		}
 	}
@@ -57,18 +57,18 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 		// Calculate total fee: number_of_coins × mint_fee_per_coin
 		numCoins := math.NewInt(int64(len(msg.Amount)))
 		totalFeeAmount := mintFeePerCoin.MulInt(numCoins).TruncateInt()
-		
+
 		if !totalFeeAmount.IsZero() {
 			feeCharged = sdk.NewCoins(sdk.NewCoin("udys", totalFeeAmount))
-			
+
 			// Collect fee to community pool before minting
 			if err := k.communityPoolKeeper.FundCommunityPool(ctx, feeCharged, ownerAddr); err != nil {
 				return nil, cosmossdkerrors.Wrap(err, "failed to fund community pool with minting fee")
 			}
-			
-			k.Logger.Info("MintCoins: Collected minting fee", 
-				"owner", msg.Owner, 
-				"coins_minted", len(msg.Amount), 
+
+			k.Logger.Info("MintCoins: Collected minting fee",
+				"name_destination", msg.NameDestination,
+				"coins_minted", len(msg.Amount),
 				"fee_charged", feeCharged.String())
 		}
 	}
@@ -96,7 +96,7 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 		return nil, cosmossdkerrors.Wrap(evErr, "failed to emit coins minted event")
 	}
 
-	k.Logger.Info("MintCoins: Successfully minted coins", "owner", msg.Owner, "amount", msg.Amount.String())
+	k.Logger.Info("MintCoins: Successfully minted coins", "name_destination", msg.NameDestination, "amount", msg.Amount.String())
 
 	return &nameservicev1.MsgMintCoinsResponse{}, nil
 }

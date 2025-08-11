@@ -12,12 +12,9 @@ import (
 
 // SetNFTMetadata handles a MsgSetNFTMetadata message
 func (k Keeper) SetNFTMetadata(ctx context.Context, msg *nameservicev1.MsgSetNFTMetadata) (*nameservicev1.MsgSetNFTMetadataResponse, error) {
-	// Verify authorization: only the owner of the root name (class owner) can set metadata
-	if err := k.verifyClassIDOwner(ctx, msg.ClassId, msg.Owner); err != nil {
-		return nil, cosmossdkerrors.Wrapf(
-			err,
-			"Error verifying class ID owner when setting NFT metadata",
-		)
+	// Verify authorization: signer must match resolved destination of class root name
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "unauthorized to set NFT metadata")
 	}
 
 	// Get current NFT data
@@ -117,7 +114,7 @@ func (k Keeper) SetNFTMetadata(ctx context.Context, msg *nameservicev1.MsgSetNFT
 	k.Logger.Info("Successfully updated NFT metadata",
 		"class_id", msg.ClassId,
 		"nft_id", msg.NftId,
-		"owner", msg.Owner)
+		"name_destination", msg.NameDestination)
 
 	return &nameservicev1.MsgSetNFTMetadataResponse{}, nil
 }

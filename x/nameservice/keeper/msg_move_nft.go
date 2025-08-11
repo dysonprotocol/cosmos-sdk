@@ -12,8 +12,8 @@ import (
 // MoveNft transfers an NFT if signer owns the class and current owner is non-module
 func (k Keeper) MoveNft(ctx context.Context, msg *nameservicev1.MsgMoveNft) (*nameservicev1.MsgMoveNftResponse, error) {
 	// validate addresses
-	if _, err := sdk.AccAddressFromBech32(msg.Owner); err != nil {
-		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address: %s", msg.Owner)
+	if _, err := sdk.AccAddressFromBech32(msg.NameDestination); err != nil {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid name_destination address: %s", msg.NameDestination)
 	}
 	toAddr, err := sdk.AccAddressFromBech32(msg.ToAddress)
 	if err != nil {
@@ -41,7 +41,7 @@ func (k Keeper) MoveNft(ctx context.Context, msg *nameservicev1.MsgMoveNft) (*na
 	}
 
 	// verify owner owns the root name of the class
-	if err := k.VerifyDenomOwner(sdk.UnwrapSDKContext(ctx), msg.ClassId, msg.Owner); err != nil {
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
 		return nil, err
 	}
 

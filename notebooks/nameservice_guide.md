@@ -29,7 +29,7 @@ Let's examine the current parameters of the nameservice module to understand the
 
     {
       "params": {
-        "bid_timeout": "2s",
+        "bid_timeout": "100ms",
         "allowed_denoms": [
           "udys"
         ],
@@ -66,8 +66,8 @@ print(f"Name: {name}")
 print(f"Salt: {salt}")
 ```
 
-    Name: alice-f7zyc.dys
-    Salt: yfjquimuexibr7okzhmo
+    Name: alice-7gfnn.dys
+    Salt: 14r0vqdrnrko53s4ff8n
 
 
 ### Compute Hash for Commitment
@@ -83,7 +83,7 @@ Now, we'll compute a hash using the name, salt, and committer address. This hash
 print(f"Hex Hash: {name_commit_hex_hash}")
 ```
 
-    Hex Hash: 1340802a506187f3d590843ccc37a22da81d20d745ae8ceb151b1f2d651c5d4b
+    Hex Hash: 7d5b8ff61e9957021fcdd9ba34f548e088ede801e7b39d5b32122612eff719cf
 
 
 ### Commit Phase
@@ -113,17 +113,17 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: F9B9CAE05BE54B32EE7954C82783DA6339361DC9E04B0A9A244295AFE956539A
+    Transaction hash: 1C99DDAFF48FF4D1E671B34B7A52E654CCC6DB3F4FF0C5269B6EB2352E92413B
 
 
-    ['{"height":"174","txhash":"F9B9CAE05BE54B32EE7954C82783DA6339361DC9E04B0A9A244295AFE956539A","codespace":"","code":0,"data":"12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D7367436F6D6D6974526573706F6E7365","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"39905","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/27","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"OZnS1mqvK20TEdRZan29aPA3lB1tuQDR/AbmkiZTgZ4xeZMePt9jNnShvrBTbnqYk5g/7jgeK3OUkzmEuZjEFw==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.nameservice.v1.MsgCommit","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"module","value":"nameservice","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nameservice.v1.EventCommitmentCreated","attributes":[{"key":"hexhash","value":"\\"1340802a506187f3d590843ccc37a22da81d20d745ae8ceb151b1f2d651c5d4b\\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}']
+    ['{"height":"1330","txhash":"1C99DDAFF48FF4D1E671B34B7A52E654CCC6DB3F4FF0C5269B6EB2352E92413B","codespace":"","code":0,"data":"12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D7367436F6D6D6974526573706F6E7365","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"39999","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/186","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"e1kskcXTFOWrcVMUOUuizglKU0MViRrDYwUY8EPv7QcaI7m6KQ9lVu4jj3a6OP4exXFChKHX5NrardqgHaZQFg==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.nameservice.v1.MsgCommit","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"module","value":"nameservice","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nameservice.v1.EventCommitmentCreated","attributes":[{"key":"hexhash","value":"\\"7d5b8ff61e9957021fcdd9ba34f548e088ede801e7b39d5b32122612eff719cf\\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}']
     Tx error code: 0
     {
       "type": "dysonprotocol.nameservice.v1.EventCommitmentCreated",
       "attributes": [
         {
           "key": "hexhash",
-          "value": "\"1340802a506187f3d590843ccc37a22da81d20d745ae8ceb151b1f2d651c5d4b\"",
+          "value": "\"7d5b8ff61e9957021fcdd9ba34f548e088ede801e7b39d5b32122612eff719cf\"",
           "index": true
         },
         {
@@ -160,7 +160,7 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: A45ECECDB2918A17CCDC38982EBF15A3789493C84043E76D4309DB59DCBCDC73
+    Transaction hash: AA2A9C72ACC40718AFC6CDE1F4212CC40C212B00040419C0DE6E3C90701D8BDF
 
 
     Tx error code: 0
@@ -174,7 +174,7 @@ for event in tx_result['events']:
         },
         {
           "key": "id",
-          "value": "\"alice-f7zyc.dys\"",
+          "value": "\"alice-7gfnn.dys\"",
           "index": true
         },
         {
@@ -199,7 +199,7 @@ for event in tx_result['events']:
         },
         {
           "key": "name",
-          "value": "\"alice-f7zyc.dys\"",
+          "value": "\"alice-7gfnn.dys\"",
           "index": true
         },
         {
@@ -223,7 +223,7 @@ Let's verify that the name was properly registered by querying the NFT details. 
     {
       "nft": {
         "class_id": "nameservice.dys",
-        "id": "alice-f7zyc.dys",
+        "id": "alice-7gfnn.dys",
         "uri": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
         "data": {
           "type": "/dysonprotocol.nameservice.v1.NFTData",
@@ -233,7 +233,7 @@ Let's verify that the name was properly registered by querying the NFT details. 
               "denom": "udys",
               "amount": "100"
             },
-            "valuation_expiry": "2026-08-02T08:24:36.916296Z",
+            "valuation_expiry": "2026-08-11T09:41:13.524038Z",
             "current_bid": {
               "amount": "0"
             }
@@ -269,7 +269,7 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: 9BFA6C94E3EF1CAF96AFF05EEF525DAA09C97EDF722FC12130B9EE2515074D46
+    Transaction hash: 90C3EF6C6B0C0DEDB172A0D80232D002D1370D64EABB8DD5FE46188C66E6E490
 
 
     Tx error code: 0
@@ -283,7 +283,7 @@ for event in tx_result['events']:
         },
         {
           "key": "name",
-          "value": "\"alice-f7zyc.dys\"",
+          "value": "\"alice-7gfnn.dys\"",
           "index": true
         },
         {
@@ -307,7 +307,7 @@ Let's confirm that the destination was correctly set by checking the NFT's URI f
     {
       "nft": {
         "class_id": "nameservice.dys",
-        "id": "alice-f7zyc.dys",
+        "id": "alice-7gfnn.dys",
         "uri": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
         "data": {
           "type": "/dysonprotocol.nameservice.v1.NFTData",
@@ -317,7 +317,7 @@ Let's confirm that the destination was correctly set by checking the NFT's URI f
               "denom": "udys",
               "amount": "100"
             },
-            "valuation_expiry": "2026-08-02T08:24:36.916296Z",
+            "valuation_expiry": "2026-08-11T09:41:13.524038Z",
             "current_bid": {
               "amount": "0"
             }
@@ -341,7 +341,7 @@ print(f"Transaction hash: {txhash}")
 
 ```
 
-    Transaction hash: 83EBCC12AFF0F10D221F28D48891F1A3ECB4D2E804E4C47691DBBBC63C1887BF
+    Transaction hash: F9F2A8DCAAEE948A269EB6A7E92F1F7DF08851DBEEC144A6AB780B91898BA93D
 
 
 
@@ -409,7 +409,7 @@ assert "hi bob" in out, "Expected 'hi bob' in output, got: " + out
 assert "Request Method: POST" in out, "Expected 'Request Method: POST' in output, got: " + out
 ```
 
-    === Making a GET request to your DWapp at 'http://alice-f7zyc.dys.localhost:2317' ===
+    === Making a GET request to your DWapp at 'http://alice-7gfnn.dys.localhost:2317' ===
 
 
     hi bob
@@ -418,7 +418,7 @@ assert "Request Method: POST" in out, "Expected 'Request Method: POST' in output
     Query String: name=bob
     Path Info: /hi
     
-    === Making a POST request to your DWapp at 'http://alice-f7zyc.dys.localhost:2317' ===
+    === Making a POST request to your DWapp at 'http://alice-7gfnn.dys.localhost:2317' ===
 
 
     hi bob
@@ -451,7 +451,7 @@ print(f"Transaction hash: {txhash}")
 
 ```
 
-    Transaction hash: 5A62EA8100EAFDE2B761F559DC3EDAC13732F388321D4B3E188DDD0519FBE78B
+    Transaction hash: 709D34C10C7ECCAEBFFF0419EE474233B0A5047C03D6781881A4646EF385EDB9
 
 
 
@@ -475,7 +475,7 @@ for event in tx_result['events']:
       "attributes": [
         {
           "key": "name",
-          "value": "\"alice-f7zyc.dys\"",
+          "value": "\"alice-7gfnn.dys\"",
           "index": true
         },
         {
@@ -504,7 +504,7 @@ Let's confirm the updated valuation by querying the NFT data.
     {
       "nft": {
         "class_id": "nameservice.dys",
-        "id": "alice-f7zyc.dys",
+        "id": "alice-7gfnn.dys",
         "uri": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
         "data": {
           "type": "/dysonprotocol.nameservice.v1.NFTData",
@@ -514,7 +514,7 @@ Let's confirm the updated valuation by querying the NFT data.
               "denom": "udys",
               "amount": "200"
             },
-            "valuation_expiry": "2026-08-02T08:24:36.916296Z",
+            "valuation_expiry": "2026-08-11T09:41:13.524038Z",
             "current_bid": {
               "amount": "0"
             }
@@ -556,7 +556,7 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: 21D89EFEDFD3C45AD0E59F5ACD2A673DA6EDE293127354D983A20E77978F37CF
+    Transaction hash: F16F4F2A3CAFA1A3E0BC92D9A684AF56D946974305717799F24069B79C7C721B
 
 
     Tx error code: 0
@@ -565,7 +565,7 @@ for event in tx_result['events']:
       "attributes": [
         {
           "key": "class_id",
-          "value": "\"alice-f7zyc.dys\"",
+          "value": "\"alice-7gfnn.dys\"",
           "index": true
         },
         {
@@ -599,7 +599,7 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: B67C4991ABD0837541F3E2B4F86EE0666B8693B66FD52A860DDD3B1C574A2C60
+    Transaction hash: D845526A0B3BB8C5DB62C18AE8E7E8FD4B8BB8EEA1EBEF275ED178FBF5771893
 
 
     Tx error code: 0
@@ -608,7 +608,7 @@ for event in tx_result['events']:
       "attributes": [
         {
           "key": "class_id",
-          "value": "\"alice-f7zyc.dys/subcollection\"",
+          "value": "\"alice-7gfnn.dys/subcollection\"",
           "index": true
         },
         {
@@ -632,18 +632,30 @@ Let's view all the NFT classes in the system to confirm our collections were cre
     {
       "classes": [
         {
-          "id": "alice-f7zyc.dys",
+          "id": "alice-7gfnn.dys",
           "name": "Main Collection",
           "symbol": "MAINCOL",
           "description": "My Main Collection",
           "uri": "https://example.com/main"
         },
         {
-          "id": "alice-f7zyc.dys/subcollection",
+          "id": "alice-7gfnn.dys/subcollection",
           "name": "Sub Collection",
           "symbol": "SUBCOL",
           "description": "My Sub-Collection",
           "uri": "https://example.com/sub"
+        },
+        {
+          "id": "ckfpud.dys"
+        },
+        {
+          "id": "dgshpj.dys"
+        },
+        {
+          "id": "ejxlea.dys"
+        },
+        {
+          "id": "lqhxij.dys"
         },
         {
           "id": "nameservice.dys",
@@ -657,10 +669,41 @@ Let's view all the NFT classes in the system to confirm our collections were cre
               "annual_pct": "0.01"
             }
           }
+        },
+        {
+          "id": "test-fbyzzxim-1754904980.dys",
+          "name": "Collection-fbyzzxim-1754904980",
+          "symbol": "COL391",
+          "description": "Test Collection fbyzzxim-1754904980",
+          "uri": "https://example.com",
+          "data": {
+            "type": "/dysonprotocol.nameservice.v1.NFTClassData",
+            "value": {
+              "annual_pct": "1.0",
+              "extra_data": "'{\"website\": \"https://example.com/fbyzzxim-1754904980\", \"created_at\": 1754904980, \"creator\": \"Test Suite\"}'"
+            }
+          }
+        },
+        {
+          "id": "test-fbyzzxim-1754904980.dys/sub330",
+          "name": "SubCollection-fbyzzxim-1754904980",
+          "symbol": "SUB164",
+          "description": "Test Sub-Collection fbyzzxim-1754904980",
+          "uri": "https://example.com/sub",
+          "data": {
+            "type": "/dysonprotocol.nameservice.v1.NFTClassData",
+            "value": {
+              "always_listed": true,
+              "annual_pct": "0.0725"
+            }
+          }
+        },
+        {
+          "id": "ukgjoq.dys"
         }
       ],
       "pagination": {
-        "total": "3"
+        "total": "10"
       }
     }
 
@@ -698,7 +741,7 @@ for event in tx_result['events']:
       "attributes": [
         {
           "key": "class_id",
-          "value": "\"alice-f7zyc.dys\"",
+          "value": "\"alice-7gfnn.dys\"",
           "index": true
         },
         {
@@ -723,7 +766,7 @@ for event in tx_result['events']:
       "attributes": [
         {
           "key": "class_id",
-          "value": "\"alice-f7zyc.dys\"",
+          "value": "\"alice-7gfnn.dys\"",
           "index": true
         },
         {
@@ -759,7 +802,7 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: 07AB29D2CCF4BF70154017FE97C303821854EA0A87CAD6BE6ABA9279E4F704CE
+    Transaction hash: 7EBE79AEC8E906268C206E406888AF2E756C7DA2BCAC8E9A3AD3033ADF6ECEB8
 
 
     Tx error code: 0
@@ -768,12 +811,12 @@ for event in tx_result['events']:
       "attributes": [
         {
           "key": "class_id",
-          "value": "\"alice-f7zyc.dys/subcollection\"",
+          "value": "\"alice-7gfnn.dys/subcollection\"",
           "index": true
         },
         {
           "key": "id",
-          "value": "\"subnft1-9c1im\"",
+          "value": "\"subnft1-btgm8\"",
           "index": true
         },
         {
@@ -793,12 +836,12 @@ for event in tx_result['events']:
       "attributes": [
         {
           "key": "class_id",
-          "value": "\"alice-f7zyc.dys/subcollection\"",
+          "value": "\"alice-7gfnn.dys/subcollection\"",
           "index": true
         },
         {
           "key": "nft_id",
-          "value": "\"subnft1-9c1im\"",
+          "value": "\"subnft1-btgm8\"",
           "index": true
         },
         {
@@ -822,7 +865,7 @@ Let's verify the NFTs in our main collection.
     {
       "nfts": [
         {
-          "class_id": "alice-f7zyc.dys",
+          "class_id": "alice-7gfnn.dys",
           "id": "nft1",
           "uri": "https://example.com/nft1",
           "data": {
@@ -831,7 +874,7 @@ Let's verify the NFTs in our main collection.
               "valuation": {
                 "amount": "0"
               },
-              "valuation_expiry": "2026-08-02T08:24:47.444752Z",
+              "valuation_expiry": "2026-08-11T09:41:20.542438Z",
               "current_bid": {
                 "amount": "0"
               }
@@ -856,8 +899,8 @@ Let's verify the NFTs in our main collection.
     {
       "nfts": [
         {
-          "class_id": "alice-f7zyc.dys/subcollection",
-          "id": "subnft1-9c1im",
+          "class_id": "alice-7gfnn.dys/subcollection",
+          "id": "subnft1-btgm8",
           "uri": "https://example.com/subnft1",
           "data": {
             "type": "/dysonprotocol.nameservice.v1.NFTData",
@@ -865,7 +908,7 @@ Let's verify the NFTs in our main collection.
               "valuation": {
                 "amount": "0"
               },
-              "valuation_expiry": "2026-08-02T08:24:49.127518Z",
+              "valuation_expiry": "2026-08-11T09:41:21.173616Z",
               "current_bid": {
                 "amount": "0"
               }
@@ -910,7 +953,7 @@ print(f"Transaction hash: {txhash}")
     Alice address: dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej
 
 
-    Transaction hash: 18F483396E7F886F96DB50FEC068FD3520D41A6A6681704557E2834346C95253
+    Transaction hash: FF5E30D990BA9EA4015E8A535F1E0E138F26E40852ACBC6E559E1DB9155A6776
 
 
 
@@ -929,7 +972,7 @@ assert tx_result['code'] == 0, f"Tx failed with code {tx_result['code']}, {tx_re
 
     {
       "nft": {
-        "class_id": "alice-f7zyc.dys",
+        "class_id": "alice-7gfnn.dys",
         "id": "nft1",
         "uri": "https://example.com/nft1",
         "data": {
@@ -938,7 +981,7 @@ assert tx_result['code'] == 0, f"Tx failed with code {tx_result['code']}, {tx_re
             "valuation": {
               "amount": "0"
             },
-            "valuation_expiry": "2026-08-02T08:24:47.444752Z",
+            "valuation_expiry": "2026-08-11T09:41:20.542438Z",
             "current_bid": {
               "amount": "0"
             },
@@ -972,7 +1015,7 @@ print("NFT class with new extra data:")
 ! dysond query nft class $name -o json
 ```
 
-    Transaction hash: B0A1C2A276EA95F9BEBFFEB6E1DC7050B059F9C2F07F17FF00931078DE09DFFA
+    Transaction hash: DB9C3F9646A7EC728CA6D04656A7690ECCFF04B368810A96B111FB99C474CCA3
 
 
     Tx error code: 0
@@ -981,7 +1024,7 @@ print("NFT class with new extra data:")
 
     {
       "class": {
-        "id": "alice-f7zyc.dys",
+        "id": "alice-7gfnn.dys",
         "name": "Main Collection",
         "symbol": "MAINCOL",
         "description": "My Main Collection",
@@ -1023,7 +1066,7 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: 9CFE42273A9EA84CE62FB6B4D3CC5986CE33CD98E1410A613BAC28DB5E5DFAEB
+    Transaction hash: E587B448175645118942D35576066202F780592825D37C90B79FA8C670377778
 
 
     Tx error code: 0
@@ -1032,7 +1075,7 @@ for event in tx_result['events']:
       "attributes": [
         {
           "key": "amount",
-          "value": "[{\"denom\":\"alice-f7zyc.dys\",\"amount\":\"1000\"}]",
+          "value": "[{\"denom\":\"alice-7gfnn.dys\",\"amount\":\"1000\"}]",
           "index": true
         },
         {
@@ -1073,7 +1116,7 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: C37D517FF4038B3901EECDB997F85109AB5143CA32BA16FB0CB7D9EAF104E72C
+    Transaction hash: 2440B4B5BAA54E77BD8748286B8AFBD885A703A4E093677F56C4063965231315
 
 
     Tx error code: 0
@@ -1082,7 +1125,7 @@ for event in tx_result['events']:
       "attributes": [
         {
           "key": "amount",
-          "value": "[{\"denom\":\"alice-f7zyc.dys/token1\",\"amount\":\"500\"}]",
+          "value": "[{\"denom\":\"alice-7gfnn.dys/token1\",\"amount\":\"500\"}]",
           "index": true
         },
         {
@@ -1111,16 +1154,16 @@ Let's check Alice's balance to confirm the minted coins have been added to her a
     {
       "balances": [
         {
-          "denom": "alice-f7zyc.dys",
+          "denom": "alice-7gfnn.dys",
           "amount": "1000"
         },
         {
-          "denom": "alice-f7zyc.dys/token1",
+          "denom": "alice-7gfnn.dys/token1",
           "amount": "500"
         },
         {
           "denom": "udys",
-          "amount": "998799979895"
+          "amount": "992279540595"
         }
       ],
       "pagination": {
@@ -1152,7 +1195,7 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: 650B80B01F69390F50A21FF13D10FEF0A15EDE67E22C8156044852343F0D72C1
+    Transaction hash: 25CECF733630545F03DA80F2AE558C32BA13F33EE4E1718B010655F9C791ECC9
 
 
     Tx error code: 0
@@ -1170,7 +1213,7 @@ Let's check Bob's balance to confirm the transfer was successful.
     [1;39m{
       [0m[1;34m"balances"[0m[1;39m: [0m[1;39m[
         [1;39m{
-          [0m[1;34m"denom"[0m[1;39m: [0m[0;32m"alice-f7zyc.dys"[0m[1;39m,
+          [0m[1;34m"denom"[0m[1;39m: [0m[0;32m"alice-7gfnn.dys"[0m[1;39m,
           [0m[1;34m"amount"[0m[1;39m: [0m[0;32m"200"[0m[1;39m
         [1;39m}[0m[1;39m,
         [1;39m{
@@ -1228,16 +1271,16 @@ for event in tx_result['events']:
 
 ```
 
-    Bob places a bid on Alice's name: alice-f7zyc.dys
+    Bob places a bid on Alice's name: alice-7gfnn.dys
 
 
-    Current bid result: {'nft': {'class_id': 'nameservice.dys', 'id': 'alice-f7zyc.dys', 'uri': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej', 'data': {'type': '/dysonprotocol.nameservice.v1.NFTData', 'value': {'listed': True, 'valuation': {'denom': 'udys', 'amount': '200'}, 'valuation_expiry': '2026-08-02T08:24:36.916296Z', 'current_bid': {'amount': '0'}}}}}
+    Current bid result: {'nft': {'class_id': 'nameservice.dys', 'id': 'alice-7gfnn.dys', 'uri': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej', 'data': {'type': '/dysonprotocol.nameservice.v1.NFTData', 'value': {'listed': True, 'valuation': {'denom': 'udys', 'amount': '200'}, 'valuation_expiry': '2026-08-11T09:41:13.524038Z', 'current_bid': {'amount': '0'}}}}}
     Current bid: {'amount': '0'}
     Current valuation: {'denom': 'udys', 'amount': '200'}
     Bob's bid amount: 200udys
 
 
-    Transaction hash: 09F48907F5EE2841D303D80DAC8C60D7F6C93E98A65D3D88B5F83B5DC8DE5161
+    Transaction hash: 07AED8B70AE744CEA36B8E2D6A561A3099BC01E21CC6F291C045BAF4426D9EA6
 
 
     Tx error code: 0
@@ -1261,7 +1304,7 @@ for event in tx_result['events']:
         },
         {
           "key": "nft_id",
-          "value": "\"alice-f7zyc.dys\"",
+          "value": "\"alice-7gfnn.dys\"",
           "index": true
         },
         {
@@ -1319,7 +1362,7 @@ for event in tx_result['events']:
 
 ```
 
-    Transaction hash: 4D4FB4EC4C6062F8BB6050D51C9BA0950F504F172C0FF1CCE60F115A7B0E80D4
+    Transaction hash: 0D407C978861E45170D7D4D5DE81C1CE2A049F5E062040F8CC5DF1A894B4698B
 
 
     Tx error code: 0
@@ -1338,7 +1381,7 @@ for event in tx_result['events']:
         },
         {
           "key": "nft_id",
-          "value": "\"alice-f7zyc.dys\"",
+          "value": "\"alice-7gfnn.dys\"",
           "index": true
         },
         {

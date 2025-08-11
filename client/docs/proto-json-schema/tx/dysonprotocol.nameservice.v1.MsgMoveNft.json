@@ -4,9 +4,9 @@
     "definitions": {
         "dysonprotocol.nameservice.v1.MsgMoveNft": {
             "properties": {
-                "owner": {
+                "name_destination": {
                     "type": "string",
-                    "description": "Signer owning class root name"
+                    "description": "Signer must be the resolved destination of the class root name"
                 },
                 "class_id": {
                     "type": "string",

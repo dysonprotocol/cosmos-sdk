@@ -4,9 +4,9 @@
     "definitions": {
         "dysonprotocol.nameservice.v1.MsgBurnCoins": {
             "properties": {
-                "owner": {
+                "name_destination": {
                     "type": "string",
-                    "description": "Owner address"
+                    "description": "name_destination address"
                 },
                 "amount": {
                     "items": {

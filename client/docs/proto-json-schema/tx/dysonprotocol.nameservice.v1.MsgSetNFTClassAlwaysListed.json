@@ -4,9 +4,9 @@
     "definitions": {
         "dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed": {
             "properties": {
-                "owner": {
+                "name_destination": {
                     "type": "string",
-                    "description": "owner is the address of the NFT class root name owner"
+                    "description": "name_destination is the resolved destination address of the NFT class root name"
                 },
                 "class_id": {
                     "type": "string",

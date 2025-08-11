@@ -4,9 +4,9 @@
     "definitions": {
         "dysonprotocol.nameservice.v1.MsgMintCoins": {
             "properties": {
-                "owner": {
+                "name_destination": {
                     "type": "string",
-                    "description": "Owner must be a valid address"
+                    "description": "name_destination must be a valid address"
                 },
                 "amount": {
                     "items": {

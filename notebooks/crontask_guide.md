@@ -40,7 +40,7 @@ from datetime import datetime
         "block_gas_limit": "10000000",
         "expiry_limit": "86400",
         "max_scheduled_time": "86400",
-        "clean_up_time": "86400"
+        "clean_up_time": "2"
       }
     }
 
@@ -77,7 +77,7 @@ The Crontask module provides the following commands:
       -h, --help   help for crontask
     
     Global Flags:
-          --home string         directory for config and data (default "/var/folders/th/nv7lq13d7gx0jfhfg68wdh040000gn/T/tmp9h1uss3m/chain-a-node-1")
+          --home string         directory for config and data (default "/var/folders/th/nv7lq13d7gx0jfhfg68wdh040000gn/T/tmpuk44capx/chain-a-node-1")
           --log_format string   The logging format (json|plain) (default "plain")
           --log_level string    The logging level (trace|debug|info|warn|error|fatal|panic|disabled or '*:<level>,<key>:<level>') (default "info")
           --log_no_color        Disable colored logs
@@ -111,7 +111,7 @@ The Crontask module provides the following commands:
       -h, --help   help for crontask
     
     Global Flags:
-          --home string         directory for config and data (default "/var/folders/th/nv7lq13d7gx0jfhfg68wdh040000gn/T/tmp9h1uss3m/chain-a-node-1")
+          --home string         directory for config and data (default "/var/folders/th/nv7lq13d7gx0jfhfg68wdh040000gn/T/tmpuk44capx/chain-a-node-1")
           --log_format string   The logging format (json|plain) (default "plain")
           --log_level string    The logging level (trace|debug|info|warn|error|fatal|panic|disabled or '*:<level>,<key>:<level>') (default "info")
           --log_no_color        Disable colored logs
@@ -181,11 +181,11 @@ print(f"Transaction hash: {txhash}")
 
 ```
 
-    Scheduled time: 2025-08-02 10:24:23 (Unix: 1754123063)
-    Expiry time: 2025-08-03 10:24:22 (Unix: 1754209462)
+    Scheduled time: 2025-08-11 11:41:05 (Unix: 1754905265)
+    Expiry time: 2025-08-12 11:41:04 (Unix: 1754991664)
 
 
-    Transaction hash: 0A85CB71BF12620C04C228671C7F5B78AA53F201749D734A537B462EABE81DF5
+    Transaction hash: 210A3C0AF257C9BF981F73A33338774966573BD0A29E481391E10F5D06FCB4C6
 
 
 
@@ -200,7 +200,7 @@ assert tx_result['code'] == 0, f"Tx failed with code {tx_result['code']}, {tx_re
 
 ```
 
-    ['{"height":"159","txhash":"0A85CB71BF12620C04C228671C7F5B78AA53F201749D734A537B462EABE81DF5","codespace":"","code":0,"data":"12360A302F6479736F6E70726F746F636F6C2E63726F6E7461736B2E76312E4D73674372656174655461736B526573706F6E736512020815","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"69100","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el/0","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"51ta/B6wvkUH85dEkVOhNBOcV9hDf7ArjE3UmD9sdo54EZMjQWSe8/Pkob9T2oET1OVTeHhTtVAF4nO1bawiPw==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.crontask.v1.MsgCreateTask","index":true},{"key":"sender","value":"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el","index":true},{"key":"module","value":"crontask","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.crontask.v1.EventTaskCreated","attributes":[{"key":"creator","value":"\\"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el\\"","index":true},{"key":"task_id","value":"\\"21\\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}']
+    ['{"height":"1311","txhash":"210A3C0AF257C9BF981F73A33338774966573BD0A29E481391E10F5D06FCB4C6","codespace":"","code":0,"data":"12360A302F6479736F6E70726F746F636F6C2E63726F6E7461736B2E76312E4D73674372656174655461736B526573706F6E736512020821","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"54538","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el/1","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"8TgPuxa2NPHhLPIv+upgE0CDlgY5lOawVFL3+uC9fKpnMeY31sqvdsSKcyhhUTmqQ4BKzc+WNF4WFeWtBWf/uQ==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.crontask.v1.MsgCreateTask","index":true},{"key":"sender","value":"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el","index":true},{"key":"module","value":"crontask","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.crontask.v1.EventTaskCreated","attributes":[{"key":"creator","value":"\\"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el\\"","index":true},{"key":"task_id","value":"\\"33\\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}']
     Tx error code: 0
 
 
@@ -235,7 +235,7 @@ print(f"Created task ID: {TASK_ID}")
         },
         {
           "key": "task_id",
-          "value": "\"21\"",
+          "value": "\"33\"",
           "index": true
         },
         {
@@ -245,7 +245,7 @@ print(f"Created task ID: {TASK_ID}")
         }
       ]
     }
-    Created task ID: 21
+    Created task ID: 33
 
 
 ## 5. Querying Task Information
@@ -262,10 +262,10 @@ print(json.dumps(json.loads(task_info_str), indent=2))
 
     {
       "task": {
-        "task_id": "21",
+        "task_id": "33",
         "creator": "dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el",
-        "scheduled_timestamp": "1754123063",
-        "expiry_timestamp": "1754209462",
+        "scheduled_timestamp": "1754905265",
+        "expiry_timestamp": "1754991664",
         "task_gas_limit": "200000",
         "task_gas_price": {
           "denom": "udys",
@@ -291,7 +291,7 @@ print(json.dumps(json.loads(task_info_str), indent=2))
           }
         ],
         "status": "SCHEDULED",
-        "creation_time": "1754123062"
+        "creation_time": "1754905264"
       }
     }
 
@@ -309,10 +309,10 @@ tasks_by_addr_json
 
 
 
-    {'tasks': [{'task_id': '21',
+    {'tasks': [{'task_id': '33',
        'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el',
-       'scheduled_timestamp': '1754123063',
-       'expiry_timestamp': '1754209462',
+       'scheduled_timestamp': '1754905265',
+       'expiry_timestamp': '1754991664',
        'task_gas_limit': '200000',
        'task_gas_price': {'denom': 'udys', 'amount': '0'},
        'task_gas_fee': {'denom': 'udys', 'amount': '1'},
@@ -321,7 +321,7 @@ tasks_by_addr_json
           'to_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el',
           'amount': [{'denom': 'udys', 'amount': '1'}]}}],
        'status': 'SCHEDULED',
-       'creation_time': '1754123062'}],
+       'creation_time': '1754905264'}],
      'pagination': {'total': '1'}}
 
 
@@ -344,262 +344,7 @@ json.loads(''.join(out))
 
 
 
-    {'tasks': [{'task_id': '1',
-       'creator': 'dys21afn05qp65nsnc8evwlnnju6qe305v8gepvmmh9',
-       'scheduled_timestamp': '1754122937',
-       'expiry_timestamp': '1754209337',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys21afn05qp65nsnc8evwlnnju6qe305v8gepvmmh9',
-          'to_address': 'dys21spwecuhl7p0xcut2jfxryddyarmzvw4hampttp',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754122934',
-       'task_gas_consumed': '19440',
-       'execution_timestamp': '1754122937'},
-      {'task_id': '3',
-       'creator': 'dys212nqrxefr4z0enffs6sx59h70x6qc7xsx9tv65k',
-       'scheduled_timestamp': '1754122978',
-       'expiry_timestamp': '1754209363',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys212nqrxefr4z0enffs6sx59h70x6qc7xsx9tv65k',
-          'to_address': 'dys212nqrxefr4z0enffs6sx59h70x6qc7xsx9tv65k',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754122963',
-       'task_gas_consumed': '19473',
-       'execution_timestamp': '1754122978'},
-      {'task_id': '4',
-       'creator': 'dys21yuapkmwep85epf48ud7jl0486hcqvyhs7ed69g',
-       'scheduled_timestamp': '1754122983',
-       'expiry_timestamp': '1754209368',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys21yuapkmwep85epf48ud7jl0486hcqvyhs7ed69g',
-          'to_address': 'dys21yuapkmwep85epf48ud7jl0486hcqvyhs7ed69g',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754122968',
-       'task_gas_consumed': '19473',
-       'execution_timestamp': '1754122983'},
-      {'task_id': '5',
-       'creator': 'dys21hszczartsl6d8sgcp3y8dzgad8kw2932ptfyp4',
-       'scheduled_timestamp': '1754122990',
-       'expiry_timestamp': '1754209372',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys21hszczartsl6d8sgcp3y8dzgad8kw2932ptfyp4',
-          'to_address': 'dys21hszczartsl6d8sgcp3y8dzgad8kw2932ptfyp4',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754122973',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754122990'},
-      {'task_id': '7',
-       'creator': 'dys216c72sh49uwresej8fe3dz6yng76v5jr0n06tlw',
-       'scheduled_timestamp': '1754122992',
-       'expiry_timestamp': '1754209377',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys216c72sh49uwresej8fe3dz6yng76v5jr0n06tlw',
-          'to_address': 'dys216c72sh49uwresej8fe3dz6yng76v5jr0n06tlw',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754122978',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754122992'},
-      {'task_id': '8',
-       'creator': 'dys216c72sh49uwresej8fe3dz6yng76v5jr0n06tlw',
-       'scheduled_timestamp': '1754122994',
-       'expiry_timestamp': '1754209379',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '2'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys216c72sh49uwresej8fe3dz6yng76v5jr0n06tlw',
-          'to_address': 'dys216c72sh49uwresej8fe3dz6yng76v5jr0n06tlw',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754122979',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754122994'},
-      {'task_id': '6',
-       'creator': 'dys21hszczartsl6d8sgcp3y8dzgad8kw2932ptfyp4',
-       'scheduled_timestamp': '1754122995',
-       'expiry_timestamp': '1754209374',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys21hszczartsl6d8sgcp3y8dzgad8kw2932ptfyp4',
-          'to_address': 'dys21hszczartsl6d8sgcp3y8dzgad8kw2932ptfyp4',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754122974',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754122995'},
-      {'task_id': '10',
-       'creator': 'dys212dmu7sj8qr7j8kagus6l3ayk6srfl67g2c0ctn',
-       'scheduled_timestamp': '1754123003',
-       'expiry_timestamp': '1754209388',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys212dmu7sj8qr7j8kagus6l3ayk6srfl67g2c0ctn',
-          'to_address': 'dys212dmu7sj8qr7j8kagus6l3ayk6srfl67g2c0ctn',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754122989',
-       'task_gas_consumed': '19473',
-       'execution_timestamp': '1754123003'},
-      {'task_id': '14',
-       'creator': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-       'scheduled_timestamp': '1754123033',
-       'expiry_timestamp': '1754209412',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-          'to_address': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754123013',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754123033'},
-      {'task_id': '15',
-       'creator': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-       'scheduled_timestamp': '1754123036',
-       'expiry_timestamp': '1754209414',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-          'to_address': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754123014',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754123036'},
-      {'task_id': '18',
-       'creator': 'dys21gzpr37jf0e7w8c3vnh7t40vkwfukyvwhnyr7zz',
-       'scheduled_timestamp': '1754123036',
-       'expiry_timestamp': '1754209421',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys21gzpr37jf0e7w8c3vnh7t40vkwfukyvwhnyr7zz',
-          'to_address': 'dys21gzpr37jf0e7w8c3vnh7t40vkwfukyvwhnyr7zz',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754123021',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754123036'},
-      {'task_id': '16',
-       'creator': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-       'scheduled_timestamp': '1754123038',
-       'expiry_timestamp': '1754209415',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-          'to_address': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754123016',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754123038'},
-      {'task_id': '19',
-       'creator': 'dys21gzpr37jf0e7w8c3vnh7t40vkwfukyvwhnyr7zz',
-       'scheduled_timestamp': '1754123038',
-       'expiry_timestamp': '1754209423',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '3'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys21gzpr37jf0e7w8c3vnh7t40vkwfukyvwhnyr7zz',
-          'to_address': 'dys21gzpr37jf0e7w8c3vnh7t40vkwfukyvwhnyr7zz',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754123023',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754123038'},
-      {'task_id': '20',
-       'creator': 'dys21gzpr37jf0e7w8c3vnh7t40vkwfukyvwhnyr7zz',
-       'scheduled_timestamp': '1754123039',
-       'expiry_timestamp': '1754209424',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '2'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys21gzpr37jf0e7w8c3vnh7t40vkwfukyvwhnyr7zz',
-          'to_address': 'dys21gzpr37jf0e7w8c3vnh7t40vkwfukyvwhnyr7zz',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754123025',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754123039'},
-      {'task_id': '17',
-       'creator': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-       'scheduled_timestamp': '1754123041',
-       'expiry_timestamp': '1754209417',
-       'task_gas_limit': '200000',
-       'task_gas_price': {'denom': 'udys', 'amount': '0'},
-       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
-       'msgs': [{'type': '/cosmos.bank.v1beta1.MsgSend',
-         'value': {'from_address': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-          'to_address': 'dys217dtm5r8yslxg0dms84k64lfvwqc26y4w0rqjfg',
-          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-       'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-         'value': {}}],
-       'status': 'DONE',
-       'creation_time': '1754123017',
-       'task_gas_consumed': '19407',
-       'execution_timestamp': '1754123041'}],
-     'pagination': {'total': '15'}}
+    {'pagination': {}}
 
 
 
@@ -644,10 +389,10 @@ task_json
 
 
 
-    {'task': {'task_id': '21',
+    {'task': {'task_id': '33',
       'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el',
-      'scheduled_timestamp': '1754123063',
-      'expiry_timestamp': '1754209462',
+      'scheduled_timestamp': '1754905265',
+      'expiry_timestamp': '1754991664',
       'task_gas_limit': '200000',
       'task_gas_price': {'denom': 'udys', 'amount': '0'},
       'task_gas_fee': {'denom': 'udys', 'amount': '1'},
@@ -655,12 +400,8 @@ task_json
         'value': {'from_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el',
          'to_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el',
          'amount': [{'denom': 'udys', 'amount': '1'}]}}],
-      'msg_results': [{'type': '/cosmos.bank.v1beta1.MsgSendResponse',
-        'value': {}}],
-      'status': 'DONE',
-      'creation_time': '1754123062',
-      'task_gas_consumed': '19671',
-      'execution_timestamp': '1754123063'}}
+      'status': 'SCHEDULED',
+      'creation_time': '1754905264'}}
 
 
 
@@ -704,7 +445,7 @@ for event in tx_result['events']:
         },
         {
           "key": "task_id",
-          "value": "\"21\"",
+          "value": "\"33\"",
           "index": true
         },
         {
@@ -811,7 +552,7 @@ for event in tx_result['events']:
 
 ```
 
-    Script update transaction hash: 11007F92E4FAC805EBB415B38F8D7ADCAF890CBEF6C686D90D3A867BAF9828C4
+    Script update transaction hash: CE7C863EC581ED63223303ECEF1E16C5941C7A7FFEF65F9AF574E34AC1E39789
 
 
     Tx error code: 0
@@ -860,7 +601,7 @@ print("Script executed successfully.")
 tx_result
 ```
 
-    Script execution transaction hash: E7B43AB1FCF0D6BED9CCF81B0CC10A0770323BC121C930DE341A5116652A57BB
+    Script execution transaction hash: 93A46301E70F32AB4663797AA464A91F52E9891878B549C45B5830B00E5619CD
 
 
     Tx error code: 0
@@ -875,21 +616,21 @@ tx_result
        'exception': None,
        'gas_limit': 200000,
        'nodes_called': 123,
-       'result': {'next_execution': 1754123069,
+       'result': {'next_execution': 1754905268,
         'remaining': 1,
         'task_result': {'@type': '/dysonprotocol.crontask.v1.MsgCreateTaskResponse',
-         'task_id': '22'}},
+         'task_id': '34'}},
        'script_gas_consumed': 36459,
        'stdout': 'COUNTDOWN: 1\n'},
       'attached_message_results': []},
      'raw_log': '',
      'events': [{'type': 'tx',
        'attributes': [{'key': 'acc_seq',
-         'value': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el/3',
+         'value': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el/4',
          'index': True}]},
       {'type': 'tx',
        'attributes': [{'key': 'signature',
-         'value': 'uuJPsNipghMiOHGWqeo2Q7BYfpDM7GdtpO1sIQGMnV96rGZc6KmwJPHDFLONhKa6YYbSgpLVd7Vip3HOWmlmGQ==',
+         'value': 'MO7S7IUqeG9xBm831DzUuLNTmhNWWmpn2Th4lBO0kfdy1eHov3zs+YzdOWdNygQXGG7p7Wri6Fy8UWJUs8dEIw==',
          'index': True}]},
       {'type': 'message',
        'attributes': [{'key': 'action',
@@ -904,14 +645,14 @@ tx_result
        'attributes': [{'key': 'creator',
          'value': '"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el"',
          'index': True},
-        {'key': 'task_id', 'value': '"22"', 'index': True},
+        {'key': 'task_id', 'value': '"34"', 'index': True},
         {'key': 'msg_index', 'value': '0', 'index': True}]},
       {'type': 'dysonprotocol.script.v1.EventExecScript',
        'attributes': [{'key': 'request',
          'value': '{"executor_address":"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el","script_address":"dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el","script_name":"","extra_code":"","function_name":"countdown","args":"[1]","kwargs":"","attached_messages":[]}',
          'index': True},
         {'key': 'response',
-         'value': '{"result":"{\\"cumsize\\":63025,\\"exception\\":null,\\"gas_limit\\":200000,\\"nodes_called\\":123,\\"result\\":{\\"next_execution\\":1754123069,\\"remaining\\":1,\\"task_result\\":{\\"@type\\":\\"/dysonprotocol.crontask.v1.MsgCreateTaskResponse\\",\\"task_id\\":\\"22\\"}},\\"script_gas_consumed\\":36459,\\"stdout\\":\\"COUNTDOWN: 1\\\\n\\"}","attached_message_results":[]}',
+         'value': '{"result":"{\\"cumsize\\":63025,\\"exception\\":null,\\"gas_limit\\":200000,\\"nodes_called\\":123,\\"result\\":{\\"next_execution\\":1754905268,\\"remaining\\":1,\\"task_result\\":{\\"@type\\":\\"/dysonprotocol.crontask.v1.MsgCreateTaskResponse\\",\\"task_id\\":\\"34\\"}},\\"script_gas_consumed\\":36459,\\"stdout\\":\\"COUNTDOWN: 1\\\\n\\"}","attached_message_results":[]}',
          'index': True},
         {'key': 'msg_index', 'value': '0', 'index': True}]}]}
 
@@ -970,33 +711,23 @@ print(f"\nProcessed {task_count} tasks in the chain.")
 
 ```
 
-    Created task ID: 22
+    Created task ID: 34
     
-    --- Examining task #1 (ID: 22) ---
+    --- Examining task #1 (ID: 34) ---
     Waiting for it to be executed...
 
 
-    Task details: {'task': {'task_id': '22', 'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'scheduled_timestamp': '1754123069', 'expiry_timestamp': '1754209468', 'task_gas_limit': '200000', 'task_gas_price': {'denom': 'udys', 'amount': '0'}, 'task_gas_fee': {'denom': 'udys', 'amount': '1'}, 'msgs': [{'type': '/dysonprotocol.script.v1.MsgExec', 'value': {'executor_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'script_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'function_name': 'countdown', 'args': '[0]', 'kwargs': '{}'}}], 'status': 'SCHEDULED', 'creation_time': '1754123068'}}
+    Task details: {'task': {'task_id': '34', 'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'scheduled_timestamp': '1754905268', 'expiry_timestamp': '1754991667', 'task_gas_limit': '200000', 'task_gas_price': {'denom': 'udys', 'amount': '0'}, 'task_gas_fee': {'denom': 'udys', 'amount': '1'}, 'msgs': [{'type': '/dysonprotocol.script.v1.MsgExec', 'value': {'executor_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'script_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'function_name': 'countdown', 'args': '[0]', 'kwargs': '{}'}}], 'status': 'SCHEDULED', 'creation_time': '1754905267'}}
     Task status: SCHEDULED
     Waiting for it to be executed...
 
 
-    Task details: {'task': {'task_id': '22', 'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'scheduled_timestamp': '1754123069', 'expiry_timestamp': '1754209468', 'task_gas_limit': '200000', 'task_gas_price': {'denom': 'udys', 'amount': '0'}, 'task_gas_fee': {'denom': 'udys', 'amount': '1'}, 'msgs': [{'type': '/dysonprotocol.script.v1.MsgExec', 'value': {'executor_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'script_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'function_name': 'countdown', 'args': '[0]', 'kwargs': '{}'}}], 'status': 'SCHEDULED', 'creation_time': '1754123068'}}
+    Task details: {'task': {'task_id': '34', 'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'scheduled_timestamp': '1754905268', 'expiry_timestamp': '1754991667', 'task_gas_limit': '200000', 'task_gas_price': {'denom': 'udys', 'amount': '0'}, 'task_gas_fee': {'denom': 'udys', 'amount': '1'}, 'msgs': [{'type': '/dysonprotocol.script.v1.MsgExec', 'value': {'executor_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'script_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'function_name': 'countdown', 'args': '[0]', 'kwargs': '{}'}}], 'status': 'SCHEDULED', 'creation_time': '1754905267'}}
     Task status: SCHEDULED
     Waiting for it to be executed...
 
 
-    Task details: {'task': {'task_id': '22', 'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'scheduled_timestamp': '1754123069', 'expiry_timestamp': '1754209468', 'task_gas_limit': '200000', 'task_gas_price': {'denom': 'udys', 'amount': '0'}, 'task_gas_fee': {'denom': 'udys', 'amount': '1'}, 'msgs': [{'type': '/dysonprotocol.script.v1.MsgExec', 'value': {'executor_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'script_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'function_name': 'countdown', 'args': '[0]', 'kwargs': '{}'}}], 'status': 'SCHEDULED', 'creation_time': '1754123068'}}
-    Task status: SCHEDULED
-    Waiting for it to be executed...
-
-
-    Task details: {'task': {'task_id': '22', 'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'scheduled_timestamp': '1754123069', 'expiry_timestamp': '1754209468', 'task_gas_limit': '200000', 'task_gas_price': {'denom': 'udys', 'amount': '0'}, 'task_gas_fee': {'denom': 'udys', 'amount': '1'}, 'msgs': [{'type': '/dysonprotocol.script.v1.MsgExec', 'value': {'executor_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'script_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'function_name': 'countdown', 'args': '[0]', 'kwargs': '{}'}}], 'status': 'SCHEDULED', 'creation_time': '1754123068'}}
-    Task status: SCHEDULED
-    Waiting for it to be executed...
-
-
-    Task details: {'task': {'task_id': '22', 'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'scheduled_timestamp': '1754123069', 'expiry_timestamp': '1754209468', 'task_gas_limit': '200000', 'task_gas_price': {'denom': 'udys', 'amount': '0'}, 'task_gas_fee': {'denom': 'udys', 'amount': '1'}, 'msgs': [{'type': '/dysonprotocol.script.v1.MsgExec', 'value': {'executor_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'script_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'function_name': 'countdown', 'args': '[0]', 'kwargs': '{}'}}], 'msg_results': [{'type': '/dysonprotocol.script.v1.MsgExecResponse', 'value': {'result': '{"cumsize":9240,"exception":null,"gas_limit":200000,"nodes_called":33,"result":"Countdown complete!","script_gas_consumed":8053,"stdout":"COUNTDOWN: 0\\n"}'}}], 'status': 'DONE', 'creation_time': '1754123068', 'task_gas_consumed': '17293', 'execution_timestamp': '1754123069'}}
+    Task details: {'task': {'task_id': '34', 'creator': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'scheduled_timestamp': '1754905268', 'expiry_timestamp': '1754991667', 'task_gas_limit': '200000', 'task_gas_price': {'denom': 'udys', 'amount': '0'}, 'task_gas_fee': {'denom': 'udys', 'amount': '1'}, 'msgs': [{'type': '/dysonprotocol.script.v1.MsgExec', 'value': {'executor_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'script_address': 'dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el', 'function_name': 'countdown', 'args': '[0]', 'kwargs': '{}'}}], 'msg_results': [{'type': '/dysonprotocol.script.v1.MsgExecResponse', 'value': {'result': '{"cumsize":9240,"exception":null,"gas_limit":200000,"nodes_called":33,"result":"Countdown complete!","script_gas_consumed":8053,"stdout":"COUNTDOWN: 0\\n"}'}}], 'status': 'DONE', 'creation_time': '1754905267', 'task_gas_consumed': '17293', 'execution_timestamp': '1754905268'}}
     Task status: DONE
     Task result: {'cumsize': 9240, 'exception': None, 'gas_limit': 200000, 'nodes_called': 33, 'result': 'Countdown complete!', 'script_gas_consumed': 8053, 'stdout': 'COUNTDOWN: 0\n'}
     No next task found. Chain complete.

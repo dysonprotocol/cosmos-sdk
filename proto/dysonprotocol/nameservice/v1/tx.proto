@@ -153,8 +153,9 @@ message MsgSetDestination {
 message MsgSetDestinationResponse {}
 
 message MsgSetNFTMetadata {
-  option (cosmos.msg.v1.signer) = "owner";
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  option (cosmos.msg.v1.signer) = "name_destination";
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   string class_id = 2;
   string nft_id = 3;
   string metadata = 4;
@@ -163,8 +164,9 @@ message MsgSetNFTMetadata {
 message MsgSetNFTMetadataResponse {}
 
 message MsgSetNFTClassExtraData {
-  option (cosmos.msg.v1.signer) = "owner";
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  option (cosmos.msg.v1.signer) = "name_destination";
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   string class_id = 2;
   string extra_data = 3;
 }
@@ -173,9 +175,11 @@ message MsgSetNFTClassExtraDataResponse {}
 // MsgSetNFTClassAlwaysListed sets the always_listed flag for an NFT class.
 // Only the owner of the NFT class root name can update this setting.
 message MsgSetNFTClassAlwaysListed {
-  option (cosmos.msg.v1.signer) = "owner";
-  // owner is the address of the NFT class root name owner
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  option (cosmos.msg.v1.signer) = "name_destination";
+  // name_destination is the resolved destination address of the NFT class root
+  // name
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   // class_id is the identifier of the NFT class to update
   string class_id = 2;
   // always_listed determines if NFTs in this class should always be listed for
@@ -190,9 +194,11 @@ message MsgSetNFTClassAlwaysListedResponse {}
 // MsgSetNFTClassAnnualPct sets the annual percentage rate for an NFT class.
 // Only the owner of the NFT class root name can update this setting.
 message MsgSetNFTClassAnnualPct {
-  option (cosmos.msg.v1.signer) = "owner";
-  // owner is the address of the NFT class root name owner
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  option (cosmos.msg.v1.signer) = "name_destination";
+  // name_destination is the resolved destination address of the NFT class root
+  // name
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   // class_id is the identifier of the NFT class to update
   string class_id = 2;
   // annual_pct is the annual percentage rate as a string (e.g. "5.5" for 5.5%)
@@ -243,9 +249,10 @@ message MsgUpdateParamsResponse {}
 // MsgMintCoins mints coins into the owner's balance, as long as each coin's
 // "root name" is owned by that owner.
 message MsgMintCoins {
-  option (cosmos.msg.v1.signer) = "owner";
-  // Owner must be a valid address
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  option (cosmos.msg.v1.signer) = "name_destination";
+  // name_destination must be a valid address
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // Using repeated cosmos.base.v1beta1.Coin with the annotation
   // (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
@@ -264,9 +271,10 @@ message MsgMintCoinsResponse {}
 // MsgBurnCoins burns coins from the owner's balance, if each coin's root name
 // is owned by that owner.
 message MsgBurnCoins {
-  option (cosmos.msg.v1.signer) = "owner";
-  // Owner address
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  option (cosmos.msg.v1.signer) = "name_destination";
+  // name_destination address
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // Using the same annotation as MintCoins for consistency
   repeated cosmos.base.v1beta1.Coin amount = 2 [
@@ -297,9 +305,10 @@ message MsgSetDenomMetadataResponse {}
 
 // SaveClass
 message MsgSaveClass {
-  option (cosmos.msg.v1.signer) = "owner";
+  option (cosmos.msg.v1.signer) = "name_destination";
 
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   string class_id = 2;    // must match regex
   string name = 3;        // optional
   string symbol = 4;      // optional
@@ -312,9 +321,10 @@ message MsgSaveClassResponse {}
 
 // MintNFT
 message MsgMintNFT {
-  option (cosmos.msg.v1.signer) = "owner";
+  option (cosmos.msg.v1.signer) = "name_destination";
 
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   string class_id = 2; // must exist
   string nft_id = 3;   // must match printable ASCII
   string uri = 4;      // optional
@@ -325,9 +335,10 @@ message MsgMintNFTResponse {}
 
 // BurnNFT
 message MsgBurnNFT {
-  option (cosmos.msg.v1.signer) = "owner";
+  option (cosmos.msg.v1.signer) = "name_destination";
 
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   string class_id = 2; // must exist
   string nft_id = 3;   // must exist
 }
@@ -337,9 +348,11 @@ message MsgBurnNFTResponse {}
 // MsgMoveCoins force moves custom denom coins between two accounts if signer
 // owns the root name of each coin denom.
 message MsgMoveCoins {
-  option (cosmos.msg.v1.signer) = "owner";
-  // Signer must own the root name of each coin denoms in all inputs.
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  option (cosmos.msg.v1.signer) = "name_destination";
+  // Signer must be the resolved destination of the root name of each coin denom
+  // in all inputs.
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
 
   // One or multiple inputs: each account holding the coins.
   repeated cosmos.bank.v1beta1.Input inputs = 2
@@ -355,9 +368,10 @@ message MsgMoveCoinsResponse {}
 // MsgMoveNft force moves an NFT between accounts when signer owns the NFT
 // class.
 message MsgMoveNft {
-  option (cosmos.msg.v1.signer) = "owner";
-  // Signer owning class root name
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  option (cosmos.msg.v1.signer) = "name_destination";
+  // Signer must be the resolved destination of the class root name
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   // NFT class ID
   string class_id = 2;
   // NFT ID
