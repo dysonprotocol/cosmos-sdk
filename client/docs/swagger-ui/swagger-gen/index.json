@@ -75,11 +75,6 @@
         {"type":"file","name":"query.swagger.json"}
       ]}
     ]},
-    {"type":"directory","name":"group","contents":[
-      {"type":"directory","name":"v1","contents":[
-        {"type":"file","name":"query.swagger.json"}
-      ]}
-    ]},
     {"type":"directory","name":"mint","contents":[
       {"type":"directory","name":"v1beta1","contents":[
         {"type":"file","name":"query.swagger.json"}
@@ -193,5 +188,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":78,"files":37}
+  {"type":"report","directories":76,"files":36}
 ]
