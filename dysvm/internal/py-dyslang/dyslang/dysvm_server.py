@@ -569,6 +569,13 @@ def build_sandbox(
         return script.get("version")
 
     @allow_dys_func
+    def get_script_code() -> str:
+        """
+        Returns the source code of this current script.
+        """
+        return script.get("code", "")
+
+    @allow_dys_func
     def get_script_name() -> str:
         """
         Returns the script name used in the execution message, if provided.
@@ -720,6 +727,7 @@ def build_sandbox(
         "get_gas_limit": get_gas_limit,
         "get_script_address": get_script_address,
         "get_script_version": get_script_version,
+        "get_script_code": get_script_code,
         "get_script_name": get_script_name,
         "get_executor_address": get_executor_address,
         "get_block_info": get_block_info,
