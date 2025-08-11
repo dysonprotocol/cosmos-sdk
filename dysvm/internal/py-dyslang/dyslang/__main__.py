@@ -24,7 +24,7 @@ if __name__ == "__main__":
         code = sys.stdin.read()
 
         try:
-            DysEval(code).validate(code)
+            DysEval().validate(code)
         except Exception as e:
             print(f"Error validating code: {e} type={type(e)}")
             sys.exit(1)

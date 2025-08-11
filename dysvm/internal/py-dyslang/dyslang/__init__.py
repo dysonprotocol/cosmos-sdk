@@ -447,7 +447,7 @@ class DysEval(object):
             ast.ListComp: self._eval_comprehension,
             ast.SetComp: self._eval_comprehension,
             ast.DictComp: self._eval_comprehension,
-            # ast.GeneratorExp: self._eval_comprehension,
+            ast.GeneratorExp: self._eval_comprehension,
             ast.ImportFrom: self._eval_importfrom,
             ast.Import: self._eval_import,
             ast.For: self._eval_for,
