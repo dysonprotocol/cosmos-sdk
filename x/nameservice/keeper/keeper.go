@@ -30,6 +30,9 @@ var (
 
 	// ClassesByRootNameKey is the key for reverse root-name -> class id mappings
 	ClassesByRootNameKey = collections.NewPrefix(6)
+
+	// DenomsByRootNameKey is the key for reverse root-name -> denom mappings
+	DenomsByRootNameKey = collections.NewPrefix(7)
 )
 
 // Keeper defines the nameservice keeper
@@ -57,6 +60,10 @@ type Keeper struct {
 	// classesByRootName stores reverse mappings: (root_name, class_id) -> class_id
 	// Enables listing all class IDs that belong to a root name
 	classesByRootName collections.Map[collections.Pair[string, string], string]
+
+	// denomsByRootName stores reverse mappings: (root_name, denom) -> empty string
+	// Enables listing all denoms that belong to a root name; supply is read from bank if needed
+	denomsByRootName collections.Map[collections.Pair[string, string], string]
 
 	authority string // the address that is authorized to update module parameters
 }
@@ -88,6 +95,7 @@ func NewKeeper(
 		params:              collections.NewItem(sb, ParamsKey, "params", codec.CollValue[nameservicev1.Params](cdc)),
 		nameDestinations:    collections.NewMap(sb, NameDestinationsKey, "name_destinations", collections.PairKeyCodec(collections.StringKey, collections.StringKey), collections.StringValue),
 		classesByRootName:   collections.NewMap(sb, ClassesByRootNameKey, "classes_by_root_name", collections.PairKeyCodec(collections.StringKey, collections.StringKey), collections.StringValue),
+		denomsByRootName:    collections.NewMap(sb, DenomsByRootNameKey, "denoms_by_root_name", collections.PairKeyCodec(collections.StringKey, collections.StringKey), collections.StringValue),
 	}
 
 	schema, err := sb.Build()
@@ -122,6 +130,16 @@ func (k Keeper) SetClassByRootName(ctx context.Context, rootName string, classID
 func (k Keeper) RemoveClassByRootName(ctx context.Context, rootName string, classID string) error {
 	key := collections.Join(rootName, classID)
 	return k.classesByRootName.Remove(ctx, key)
+}
+
+// setDenomTracked stores the denom under its root; value is empty string since supply comes from bank
+func (k Keeper) setDenomTracked(ctx context.Context, denom string) error {
+	return k.denomsByRootName.Set(ctx, collections.Join(extractRootName(denom), denom), "")
+}
+
+// unsetDenomTracked removes denom entry from reverse index
+func (k Keeper) unsetDenomTracked(ctx context.Context, denom string) error {
+	return k.denomsByRootName.Remove(ctx, collections.Join(extractRootName(denom), denom))
 }
 
 // GetNamesByDestination returns all names pointing to the given destination address

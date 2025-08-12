@@ -122,15 +122,25 @@ func (k Keeper) QueryNFTClassesByName(c context.Context, req *types.QueryNFTClas
 		return nil, status.Error(codes.NotFound, "root name NFT not found")
 	}
 
-	// Iterate the reverse index by root name prefix and collect class IDs
+	// Build pagination prefix: when subclass_prefix is provided, use full (name, subprefix) pair key prefix
+	// otherwise prefix only by name (first element of pair)
+	var opts []func(opt *query.CollectionsPaginateOptions[collections.Pair[string, string]])
+	if req.SubclassPrefix != "" {
+		pk := collections.Join(req.Name, req.SubclassPrefix)
+		opts = append(opts, func(o *query.CollectionsPaginateOptions[collections.Pair[string, string]]) {
+			o.Prefix = &pk
+		})
+	} else {
+		opts = append(opts, query.WithCollectionPaginationPairPrefix[string, string](req.Name))
+	}
+
+	// Iterate the reverse index with the computed prefix and collect class IDs
 	classIDs, pageRes, err := query.CollectionPaginate(
 		c,
 		k.classesByRootName,
 		req.Pagination,
-		func(key collections.Pair[string, string], value string) (string, error) {
-			return value, nil
-		},
-		query.WithCollectionPaginationPairPrefix[string, string](req.Name),
+		func(key collections.Pair[string, string], value string) (string, error) { return value, nil },
+		opts...,
 	)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -140,4 +150,49 @@ func (k Keeper) QueryNFTClassesByName(c context.Context, req *types.QueryNFTClas
 		ClassIds:   classIDs,
 		Pagination: pageRes,
 	}, nil
+}
+
+// QueryDenomByName implements the Query/QueryDenomByName gRPC method
+func (k Keeper) QueryDenomByName(c context.Context, req *types.QueryDenomByNameRequest) (*types.QueryDenomByNameResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	if req.Name == "" {
+		return nil, status.Error(codes.InvalidArgument, "name cannot be empty")
+	}
+
+	// Ensure the provided name exists as a Name NFT root
+	if !k.nftKeeper.HasNFT(c, NamesClassID, req.Name) {
+		return nil, status.Error(codes.NotFound, "root name NFT not found")
+	}
+
+	// Build pagination prefix: when subdenom_prefix is provided, use full (name, subprefix) key prefix
+	// otherwise prefix only by name (first element of pair)
+	var opts []func(opt *query.CollectionsPaginateOptions[collections.Pair[string, string]])
+	if req.SubdenomPrefix != "" {
+		pk := collections.Join(req.Name, req.SubdenomPrefix)
+		opts = append(opts, func(o *query.CollectionsPaginateOptions[collections.Pair[string, string]]) {
+			o.Prefix = &pk
+		})
+	} else {
+		opts = append(opts, query.WithCollectionPaginationPairPrefix[string, string](req.Name))
+	}
+
+	results, pageRes, err := query.CollectionPaginate(
+		c,
+		k.denomsByRootName,
+		req.Pagination,
+		func(key collections.Pair[string, string], _ string) (*types.DenomDetails, error) {
+			return &types.DenomDetails{Denom: key.K2()}, nil
+		},
+		opts...,
+	)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	if results == nil {
+		results = make([]*types.DenomDetails, 0)
+	}
+	return &types.QueryDenomByNameResponse{Denoms: results, Pagination: pageRes}, nil
 }

@@ -46,6 +46,13 @@ service Query {
     option (google.api.http).get =
         "/dysonprotocol/nameservice/v1/nftclasses_by_name/{name}";
   }
+
+  // QueryDenomByName lists denoms under a given root name along with details
+  rpc QueryDenomByName(QueryDenomByNameRequest)
+      returns (QueryDenomByNameResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/nameservice/v1/denoms_by_name/{name}";
+  }
 }
 
 // ComputeHashRequest is a request to compute the hash for a name and salt
@@ -109,6 +116,10 @@ message QueryNamesByDestinationResponse {
 message QueryNFTClassesByNameRequest {
   // name is the root name to list classes for
   string name = 1;
+  // subclass_prefix optionally filters to a sub-path under the name (e.g.
+  // "/foo") If empty, all classes under the root including the base class are
+  // returned
+  string subclass_prefix = 3;
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
@@ -118,6 +129,34 @@ message QueryNFTClassesByNameRequest {
 message QueryNFTClassesByNameResponse {
   // class_ids is the list of NFT class IDs under the provided root name
   repeated string class_ids = 1;
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// DenomDetails provides basic information about a custom denom
+message DenomDetails {
+  // denom is the full denom string (e.g. "foo.dys/bar:baz")
+  string denom = 1;
+}
+
+// QueryDenomByNameRequest is request type for the Query/QueryDenomByName RPC
+// method.
+message QueryDenomByNameRequest {
+  // name is the root name to list denoms for
+  string name = 1;
+  // subdenom_prefix optionally filters to a sub-path under the name (e.g.
+  // "/foo") If empty, all denoms under the root including the base denom are
+  // returned
+  string subdenom_prefix = 3;
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryDenomByNameResponse is response type for the
+// Query/QueryDenomByName RPC method.
+message QueryDenomByNameResponse {
+  // denoms is the list of denom details under the provided root name
+  repeated DenomDetails denoms = 1;
   // pagination defines the pagination in the response.
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

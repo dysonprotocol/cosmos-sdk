@@ -45,6 +45,15 @@ func (k Keeper) BurnCoins(ctx context.Context, msg *nameservicev1.MsgBurnCoins) 
 		return nil, cosmossdkerrors.Wrap(err, "failed to burn coins")
 	}
 
+	// After burn, if supply is zero, remove from reverse index
+	for _, coin := range msg.Amount {
+		if !k.bankKeeper.HasSupply(ctx, coin.Denom) {
+			if err := k.unsetDenomTracked(ctx, coin.Denom); err != nil {
+				return nil, cosmossdkerrors.Wrapf(err, "failed to remove denom %s from index", coin.Denom)
+			}
+		}
+	}
+
 	k.Logger.Info("BurnCoins: Successfully burned coins", "amount", msg.Amount, "name_destination", msg.NameDestination)
 
 	// Emit event

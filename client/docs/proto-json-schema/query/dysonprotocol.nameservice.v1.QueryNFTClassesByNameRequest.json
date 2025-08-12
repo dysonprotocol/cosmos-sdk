@@ -8,6 +8,10 @@
                     "type": "string",
                     "description": "name is the root name to list classes for"
                 },
+                "subclass_prefix": {
+                    "type": "string",
+                    "description": "subclass_prefix optionally filters to a sub-path under the name (e.g. \"/foo\") If empty, all classes under the root including the base class are returned"
+                },
                 "pagination": {
                     "$ref": "#/definitions/cosmos.base.query.v1beta1.PageRequest",
                     "additionalProperties": false,

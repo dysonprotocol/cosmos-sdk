@@ -24,6 +24,7 @@ const (
 	Query_Params_FullMethodName                  = "/dysonprotocol.nameservice.v1.Query/Params"
 	Query_QueryNamesByDestination_FullMethodName = "/dysonprotocol.nameservice.v1.Query/QueryNamesByDestination"
 	Query_QueryNFTClassesByName_FullMethodName   = "/dysonprotocol.nameservice.v1.Query/QueryNFTClassesByName"
+	Query_QueryDenomByName_FullMethodName        = "/dysonprotocol.nameservice.v1.Query/QueryDenomByName"
 )
 
 // QueryClient is the client API for Query service.
@@ -43,6 +44,8 @@ type QueryClient interface {
 	QueryNamesByDestination(ctx context.Context, in *QueryNamesByDestinationRequest, opts ...grpc.CallOption) (*QueryNamesByDestinationResponse, error)
 	// QueryNFTClassesByName lists NFT class IDs under a given root name
 	QueryNFTClassesByName(ctx context.Context, in *QueryNFTClassesByNameRequest, opts ...grpc.CallOption) (*QueryNFTClassesByNameResponse, error)
+	// QueryDenomByName lists denoms under a given root name along with details
+	QueryDenomByName(ctx context.Context, in *QueryDenomByNameRequest, opts ...grpc.CallOption) (*QueryDenomByNameResponse, error)
 }
 
 type queryClient struct {
@@ -103,6 +106,16 @@ func (c *queryClient) QueryNFTClassesByName(ctx context.Context, in *QueryNFTCla
 	return out, nil
 }
 
+func (c *queryClient) QueryDenomByName(ctx context.Context, in *QueryDenomByNameRequest, opts ...grpc.CallOption) (*QueryDenomByNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryDenomByNameResponse)
+	err := c.cc.Invoke(ctx, Query_QueryDenomByName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -120,6 +133,8 @@ type QueryServer interface {
 	QueryNamesByDestination(context.Context, *QueryNamesByDestinationRequest) (*QueryNamesByDestinationResponse, error)
 	// QueryNFTClassesByName lists NFT class IDs under a given root name
 	QueryNFTClassesByName(context.Context, *QueryNFTClassesByNameRequest) (*QueryNFTClassesByNameResponse, error)
+	// QueryDenomByName lists denoms under a given root name along with details
+	QueryDenomByName(context.Context, *QueryDenomByNameRequest) (*QueryDenomByNameResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -144,6 +159,9 @@ func (UnimplementedQueryServer) QueryNamesByDestination(context.Context, *QueryN
 }
 func (UnimplementedQueryServer) QueryNFTClassesByName(context.Context, *QueryNFTClassesByNameRequest) (*QueryNFTClassesByNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryNFTClassesByName not implemented")
+}
+func (UnimplementedQueryServer) QueryDenomByName(context.Context, *QueryDenomByNameRequest) (*QueryDenomByNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryDenomByName not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -256,6 +274,24 @@ func _Query_QueryNFTClassesByName_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_QueryDenomByName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryDenomByNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).QueryDenomByName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_QueryDenomByName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).QueryDenomByName(ctx, req.(*QueryDenomByNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -282,6 +318,10 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryNFTClassesByName",
 			Handler:    _Query_QueryNFTClassesByName_Handler,
+		},
+		{
+			MethodName: "QueryDenomByName",
+			Handler:    _Query_QueryDenomByName_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

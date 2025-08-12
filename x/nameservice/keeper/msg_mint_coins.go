@@ -85,6 +85,13 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 		return nil, cosmossdkerrors.Wrap(err, "failed to send minted coins to owner")
 	}
 
+	// 6b. Ensure denom entries exist in reverse index. Bank module holds supply, we only index on first mint.
+	for _, coin := range msg.Amount {
+		if err := k.setDenomTracked(ctx, coin.Denom); err != nil {
+			return nil, cosmossdkerrors.Wrapf(err, "failed to index denom %s", coin.Denom)
+		}
+	}
+
 	// 7. Emit event with fee information
 	if evErr := sdk.UnwrapSDKContext(ctx).EventManager().EmitTypedEvent(
 		&nameservicev1.EventCoinsMinted{

@@ -2055,6 +2055,118 @@ paths:
           type: string
       tags:
         - Query
+  /dysonprotocol/nameservice/v1/denoms_by_name/{name}:
+    get:
+      summary: QueryDenomByName lists denoms under a given root name along with details
+      operationId: dysonprotocol.nameservice.v1.QueryQueryDenomByNameRequest
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denoms:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                      title: denom is the full denom string (e.g. "foo.dys/bar:baz")
+                  title: DenomDetails provides basic information about a custom denom
+                title: >-
+                  denoms is the list of denom details under the provided root
+                  name
+              pagination:
+                description: pagination defines the pagination in the response.
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+            description: |-
+              QueryDenomByNameResponse is response type for the
+              Query/QueryDenomByName RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: name
+          description: name is the root name to list denoms for
+          in: path
+          required: true
+          type: string
+        - name: subdenom_prefix
+          description: >-
+            subdenom_prefix optionally filters to a sub-path under the name
+            (e.g.
+
+            "/foo") If empty, all denoms under the root including the base denom
+            are
+
+            returned.
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /dysonprotocol/nameservice/v1/names_by_destination/{destination}:
     get:
       summary: >-
@@ -2221,6 +2333,18 @@ paths:
           description: name is the root name to list classes for
           in: path
           required: true
+          type: string
+        - name: subclass_prefix
+          description: >-
+            subclass_prefix optionally filters to a sub-path under the name
+            (e.g.
+
+            "/foo") If empty, all classes under the root including the base
+            class are
+
+            returned.
+          in: query
+          required: false
           type: string
         - name: pagination.key
           in: query
@@ -17409,6 +17533,13 @@ definitions:
         type: string
         title: hex_hash is the computed hash as a hex string
     title: ComputeHashResponse contains the computed hash as a hex string
+  dysonprotocol.nameservice.v1.DenomDetails:
+    type: object
+    properties:
+      denom:
+        type: string
+        title: denom is the full denom string (e.g. "foo.dys/bar:baz")
+    title: DenomDetails provides basic information about a custom denom
   dysonprotocol.nameservice.v1.Params:
     type: object
     properties:
@@ -17442,6 +17573,41 @@ definitions:
         type: string
         title: mint_fee_per_coin defines the fee in udys charged per coin minted
     description: Params defines the parameters for the nameservice module.
+  dysonprotocol.nameservice.v1.QueryDenomByNameResponse:
+    type: object
+    properties:
+      denoms:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+              title: denom is the full denom string (e.g. "foo.dys/bar:baz")
+          title: DenomDetails provides basic information about a custom denom
+        title: denoms is the list of denom details under the provided root name
+      pagination:
+        description: pagination defines the pagination in the response.
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+    description: |-
+      QueryDenomByNameResponse is response type for the
+      Query/QueryDenomByName RPC method.
   dysonprotocol.nameservice.v1.QueryNFTClassesByNameResponse:
     type: object
     properties:

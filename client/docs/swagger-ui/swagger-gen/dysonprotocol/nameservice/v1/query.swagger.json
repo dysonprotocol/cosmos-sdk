@@ -57,6 +57,78 @@
         ]
       }
     },
+    "/dysonprotocol/nameservice/v1/denoms_by_name/{name}": {
+      "get": {
+        "summary": "QueryDenomByName lists denoms under a given root name along with details",
+        "operationId": "dysonprotocol.nameservice.v1.QueryQueryDenomByNameRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.QueryDenomByNameResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "name is the root name to list denoms for",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "subdenom_prefix",
+            "description": "subdenom_prefix optionally filters to a sub-path under the name (e.g.\n\"/foo\") If empty, all denoms under the root including the base denom are\nreturned.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
     "/dysonprotocol/nameservice/v1/names_by_destination/{destination}": {
       "get": {
         "summary": "QueryNamesByDestination queries all names pointing to a destination address",
@@ -146,6 +218,13 @@
             "description": "name is the root name to list classes for",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "subclass_prefix",
+            "description": "subclass_prefix optionally filters to a sub-path under the name (e.g.\n\"/foo\") If empty, all classes under the root including the base class are\nreturned.",
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
@@ -300,6 +379,16 @@
       },
       "title": "ComputeHashResponse contains the computed hash as a hex string"
     },
+    "dysonprotocol.nameservice.v1.DenomDetails": {
+      "type": "object",
+      "properties": {
+        "denom": {
+          "type": "string",
+          "title": "denom is the full denom string (e.g. \"foo.dys/bar:baz\")"
+        }
+      },
+      "title": "DenomDetails provides basic information about a custom denom"
+    },
     "dysonprotocol.nameservice.v1.Params": {
       "type": "object",
       "properties": {
@@ -328,6 +417,23 @@
         }
       },
       "description": "Params defines the parameters for the nameservice module."
+    },
+    "dysonprotocol.nameservice.v1.QueryDenomByNameResponse": {
+      "type": "object",
+      "properties": {
+        "denoms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.nameservice.v1.DenomDetails"
+          },
+          "title": "denoms is the list of denom details under the provided root name"
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse",
+          "description": "pagination defines the pagination in the response."
+        }
+      },
+      "description": "QueryDenomByNameResponse is response type for the\nQuery/QueryDenomByName RPC method."
     },
     "dysonprotocol.nameservice.v1.QueryNFTClassesByNameResponse": {
       "type": "object",

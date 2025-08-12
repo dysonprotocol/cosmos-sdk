@@ -13,13 +13,35 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 			EnhanceCustomCommand: true,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
-					RpcMethod: "QueryNFTClassesByName",
-					Use:       "nftclasses-by-name",
-					Short:     "List NFT class IDs by root name",
+					RpcMethod: "QueryDenomByName",
+					Use:       "denoms-by-name",
+					Short:     "List denoms by root name, optional subdenom prefix",
 					FlagOptions: map[string]*autocliv1.FlagOptions{
 						"name": {
 							Name:         "name",
 							Usage:        "The root name (e.g. example.dys)",
+							DefaultValue: "",
+						},
+						"subdenom_prefix": {
+							Name:         "subdenom-prefix",
+							Usage:        "Optional subdenom path prefix (e.g. /foo)",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
+					RpcMethod: "QueryNFTClassesByName",
+					Use:       "nftclasses-by-name",
+					Short:     "List NFT class IDs by root name, optional subclass prefix",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"name": {
+							Name:         "name",
+							Usage:        "The root name (e.g. example.dys)",
+							DefaultValue: "",
+						},
+						"subclass_prefix": {
+							Name:         "subclass-prefix",
+							Usage:        "Optional subclass path prefix (e.g. /foo)",
 							DefaultValue: "",
 						},
 					},
