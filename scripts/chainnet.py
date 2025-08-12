@@ -632,15 +632,15 @@ def setup(config_file, force):
             # Add user keys to this node's keyring
             for acc in cfg['accounts']:
                 subprocess.run([
-                    bin_path, 'keys', 'add', acc['name'], '--recover', '--keyring-backend', 'test', '--home', str(home)
+                    bin_path, 'keys', 'add', acc['name'], '--recover','--home', str(home)
                 ], input=acc['mnemonic'] + "\n", text=True, check=True, capture_output=True)
             
             # Add validator key for this node to its own keyring and get address
             subprocess.run([
-                bin_path, 'keys', 'add', "validator", '--keyring-backend', 'test', '--home', str(home)
+                bin_path, 'keys', 'add', "validator", '--home', str(home)
             ], check=True, capture_output=True, text=True)
             show_addr_proc = subprocess.run([
-                bin_path, 'keys', 'show', "validator", '-a', '--keyring-backend', 'test', '--home', str(home)
+                bin_path, 'keys', 'show', "validator", '-a', '--home', str(home)
             ], capture_output=True, text=True, check=True)
             validator_address = show_addr_proc.stdout.strip()
             node_config_data['validator_address'] = validator_address
