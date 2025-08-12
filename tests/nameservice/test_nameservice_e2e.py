@@ -12,6 +12,7 @@ This test demonstrates a complete workflow of the Nameservice module:
 8. Bidding System (place-bid, accept-bid, reject-bid, claim-bid)
 """
 import pytest
+from decimal import Decimal, ROUND_CEILING
 import json
 import os
 import random
@@ -428,7 +429,12 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     print(f"Charlie successfully placed a bid of {charlie_bid_amount}udys")
     
     # Step 9.4: Bob rejects Charlie's bid with a higher valuation
-    new_bidding_valuation = charlie_bid_amount + random.randint(10, 30)
+    # Compute minimum acceptable valuation based on module param (e.g., 1% above current bid)
+    params = dysond_bin("query", "nameservice", "params")
+    min_inc_str = params.get("params", {}).get("minimum_bid_percent_increase", "0.01")
+    min_inc = Decimal(min_inc_str)
+    min_required = int((Decimal(charlie_bid_amount) * (Decimal(1) + min_inc)).to_integral_value(rounding=ROUND_CEILING))
+    new_bidding_valuation = max(min_required, charlie_bid_amount + random.randint(10, 30))
     reject_bid_result = dysond_bin("tx", "nameservice", "reject-bid", "--nft-class-id", "nameservice.dys", "--nft-id", bidding_name, "--new-valuation", f"{new_bidding_valuation}udys", "--from", bob_name)
     assert reject_bid_result["code"] == 0, "Reject bid transaction failed" + reject_bid_result["raw_log"]
     print(f"Bob successfully rejected Charlie's bid and set new valuation to {new_bidding_valuation}udys")

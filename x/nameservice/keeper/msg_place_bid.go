@@ -145,14 +145,27 @@ func (k Keeper) PlaceBid(ctx context.Context, msg *nameservicev1.MsgPlaceBid) (*
 
 			// Compare the new bid with the minimum required amount
 			if newBidAmountLegacy.LT(minRequiredBidAmount) {
+				// Compute human-friendly percent (e.g., 1 instead of 0.01%) and integer min required amount
+				percentDisplay := minBidIncreaseLegacy.Mul(math.LegacyNewDec(100)).TruncateInt().String()
+				minRequiredInt := minRequiredBidAmount.TruncateInt().String()
+
 				k.Logger.Error("PlaceBid: Bid amount does not meet minimum percentage increase",
 					"bid_amount", msg.BidAmount.Amount.String(),
 					"current_bid", nftData.CurrentBid.Amount.String(),
-					"min_required", minRequiredBidAmount.String(),
-					"min_increase_percent", params.MinimumBidPercentIncrease)
-				return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
-					fmt.Sprintf("bid amount (%s) must be at least %s%% higher than current bid (%s) with a minimum bid of (%s)",
-						msg.BidAmount.Amount.String(), params.MinimumBidPercentIncrease, nftData.CurrentBid.Amount.String(), minRequiredBidAmount.String()))
+					"min_required", minRequiredInt,
+					"min_increase_percent_display", percentDisplay,
+					"denom", msg.BidAmount.Denom)
+
+				// Example: The minimum bid is 1% higher than current bid: 1515000 uatom
+				return nil, cosmossdkerrors.Wrap(
+					sdkerrors.ErrInvalidRequest,
+					fmt.Sprintf(
+						"The next minimum acceptable bid is %s%% higher than current bid: %s %s",
+						percentDisplay,
+						minRequiredInt,
+						msg.BidAmount.Denom,
+					),
+				)
 			}
 
 			k.Logger.Info("PlaceBid: New bid meets minimum percentage increase requirement",

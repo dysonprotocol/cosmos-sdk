@@ -126,7 +126,10 @@ func (k Keeper) QueryNFTClassesByName(c context.Context, req *types.QueryNFTClas
 	// otherwise prefix only by name (first element of pair)
 	var opts []func(opt *query.CollectionsPaginateOptions[collections.Pair[string, string]])
 	if req.SubclassPrefix != "" {
-		pk := collections.Join(req.Name, req.SubclassPrefix)
+		// The second key in the (root_name, class_id) pair is the full class_id (which starts with root_name).
+		// To filter by a subclass path prefix like "/foo", we must prefix K2 with root_name+subclass_prefix.
+		secondPrefix := req.Name + req.SubclassPrefix
+		pk := collections.Join(req.Name, secondPrefix)
 		opts = append(opts, func(o *query.CollectionsPaginateOptions[collections.Pair[string, string]]) {
 			o.Prefix = &pk
 		})
@@ -146,10 +149,10 @@ func (k Keeper) QueryNFTClassesByName(c context.Context, req *types.QueryNFTClas
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryNFTClassesByNameResponse{
-		ClassIds:   classIDs,
-		Pagination: pageRes,
-	}, nil
+	if classIDs == nil {
+		classIDs = make([]string, 0)
+	}
+	return &types.QueryNFTClassesByNameResponse{ClassIds: classIDs, Pagination: pageRes}, nil
 }
 
 // QueryDenomByName implements the Query/QueryDenomByName gRPC method
@@ -171,7 +174,10 @@ func (k Keeper) QueryDenomByName(c context.Context, req *types.QueryDenomByNameR
 	// otherwise prefix only by name (first element of pair)
 	var opts []func(opt *query.CollectionsPaginateOptions[collections.Pair[string, string]])
 	if req.SubdenomPrefix != "" {
-		pk := collections.Join(req.Name, req.SubdenomPrefix)
+		// The second key in (root_name, denom) is the full denom starting with root_name.
+		// Prefix it with root_name+subdenom_prefix for filtering.
+		secondPrefix := req.Name + req.SubdenomPrefix
+		pk := collections.Join(req.Name, secondPrefix)
 		opts = append(opts, func(o *query.CollectionsPaginateOptions[collections.Pair[string, string]]) {
 			o.Prefix = &pk
 		})
