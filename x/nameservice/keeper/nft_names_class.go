@@ -69,7 +69,7 @@ func (k Keeper) EnsureNamesClassExists(ctx context.Context) error {
 		token := nft.NFT{
 			ClassId: NamesClassID,
 			Id:      NamesClassID,
-			Uri:     "",
+			Uri:     authorityAddr.String(),
 			UriHash: "",
 			Data:    nil, // We'll set this using SetNFTData after minting
 		}
@@ -86,6 +86,12 @@ func (k Keeper) EnsureNamesClassExists(ctx context.Context) error {
 		// Use SetNFTData to set the NFT data
 		if err := k.SetNFTData(ctx, NamesClassID, NamesClassID, *nftData); err != nil {
 			return cosmossdkerrors.Wrapf(err, "failed to set NFT data for %s", NamesClassID)
+		}
+
+		// Maintain reverse index for this class under its root name
+		root := extractRootName(NamesClassID)
+		if err := k.SetClassByRootName(ctx, root, NamesClassID); err != nil {
+			return cosmossdkerrors.Wrap(err, "failed to set reverse index for class root name")
 		}
 
 		k.Logger.Info("Successfully minted authority NFT",

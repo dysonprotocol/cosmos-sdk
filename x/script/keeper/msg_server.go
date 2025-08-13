@@ -29,8 +29,10 @@ func (k Keeper) UpdateScript(ctx context.Context, msg *scripttypes.MsgUpdateScri
 
 	if !exists {
 		script = scripttypes.Script{
-			Address: msg.Address,
-			Version: 0,
+			Address:      msg.Address,
+			Version:      0,
+			Code:         msg.Code,
+			UpdateHeight: uint64(sdkCtx.BlockHeight()),
 		}
 	} else {
 		script, err = k.ScriptMap.Get(ctx, msg.Address)
@@ -43,14 +45,14 @@ func (k Keeper) UpdateScript(ctx context.Context, msg *scripttypes.MsgUpdateScri
 	formattedCode, err := dysvm.DysFormat(msg.Code)
 	if err != nil {
 		k.Logger(sdkCtx).Error("failed to format code with dys_format", "error", err)
-		return nil, cosmossdkerrors.Wrapf(err, "failed to format code: %s")
+		return nil, cosmossdkerrors.Wrap(err, "failed to format code")
 	}
 
 	script.Code = formattedCode
 	script.Version = script.Version + 1
 	// Set update metadata
 	script.UpdateHeight = uint64(sdkCtx.BlockHeight())
-
+	k.Logger(sdkCtx).Info("updating script", "script", script)
 	err = k.ScriptMap.Set(ctx, msg.Address, script)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to set script")

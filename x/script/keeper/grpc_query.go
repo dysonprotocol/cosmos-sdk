@@ -48,9 +48,10 @@ func (k Keeper) ScriptInfo(ctx context.Context, req *scripttypes.QueryScriptInfo
 	if err == nil {
 		return &scripttypes.QueryScriptInfoResponse{
 			Script: &scripttypes.Script{
-				Address: script.Address,
-				Version: script.Version,
-				Code:    script.Code,
+				Address:      script.Address,
+				Version:      script.Version,
+				Code:         script.Code,
+				UpdateHeight: script.UpdateHeight,
 			},
 		}, nil
 	}

@@ -19,20 +19,36 @@ if __name__ == "__main__":
     
     elif sys.argv[1] == "dys_format":
         import black
-        from . import DysEval, DysRuntimeError
+        from . import DysEval
 
         code = sys.stdin.read()
+
+        def _pos(exc):
+            n = getattr(exc, "lineno", None)
+            c = getattr(exc, "offset", None) or getattr(exc, "col_offset", None) or getattr(exc, "colno", None)
+            if n is None:
+                node = getattr(exc, "node", None)
+                if node is not None:
+                    n = getattr(node, "lineno", None)
+                    c = getattr(node, "col_offset", None)
+            return n, c
 
         try:
             DysEval().validate(code)
         except Exception as e:
-            print(f"Error validating code: {e} type={type(e)}")
+            n, c = _pos(e)
+            print(f"Error validating code: {e} line={n} col={c} type={type(e)}")
             sys.exit(1)
 
         try:
             formatted_code = black.format_str(code, mode=black.Mode())
             print(formatted_code)
         except Exception as e:
-            print(f"Error formatting code: {e}")
+            n, c = _pos(e)
+            if n is None:
+                inner = getattr(e, "exc", None)
+                if inner is not None:
+                    n, c = _pos(inner)
+            print(f"Error formatting code: {e} line={n} col={c}")
             sys.exit(1)
 
