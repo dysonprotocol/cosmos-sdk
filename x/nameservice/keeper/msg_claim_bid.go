@@ -6,6 +6,7 @@ import (
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
+	nameservice "dysonprotocol.com/x/nameservice"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -39,7 +40,7 @@ func (k Keeper) ClaimBid(ctx context.Context, msg *nameservicev1.MsgClaimBid) (*
 
 	// Check if bid timeout has elapsed
 	currentTime := sdk.UnwrapSDKContext(ctx).BlockTime()
-	params := k.GetParams(ctx)
+	// params := k.GetParams(ctx)
 
 	// Check if BidTimestamp is set
 	if nftData.BidTimestamp == nil {
@@ -47,8 +48,12 @@ func (k Keeper) ClaimBid(ctx context.Context, msg *nameservicev1.MsgClaimBid) (*
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no bid timestamp set")
 	}
 
-	// Calculate timeout time by adding the BidTimeout duration to the bid timestamp
-	timeoutTime := nftData.BidTimestamp.Add(params.BidTimeout)
+	// Calculate timeout time by adding the class BidTimeout duration to the bid timestamp
+	classData, err := k.GetNFTClassData(ctx, msg.NftClassId)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to get class data")
+	}
+	timeoutTime := nftData.BidTimestamp.Add(classData.BidTimeout)
 
 	// Check if current time is before the timeout time
 	if currentTime.Before(timeoutTime) {
@@ -75,14 +80,24 @@ func (k Keeper) ClaimBid(ctx context.Context, msg *nameservicev1.MsgClaimBid) (*
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid bidder address: %s", msg.Bidder)
 	}
 
+	// Send the escrowed bid amount from the module to the previous owner
+	if !nftData.CurrentBid.IsZero() {
+		bidCoins := sdk.NewCoins(nftData.CurrentBid)
+		if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, nameservice.ModuleName, currentOwnerAddr, bidCoins); err != nil {
+			k.Logger.Error("ClaimBid: Failed to transfer bid amount to previous owner", "amount", nftData.CurrentBid, "error", err)
+			return nil, cosmossdkerrors.Wrap(err, "failed to transfer bid amount to previous owner")
+		}
+		k.Logger.Info("ClaimBid: Transferred bid to previous owner", "amount", nftData.CurrentBid, "owner", currentOwner)
+	}
+
 	// Update the NFT data - use the current bid as the valuation
 	var valuationCoin sdk.Coin
 	if !nftData.CurrentBid.IsZero() {
 		valuationCoin = nftData.CurrentBid
 	} else {
 		// If CurrentBid is invalid, use the first allowed denomination with zero amount
-		if len(params.AllowedDenoms) > 0 {
-			valuationCoin = sdk.NewCoin(params.AllowedDenoms[0], math.ZeroInt())
+		if len(classData.AllowedDenoms) > 0 {
+			valuationCoin = sdk.NewCoin(classData.AllowedDenoms[0], math.ZeroInt())
 		} else {
 			k.Logger.Error("ClaimBid: No allowed denominations configured")
 			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no allowed denominations configured")

@@ -18,9 +18,9 @@
                     "additionalProperties": false,
                     "description": "valuation is the new valuation of the NFT"
                 },
-                "max_annual_pct_fee": {
+                "max_valuation_fee_pct": {
                     "type": "string",
-                    "description": "max_annual_pct_fee (optional) is the maximum annual percentage fee the user is willing to pay for setting the new valuation (e.g. \"0.025\" for 2.5%). This guards against unexpected fee amounts if the name owner changes the annual_pct."
+                    "description": "max_valuation_fee_pct (optional) is the maximum valuation fee percent the user is willing to pay for setting the new valuation (e.g. \"0.025\" for 2.5% per valuation period). This guards against unexpected fee amounts if the class updates valuation_fee_pct."
                 }
             },
             "additionalProperties": false,

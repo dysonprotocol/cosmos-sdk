@@ -66,8 +66,8 @@ func (k Keeper) RejectBid(ctx context.Context, msg *nameservicev1.MsgRejectBid) 
 	}
 
 	// Enforce that the new valuation is at least the minimum percent higher than the current bid
-	params := k.GetParams(ctx)
-	minBidIncrease, err := params.GetMinimumBidPercentIncreaseAsDec()
+	classDataForBids, _ := k.GetNFTClassData(ctx, msg.NftClassId)
+	minBidIncrease, err := math.LegacyNewDecFromStr(classDataForBids.MinimumBidPercentIncrease)
 	if err != nil {
 		k.Logger.Error("RejectBid: Failed to parse minimum bid percent increase", "error", err)
 		return nil, cosmossdkerrors.Wrap(err, "failed to parse minimum bid percent increase")
@@ -132,7 +132,7 @@ func (k Keeper) RejectBid(ctx context.Context, msg *nameservicev1.MsgRejectBid) 
 	}
 
 	// Validate the new valuation
-	if err := k.ValidateValuation(ctx, msg.NewValuation); err != nil {
+	if err := k.ValidateValuation(ctx, msg.NftClassId, msg.NewValuation); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to validate new valuation: %s", msg.NewValuation.String())
 	}
 
@@ -146,7 +146,7 @@ func (k Keeper) RejectBid(ctx context.Context, msg *nameservicev1.MsgRejectBid) 
 	// --------------------------------
 
 	// Get the reject bid fee percentage
-	rejectFeePercent, err := params.GetRejectBidValuationFeePercentAsDec()
+	rejectFeePercent, err := math.LegacyNewDecFromStr(classDataForBids.RejectBidValuationFeePercent)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to parse reject bid valuation fee percent")
 	}

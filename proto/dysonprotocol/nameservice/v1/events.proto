@@ -94,6 +94,10 @@ message EventNFTClassAlwaysListedUpdated { string class_id = 1; }
 // updated
 message EventNFTClassAnnualPctUpdated { string class_id = 1; }
 
+// EventNFTClassDataUpdated is emitted when any per-class bidding parameter is
+// updated
+message EventNFTClassDataUpdated { string class_id = 1; }
+
 // EventNFTMetadataUpdated is emitted when NFT metadata is updated
 message EventNFTMetadataUpdated {
   string class_id = 1;

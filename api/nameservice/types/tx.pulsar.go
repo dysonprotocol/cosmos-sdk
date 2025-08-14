@@ -13,6 +13,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoiface "google.golang.org/protobuf/runtime/protoiface"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	reflect "reflect"
@@ -2683,12 +2684,12 @@ func (x *fastReflection_MsgCreateExternalNameResponse) ProtoMethods() *protoifac
 }
 
 var (
-	md_MsgSetValuation                    protoreflect.MessageDescriptor
-	fd_MsgSetValuation_owner              protoreflect.FieldDescriptor
-	fd_MsgSetValuation_nft_class_id       protoreflect.FieldDescriptor
-	fd_MsgSetValuation_nft_id             protoreflect.FieldDescriptor
-	fd_MsgSetValuation_valuation          protoreflect.FieldDescriptor
-	fd_MsgSetValuation_max_annual_pct_fee protoreflect.FieldDescriptor
+	md_MsgSetValuation                       protoreflect.MessageDescriptor
+	fd_MsgSetValuation_owner                 protoreflect.FieldDescriptor
+	fd_MsgSetValuation_nft_class_id          protoreflect.FieldDescriptor
+	fd_MsgSetValuation_nft_id                protoreflect.FieldDescriptor
+	fd_MsgSetValuation_valuation             protoreflect.FieldDescriptor
+	fd_MsgSetValuation_max_valuation_fee_pct protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -2698,7 +2699,7 @@ func init() {
 	fd_MsgSetValuation_nft_class_id = md_MsgSetValuation.Fields().ByName("nft_class_id")
 	fd_MsgSetValuation_nft_id = md_MsgSetValuation.Fields().ByName("nft_id")
 	fd_MsgSetValuation_valuation = md_MsgSetValuation.Fields().ByName("valuation")
-	fd_MsgSetValuation_max_annual_pct_fee = md_MsgSetValuation.Fields().ByName("max_annual_pct_fee")
+	fd_MsgSetValuation_max_valuation_fee_pct = md_MsgSetValuation.Fields().ByName("max_valuation_fee_pct")
 }
 
 var _ protoreflect.Message = (*fastReflection_MsgSetValuation)(nil)
@@ -2790,9 +2791,9 @@ func (x *fastReflection_MsgSetValuation) Range(f func(protoreflect.FieldDescript
 			return
 		}
 	}
-	if x.MaxAnnualPctFee != "" {
-		value := protoreflect.ValueOfString(x.MaxAnnualPctFee)
-		if !f(fd_MsgSetValuation_max_annual_pct_fee, value) {
+	if x.MaxValuationFeePct != "" {
+		value := protoreflect.ValueOfString(x.MaxValuationFeePct)
+		if !f(fd_MsgSetValuation_max_valuation_fee_pct, value) {
 			return
 		}
 	}
@@ -2819,8 +2820,8 @@ func (x *fastReflection_MsgSetValuation) Has(fd protoreflect.FieldDescriptor) bo
 		return x.NftId != ""
 	case "dysonprotocol.nameservice.v1.MsgSetValuation.valuation":
 		return x.Valuation != nil
-	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_annual_pct_fee":
-		return x.MaxAnnualPctFee != ""
+	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_valuation_fee_pct":
+		return x.MaxValuationFeePct != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetValuation"))
@@ -2845,8 +2846,8 @@ func (x *fastReflection_MsgSetValuation) Clear(fd protoreflect.FieldDescriptor) 
 		x.NftId = ""
 	case "dysonprotocol.nameservice.v1.MsgSetValuation.valuation":
 		x.Valuation = nil
-	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_annual_pct_fee":
-		x.MaxAnnualPctFee = ""
+	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_valuation_fee_pct":
+		x.MaxValuationFeePct = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetValuation"))
@@ -2875,8 +2876,8 @@ func (x *fastReflection_MsgSetValuation) Get(descriptor protoreflect.FieldDescri
 	case "dysonprotocol.nameservice.v1.MsgSetValuation.valuation":
 		value := x.Valuation
 		return protoreflect.ValueOfMessage(value.ProtoReflect())
-	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_annual_pct_fee":
-		value := x.MaxAnnualPctFee
+	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_valuation_fee_pct":
+		value := x.MaxValuationFeePct
 		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
@@ -2906,8 +2907,8 @@ func (x *fastReflection_MsgSetValuation) Set(fd protoreflect.FieldDescriptor, va
 		x.NftId = value.Interface().(string)
 	case "dysonprotocol.nameservice.v1.MsgSetValuation.valuation":
 		x.Valuation = value.Message().Interface().(*v1beta1.Coin)
-	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_annual_pct_fee":
-		x.MaxAnnualPctFee = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_valuation_fee_pct":
+		x.MaxValuationFeePct = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetValuation"))
@@ -2939,8 +2940,8 @@ func (x *fastReflection_MsgSetValuation) Mutable(fd protoreflect.FieldDescriptor
 		panic(fmt.Errorf("field nft_class_id of message dysonprotocol.nameservice.v1.MsgSetValuation is not mutable"))
 	case "dysonprotocol.nameservice.v1.MsgSetValuation.nft_id":
 		panic(fmt.Errorf("field nft_id of message dysonprotocol.nameservice.v1.MsgSetValuation is not mutable"))
-	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_annual_pct_fee":
-		panic(fmt.Errorf("field max_annual_pct_fee of message dysonprotocol.nameservice.v1.MsgSetValuation is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_valuation_fee_pct":
+		panic(fmt.Errorf("field max_valuation_fee_pct of message dysonprotocol.nameservice.v1.MsgSetValuation is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetValuation"))
@@ -2963,7 +2964,7 @@ func (x *fastReflection_MsgSetValuation) NewField(fd protoreflect.FieldDescripto
 	case "dysonprotocol.nameservice.v1.MsgSetValuation.valuation":
 		m := new(v1beta1.Coin)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
-	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_annual_pct_fee":
+	case "dysonprotocol.nameservice.v1.MsgSetValuation.max_valuation_fee_pct":
 		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
@@ -3050,7 +3051,7 @@ func (x *fastReflection_MsgSetValuation) ProtoMethods() *protoiface.Methods {
 			l = options.Size(x.Valuation)
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
-		l = len(x.MaxAnnualPctFee)
+		l = len(x.MaxValuationFeePct)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
@@ -3083,10 +3084,10 @@ func (x *fastReflection_MsgSetValuation) ProtoMethods() *protoiface.Methods {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if len(x.MaxAnnualPctFee) > 0 {
-			i -= len(x.MaxAnnualPctFee)
-			copy(dAtA[i:], x.MaxAnnualPctFee)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MaxAnnualPctFee)))
+		if len(x.MaxValuationFeePct) > 0 {
+			i -= len(x.MaxValuationFeePct)
+			copy(dAtA[i:], x.MaxValuationFeePct)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MaxValuationFeePct)))
 			i--
 			dAtA[i] = 0x2a
 		}
@@ -3308,7 +3309,7 @@ func (x *fastReflection_MsgSetValuation) ProtoMethods() *protoiface.Methods {
 				iNdEx = postIndex
 			case 5:
 				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxAnnualPctFee", wireType)
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxValuationFeePct", wireType)
 				}
 				var stringLen uint64
 				for shift := uint(0); ; shift += 7 {
@@ -3336,7 +3337,7 @@ func (x *fastReflection_MsgSetValuation) ProtoMethods() *protoiface.Methods {
 				if postIndex > l {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
-				x.MaxAnnualPctFee = string(dAtA[iNdEx:postIndex])
+				x.MaxValuationFeePct = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
@@ -12359,29 +12360,29 @@ func (x *fastReflection_MsgSetNFTClassAlwaysListedResponse) ProtoMethods() *prot
 }
 
 var (
-	md_MsgSetNFTClassAnnualPct                  protoreflect.MessageDescriptor
-	fd_MsgSetNFTClassAnnualPct_name_destination protoreflect.FieldDescriptor
-	fd_MsgSetNFTClassAnnualPct_class_id         protoreflect.FieldDescriptor
-	fd_MsgSetNFTClassAnnualPct_annual_pct       protoreflect.FieldDescriptor
+	md_MsgSetNFTClassValuationFeePct                   protoreflect.MessageDescriptor
+	fd_MsgSetNFTClassValuationFeePct_name_destination  protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassValuationFeePct_class_id          protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassValuationFeePct_valuation_fee_pct protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_dysonprotocol_nameservice_v1_tx_proto_init()
-	md_MsgSetNFTClassAnnualPct = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassAnnualPct")
-	fd_MsgSetNFTClassAnnualPct_name_destination = md_MsgSetNFTClassAnnualPct.Fields().ByName("name_destination")
-	fd_MsgSetNFTClassAnnualPct_class_id = md_MsgSetNFTClassAnnualPct.Fields().ByName("class_id")
-	fd_MsgSetNFTClassAnnualPct_annual_pct = md_MsgSetNFTClassAnnualPct.Fields().ByName("annual_pct")
+	md_MsgSetNFTClassValuationFeePct = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassValuationFeePct")
+	fd_MsgSetNFTClassValuationFeePct_name_destination = md_MsgSetNFTClassValuationFeePct.Fields().ByName("name_destination")
+	fd_MsgSetNFTClassValuationFeePct_class_id = md_MsgSetNFTClassValuationFeePct.Fields().ByName("class_id")
+	fd_MsgSetNFTClassValuationFeePct_valuation_fee_pct = md_MsgSetNFTClassValuationFeePct.Fields().ByName("valuation_fee_pct")
 }
 
-var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassAnnualPct)(nil)
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassValuationFeePct)(nil)
 
-type fastReflection_MsgSetNFTClassAnnualPct MsgSetNFTClassAnnualPct
+type fastReflection_MsgSetNFTClassValuationFeePct MsgSetNFTClassValuationFeePct
 
-func (x *MsgSetNFTClassAnnualPct) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_MsgSetNFTClassAnnualPct)(x)
+func (x *MsgSetNFTClassValuationFeePct) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassValuationFeePct)(x)
 }
 
-func (x *MsgSetNFTClassAnnualPct) slowProtoReflect() protoreflect.Message {
+func (x *MsgSetNFTClassValuationFeePct) slowProtoReflect() protoreflect.Message {
 	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -12393,43 +12394,43 @@ func (x *MsgSetNFTClassAnnualPct) slowProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_MsgSetNFTClassAnnualPct_messageType fastReflection_MsgSetNFTClassAnnualPct_messageType
-var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassAnnualPct_messageType{}
+var _fastReflection_MsgSetNFTClassValuationFeePct_messageType fastReflection_MsgSetNFTClassValuationFeePct_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassValuationFeePct_messageType{}
 
-type fastReflection_MsgSetNFTClassAnnualPct_messageType struct{}
+type fastReflection_MsgSetNFTClassValuationFeePct_messageType struct{}
 
-func (x fastReflection_MsgSetNFTClassAnnualPct_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_MsgSetNFTClassAnnualPct)(nil)
+func (x fastReflection_MsgSetNFTClassValuationFeePct_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassValuationFeePct)(nil)
 }
-func (x fastReflection_MsgSetNFTClassAnnualPct_messageType) New() protoreflect.Message {
-	return new(fastReflection_MsgSetNFTClassAnnualPct)
+func (x fastReflection_MsgSetNFTClassValuationFeePct_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassValuationFeePct)
 }
-func (x fastReflection_MsgSetNFTClassAnnualPct_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgSetNFTClassAnnualPct
+func (x fastReflection_MsgSetNFTClassValuationFeePct_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassValuationFeePct
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgSetNFTClassAnnualPct
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassValuationFeePct
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) Type() protoreflect.MessageType {
-	return _fastReflection_MsgSetNFTClassAnnualPct_messageType
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassValuationFeePct_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) New() protoreflect.Message {
-	return new(fastReflection_MsgSetNFTClassAnnualPct)
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassValuationFeePct)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) Interface() protoreflect.ProtoMessage {
-	return (*MsgSetNFTClassAnnualPct)(x)
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassValuationFeePct)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -12437,22 +12438,22 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) Interface() protoreflect.ProtoM
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 	if x.NameDestination != "" {
 		value := protoreflect.ValueOfString(x.NameDestination)
-		if !f(fd_MsgSetNFTClassAnnualPct_name_destination, value) {
+		if !f(fd_MsgSetNFTClassValuationFeePct_name_destination, value) {
 			return
 		}
 	}
 	if x.ClassId != "" {
 		value := protoreflect.ValueOfString(x.ClassId)
-		if !f(fd_MsgSetNFTClassAnnualPct_class_id, value) {
+		if !f(fd_MsgSetNFTClassValuationFeePct_class_id, value) {
 			return
 		}
 	}
-	if x.AnnualPct != "" {
-		value := protoreflect.ValueOfString(x.AnnualPct)
-		if !f(fd_MsgSetNFTClassAnnualPct_annual_pct, value) {
+	if x.ValuationFeePct != "" {
+		value := protoreflect.ValueOfString(x.ValuationFeePct)
+		if !f(fd_MsgSetNFTClassValuationFeePct_valuation_fee_pct, value) {
 			return
 		}
 	}
@@ -12469,19 +12470,19 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) Range(f func(protoreflect.Field
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.name_destination":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.name_destination":
 		return x.NameDestination != ""
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.class_id":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.class_id":
 		return x.ClassId != ""
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.annual_pct":
-		return x.AnnualPct != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.valuation_fee_pct":
+		return x.ValuationFeePct != ""
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -12491,19 +12492,19 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) Has(fd protoreflect.FieldDescri
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.name_destination":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.name_destination":
 		x.NameDestination = ""
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.class_id":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.class_id":
 		x.ClassId = ""
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.annual_pct":
-		x.AnnualPct = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.valuation_fee_pct":
+		x.ValuationFeePct = ""
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -12513,22 +12514,22 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) Clear(fd protoreflect.FieldDesc
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.name_destination":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.name_destination":
 		value := x.NameDestination
 		return protoreflect.ValueOfString(value)
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.class_id":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.class_id":
 		value := x.ClassId
 		return protoreflect.ValueOfString(value)
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.annual_pct":
-		value := x.AnnualPct
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.valuation_fee_pct":
+		value := x.ValuationFeePct
 		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -12542,19 +12543,19 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) Get(descriptor protoreflect.Fie
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.name_destination":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.name_destination":
 		x.NameDestination = value.Interface().(string)
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.class_id":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.class_id":
 		x.ClassId = value.Interface().(string)
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.annual_pct":
-		x.AnnualPct = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.valuation_fee_pct":
+		x.ValuationFeePct = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -12568,48 +12569,48 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) Set(fd protoreflect.FieldDescri
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.name_destination":
-		panic(fmt.Errorf("field name_destination of message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct is not mutable"))
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.class_id":
-		panic(fmt.Errorf("field class_id of message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct is not mutable"))
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.annual_pct":
-		panic(fmt.Errorf("field annual_pct of message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.name_destination":
+		panic(fmt.Errorf("field name_destination of message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.class_id":
+		panic(fmt.Errorf("field class_id of message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.valuation_fee_pct":
+		panic(fmt.Errorf("field valuation_fee_pct of message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct is not mutable"))
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.name_destination":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.name_destination":
 		return protoreflect.ValueOfString("")
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.class_id":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.class_id":
 		return protoreflect.ValueOfString("")
-	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.annual_pct":
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.valuation_fee_pct":
 		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -12617,7 +12618,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) WhichOneof(d protoreflect.Oneof
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -12628,7 +12629,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) GetUnknown() protoreflect.RawFi
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -12640,7 +12641,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) SetUnknown(fields protoreflect.
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) IsValid() bool {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) IsValid() bool {
 	return x != nil
 }
 
@@ -12650,9 +12651,9 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_MsgSetNFTClassAnnualPct) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_MsgSetNFTClassValuationFeePct) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*MsgSetNFTClassAnnualPct)
+		x := input.Message.Interface().(*MsgSetNFTClassValuationFeePct)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -12672,7 +12673,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) ProtoMethods() *protoiface.Meth
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
-		l = len(x.AnnualPct)
+		l = len(x.ValuationFeePct)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
@@ -12686,7 +12687,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) ProtoMethods() *protoiface.Meth
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*MsgSetNFTClassAnnualPct)
+		x := input.Message.Interface().(*MsgSetNFTClassValuationFeePct)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -12705,10 +12706,10 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) ProtoMethods() *protoiface.Meth
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if len(x.AnnualPct) > 0 {
-			i -= len(x.AnnualPct)
-			copy(dAtA[i:], x.AnnualPct)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.AnnualPct)))
+		if len(x.ValuationFeePct) > 0 {
+			i -= len(x.ValuationFeePct)
+			copy(dAtA[i:], x.ValuationFeePct)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ValuationFeePct)))
 			i--
 			dAtA[i] = 0x1a
 		}
@@ -12737,7 +12738,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) ProtoMethods() *protoiface.Meth
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*MsgSetNFTClassAnnualPct)
+		x := input.Message.Interface().(*MsgSetNFTClassValuationFeePct)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -12769,10 +12770,10 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) ProtoMethods() *protoiface.Meth
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassAnnualPct: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassValuationFeePct: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassAnnualPct: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassValuationFeePct: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			case 1:
@@ -12841,7 +12842,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) ProtoMethods() *protoiface.Meth
 				iNdEx = postIndex
 			case 3:
 				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AnnualPct", wireType)
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ValuationFeePct", wireType)
 				}
 				var stringLen uint64
 				for shift := uint(0); ; shift += 7 {
@@ -12869,7 +12870,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) ProtoMethods() *protoiface.Meth
 				if postIndex > l {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
-				x.AnnualPct = string(dAtA[iNdEx:postIndex])
+				x.ValuationFeePct = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
@@ -12907,23 +12908,23 @@ func (x *fastReflection_MsgSetNFTClassAnnualPct) ProtoMethods() *protoiface.Meth
 }
 
 var (
-	md_MsgSetNFTClassAnnualPctResponse protoreflect.MessageDescriptor
+	md_MsgSetNFTClassValuationFeePctResponse protoreflect.MessageDescriptor
 )
 
 func init() {
 	file_dysonprotocol_nameservice_v1_tx_proto_init()
-	md_MsgSetNFTClassAnnualPctResponse = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassAnnualPctResponse")
+	md_MsgSetNFTClassValuationFeePctResponse = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassValuationFeePctResponse")
 }
 
-var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassAnnualPctResponse)(nil)
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassValuationFeePctResponse)(nil)
 
-type fastReflection_MsgSetNFTClassAnnualPctResponse MsgSetNFTClassAnnualPctResponse
+type fastReflection_MsgSetNFTClassValuationFeePctResponse MsgSetNFTClassValuationFeePctResponse
 
-func (x *MsgSetNFTClassAnnualPctResponse) ProtoReflect() protoreflect.Message {
-	return (*fastReflection_MsgSetNFTClassAnnualPctResponse)(x)
+func (x *MsgSetNFTClassValuationFeePctResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassValuationFeePctResponse)(x)
 }
 
-func (x *MsgSetNFTClassAnnualPctResponse) slowProtoReflect() protoreflect.Message {
+func (x *MsgSetNFTClassValuationFeePctResponse) slowProtoReflect() protoreflect.Message {
 	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -12935,43 +12936,43 @@ func (x *MsgSetNFTClassAnnualPctResponse) slowProtoReflect() protoreflect.Messag
 	return mi.MessageOf(x)
 }
 
-var _fastReflection_MsgSetNFTClassAnnualPctResponse_messageType fastReflection_MsgSetNFTClassAnnualPctResponse_messageType
-var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassAnnualPctResponse_messageType{}
+var _fastReflection_MsgSetNFTClassValuationFeePctResponse_messageType fastReflection_MsgSetNFTClassValuationFeePctResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassValuationFeePctResponse_messageType{}
 
-type fastReflection_MsgSetNFTClassAnnualPctResponse_messageType struct{}
+type fastReflection_MsgSetNFTClassValuationFeePctResponse_messageType struct{}
 
-func (x fastReflection_MsgSetNFTClassAnnualPctResponse_messageType) Zero() protoreflect.Message {
-	return (*fastReflection_MsgSetNFTClassAnnualPctResponse)(nil)
+func (x fastReflection_MsgSetNFTClassValuationFeePctResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassValuationFeePctResponse)(nil)
 }
-func (x fastReflection_MsgSetNFTClassAnnualPctResponse_messageType) New() protoreflect.Message {
-	return new(fastReflection_MsgSetNFTClassAnnualPctResponse)
+func (x fastReflection_MsgSetNFTClassValuationFeePctResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassValuationFeePctResponse)
 }
-func (x fastReflection_MsgSetNFTClassAnnualPctResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgSetNFTClassAnnualPctResponse
+func (x fastReflection_MsgSetNFTClassValuationFeePctResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassValuationFeePctResponse
 }
 
 // Descriptor returns message descriptor, which contains only the protobuf
 // type information for the message.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Descriptor() protoreflect.MessageDescriptor {
-	return md_MsgSetNFTClassAnnualPctResponse
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassValuationFeePctResponse
 }
 
 // Type returns the message type, which encapsulates both Go and protobuf
 // type information. If the Go type information is not needed,
 // it is recommended that the message descriptor be used instead.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Type() protoreflect.MessageType {
-	return _fastReflection_MsgSetNFTClassAnnualPctResponse_messageType
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassValuationFeePctResponse_messageType
 }
 
 // New returns a newly allocated and mutable empty message.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) New() protoreflect.Message {
-	return new(fastReflection_MsgSetNFTClassAnnualPctResponse)
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassValuationFeePctResponse)
 }
 
 // Interface unwraps the message reflection interface and
 // returns the underlying ProtoMessage interface.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Interface() protoreflect.ProtoMessage {
-	return (*MsgSetNFTClassAnnualPctResponse)(x)
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassValuationFeePctResponse)(x)
 }
 
 // Range iterates over every populated field in an undefined order,
@@ -12979,7 +12980,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Interface() protoreflec
 // Range returns immediately if f returns false.
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
 }
 
 // Has reports whether a field is populated.
@@ -12993,13 +12994,13 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Range(f func(protorefle
 // In other cases (aside from the nullable cases above),
 // a proto3 scalar field is populated if it contains a non-zero value, and
 // a repeated field is populated if it is non-empty.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Has(fd protoreflect.FieldDescriptor) bool {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -13009,13 +13010,13 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Has(fd protoreflect.Fie
 // associated with the given field number.
 //
 // Clear is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Clear(fd protoreflect.FieldDescriptor) {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -13025,13 +13026,13 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Clear(fd protoreflect.F
 // the default value of a bytes scalar is guaranteed to be a copy.
 // For unpopulated composite types, it returns an empty, read-only view
 // of the value; to obtain a mutable reference, use Mutable.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
 	default:
 		if descriptor.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse does not contain field %s", descriptor.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse does not contain field %s", descriptor.FullName()))
 	}
 }
 
@@ -13045,13 +13046,13 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Get(descriptor protoref
 // empty, read-only value, then it panics.
 //
 // Set is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse does not contain field %s", fd.FullName()))
 	}
 }
 
@@ -13065,36 +13066,36 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Set(fd protoreflect.Fie
 // It panics if the field does not contain a composite type.
 //
 // Mutable is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // NewField returns a new value that is assignable to the field
 // for the given descriptor. For scalars, this returns the default value.
 // For lists, maps, and messages, this returns a new, empty, mutable value.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
 	default:
 		if fd.IsExtension() {
-			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse"))
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse"))
 		}
-		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse does not contain field %s", fd.FullName()))
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse does not contain field %s", fd.FullName()))
 	}
 }
 
 // WhichOneof reports which field within the oneof is populated,
 // returning nil if none are populated.
 // It panics if the oneof descriptor does not belong to this message.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
 	switch d.FullName() {
 	default:
-		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse", d.FullName()))
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse", d.FullName()))
 	}
 	panic("unreachable")
 }
@@ -13102,7 +13103,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) WhichOneof(d protorefle
 // GetUnknown retrieves the entire list of unknown fields.
 // The caller may only mutate the contents of the RawFields
 // if the mutated bytes are stored back into the message with SetUnknown.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) GetUnknown() protoreflect.RawFields {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) GetUnknown() protoreflect.RawFields {
 	return x.unknownFields
 }
 
@@ -13113,7 +13114,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) GetUnknown() protorefle
 // An empty RawFields may be passed to clear the fields.
 //
 // SetUnknown is a mutating operation and unsafe for concurrent use.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) SetUnknown(fields protoreflect.RawFields) {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) SetUnknown(fields protoreflect.RawFields) {
 	x.unknownFields = fields
 }
 
@@ -13125,7 +13126,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) SetUnknown(fields proto
 // message type, but the details are implementation dependent.
 // Validity is not part of the protobuf data model, and may not
 // be preserved in marshaling or other operations.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) IsValid() bool {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) IsValid() bool {
 	return x != nil
 }
 
@@ -13135,9 +13136,9 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) IsValid() bool {
 // The returned methods type is identical to
 // "google.golang.org/protobuf/runtime/protoiface".Methods.
 // Consult the protoiface package documentation for details.
-func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) ProtoMethods() *protoiface.Methods {
+func (x *fastReflection_MsgSetNFTClassValuationFeePctResponse) ProtoMethods() *protoiface.Methods {
 	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
-		x := input.Message.Interface().(*MsgSetNFTClassAnnualPctResponse)
+		x := input.Message.Interface().(*MsgSetNFTClassValuationFeePctResponse)
 		if x == nil {
 			return protoiface.SizeOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -13159,7 +13160,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) ProtoMethods() *protoif
 	}
 
 	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
-		x := input.Message.Interface().(*MsgSetNFTClassAnnualPctResponse)
+		x := input.Message.Interface().(*MsgSetNFTClassValuationFeePctResponse)
 		if x == nil {
 			return protoiface.MarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -13189,7 +13190,7 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) ProtoMethods() *protoif
 		}, nil
 	}
 	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
-		x := input.Message.Interface().(*MsgSetNFTClassAnnualPctResponse)
+		x := input.Message.Interface().(*MsgSetNFTClassValuationFeePctResponse)
 		if x == nil {
 			return protoiface.UnmarshalOutput{
 				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -13221,10 +13222,4620 @@ func (x *fastReflection_MsgSetNFTClassAnnualPctResponse) ProtoMethods() *protoif
 			fieldNum := int32(wire >> 3)
 			wireType := int(wire & 0x7)
 			if wireType == 4 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassAnnualPctResponse: wiretype end group for non-group")
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassValuationFeePctResponse: wiretype end group for non-group")
 			}
 			if fieldNum <= 0 {
-				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassAnnualPctResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassValuationFeePctResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgSetNFTClassValuationPeriod                  protoreflect.MessageDescriptor
+	fd_MsgSetNFTClassValuationPeriod_name_destination protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassValuationPeriod_class_id         protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassValuationPeriod_valuation_period protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassValuationPeriod = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassValuationPeriod")
+	fd_MsgSetNFTClassValuationPeriod_name_destination = md_MsgSetNFTClassValuationPeriod.Fields().ByName("name_destination")
+	fd_MsgSetNFTClassValuationPeriod_class_id = md_MsgSetNFTClassValuationPeriod.Fields().ByName("class_id")
+	fd_MsgSetNFTClassValuationPeriod_valuation_period = md_MsgSetNFTClassValuationPeriod.Fields().ByName("valuation_period")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassValuationPeriod)(nil)
+
+type fastReflection_MsgSetNFTClassValuationPeriod MsgSetNFTClassValuationPeriod
+
+func (x *MsgSetNFTClassValuationPeriod) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassValuationPeriod)(x)
+}
+
+func (x *MsgSetNFTClassValuationPeriod) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[28]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassValuationPeriod_messageType fastReflection_MsgSetNFTClassValuationPeriod_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassValuationPeriod_messageType{}
+
+type fastReflection_MsgSetNFTClassValuationPeriod_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassValuationPeriod_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassValuationPeriod)(nil)
+}
+func (x fastReflection_MsgSetNFTClassValuationPeriod_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassValuationPeriod)
+}
+func (x fastReflection_MsgSetNFTClassValuationPeriod_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassValuationPeriod
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassValuationPeriod
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassValuationPeriod_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassValuationPeriod)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassValuationPeriod)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.NameDestination != "" {
+		value := protoreflect.ValueOfString(x.NameDestination)
+		if !f(fd_MsgSetNFTClassValuationPeriod_name_destination, value) {
+			return
+		}
+	}
+	if x.ClassId != "" {
+		value := protoreflect.ValueOfString(x.ClassId)
+		if !f(fd_MsgSetNFTClassValuationPeriod_class_id, value) {
+			return
+		}
+	}
+	if x.ValuationPeriod != nil {
+		value := protoreflect.ValueOfMessage(x.ValuationPeriod.ProtoReflect())
+		if !f(fd_MsgSetNFTClassValuationPeriod_valuation_period, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.name_destination":
+		return x.NameDestination != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.class_id":
+		return x.ClassId != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.valuation_period":
+		return x.ValuationPeriod != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.name_destination":
+		x.NameDestination = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.class_id":
+		x.ClassId = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.valuation_period":
+		x.ValuationPeriod = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.name_destination":
+		value := x.NameDestination
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.class_id":
+		value := x.ClassId
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.valuation_period":
+		value := x.ValuationPeriod
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.name_destination":
+		x.NameDestination = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.class_id":
+		x.ClassId = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.valuation_period":
+		x.ValuationPeriod = value.Message().Interface().(*durationpb.Duration)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.valuation_period":
+		if x.ValuationPeriod == nil {
+			x.ValuationPeriod = new(durationpb.Duration)
+		}
+		return protoreflect.ValueOfMessage(x.ValuationPeriod.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.name_destination":
+		panic(fmt.Errorf("field name_destination of message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.class_id":
+		panic(fmt.Errorf("field class_id of message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.name_destination":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.class_id":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.valuation_period":
+		m := new(durationpb.Duration)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassValuationPeriod) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassValuationPeriod)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.NameDestination)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ClassId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.ValuationPeriod != nil {
+			l = options.Size(x.ValuationPeriod)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassValuationPeriod)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.ValuationPeriod != nil {
+			encoded, err := options.Marshal(x.ValuationPeriod)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.ClassId) > 0 {
+			i -= len(x.ClassId)
+			copy(dAtA[i:], x.ClassId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ClassId)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.NameDestination) > 0 {
+			i -= len(x.NameDestination)
+			copy(dAtA[i:], x.NameDestination)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.NameDestination)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassValuationPeriod)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassValuationPeriod: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassValuationPeriod: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.NameDestination = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ClassId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ValuationPeriod", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.ValuationPeriod == nil {
+					x.ValuationPeriod = &durationpb.Duration{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ValuationPeriod); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgSetNFTClassValuationPeriodResponse protoreflect.MessageDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassValuationPeriodResponse = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassValuationPeriodResponse")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassValuationPeriodResponse)(nil)
+
+type fastReflection_MsgSetNFTClassValuationPeriodResponse MsgSetNFTClassValuationPeriodResponse
+
+func (x *MsgSetNFTClassValuationPeriodResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassValuationPeriodResponse)(x)
+}
+
+func (x *MsgSetNFTClassValuationPeriodResponse) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[29]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassValuationPeriodResponse_messageType fastReflection_MsgSetNFTClassValuationPeriodResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassValuationPeriodResponse_messageType{}
+
+type fastReflection_MsgSetNFTClassValuationPeriodResponse_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassValuationPeriodResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassValuationPeriodResponse)(nil)
+}
+func (x fastReflection_MsgSetNFTClassValuationPeriodResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassValuationPeriodResponse)
+}
+func (x fastReflection_MsgSetNFTClassValuationPeriodResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassValuationPeriodResponse
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassValuationPeriodResponse
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassValuationPeriodResponse_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassValuationPeriodResponse)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassValuationPeriodResponse)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassValuationPeriodResponse) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassValuationPeriodResponse)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassValuationPeriodResponse)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassValuationPeriodResponse)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassValuationPeriodResponse: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassValuationPeriodResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgSetNFTClassBidTimeout                  protoreflect.MessageDescriptor
+	fd_MsgSetNFTClassBidTimeout_name_destination protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassBidTimeout_class_id         protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassBidTimeout_bid_timeout      protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassBidTimeout = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassBidTimeout")
+	fd_MsgSetNFTClassBidTimeout_name_destination = md_MsgSetNFTClassBidTimeout.Fields().ByName("name_destination")
+	fd_MsgSetNFTClassBidTimeout_class_id = md_MsgSetNFTClassBidTimeout.Fields().ByName("class_id")
+	fd_MsgSetNFTClassBidTimeout_bid_timeout = md_MsgSetNFTClassBidTimeout.Fields().ByName("bid_timeout")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassBidTimeout)(nil)
+
+type fastReflection_MsgSetNFTClassBidTimeout MsgSetNFTClassBidTimeout
+
+func (x *MsgSetNFTClassBidTimeout) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassBidTimeout)(x)
+}
+
+func (x *MsgSetNFTClassBidTimeout) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[30]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassBidTimeout_messageType fastReflection_MsgSetNFTClassBidTimeout_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassBidTimeout_messageType{}
+
+type fastReflection_MsgSetNFTClassBidTimeout_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassBidTimeout_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassBidTimeout)(nil)
+}
+func (x fastReflection_MsgSetNFTClassBidTimeout_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassBidTimeout)
+}
+func (x fastReflection_MsgSetNFTClassBidTimeout_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassBidTimeout
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassBidTimeout
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassBidTimeout_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassBidTimeout)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassBidTimeout)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.NameDestination != "" {
+		value := protoreflect.ValueOfString(x.NameDestination)
+		if !f(fd_MsgSetNFTClassBidTimeout_name_destination, value) {
+			return
+		}
+	}
+	if x.ClassId != "" {
+		value := protoreflect.ValueOfString(x.ClassId)
+		if !f(fd_MsgSetNFTClassBidTimeout_class_id, value) {
+			return
+		}
+	}
+	if x.BidTimeout != nil {
+		value := protoreflect.ValueOfMessage(x.BidTimeout.ProtoReflect())
+		if !f(fd_MsgSetNFTClassBidTimeout_bid_timeout, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.name_destination":
+		return x.NameDestination != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.class_id":
+		return x.ClassId != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.bid_timeout":
+		return x.BidTimeout != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.name_destination":
+		x.NameDestination = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.class_id":
+		x.ClassId = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.bid_timeout":
+		x.BidTimeout = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.name_destination":
+		value := x.NameDestination
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.class_id":
+		value := x.ClassId
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.bid_timeout":
+		value := x.BidTimeout
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.name_destination":
+		x.NameDestination = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.class_id":
+		x.ClassId = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.bid_timeout":
+		x.BidTimeout = value.Message().Interface().(*durationpb.Duration)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.bid_timeout":
+		if x.BidTimeout == nil {
+			x.BidTimeout = new(durationpb.Duration)
+		}
+		return protoreflect.ValueOfMessage(x.BidTimeout.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.name_destination":
+		panic(fmt.Errorf("field name_destination of message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.class_id":
+		panic(fmt.Errorf("field class_id of message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.name_destination":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.class_id":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.bid_timeout":
+		m := new(durationpb.Duration)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassBidTimeout) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassBidTimeout)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.NameDestination)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ClassId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.BidTimeout != nil {
+			l = options.Size(x.BidTimeout)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassBidTimeout)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.BidTimeout != nil {
+			encoded, err := options.Marshal(x.BidTimeout)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.ClassId) > 0 {
+			i -= len(x.ClassId)
+			copy(dAtA[i:], x.ClassId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ClassId)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.NameDestination) > 0 {
+			i -= len(x.NameDestination)
+			copy(dAtA[i:], x.NameDestination)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.NameDestination)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassBidTimeout)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassBidTimeout: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassBidTimeout: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.NameDestination = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ClassId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field BidTimeout", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.BidTimeout == nil {
+					x.BidTimeout = &durationpb.Duration{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.BidTimeout); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgSetNFTClassBidTimeoutResponse protoreflect.MessageDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassBidTimeoutResponse = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassBidTimeoutResponse")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassBidTimeoutResponse)(nil)
+
+type fastReflection_MsgSetNFTClassBidTimeoutResponse MsgSetNFTClassBidTimeoutResponse
+
+func (x *MsgSetNFTClassBidTimeoutResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassBidTimeoutResponse)(x)
+}
+
+func (x *MsgSetNFTClassBidTimeoutResponse) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[31]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassBidTimeoutResponse_messageType fastReflection_MsgSetNFTClassBidTimeoutResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassBidTimeoutResponse_messageType{}
+
+type fastReflection_MsgSetNFTClassBidTimeoutResponse_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassBidTimeoutResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassBidTimeoutResponse)(nil)
+}
+func (x fastReflection_MsgSetNFTClassBidTimeoutResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassBidTimeoutResponse)
+}
+func (x fastReflection_MsgSetNFTClassBidTimeoutResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassBidTimeoutResponse
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassBidTimeoutResponse
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassBidTimeoutResponse_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassBidTimeoutResponse)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassBidTimeoutResponse)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassBidTimeoutResponse) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassBidTimeoutResponse)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassBidTimeoutResponse)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassBidTimeoutResponse)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassBidTimeoutResponse: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassBidTimeoutResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var _ protoreflect.List = (*_MsgSetNFTClassAllowedDenoms_3_list)(nil)
+
+type _MsgSetNFTClassAllowedDenoms_3_list struct {
+	list *[]string
+}
+
+func (x *_MsgSetNFTClassAllowedDenoms_3_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_MsgSetNFTClassAllowedDenoms_3_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfString((*x.list)[i])
+}
+
+func (x *_MsgSetNFTClassAllowedDenoms_3_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.String()
+	concreteValue := valueUnwrapped
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_MsgSetNFTClassAllowedDenoms_3_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.String()
+	concreteValue := valueUnwrapped
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_MsgSetNFTClassAllowedDenoms_3_list) AppendMutable() protoreflect.Value {
+	panic(fmt.Errorf("AppendMutable can not be called on message MsgSetNFTClassAllowedDenoms at list field AllowedDenoms as it is not of Message kind"))
+}
+
+func (x *_MsgSetNFTClassAllowedDenoms_3_list) Truncate(n int) {
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_MsgSetNFTClassAllowedDenoms_3_list) NewElement() protoreflect.Value {
+	v := ""
+	return protoreflect.ValueOfString(v)
+}
+
+func (x *_MsgSetNFTClassAllowedDenoms_3_list) IsValid() bool {
+	return x.list != nil
+}
+
+var (
+	md_MsgSetNFTClassAllowedDenoms                  protoreflect.MessageDescriptor
+	fd_MsgSetNFTClassAllowedDenoms_name_destination protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassAllowedDenoms_class_id         protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassAllowedDenoms_allowed_denoms   protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassAllowedDenoms = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassAllowedDenoms")
+	fd_MsgSetNFTClassAllowedDenoms_name_destination = md_MsgSetNFTClassAllowedDenoms.Fields().ByName("name_destination")
+	fd_MsgSetNFTClassAllowedDenoms_class_id = md_MsgSetNFTClassAllowedDenoms.Fields().ByName("class_id")
+	fd_MsgSetNFTClassAllowedDenoms_allowed_denoms = md_MsgSetNFTClassAllowedDenoms.Fields().ByName("allowed_denoms")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassAllowedDenoms)(nil)
+
+type fastReflection_MsgSetNFTClassAllowedDenoms MsgSetNFTClassAllowedDenoms
+
+func (x *MsgSetNFTClassAllowedDenoms) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassAllowedDenoms)(x)
+}
+
+func (x *MsgSetNFTClassAllowedDenoms) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[32]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassAllowedDenoms_messageType fastReflection_MsgSetNFTClassAllowedDenoms_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassAllowedDenoms_messageType{}
+
+type fastReflection_MsgSetNFTClassAllowedDenoms_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassAllowedDenoms_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassAllowedDenoms)(nil)
+}
+func (x fastReflection_MsgSetNFTClassAllowedDenoms_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassAllowedDenoms)
+}
+func (x fastReflection_MsgSetNFTClassAllowedDenoms_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassAllowedDenoms
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassAllowedDenoms
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassAllowedDenoms_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassAllowedDenoms)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassAllowedDenoms)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.NameDestination != "" {
+		value := protoreflect.ValueOfString(x.NameDestination)
+		if !f(fd_MsgSetNFTClassAllowedDenoms_name_destination, value) {
+			return
+		}
+	}
+	if x.ClassId != "" {
+		value := protoreflect.ValueOfString(x.ClassId)
+		if !f(fd_MsgSetNFTClassAllowedDenoms_class_id, value) {
+			return
+		}
+	}
+	if len(x.AllowedDenoms) != 0 {
+		value := protoreflect.ValueOfList(&_MsgSetNFTClassAllowedDenoms_3_list{list: &x.AllowedDenoms})
+		if !f(fd_MsgSetNFTClassAllowedDenoms_allowed_denoms, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.name_destination":
+		return x.NameDestination != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.class_id":
+		return x.ClassId != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.allowed_denoms":
+		return len(x.AllowedDenoms) != 0
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.name_destination":
+		x.NameDestination = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.class_id":
+		x.ClassId = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.allowed_denoms":
+		x.AllowedDenoms = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.name_destination":
+		value := x.NameDestination
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.class_id":
+		value := x.ClassId
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.allowed_denoms":
+		if len(x.AllowedDenoms) == 0 {
+			return protoreflect.ValueOfList(&_MsgSetNFTClassAllowedDenoms_3_list{})
+		}
+		listValue := &_MsgSetNFTClassAllowedDenoms_3_list{list: &x.AllowedDenoms}
+		return protoreflect.ValueOfList(listValue)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.name_destination":
+		x.NameDestination = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.class_id":
+		x.ClassId = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.allowed_denoms":
+		lv := value.List()
+		clv := lv.(*_MsgSetNFTClassAllowedDenoms_3_list)
+		x.AllowedDenoms = *clv.list
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.allowed_denoms":
+		if x.AllowedDenoms == nil {
+			x.AllowedDenoms = []string{}
+		}
+		value := &_MsgSetNFTClassAllowedDenoms_3_list{list: &x.AllowedDenoms}
+		return protoreflect.ValueOfList(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.name_destination":
+		panic(fmt.Errorf("field name_destination of message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.class_id":
+		panic(fmt.Errorf("field class_id of message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.name_destination":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.class_id":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.allowed_denoms":
+		list := []string{}
+		return protoreflect.ValueOfList(&_MsgSetNFTClassAllowedDenoms_3_list{list: &list})
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassAllowedDenoms) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassAllowedDenoms)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.NameDestination)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ClassId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if len(x.AllowedDenoms) > 0 {
+			for _, s := range x.AllowedDenoms {
+				l = len(s)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassAllowedDenoms)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.AllowedDenoms) > 0 {
+			for iNdEx := len(x.AllowedDenoms) - 1; iNdEx >= 0; iNdEx-- {
+				i -= len(x.AllowedDenoms[iNdEx])
+				copy(dAtA[i:], x.AllowedDenoms[iNdEx])
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(x.AllowedDenoms[iNdEx])))
+				i--
+				dAtA[i] = 0x1a
+			}
+		}
+		if len(x.ClassId) > 0 {
+			i -= len(x.ClassId)
+			copy(dAtA[i:], x.ClassId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ClassId)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.NameDestination) > 0 {
+			i -= len(x.NameDestination)
+			copy(dAtA[i:], x.NameDestination)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.NameDestination)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassAllowedDenoms)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassAllowedDenoms: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassAllowedDenoms: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.NameDestination = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ClassId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AllowedDenoms", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.AllowedDenoms = append(x.AllowedDenoms, string(dAtA[iNdEx:postIndex]))
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgSetNFTClassAllowedDenomsResponse protoreflect.MessageDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassAllowedDenomsResponse = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassAllowedDenomsResponse")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassAllowedDenomsResponse)(nil)
+
+type fastReflection_MsgSetNFTClassAllowedDenomsResponse MsgSetNFTClassAllowedDenomsResponse
+
+func (x *MsgSetNFTClassAllowedDenomsResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassAllowedDenomsResponse)(x)
+}
+
+func (x *MsgSetNFTClassAllowedDenomsResponse) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[33]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassAllowedDenomsResponse_messageType fastReflection_MsgSetNFTClassAllowedDenomsResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassAllowedDenomsResponse_messageType{}
+
+type fastReflection_MsgSetNFTClassAllowedDenomsResponse_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassAllowedDenomsResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassAllowedDenomsResponse)(nil)
+}
+func (x fastReflection_MsgSetNFTClassAllowedDenomsResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassAllowedDenomsResponse)
+}
+func (x fastReflection_MsgSetNFTClassAllowedDenomsResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassAllowedDenomsResponse
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassAllowedDenomsResponse
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassAllowedDenomsResponse_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassAllowedDenomsResponse)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassAllowedDenomsResponse)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassAllowedDenomsResponse) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassAllowedDenomsResponse)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassAllowedDenomsResponse)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassAllowedDenomsResponse)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassAllowedDenomsResponse: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassAllowedDenomsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgSetNFTClassRejectBidValuationFeePercent                                  protoreflect.MessageDescriptor
+	fd_MsgSetNFTClassRejectBidValuationFeePercent_name_destination                 protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassRejectBidValuationFeePercent_class_id                         protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassRejectBidValuationFeePercent_reject_bid_valuation_fee_percent protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassRejectBidValuationFeePercent = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassRejectBidValuationFeePercent")
+	fd_MsgSetNFTClassRejectBidValuationFeePercent_name_destination = md_MsgSetNFTClassRejectBidValuationFeePercent.Fields().ByName("name_destination")
+	fd_MsgSetNFTClassRejectBidValuationFeePercent_class_id = md_MsgSetNFTClassRejectBidValuationFeePercent.Fields().ByName("class_id")
+	fd_MsgSetNFTClassRejectBidValuationFeePercent_reject_bid_valuation_fee_percent = md_MsgSetNFTClassRejectBidValuationFeePercent.Fields().ByName("reject_bid_valuation_fee_percent")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassRejectBidValuationFeePercent)(nil)
+
+type fastReflection_MsgSetNFTClassRejectBidValuationFeePercent MsgSetNFTClassRejectBidValuationFeePercent
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercent) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassRejectBidValuationFeePercent)(x)
+}
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercent) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[34]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassRejectBidValuationFeePercent_messageType fastReflection_MsgSetNFTClassRejectBidValuationFeePercent_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassRejectBidValuationFeePercent_messageType{}
+
+type fastReflection_MsgSetNFTClassRejectBidValuationFeePercent_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassRejectBidValuationFeePercent_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassRejectBidValuationFeePercent)(nil)
+}
+func (x fastReflection_MsgSetNFTClassRejectBidValuationFeePercent_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassRejectBidValuationFeePercent)
+}
+func (x fastReflection_MsgSetNFTClassRejectBidValuationFeePercent_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassRejectBidValuationFeePercent
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassRejectBidValuationFeePercent
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassRejectBidValuationFeePercent_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassRejectBidValuationFeePercent)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassRejectBidValuationFeePercent)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.NameDestination != "" {
+		value := protoreflect.ValueOfString(x.NameDestination)
+		if !f(fd_MsgSetNFTClassRejectBidValuationFeePercent_name_destination, value) {
+			return
+		}
+	}
+	if x.ClassId != "" {
+		value := protoreflect.ValueOfString(x.ClassId)
+		if !f(fd_MsgSetNFTClassRejectBidValuationFeePercent_class_id, value) {
+			return
+		}
+	}
+	if x.RejectBidValuationFeePercent != "" {
+		value := protoreflect.ValueOfString(x.RejectBidValuationFeePercent)
+		if !f(fd_MsgSetNFTClassRejectBidValuationFeePercent_reject_bid_valuation_fee_percent, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.name_destination":
+		return x.NameDestination != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.class_id":
+		return x.ClassId != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.reject_bid_valuation_fee_percent":
+		return x.RejectBidValuationFeePercent != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.name_destination":
+		x.NameDestination = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.class_id":
+		x.ClassId = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.reject_bid_valuation_fee_percent":
+		x.RejectBidValuationFeePercent = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.name_destination":
+		value := x.NameDestination
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.class_id":
+		value := x.ClassId
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.reject_bid_valuation_fee_percent":
+		value := x.RejectBidValuationFeePercent
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.name_destination":
+		x.NameDestination = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.class_id":
+		x.ClassId = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.reject_bid_valuation_fee_percent":
+		x.RejectBidValuationFeePercent = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.name_destination":
+		panic(fmt.Errorf("field name_destination of message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.class_id":
+		panic(fmt.Errorf("field class_id of message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.reject_bid_valuation_fee_percent":
+		panic(fmt.Errorf("field reject_bid_valuation_fee_percent of message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.name_destination":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.class_id":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.reject_bid_valuation_fee_percent":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercent) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassRejectBidValuationFeePercent)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.NameDestination)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ClassId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.RejectBidValuationFeePercent)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassRejectBidValuationFeePercent)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.RejectBidValuationFeePercent) > 0 {
+			i -= len(x.RejectBidValuationFeePercent)
+			copy(dAtA[i:], x.RejectBidValuationFeePercent)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.RejectBidValuationFeePercent)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.ClassId) > 0 {
+			i -= len(x.ClassId)
+			copy(dAtA[i:], x.ClassId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ClassId)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.NameDestination) > 0 {
+			i -= len(x.NameDestination)
+			copy(dAtA[i:], x.NameDestination)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.NameDestination)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassRejectBidValuationFeePercent)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassRejectBidValuationFeePercent: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassRejectBidValuationFeePercent: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.NameDestination = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ClassId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field RejectBidValuationFeePercent", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.RejectBidValuationFeePercent = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgSetNFTClassRejectBidValuationFeePercentResponse protoreflect.MessageDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassRejectBidValuationFeePercentResponse = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassRejectBidValuationFeePercentResponse")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse)(nil)
+
+type fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse MsgSetNFTClassRejectBidValuationFeePercentResponse
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercentResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse)(x)
+}
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercentResponse) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[35]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse_messageType fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse_messageType{}
+
+type fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse)(nil)
+}
+func (x fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse)
+}
+func (x fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassRejectBidValuationFeePercentResponse
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassRejectBidValuationFeePercentResponse
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassRejectBidValuationFeePercentResponse)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassRejectBidValuationFeePercentResponse) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassRejectBidValuationFeePercentResponse)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassRejectBidValuationFeePercentResponse)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassRejectBidValuationFeePercentResponse)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassRejectBidValuationFeePercentResponse: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassRejectBidValuationFeePercentResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgSetNFTClassMinimumBidPercentIncrease                              protoreflect.MessageDescriptor
+	fd_MsgSetNFTClassMinimumBidPercentIncrease_name_destination             protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassMinimumBidPercentIncrease_class_id                     protoreflect.FieldDescriptor
+	fd_MsgSetNFTClassMinimumBidPercentIncrease_minimum_bid_percent_increase protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassMinimumBidPercentIncrease = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassMinimumBidPercentIncrease")
+	fd_MsgSetNFTClassMinimumBidPercentIncrease_name_destination = md_MsgSetNFTClassMinimumBidPercentIncrease.Fields().ByName("name_destination")
+	fd_MsgSetNFTClassMinimumBidPercentIncrease_class_id = md_MsgSetNFTClassMinimumBidPercentIncrease.Fields().ByName("class_id")
+	fd_MsgSetNFTClassMinimumBidPercentIncrease_minimum_bid_percent_increase = md_MsgSetNFTClassMinimumBidPercentIncrease.Fields().ByName("minimum_bid_percent_increase")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassMinimumBidPercentIncrease)(nil)
+
+type fastReflection_MsgSetNFTClassMinimumBidPercentIncrease MsgSetNFTClassMinimumBidPercentIncrease
+
+func (x *MsgSetNFTClassMinimumBidPercentIncrease) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassMinimumBidPercentIncrease)(x)
+}
+
+func (x *MsgSetNFTClassMinimumBidPercentIncrease) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[36]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassMinimumBidPercentIncrease_messageType fastReflection_MsgSetNFTClassMinimumBidPercentIncrease_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassMinimumBidPercentIncrease_messageType{}
+
+type fastReflection_MsgSetNFTClassMinimumBidPercentIncrease_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassMinimumBidPercentIncrease_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassMinimumBidPercentIncrease)(nil)
+}
+func (x fastReflection_MsgSetNFTClassMinimumBidPercentIncrease_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassMinimumBidPercentIncrease)
+}
+func (x fastReflection_MsgSetNFTClassMinimumBidPercentIncrease_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassMinimumBidPercentIncrease
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassMinimumBidPercentIncrease
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassMinimumBidPercentIncrease_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassMinimumBidPercentIncrease)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassMinimumBidPercentIncrease)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.NameDestination != "" {
+		value := protoreflect.ValueOfString(x.NameDestination)
+		if !f(fd_MsgSetNFTClassMinimumBidPercentIncrease_name_destination, value) {
+			return
+		}
+	}
+	if x.ClassId != "" {
+		value := protoreflect.ValueOfString(x.ClassId)
+		if !f(fd_MsgSetNFTClassMinimumBidPercentIncrease_class_id, value) {
+			return
+		}
+	}
+	if x.MinimumBidPercentIncrease != "" {
+		value := protoreflect.ValueOfString(x.MinimumBidPercentIncrease)
+		if !f(fd_MsgSetNFTClassMinimumBidPercentIncrease_minimum_bid_percent_increase, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.name_destination":
+		return x.NameDestination != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.class_id":
+		return x.ClassId != ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.minimum_bid_percent_increase":
+		return x.MinimumBidPercentIncrease != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.name_destination":
+		x.NameDestination = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.class_id":
+		x.ClassId = ""
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.minimum_bid_percent_increase":
+		x.MinimumBidPercentIncrease = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.name_destination":
+		value := x.NameDestination
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.class_id":
+		value := x.ClassId
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.minimum_bid_percent_increase":
+		value := x.MinimumBidPercentIncrease
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.name_destination":
+		x.NameDestination = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.class_id":
+		x.ClassId = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.minimum_bid_percent_increase":
+		x.MinimumBidPercentIncrease = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.name_destination":
+		panic(fmt.Errorf("field name_destination of message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.class_id":
+		panic(fmt.Errorf("field class_id of message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease is not mutable"))
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.minimum_bid_percent_increase":
+		panic(fmt.Errorf("field minimum_bid_percent_increase of message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.name_destination":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.class_id":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.minimum_bid_percent_increase":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncrease) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassMinimumBidPercentIncrease)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.NameDestination)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ClassId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MinimumBidPercentIncrease)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassMinimumBidPercentIncrease)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.MinimumBidPercentIncrease) > 0 {
+			i -= len(x.MinimumBidPercentIncrease)
+			copy(dAtA[i:], x.MinimumBidPercentIncrease)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MinimumBidPercentIncrease)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.ClassId) > 0 {
+			i -= len(x.ClassId)
+			copy(dAtA[i:], x.ClassId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ClassId)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.NameDestination) > 0 {
+			i -= len(x.NameDestination)
+			copy(dAtA[i:], x.NameDestination)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.NameDestination)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassMinimumBidPercentIncrease)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassMinimumBidPercentIncrease: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassMinimumBidPercentIncrease: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.NameDestination = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ClassId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinimumBidPercentIncrease", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_MsgSetNFTClassMinimumBidPercentIncreaseResponse protoreflect.MessageDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_tx_proto_init()
+	md_MsgSetNFTClassMinimumBidPercentIncreaseResponse = File_dysonprotocol_nameservice_v1_tx_proto.Messages().ByName("MsgSetNFTClassMinimumBidPercentIncreaseResponse")
+}
+
+var _ protoreflect.Message = (*fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse)(nil)
+
+type fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse MsgSetNFTClassMinimumBidPercentIncreaseResponse
+
+func (x *MsgSetNFTClassMinimumBidPercentIncreaseResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse)(x)
+}
+
+func (x *MsgSetNFTClassMinimumBidPercentIncreaseResponse) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[37]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse_messageType fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse_messageType
+var _ protoreflect.MessageType = fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse_messageType{}
+
+type fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse_messageType struct{}
+
+func (x fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse)(nil)
+}
+func (x fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse)
+}
+func (x fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassMinimumBidPercentIncreaseResponse
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_MsgSetNFTClassMinimumBidPercentIncreaseResponse
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) Type() protoreflect.MessageType {
+	return _fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) New() protoreflect.Message {
+	return new(fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) Interface() protoreflect.ProtoMessage {
+	return (*MsgSetNFTClassMinimumBidPercentIncreaseResponse)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_MsgSetNFTClassMinimumBidPercentIncreaseResponse) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*MsgSetNFTClassMinimumBidPercentIncreaseResponse)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassMinimumBidPercentIncreaseResponse)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*MsgSetNFTClassMinimumBidPercentIncreaseResponse)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassMinimumBidPercentIncreaseResponse: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: MsgSetNFTClassMinimumBidPercentIncreaseResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
 			default:
@@ -13288,7 +17899,7 @@ func (x *MsgSetListed) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgSetListed) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[28]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[38]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13882,7 +18493,7 @@ func (x *MsgSetListedResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgSetListedResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[29]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[39]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14242,7 +18853,7 @@ func (x *MsgUpdateParams) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgUpdateParams) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[30]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[40]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14737,7 +19348,7 @@ func (x *MsgUpdateParamsResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgUpdateParamsResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[31]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[41]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15148,7 +19759,7 @@ func (x *MsgMintCoins) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgMintCoins) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[32]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[42]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15651,7 +20262,7 @@ func (x *MsgMintCoinsResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgMintCoinsResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[33]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[43]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16062,7 +20673,7 @@ func (x *MsgBurnCoins) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgBurnCoins) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[34]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[44]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16565,7 +21176,7 @@ func (x *MsgBurnCoinsResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgBurnCoinsResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[35]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[45]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16925,7 +21536,7 @@ func (x *MsgSetDenomMetadata) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgSetDenomMetadata) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[36]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[46]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -17420,7 +22031,7 @@ func (x *MsgSetDenomMetadataResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgSetDenomMetadataResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[37]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[47]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -17790,7 +22401,7 @@ func (x *MsgSaveClass) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgSaveClass) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[38]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[48]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -18580,7 +23191,7 @@ func (x *MsgSaveClassResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgSaveClassResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[39]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[49]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -18946,7 +23557,7 @@ func (x *MsgMintNFT) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgMintNFT) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[40]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[50]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -19612,7 +24223,7 @@ func (x *MsgMintNFTResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgMintNFTResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[41]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[51]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -19974,7 +24585,7 @@ func (x *MsgBurnNFT) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgBurnNFT) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[42]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[52]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -20516,7 +25127,7 @@ func (x *MsgBurnNFTResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgBurnNFTResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[43]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[53]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -20980,7 +25591,7 @@ func (x *MsgMoveCoins) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgMoveCoins) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[44]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[54]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -21568,7 +26179,7 @@ func (x *MsgMoveCoinsResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgMoveCoinsResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[45]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[55]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -21932,7 +26543,7 @@ func (x *MsgMoveNft) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgMoveNft) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[46]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[56]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -22536,7 +27147,7 @@ func (x *MsgMoveNftResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgMoveNftResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[47]
+	mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[57]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -23123,11 +27734,11 @@ type MsgSetValuation struct {
 	NftId      string `protobuf:"bytes,3,opt,name=nft_id,json=nftId,proto3" json:"nft_id,omitempty"`
 	// valuation is the new valuation of the NFT
 	Valuation *v1beta1.Coin `protobuf:"bytes,4,opt,name=valuation,proto3" json:"valuation,omitempty"`
-	// max_annual_pct_fee (optional) is the maximum annual percentage fee the user
-	// is willing to pay for setting the new valuation (e.g. "0.025" for 2.5%).
-	// This guards against unexpected fee amounts if the name owner changes the
-	// annual_pct.
-	MaxAnnualPctFee string `protobuf:"bytes,5,opt,name=max_annual_pct_fee,json=maxAnnualPctFee,proto3" json:"max_annual_pct_fee,omitempty"`
+	// max_valuation_fee_pct (optional) is the maximum valuation fee percent the
+	// user is willing to pay for setting the new valuation (e.g. "0.025" for
+	// 2.5% per valuation period). This guards against unexpected fee amounts if
+	// the class updates valuation_fee_pct.
+	MaxValuationFeePct string `protobuf:"bytes,5,opt,name=max_valuation_fee_pct,json=maxValuationFeePct,proto3" json:"max_valuation_fee_pct,omitempty"`
 }
 
 func (x *MsgSetValuation) Reset() {
@@ -23178,9 +27789,9 @@ func (x *MsgSetValuation) GetValuation() *v1beta1.Coin {
 	return nil
 }
 
-func (x *MsgSetValuation) GetMaxAnnualPctFee() string {
+func (x *MsgSetValuation) GetMaxValuationFeePct() string {
 	if x != nil {
-		return x.MaxAnnualPctFee
+		return x.MaxValuationFeePct
 	}
 	return ""
 }
@@ -23964,25 +28575,19 @@ func (*MsgSetNFTClassAlwaysListedResponse) Descriptor() ([]byte, []int) {
 	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{25}
 }
 
-// MsgSetNFTClassAnnualPct sets the annual percentage rate for an NFT class.
-// Only the owner of the NFT class root name can update this setting.
-type MsgSetNFTClassAnnualPct struct {
+// Set per-class valuation fee percent (cosmos.Dec string)
+type MsgSetNFTClassValuationFeePct struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// name_destination is the resolved destination address of the NFT class root
-	// name
 	NameDestination string `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
-	// class_id is the identifier of the NFT class to update
-	ClassId string `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
-	// annual_pct is the annual percentage rate as a string (e.g. "5.5" for 5.5%)
-	// representing the yearly rate for this NFT class
-	AnnualPct string `protobuf:"bytes,3,opt,name=annual_pct,json=annualPct,proto3" json:"annual_pct,omitempty"`
+	ClassId         string `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	ValuationFeePct string `protobuf:"bytes,3,opt,name=valuation_fee_pct,json=valuationFeePct,proto3" json:"valuation_fee_pct,omitempty"` // plain string; parsed as Dec in keeper
 }
 
-func (x *MsgSetNFTClassAnnualPct) Reset() {
-	*x = MsgSetNFTClassAnnualPct{}
+func (x *MsgSetNFTClassValuationFeePct) Reset() {
+	*x = MsgSetNFTClassValuationFeePct{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -23990,48 +28595,46 @@ func (x *MsgSetNFTClassAnnualPct) Reset() {
 	}
 }
 
-func (x *MsgSetNFTClassAnnualPct) String() string {
+func (x *MsgSetNFTClassValuationFeePct) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MsgSetNFTClassAnnualPct) ProtoMessage() {}
+func (*MsgSetNFTClassValuationFeePct) ProtoMessage() {}
 
-// Deprecated: Use MsgSetNFTClassAnnualPct.ProtoReflect.Descriptor instead.
-func (*MsgSetNFTClassAnnualPct) Descriptor() ([]byte, []int) {
+// Deprecated: Use MsgSetNFTClassValuationFeePct.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassValuationFeePct) Descriptor() ([]byte, []int) {
 	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *MsgSetNFTClassAnnualPct) GetNameDestination() string {
+func (x *MsgSetNFTClassValuationFeePct) GetNameDestination() string {
 	if x != nil {
 		return x.NameDestination
 	}
 	return ""
 }
 
-func (x *MsgSetNFTClassAnnualPct) GetClassId() string {
+func (x *MsgSetNFTClassValuationFeePct) GetClassId() string {
 	if x != nil {
 		return x.ClassId
 	}
 	return ""
 }
 
-func (x *MsgSetNFTClassAnnualPct) GetAnnualPct() string {
+func (x *MsgSetNFTClassValuationFeePct) GetValuationFeePct() string {
 	if x != nil {
-		return x.AnnualPct
+		return x.ValuationFeePct
 	}
 	return ""
 }
 
-// MsgSetNFTClassAnnualPctResponse defines the response for
-// MsgSetNFTClassAnnualPct
-type MsgSetNFTClassAnnualPctResponse struct {
+type MsgSetNFTClassValuationFeePctResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *MsgSetNFTClassAnnualPctResponse) Reset() {
-	*x = MsgSetNFTClassAnnualPctResponse{}
+func (x *MsgSetNFTClassValuationFeePctResponse) Reset() {
+	*x = MsgSetNFTClassValuationFeePctResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -24039,15 +28642,407 @@ func (x *MsgSetNFTClassAnnualPctResponse) Reset() {
 	}
 }
 
-func (x *MsgSetNFTClassAnnualPctResponse) String() string {
+func (x *MsgSetNFTClassValuationFeePctResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MsgSetNFTClassAnnualPctResponse) ProtoMessage() {}
+func (*MsgSetNFTClassValuationFeePctResponse) ProtoMessage() {}
 
-// Deprecated: Use MsgSetNFTClassAnnualPctResponse.ProtoReflect.Descriptor instead.
-func (*MsgSetNFTClassAnnualPctResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use MsgSetNFTClassValuationFeePctResponse.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassValuationFeePctResponse) Descriptor() ([]byte, []int) {
 	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{27}
+}
+
+// Set per-class valuation period (duration)
+type MsgSetNFTClassValuationPeriod struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	NameDestination string               `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId         string               `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	ValuationPeriod *durationpb.Duration `protobuf:"bytes,3,opt,name=valuation_period,json=valuationPeriod,proto3" json:"valuation_period,omitempty"`
+}
+
+func (x *MsgSetNFTClassValuationPeriod) Reset() {
+	*x = MsgSetNFTClassValuationPeriod{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[28]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassValuationPeriod) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassValuationPeriod) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassValuationPeriod.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassValuationPeriod) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *MsgSetNFTClassValuationPeriod) GetNameDestination() string {
+	if x != nil {
+		return x.NameDestination
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassValuationPeriod) GetClassId() string {
+	if x != nil {
+		return x.ClassId
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassValuationPeriod) GetValuationPeriod() *durationpb.Duration {
+	if x != nil {
+		return x.ValuationPeriod
+	}
+	return nil
+}
+
+type MsgSetNFTClassValuationPeriodResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *MsgSetNFTClassValuationPeriodResponse) Reset() {
+	*x = MsgSetNFTClassValuationPeriodResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[29]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassValuationPeriodResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassValuationPeriodResponse) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassValuationPeriodResponse.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassValuationPeriodResponse) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{29}
+}
+
+// MsgSetNFTClassBidTimeout sets the per-class bid timeout duration.
+type MsgSetNFTClassBidTimeout struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	NameDestination string               `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId         string               `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	BidTimeout      *durationpb.Duration `protobuf:"bytes,3,opt,name=bid_timeout,json=bidTimeout,proto3" json:"bid_timeout,omitempty"`
+}
+
+func (x *MsgSetNFTClassBidTimeout) Reset() {
+	*x = MsgSetNFTClassBidTimeout{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[30]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassBidTimeout) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassBidTimeout) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassBidTimeout.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassBidTimeout) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *MsgSetNFTClassBidTimeout) GetNameDestination() string {
+	if x != nil {
+		return x.NameDestination
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassBidTimeout) GetClassId() string {
+	if x != nil {
+		return x.ClassId
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassBidTimeout) GetBidTimeout() *durationpb.Duration {
+	if x != nil {
+		return x.BidTimeout
+	}
+	return nil
+}
+
+type MsgSetNFTClassBidTimeoutResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *MsgSetNFTClassBidTimeoutResponse) Reset() {
+	*x = MsgSetNFTClassBidTimeoutResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[31]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassBidTimeoutResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassBidTimeoutResponse) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassBidTimeoutResponse.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassBidTimeoutResponse) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{31}
+}
+
+// MsgSetNFTClassAllowedDenoms sets the per-class allowed denoms list.
+type MsgSetNFTClassAllowedDenoms struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	NameDestination string   `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId         string   `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	AllowedDenoms   []string `protobuf:"bytes,3,rep,name=allowed_denoms,json=allowedDenoms,proto3" json:"allowed_denoms,omitempty"`
+}
+
+func (x *MsgSetNFTClassAllowedDenoms) Reset() {
+	*x = MsgSetNFTClassAllowedDenoms{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[32]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassAllowedDenoms) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassAllowedDenoms) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassAllowedDenoms.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassAllowedDenoms) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *MsgSetNFTClassAllowedDenoms) GetNameDestination() string {
+	if x != nil {
+		return x.NameDestination
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassAllowedDenoms) GetClassId() string {
+	if x != nil {
+		return x.ClassId
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassAllowedDenoms) GetAllowedDenoms() []string {
+	if x != nil {
+		return x.AllowedDenoms
+	}
+	return nil
+}
+
+type MsgSetNFTClassAllowedDenomsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *MsgSetNFTClassAllowedDenomsResponse) Reset() {
+	*x = MsgSetNFTClassAllowedDenomsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[33]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassAllowedDenomsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassAllowedDenomsResponse) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassAllowedDenomsResponse.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassAllowedDenomsResponse) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{33}
+}
+
+// MsgSetNFTClassRejectBidValuationFeePercent sets the per-class reject fee
+// percent.
+type MsgSetNFTClassRejectBidValuationFeePercent struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	NameDestination              string `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId                      string `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	RejectBidValuationFeePercent string `protobuf:"bytes,3,opt,name=reject_bid_valuation_fee_percent,json=rejectBidValuationFeePercent,proto3" json:"reject_bid_valuation_fee_percent,omitempty"` // plain string; parsed as Dec in keeper
+}
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercent) Reset() {
+	*x = MsgSetNFTClassRejectBidValuationFeePercent{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[34]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassRejectBidValuationFeePercent) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassRejectBidValuationFeePercent.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassRejectBidValuationFeePercent) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercent) GetNameDestination() string {
+	if x != nil {
+		return x.NameDestination
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercent) GetClassId() string {
+	if x != nil {
+		return x.ClassId
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercent) GetRejectBidValuationFeePercent() string {
+	if x != nil {
+		return x.RejectBidValuationFeePercent
+	}
+	return ""
+}
+
+type MsgSetNFTClassRejectBidValuationFeePercentResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercentResponse) Reset() {
+	*x = MsgSetNFTClassRejectBidValuationFeePercentResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[35]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassRejectBidValuationFeePercentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassRejectBidValuationFeePercentResponse) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassRejectBidValuationFeePercentResponse.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassRejectBidValuationFeePercentResponse) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{35}
+}
+
+// MsgSetNFTClassMinimumBidPercentIncrease sets the per-class minimum bid
+// increase percent.
+type MsgSetNFTClassMinimumBidPercentIncrease struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	NameDestination           string `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId                   string `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	MinimumBidPercentIncrease string `protobuf:"bytes,3,opt,name=minimum_bid_percent_increase,json=minimumBidPercentIncrease,proto3" json:"minimum_bid_percent_increase,omitempty"` // plain string; parsed as Dec in keeper
+}
+
+func (x *MsgSetNFTClassMinimumBidPercentIncrease) Reset() {
+	*x = MsgSetNFTClassMinimumBidPercentIncrease{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[36]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassMinimumBidPercentIncrease) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassMinimumBidPercentIncrease) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassMinimumBidPercentIncrease.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassMinimumBidPercentIncrease) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *MsgSetNFTClassMinimumBidPercentIncrease) GetNameDestination() string {
+	if x != nil {
+		return x.NameDestination
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassMinimumBidPercentIncrease) GetClassId() string {
+	if x != nil {
+		return x.ClassId
+	}
+	return ""
+}
+
+func (x *MsgSetNFTClassMinimumBidPercentIncrease) GetMinimumBidPercentIncrease() string {
+	if x != nil {
+		return x.MinimumBidPercentIncrease
+	}
+	return ""
+}
+
+type MsgSetNFTClassMinimumBidPercentIncreaseResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *MsgSetNFTClassMinimumBidPercentIncreaseResponse) Reset() {
+	*x = MsgSetNFTClassMinimumBidPercentIncreaseResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[37]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgSetNFTClassMinimumBidPercentIncreaseResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgSetNFTClassMinimumBidPercentIncreaseResponse) ProtoMessage() {}
+
+// Deprecated: Use MsgSetNFTClassMinimumBidPercentIncreaseResponse.ProtoReflect.Descriptor instead.
+func (*MsgSetNFTClassMinimumBidPercentIncreaseResponse) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{37}
 }
 
 // MsgSetListed sets the listed status for a specific NFT.
@@ -24071,7 +29066,7 @@ type MsgSetListed struct {
 func (x *MsgSetListed) Reset() {
 	*x = MsgSetListed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[28]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[38]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24085,7 +29080,7 @@ func (*MsgSetListed) ProtoMessage() {}
 
 // Deprecated: Use MsgSetListed.ProtoReflect.Descriptor instead.
 func (*MsgSetListed) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{28}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *MsgSetListed) GetNftOwner() string {
@@ -24126,7 +29121,7 @@ type MsgSetListedResponse struct {
 func (x *MsgSetListedResponse) Reset() {
 	*x = MsgSetListedResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[29]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[39]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24140,7 +29135,7 @@ func (*MsgSetListedResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgSetListedResponse.ProtoReflect.Descriptor instead.
 func (*MsgSetListedResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{29}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{39}
 }
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
@@ -24161,7 +29156,7 @@ type MsgUpdateParams struct {
 func (x *MsgUpdateParams) Reset() {
 	*x = MsgUpdateParams{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[30]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[40]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24175,7 +29170,7 @@ func (*MsgUpdateParams) ProtoMessage() {}
 
 // Deprecated: Use MsgUpdateParams.ProtoReflect.Descriptor instead.
 func (*MsgUpdateParams) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{30}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *MsgUpdateParams) GetAuthority() string {
@@ -24203,7 +29198,7 @@ type MsgUpdateParamsResponse struct {
 func (x *MsgUpdateParamsResponse) Reset() {
 	*x = MsgUpdateParamsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[31]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[41]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24217,7 +29212,7 @@ func (*MsgUpdateParamsResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgUpdateParamsResponse.ProtoReflect.Descriptor instead.
 func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{31}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{41}
 }
 
 // MsgMintCoins mints coins into the owner's balance, as long as each coin's
@@ -24238,7 +29233,7 @@ type MsgMintCoins struct {
 func (x *MsgMintCoins) Reset() {
 	*x = MsgMintCoins{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[32]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[42]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24252,7 +29247,7 @@ func (*MsgMintCoins) ProtoMessage() {}
 
 // Deprecated: Use MsgMintCoins.ProtoReflect.Descriptor instead.
 func (*MsgMintCoins) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{32}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *MsgMintCoins) GetNameDestination() string {
@@ -24279,7 +29274,7 @@ type MsgMintCoinsResponse struct {
 func (x *MsgMintCoinsResponse) Reset() {
 	*x = MsgMintCoinsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[33]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[43]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24293,7 +29288,7 @@ func (*MsgMintCoinsResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgMintCoinsResponse.ProtoReflect.Descriptor instead.
 func (*MsgMintCoinsResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{33}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{43}
 }
 
 // MsgBurnCoins burns coins from the owner's balance, if each coin's root name
@@ -24312,7 +29307,7 @@ type MsgBurnCoins struct {
 func (x *MsgBurnCoins) Reset() {
 	*x = MsgBurnCoins{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[34]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[44]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24326,7 +29321,7 @@ func (*MsgBurnCoins) ProtoMessage() {}
 
 // Deprecated: Use MsgBurnCoins.ProtoReflect.Descriptor instead.
 func (*MsgBurnCoins) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{34}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *MsgBurnCoins) GetNameDestination() string {
@@ -24353,7 +29348,7 @@ type MsgBurnCoinsResponse struct {
 func (x *MsgBurnCoinsResponse) Reset() {
 	*x = MsgBurnCoinsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[35]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[45]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24367,7 +29362,7 @@ func (*MsgBurnCoinsResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgBurnCoinsResponse.ProtoReflect.Descriptor instead.
 func (*MsgBurnCoinsResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{35}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{45}
 }
 
 // MsgSetDenomMetadata allows a governance-authorized account to set denom
@@ -24387,7 +29382,7 @@ type MsgSetDenomMetadata struct {
 func (x *MsgSetDenomMetadata) Reset() {
 	*x = MsgSetDenomMetadata{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[36]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[46]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24401,7 +29396,7 @@ func (*MsgSetDenomMetadata) ProtoMessage() {}
 
 // Deprecated: Use MsgSetDenomMetadata.ProtoReflect.Descriptor instead.
 func (*MsgSetDenomMetadata) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{36}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *MsgSetDenomMetadata) GetAuthority() string {
@@ -24429,7 +29424,7 @@ type MsgSetDenomMetadataResponse struct {
 func (x *MsgSetDenomMetadataResponse) Reset() {
 	*x = MsgSetDenomMetadataResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[37]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[47]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24443,7 +29438,7 @@ func (*MsgSetDenomMetadataResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgSetDenomMetadataResponse.ProtoReflect.Descriptor instead.
 func (*MsgSetDenomMetadataResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{37}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{47}
 }
 
 // SaveClass
@@ -24464,7 +29459,7 @@ type MsgSaveClass struct {
 func (x *MsgSaveClass) Reset() {
 	*x = MsgSaveClass{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[38]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[48]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24478,7 +29473,7 @@ func (*MsgSaveClass) ProtoMessage() {}
 
 // Deprecated: Use MsgSaveClass.ProtoReflect.Descriptor instead.
 func (*MsgSaveClass) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{38}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *MsgSaveClass) GetNameDestination() string {
@@ -24539,7 +29534,7 @@ type MsgSaveClassResponse struct {
 func (x *MsgSaveClassResponse) Reset() {
 	*x = MsgSaveClassResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[39]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[49]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24553,7 +29548,7 @@ func (*MsgSaveClassResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgSaveClassResponse.ProtoReflect.Descriptor instead.
 func (*MsgSaveClassResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{39}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{49}
 }
 
 // MintNFT
@@ -24572,7 +29567,7 @@ type MsgMintNFT struct {
 func (x *MsgMintNFT) Reset() {
 	*x = MsgMintNFT{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[40]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[50]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24586,7 +29581,7 @@ func (*MsgMintNFT) ProtoMessage() {}
 
 // Deprecated: Use MsgMintNFT.ProtoReflect.Descriptor instead.
 func (*MsgMintNFT) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{40}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *MsgMintNFT) GetNameDestination() string {
@@ -24633,7 +29628,7 @@ type MsgMintNFTResponse struct {
 func (x *MsgMintNFTResponse) Reset() {
 	*x = MsgMintNFTResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[41]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[51]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24647,7 +29642,7 @@ func (*MsgMintNFTResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgMintNFTResponse.ProtoReflect.Descriptor instead.
 func (*MsgMintNFTResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{41}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{51}
 }
 
 // BurnNFT
@@ -24664,7 +29659,7 @@ type MsgBurnNFT struct {
 func (x *MsgBurnNFT) Reset() {
 	*x = MsgBurnNFT{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[42]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[52]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24678,7 +29673,7 @@ func (*MsgBurnNFT) ProtoMessage() {}
 
 // Deprecated: Use MsgBurnNFT.ProtoReflect.Descriptor instead.
 func (*MsgBurnNFT) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{42}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *MsgBurnNFT) GetNameDestination() string {
@@ -24711,7 +29706,7 @@ type MsgBurnNFTResponse struct {
 func (x *MsgBurnNFTResponse) Reset() {
 	*x = MsgBurnNFTResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[43]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[53]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24725,7 +29720,7 @@ func (*MsgBurnNFTResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgBurnNFTResponse.ProtoReflect.Descriptor instead.
 func (*MsgBurnNFTResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{43}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{53}
 }
 
 // MsgMoveCoins force moves custom denom coins between two accounts if signer
@@ -24747,7 +29742,7 @@ type MsgMoveCoins struct {
 func (x *MsgMoveCoins) Reset() {
 	*x = MsgMoveCoins{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[44]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[54]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24761,7 +29756,7 @@ func (*MsgMoveCoins) ProtoMessage() {}
 
 // Deprecated: Use MsgMoveCoins.ProtoReflect.Descriptor instead.
 func (*MsgMoveCoins) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{44}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *MsgMoveCoins) GetNameDestination() string {
@@ -24794,7 +29789,7 @@ type MsgMoveCoinsResponse struct {
 func (x *MsgMoveCoinsResponse) Reset() {
 	*x = MsgMoveCoinsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[45]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[55]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24808,7 +29803,7 @@ func (*MsgMoveCoinsResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgMoveCoinsResponse.ProtoReflect.Descriptor instead.
 func (*MsgMoveCoinsResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{45}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{55}
 }
 
 // MsgMoveNft force moves an NFT between accounts when signer owns the NFT
@@ -24831,7 +29826,7 @@ type MsgMoveNft struct {
 func (x *MsgMoveNft) Reset() {
 	*x = MsgMoveNft{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[46]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[56]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24845,7 +29840,7 @@ func (*MsgMoveNft) ProtoMessage() {}
 
 // Deprecated: Use MsgMoveNft.ProtoReflect.Descriptor instead.
 func (*MsgMoveNft) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{46}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *MsgMoveNft) GetNameDestination() string {
@@ -24885,7 +29880,7 @@ type MsgMoveNftResponse struct {
 func (x *MsgMoveNftResponse) Reset() {
 	*x = MsgMoveNftResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[47]
+		mi := &file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[57]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -24899,7 +29894,7 @@ func (*MsgMoveNftResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgMoveNftResponse.ProtoReflect.Descriptor instead.
 func (*MsgMoveNftResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{47}
+	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP(), []int{57}
 }
 
 var File_dysonprotocol_nameservice_v1_tx_proto protoreflect.FileDescriptor
@@ -24923,7 +29918,9 @@ var file_dysonprotocol_nameservice_v1_tx_proto_rawDesc = []byte{
 	0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x11, 0x61, 0x6d, 0x69,
 	0x6e, 0x6f, 0x2f, 0x61, 0x6d, 0x69, 0x6e, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1e,
 	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2f, 0x62, 0x61, 0x6e, 0x6b, 0x2f, 0x76, 0x31, 0x62, 0x65,
-	0x74, 0x61, 0x31, 0x2f, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xac,
+	0x74, 0x61, 0x31, 0x2f, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1e,
+	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f,
+	0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xac,
 	0x01, 0x0a, 0x09, 0x4d, 0x73, 0x67, 0x43, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x12, 0x36, 0x0a, 0x09,
 	0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x74, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42,
 	0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72,
@@ -24954,7 +29951,7 @@ var file_dysonprotocol_nameservice_v1_tx_proto_rawDesc = []byte{
 	0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x3a, 0x0e, 0x82, 0xe7, 0xb0, 0x2a, 0x09,
 	0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x22, 0x1f, 0x0a, 0x1d, 0x4d, 0x73, 0x67,
 	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x45, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x4e, 0x61,
-	0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xf7, 0x01, 0x0a, 0x0f, 0x4d,
+	0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xfd, 0x01, 0x0a, 0x0f, 0x4d,
 	0x73, 0x67, 0x53, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2e,
 	0x0a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2,
 	0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
@@ -24966,462 +29963,601 @@ var file_dysonprotocol_nameservice_v1_tx_proto_rawDesc = []byte{
 	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73,
 	0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31,
 	0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01,
-	0x52, 0x09, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2b, 0x0a, 0x12, 0x6d,
-	0x61, 0x78, 0x5f, 0x61, 0x6e, 0x6e, 0x75, 0x61, 0x6c, 0x5f, 0x70, 0x63, 0x74, 0x5f, 0x66, 0x65,
-	0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0f, 0x6d, 0x61, 0x78, 0x41, 0x6e, 0x6e, 0x75,
-	0x61, 0x6c, 0x50, 0x63, 0x74, 0x46, 0x65, 0x65, 0x3a, 0x0a, 0x82, 0xe7, 0xb0, 0x2a, 0x05, 0x6f,
-	0x77, 0x6e, 0x65, 0x72, 0x22, 0x19, 0x0a, 0x17, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x56, 0x61,
-	0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0x7f, 0x0a, 0x08, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6e, 0x65, 0x77, 0x12, 0x2e, 0x0a, 0x05, 0x70,
-	0x61, 0x79, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14,
-	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74,
-	0x72, 0x69, 0x6e, 0x67, 0x52, 0x05, 0x70, 0x61, 0x79, 0x65, 0x72, 0x12, 0x20, 0x0a, 0x0c, 0x6e,
-	0x66, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x0a, 0x6e, 0x66, 0x74, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a,
-	0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e,
-	0x66, 0x74, 0x49, 0x64, 0x3a, 0x0a, 0x82, 0xe7, 0xb0, 0x2a, 0x05, 0x70, 0x61, 0x79, 0x65, 0x72,
-	0x22, 0x50, 0x0a, 0x10, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6e, 0x65, 0x77, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3c, 0x0a, 0x06, 0x65, 0x78, 0x70, 0x69, 0x72, 0x79, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70,
-	0x42, 0x08, 0xc8, 0xde, 0x1f, 0x00, 0x90, 0xdf, 0x1f, 0x01, 0x52, 0x06, 0x65, 0x78, 0x70, 0x69,
-	0x72, 0x79, 0x22, 0xca, 0x01, 0x0a, 0x0b, 0x4d, 0x73, 0x67, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x42,
-	0x69, 0x64, 0x12, 0x30, 0x0a, 0x06, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41,
-	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x06, 0x62, 0x69,
-	0x64, 0x64, 0x65, 0x72, 0x12, 0x20, 0x0a, 0x0c, 0x6e, 0x66, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73,
-	0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6e, 0x66, 0x74, 0x43,
-	0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12, 0x43, 0x0a,
-	0x0a, 0x62, 0x69, 0x64, 0x5f, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28,
-	0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e,
-	0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x09, 0xc8, 0xde,
-	0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x09, 0x62, 0x69, 0x64, 0x41, 0x6d, 0x6f, 0x75,
-	0x6e, 0x74, 0x3a, 0x0b, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x22,
-	0x15, 0x0a, 0x13, 0x4d, 0x73, 0x67, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x42, 0x69, 0x64, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x83, 0x01, 0x0a, 0x0c, 0x4d, 0x73, 0x67, 0x41, 0x63,
-	0x63, 0x65, 0x70, 0x74, 0x42, 0x69, 0x64, 0x12, 0x2e, 0x0a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d,
-	0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67,
-	0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x20, 0x0a, 0x0c, 0x6e, 0x66, 0x74, 0x5f, 0x63,
-	0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6e,
-	0x66, 0x74, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74,
-	0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64,
-	0x3a, 0x0a, 0x82, 0xe7, 0xb0, 0x2a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x22, 0x16, 0x0a, 0x14,
-	0x4d, 0x73, 0x67, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0xce, 0x01, 0x0a, 0x0c, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6a, 0x65,
-	0x63, 0x74, 0x42, 0x69, 0x64, 0x12, 0x2e, 0x0a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
-	0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x05,
-	0x6f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x20, 0x0a, 0x0c, 0x6e, 0x66, 0x74, 0x5f, 0x63, 0x6c, 0x61,
-	0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6e, 0x66, 0x74,
-	0x43, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69,
-	0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12, 0x49,
-	0x0a, 0x0d, 0x6e, 0x65, 0x77, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18,
-	0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62,
-	0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e,
-	0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x0c, 0x6e, 0x65, 0x77,
-	0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x3a, 0x0a, 0x82, 0xe7, 0xb0, 0x2a, 0x05,
-	0x6f, 0x77, 0x6e, 0x65, 0x72, 0x22, 0x61, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6a, 0x65,
-	0x63, 0x74, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x49, 0x0a,
-	0x0d, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65, 0x18, 0x01,
-	0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61,
-	0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42,
-	0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x0c, 0x72, 0x65, 0x6a, 0x65,
-	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x22, 0x85, 0x01, 0x0a, 0x0b, 0x4d, 0x73, 0x67,
-	0x43, 0x6c, 0x61, 0x69, 0x6d, 0x42, 0x69, 0x64, 0x12, 0x30, 0x0a, 0x06, 0x62, 0x69, 0x64, 0x64,
+	0x52, 0x09, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x31, 0x0a, 0x15, 0x6d,
+	0x61, 0x78, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65,
+	0x5f, 0x70, 0x63, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x12, 0x6d, 0x61, 0x78, 0x56,
+	0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x63, 0x74, 0x3a, 0x0a,
+	0x82, 0xe7, 0xb0, 0x2a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x22, 0x19, 0x0a, 0x17, 0x4d, 0x73,
+	0x67, 0x53, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x7f, 0x0a, 0x08, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6e, 0x65,
+	0x77, 0x12, 0x2e, 0x0a, 0x05, 0x70, 0x61, 0x79, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64,
+	0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x05, 0x70, 0x61, 0x79, 0x65,
+	0x72, 0x12, 0x20, 0x0a, 0x0c, 0x6e, 0x66, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69,
+	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6e, 0x66, 0x74, 0x43, 0x6c, 0x61, 0x73,
+	0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x3a, 0x0a, 0x82, 0xe7, 0xb0, 0x2a,
+	0x05, 0x70, 0x61, 0x79, 0x65, 0x72, 0x22, 0x50, 0x0a, 0x10, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6e,
+	0x65, 0x77, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3c, 0x0a, 0x06, 0x65, 0x78,
+	0x70, 0x69, 0x72, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f,
+	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d,
+	0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x42, 0x08, 0xc8, 0xde, 0x1f, 0x00, 0x90, 0xdf, 0x1f, 0x01,
+	0x52, 0x06, 0x65, 0x78, 0x70, 0x69, 0x72, 0x79, 0x22, 0xca, 0x01, 0x0a, 0x0b, 0x4d, 0x73, 0x67,
+	0x50, 0x6c, 0x61, 0x63, 0x65, 0x42, 0x69, 0x64, 0x12, 0x30, 0x0a, 0x06, 0x62, 0x69, 0x64, 0x64,
 	0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f,
 	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69,
 	0x6e, 0x67, 0x52, 0x06, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x12, 0x20, 0x0a, 0x0c, 0x6e, 0x66,
 	0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x0a, 0x6e, 0x66, 0x74, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06,
 	0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66,
-	0x74, 0x49, 0x64, 0x3a, 0x0b, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72,
-	0x22, 0x15, 0x0a, 0x13, 0x4d, 0x73, 0x67, 0x43, 0x6c, 0x61, 0x69, 0x6d, 0x42, 0x69, 0x64, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x85, 0x01, 0x0a, 0x11, 0x4d, 0x73, 0x67, 0x53,
-	0x65, 0x74, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2e, 0x0a,
+	0x74, 0x49, 0x64, 0x12, 0x43, 0x0a, 0x0a, 0x62, 0x69, 0x64, 0x5f, 0x61, 0x6d, 0x6f, 0x75, 0x6e,
+	0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f,
+	0x69, 0x6e, 0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x09, 0x62,
+	0x69, 0x64, 0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x3a, 0x0b, 0x82, 0xe7, 0xb0, 0x2a, 0x06, 0x62,
+	0x69, 0x64, 0x64, 0x65, 0x72, 0x22, 0x15, 0x0a, 0x13, 0x4d, 0x73, 0x67, 0x50, 0x6c, 0x61, 0x63,
+	0x65, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x83, 0x01, 0x0a,
+	0x0c, 0x4d, 0x73, 0x67, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x42, 0x69, 0x64, 0x12, 0x2e, 0x0a,
 	0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4,
 	0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
-	0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x12, 0x0a,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d,
-	0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74,
-	0x69, 0x6f, 0x6e, 0x3a, 0x0a, 0x82, 0xe7, 0xb0, 0x2a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x22,
-	0x1b, 0x0a, 0x19, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xcf, 0x01, 0x0a,
-	0x11, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61,
-	0x74, 0x61, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69,
-	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4,
-	0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
-	0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74,
-	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73, 0x73,
-	0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73,
+	0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x20, 0x0a,
+	0x0c, 0x6e, 0x66, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0a, 0x6e, 0x66, 0x74, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12,
+	0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x3a, 0x0a, 0x82, 0xe7, 0xb0, 0x2a, 0x05, 0x6f, 0x77, 0x6e,
+	0x65, 0x72, 0x22, 0x16, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x42,
+	0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xce, 0x01, 0x0a, 0x0c, 0x4d,
+	0x73, 0x67, 0x52, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x12, 0x2e, 0x0a, 0x05, 0x6f,
+	0x77, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74,
+	0x72, 0x69, 0x6e, 0x67, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x20, 0x0a, 0x0c, 0x6e,
+	0x66, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0a, 0x6e, 0x66, 0x74, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a,
+	0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e,
+	0x66, 0x74, 0x49, 0x64, 0x12, 0x49, 0x0a, 0x0d, 0x6e, 0x65, 0x77, 0x5f, 0x76, 0x61, 0x6c, 0x75,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f,
+	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61,
+	0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a,
+	0x01, 0x52, 0x0c, 0x6e, 0x65, 0x77, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x3a,
+	0x0a, 0x82, 0xe7, 0xb0, 0x2a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x22, 0x61, 0x0a, 0x14, 0x4d,
+	0x73, 0x67, 0x52, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x49, 0x0a, 0x0d, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x5f, 0x66, 0x65, 0x65, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73,
+	0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31,
+	0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01,
+	0x52, 0x0c, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x22, 0x85,
+	0x01, 0x0a, 0x0b, 0x4d, 0x73, 0x67, 0x43, 0x6c, 0x61, 0x69, 0x6d, 0x42, 0x69, 0x64, 0x12, 0x30,
+	0x0a, 0x06, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18,
+	0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65,
+	0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x06, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72,
+	0x12, 0x20, 0x0a, 0x0c, 0x6e, 0x66, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6e, 0x66, 0x74, 0x43, 0x6c, 0x61, 0x73, 0x73,
 	0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x6d, 0x65, 0x74,
-	0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6d, 0x65, 0x74,
-	0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x69, 0x18, 0x05, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x69, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61,
-	0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x1b,
-	0x0a, 0x19, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x4d, 0x65, 0x74, 0x61, 0x64,
-	0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xaf, 0x01, 0x0a, 0x17,
-	0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x45, 0x78,
-	0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f,
-	0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64,
-	0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d,
-	0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08,
-	0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
-	0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x1d, 0x0a, 0x0a, 0x65, 0x78, 0x74, 0x72, 0x61,
-	0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x65, 0x78, 0x74,
-	0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d,
-	0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x21, 0x0a,
-	0x1f, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x45,
-	0x78, 0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x22, 0xb8, 0x01, 0x0a, 0x1a, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c,
-	0x61, 0x73, 0x73, 0x41, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x12,
-	0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74,
-	0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63,
-	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72,
-	0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12,
-	0x23, 0x0a, 0x0d, 0x61, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x5f, 0x6c, 0x69, 0x73, 0x74, 0x65, 0x64,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0c, 0x61, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c, 0x69,
-	0x73, 0x74, 0x65, 0x64, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f,
-	0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x24, 0x0a, 0x22, 0x4d,
-	0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c, 0x77,
-	0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x3a, 0x0b, 0x82, 0xe7, 0xb0, 0x2a, 0x06,
+	0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x22, 0x15, 0x0a, 0x13, 0x4d, 0x73, 0x67, 0x43, 0x6c, 0x61,
+	0x69, 0x6d, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x85, 0x01,
+	0x0a, 0x11, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x12, 0x2e, 0x0a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41,
+	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x05, 0x6f, 0x77,
+	0x6e, 0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x74, 0x69,
+	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65,
+	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x3a, 0x0a, 0x82, 0xe7, 0xb0, 0x2a, 0x05,
+	0x6f, 0x77, 0x6e, 0x65, 0x72, 0x22, 0x1b, 0x0a, 0x19, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44,
+	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0xcf, 0x01, 0x0a, 0x11, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54,
+	0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65,
+	0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41,
+	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61,
+	0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a,
+	0x08, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f,
+	0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12,
+	0x1a, 0x0a, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x10, 0x0a, 0x03, 0x75,
+	0x72, 0x69, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x69, 0x3a, 0x15, 0x82,
+	0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x22, 0x1b, 0x0a, 0x19, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46,
+	0x54, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
 	0x65, 0x22, 0xaf, 0x01, 0x0a, 0x17, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43,
-	0x6c, 0x61, 0x73, 0x73, 0x41, 0x6e, 0x6e, 0x75, 0x61, 0x6c, 0x50, 0x63, 0x74, 0x12, 0x43, 0x0a,
+	0x6c, 0x61, 0x73, 0x73, 0x45, 0x78, 0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x12, 0x43, 0x0a,
 	0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f,
 	0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73,
 	0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e,
 	0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69,
 	0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x1d, 0x0a,
-	0x0a, 0x61, 0x6e, 0x6e, 0x75, 0x61, 0x6c, 0x5f, 0x70, 0x63, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x09, 0x61, 0x6e, 0x6e, 0x75, 0x61, 0x6c, 0x50, 0x63, 0x74, 0x3a, 0x15, 0x82, 0xe7,
+	0x0a, 0x65, 0x78, 0x74, 0x72, 0x61, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x09, 0x65, 0x78, 0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x3a, 0x15, 0x82, 0xe7,
 	0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74,
 	0x69, 0x6f, 0x6e, 0x22, 0x21, 0x0a, 0x1f, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54,
-	0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6e, 0x6e, 0x75, 0x61, 0x6c, 0x50, 0x63, 0x74, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xa6, 0x01, 0x0a, 0x0c, 0x4d, 0x73, 0x67, 0x53, 0x65,
-	0x74, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x12, 0x35, 0x0a, 0x09, 0x6e, 0x66, 0x74, 0x5f, 0x6f,
-	0x77, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14,
-	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74,
-	0x72, 0x69, 0x6e, 0x67, 0x52, 0x08, 0x6e, 0x66, 0x74, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x20,
-	0x0a, 0x0c, 0x6e, 0x66, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x6e, 0x66, 0x74, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64,
-	0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x6c, 0x69, 0x73, 0x74, 0x65,
-	0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x6c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x3a,
-	0x0e, 0x82, 0xe7, 0xb0, 0x2a, 0x09, 0x6e, 0x66, 0x74, 0x5f, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x22,
-	0x16, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x9d, 0x01, 0x0a, 0x0f, 0x4d, 0x73, 0x67, 0x55,
-	0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x36, 0x0a, 0x09, 0x61,
-	0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18,
+	0x43, 0x6c, 0x61, 0x73, 0x73, 0x45, 0x78, 0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xb8, 0x01, 0x0a, 0x1a, 0x4d, 0x73, 0x67, 0x53, 0x65,
+	0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c,
+	0x69, 0x73, 0x74, 0x65, 0x64, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65,
+	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42,
+	0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44,
+	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c,
+	0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c,
+	0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x23, 0x0a, 0x0d, 0x61, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x5f,
+	0x6c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0c, 0x61, 0x6c,
+	0x77, 0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a,
+	0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x22, 0x24, 0x0a, 0x22, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c,
+	0x61, 0x73, 0x73, 0x41, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xc2, 0x01, 0x0a, 0x1d, 0x4d, 0x73, 0x67, 0x53,
+	0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x63, 0x74, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d,
+	0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e,
+	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e,
+	0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19,
+	0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x2a, 0x0a, 0x11, 0x76, 0x61, 0x6c,
+	0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x63, 0x74, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46,
+	0x65, 0x65, 0x50, 0x63, 0x74, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65,
+	0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x27, 0x0a, 0x25,
+	0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x56, 0x61,
+	0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x63, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xe6, 0x01, 0x0a, 0x1d, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74,
+	0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f,
+	0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64,
+	0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d,
+	0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08,
+	0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
+	0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x4e, 0x0a, 0x10, 0x76, 0x61, 0x6c, 0x75, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x08, 0xc8, 0xde,
+	0x1f, 0x00, 0x98, 0xdf, 0x1f, 0x01, 0x52, 0x0f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61,
+	0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x27,
+	0x0a, 0x25, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73,
+	0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xd7, 0x01, 0x0a, 0x18, 0x4d, 0x73, 0x67, 0x53,
+	0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x42, 0x69, 0x64, 0x54, 0x69, 0x6d,
+	0x65, 0x6f, 0x75, 0x74, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73,
+	0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18,
 	0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65,
-	0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72,
-	0x69, 0x74, 0x79, 0x12, 0x42, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x0b, 0x32, 0x24, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
-	0x76, 0x31, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52,
-	0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x3a, 0x0e, 0x82, 0xe7, 0xb0, 0x2a, 0x09, 0x61, 0x75,
-	0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x22, 0x19, 0x0a, 0x17, 0x4d, 0x73, 0x67, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0xe5, 0x01, 0x0a, 0x0c, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x43, 0x6f,
-	0x69, 0x6e, 0x73, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74,
-	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2,
-	0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
-	0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73,
-	0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x79, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75,
-	0x6e, 0x74, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
-	0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43,
-	0x6f, 0x69, 0x6e, 0x42, 0x46, 0xc8, 0xde, 0x1f, 0x00, 0xaa, 0xdf, 0x1f, 0x28, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2f, 0x63,
-	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e,
-	0x43, 0x6f, 0x69, 0x6e, 0x73, 0x9a, 0xe7, 0xb0, 0x2a, 0x0c, 0x6c, 0x65, 0x67, 0x61, 0x63, 0x79,
-	0x5f, 0x63, 0x6f, 0x69, 0x6e, 0x73, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x06, 0x61, 0x6d, 0x6f,
-	0x75, 0x6e, 0x74, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64,
-	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x16, 0x0a, 0x14, 0x4d, 0x73,
-	0x67, 0x4d, 0x69, 0x6e, 0x74, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0xcf, 0x01, 0x0a, 0x0c, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x43, 0x6f,
-	0x69, 0x6e, 0x73, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74,
-	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2,
-	0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
-	0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73,
-	0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x63, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75,
-	0x6e, 0x74, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
-	0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43,
-	0x6f, 0x69, 0x6e, 0x42, 0x30, 0xc8, 0xde, 0x1f, 0x00, 0xaa, 0xdf, 0x1f, 0x28, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2f, 0x63,
-	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e,
-	0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x3a, 0x15, 0x82,
-	0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x22, 0x16, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x43,
-	0x6f, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x9e, 0x01, 0x0a,
-	0x13, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61,
-	0x64, 0x61, 0x74, 0x61, 0x12, 0x36, 0x0a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74,
-	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73,
-	0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e,
-	0x67, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x12, 0x3f, 0x0a, 0x08,
-	0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d,
-	0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62,
-	0x65, 0x74, 0x61, 0x31, 0x2e, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x42, 0x04, 0xc8,
-	0xde, 0x1f, 0x00, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x3a, 0x0e, 0x82,
-	0xe7, 0xb0, 0x2a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x22, 0x1d, 0x0a,
-	0x1b, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61,
-	0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x80, 0x02, 0x0a,
-	0x0c, 0x4d, 0x73, 0x67, 0x53, 0x61, 0x76, 0x65, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x12, 0x43, 0x0a,
+	0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65,
+	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61,
+	0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x61,
+	0x73, 0x73, 0x49, 0x64, 0x12, 0x44, 0x0a, 0x0b, 0x62, 0x69, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65,
+	0x6f, 0x75, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
+	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x42, 0x08, 0xc8, 0xde, 0x1f, 0x00, 0x98, 0xdf, 0x1f, 0x01, 0x52, 0x0a,
+	0x62, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a,
 	0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73,
-	0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e,
-	0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x12, 0x0a,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d,
-	0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x18, 0x04, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x06, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73,
-	0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b,
-	0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x10, 0x0a, 0x03, 0x75,
-	0x72, 0x69, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x69, 0x12, 0x19, 0x0a,
-	0x08, 0x75, 0x72, 0x69, 0x5f, 0x68, 0x61, 0x73, 0x68, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x07, 0x75, 0x72, 0x69, 0x48, 0x61, 0x73, 0x68, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e,
-	0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22,
-	0x16, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x53, 0x61, 0x76, 0x65, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xc7, 0x01, 0x0a, 0x0a, 0x4d, 0x73, 0x67, 0x4d,
-	0x69, 0x6e, 0x74, 0x4e, 0x46, 0x54, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64,
-	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65,
-	0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63,
-	0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63,
-	0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12, 0x10, 0x0a,
-	0x03, 0x75, 0x72, 0x69, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x69, 0x12,
-	0x19, 0x0a, 0x08, 0x75, 0x72, 0x69, 0x5f, 0x68, 0x61, 0x73, 0x68, 0x18, 0x05, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x07, 0x75, 0x72, 0x69, 0x48, 0x61, 0x73, 0x68, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a,
-	0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x22, 0x14, 0x0a, 0x12, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x4e, 0x46, 0x54, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x9a, 0x01, 0x0a, 0x0a, 0x4d, 0x73, 0x67, 0x42,
-	0x75, 0x72, 0x6e, 0x4e, 0x46, 0x54, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64,
-	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65,
-	0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63,
-	0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63,
-	0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x3a, 0x15, 0x82,
-	0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x22, 0x14, 0x0a, 0x12, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x4e,
-	0x46, 0x54, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xe1, 0x01, 0x0a, 0x0c, 0x4d,
-	0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x12, 0x43, 0x0a, 0x10, 0x6e,
-	0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
-	0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52,
-	0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e,
-	0x12, 0x38, 0x0a, 0x06, 0x69, 0x6e, 0x70, 0x75, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x1a, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76,
-	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x49, 0x6e, 0x70, 0x75, 0x74, 0x42, 0x04, 0xc8, 0xde,
-	0x1f, 0x00, 0x52, 0x06, 0x69, 0x6e, 0x70, 0x75, 0x74, 0x73, 0x12, 0x3b, 0x0a, 0x07, 0x6f, 0x75,
-	0x74, 0x70, 0x75, 0x74, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x63, 0x6f,
-	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61,
-	0x31, 0x2e, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x07,
-	0x6f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x73, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61,
+	0x6e, 0x22, 0x22, 0x0a, 0x20, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c,
+	0x61, 0x73, 0x73, 0x42, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xbb, 0x01, 0x0a, 0x1b, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74,
+	0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x44,
+	0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65,
+	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42,
+	0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44,
+	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c,
+	0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c,
+	0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x25, 0x0a, 0x0e, 0x61, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64,
+	0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0d, 0x61,
+	0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x3a, 0x15, 0x82, 0xe7,
+	0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x22, 0x25, 0x0a, 0x23, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54,
+	0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x44, 0x65, 0x6e, 0x6f,
+	0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xeb, 0x01, 0x0a, 0x2a, 0x4d,
+	0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x52, 0x65, 0x6a,
+	0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46,
+	0x65, 0x65, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d,
+	0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e,
+	0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e,
+	0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19,
+	0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x46, 0x0a, 0x20, 0x72, 0x65, 0x6a,
+	0x65, 0x63, 0x74, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x1c, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x56, 0x61,
+	0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e,
+	0x74, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73,
+	0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x34, 0x0a, 0x32, 0x4d, 0x73, 0x67, 0x53,
+	0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x52, 0x65, 0x6a, 0x65, 0x63, 0x74,
+	0x42, 0x69, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50,
+	0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xe1,
+	0x01, 0x0a, 0x27, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73,
+	0x73, 0x4d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64, 0x50, 0x65, 0x72, 0x63, 0x65,
+	0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61,
+	0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f,
+	0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12,
+	0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x3f, 0x0a, 0x1c, 0x6d, 0x69,
+	0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e,
+	0x74, 0x5f, 0x69, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x19, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64, 0x50, 0x65, 0x72, 0x63,
+	0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x3a, 0x15, 0x82, 0xe7, 0xb0,
+	0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x22, 0x31, 0x0a, 0x2f, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43,
+	0x6c, 0x61, 0x73, 0x73, 0x4d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64, 0x50, 0x65,
+	0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xa6, 0x01, 0x0a, 0x0c, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74,
+	0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x12, 0x35, 0x0a, 0x09, 0x6e, 0x66, 0x74, 0x5f, 0x6f, 0x77,
+	0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63,
+	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72,
+	0x69, 0x6e, 0x67, 0x52, 0x08, 0x6e, 0x66, 0x74, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x20, 0x0a,
+	0x0c, 0x6e, 0x66, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0a, 0x6e, 0x66, 0x74, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12,
+	0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x6c, 0x69, 0x73, 0x74, 0x65, 0x64,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x6c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x3a, 0x0e,
+	0x82, 0xe7, 0xb0, 0x2a, 0x09, 0x6e, 0x66, 0x74, 0x5f, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x22, 0x16,
+	0x0a, 0x14, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x9d, 0x01, 0x0a, 0x0f, 0x4d, 0x73, 0x67, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x36, 0x0a, 0x09, 0x61, 0x75,
+	0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2,
+	0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
+	0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69,
+	0x74, 0x79, 0x12, 0x42, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x24, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
+	0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76,
+	0x31, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x06,
+	0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x3a, 0x0e, 0x82, 0xe7, 0xb0, 0x2a, 0x09, 0x61, 0x75, 0x74,
+	0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x22, 0x19, 0x0a, 0x17, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0xe5, 0x01, 0x0a, 0x0c, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x43, 0x6f, 0x69,
+	0x6e, 0x73, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69,
+	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4,
+	0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
+	0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74,
+	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x79, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e,
+	0x74, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f,
+	0x69, 0x6e, 0x42, 0x46, 0xc8, 0xde, 0x1f, 0x00, 0xaa, 0xdf, 0x1f, 0x28, 0x67, 0x69, 0x74, 0x68,
+	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2f, 0x63, 0x6f,
+	0x73, 0x6d, 0x6f, 0x73, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x43,
+	0x6f, 0x69, 0x6e, 0x73, 0x9a, 0xe7, 0xb0, 0x2a, 0x0c, 0x6c, 0x65, 0x67, 0x61, 0x63, 0x79, 0x5f,
+	0x63, 0x6f, 0x69, 0x6e, 0x73, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75,
+	0x6e, 0x74, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65,
+	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x16, 0x0a, 0x14, 0x4d, 0x73, 0x67,
+	0x4d, 0x69, 0x6e, 0x74, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0xcf, 0x01, 0x0a, 0x0c, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x43, 0x6f, 0x69,
+	0x6e, 0x73, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69,
+	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4,
+	0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
+	0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74,
+	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x63, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e,
+	0x74, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f,
+	0x69, 0x6e, 0x42, 0x30, 0xc8, 0xde, 0x1f, 0x00, 0xaa, 0xdf, 0x1f, 0x28, 0x67, 0x69, 0x74, 0x68,
+	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2f, 0x63, 0x6f,
+	0x73, 0x6d, 0x6f, 0x73, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x43,
+	0x6f, 0x69, 0x6e, 0x73, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x3a, 0x15, 0x82, 0xe7,
+	0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x22, 0x16, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x43, 0x6f,
+	0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x9e, 0x01, 0x0a, 0x13,
+	0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64,
+	0x61, 0x74, 0x61, 0x12, 0x36, 0x0a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d,
+	0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67,
+	0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x12, 0x3f, 0x0a, 0x08, 0x6d,
+	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65,
+	0x74, 0x61, 0x31, 0x2e, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x42, 0x04, 0xc8, 0xde,
+	0x1f, 0x00, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x3a, 0x0e, 0x82, 0xe7,
+	0xb0, 0x2a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x22, 0x1d, 0x0a, 0x1b,
+	0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64,
+	0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x80, 0x02, 0x0a, 0x0c,
+	0x4d, 0x73, 0x67, 0x53, 0x61, 0x76, 0x65, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x12, 0x43, 0x0a, 0x10,
+	0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d,
+	0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67,
+	0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x12, 0x16, 0x0a, 0x06, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x06, 0x73, 0x79, 0x6d, 0x62, 0x6f, 0x6c, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63,
+	0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64,
+	0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72,
+	0x69, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x69, 0x12, 0x19, 0x0a, 0x08,
+	0x75, 0x72, 0x69, 0x5f, 0x68, 0x61, 0x73, 0x68, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
+	0x75, 0x72, 0x69, 0x48, 0x61, 0x73, 0x68, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61,
 	0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x16,
-	0x0a, 0x14, 0x4d, 0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xd3, 0x01, 0x0a, 0x0a, 0x4d, 0x73, 0x67, 0x4d, 0x6f,
-	0x76, 0x65, 0x4e, 0x66, 0x74, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65,
+	0x0a, 0x14, 0x4d, 0x73, 0x67, 0x53, 0x61, 0x76, 0x65, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xc7, 0x01, 0x0a, 0x0a, 0x4d, 0x73, 0x67, 0x4d, 0x69,
+	0x6e, 0x74, 0x4e, 0x46, 0x54, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65,
 	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42,
 	0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72,
 	0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44,
 	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c,
 	0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c,
 	0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18,
-	0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12, 0x37, 0x0a, 0x0a,
-	0x74, 0x6f, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09,
-	0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x09, 0x74, 0x6f, 0x41, 0x64,
-	0x64, 0x72, 0x65, 0x73, 0x73, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65,
-	0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x14, 0x0a, 0x12,
-	0x4d, 0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65, 0x4e, 0x66, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x32, 0xdf, 0x15, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x62, 0x0a, 0x06, 0x43, 0x6f,
-	0x6d, 0x6d, 0x69, 0x74, 0x12, 0x27, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x1a, 0x2f, 0x2e,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61,
-	0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67,
-	0x43, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x62,
-	0x0a, 0x06, 0x52, 0x65, 0x76, 0x65, 0x61, 0x6c, 0x12, 0x27, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x76, 0x65, 0x61,
-	0x6c, 0x1a, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
-	0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31,
-	0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x76, 0x65, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x74, 0x0a, 0x0c, 0x53, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76,
-	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x1a, 0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12, 0x10, 0x0a, 0x03,
+	0x75, 0x72, 0x69, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x69, 0x12, 0x19,
+	0x0a, 0x08, 0x75, 0x72, 0x69, 0x5f, 0x68, 0x61, 0x73, 0x68, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x07, 0x75, 0x72, 0x69, 0x48, 0x61, 0x73, 0x68, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10,
+	0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x22, 0x14, 0x0a, 0x12, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x4e, 0x46, 0x54, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x9a, 0x01, 0x0a, 0x0a, 0x4d, 0x73, 0x67, 0x42, 0x75,
+	0x72, 0x6e, 0x4e, 0x46, 0x54, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65,
+	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42,
+	0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44,
+	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c,
+	0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c,
+	0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x3a, 0x15, 0x82, 0xe7,
+	0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x22, 0x14, 0x0a, 0x12, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x4e, 0x46,
+	0x54, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xe1, 0x01, 0x0a, 0x0c, 0x4d, 0x73,
+	0x67, 0x4d, 0x6f, 0x76, 0x65, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61,
+	0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f,
+	0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12,
+	0x38, 0x0a, 0x06, 0x69, 0x6e, 0x70, 0x75, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x1a, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31,
+	0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x49, 0x6e, 0x70, 0x75, 0x74, 0x42, 0x04, 0xc8, 0xde, 0x1f,
+	0x00, 0x52, 0x06, 0x69, 0x6e, 0x70, 0x75, 0x74, 0x73, 0x12, 0x3b, 0x0a, 0x07, 0x6f, 0x75, 0x74,
+	0x70, 0x75, 0x74, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x63, 0x6f, 0x73,
+	0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31,
+	0x2e, 0x4f, 0x75, 0x74, 0x70, 0x75, 0x74, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x07, 0x6f,
+	0x75, 0x74, 0x70, 0x75, 0x74, 0x73, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d,
+	0x65, 0x5f, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x16, 0x0a,
+	0x14, 0x4d, 0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0xd3, 0x01, 0x0a, 0x0a, 0x4d, 0x73, 0x67, 0x4d, 0x6f, 0x76,
+	0x65, 0x4e, 0x66, 0x74, 0x12, 0x43, 0x0a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f, 0x64, 0x65, 0x73,
+	0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18,
+	0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65,
+	0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x6e, 0x61, 0x6d, 0x65, 0x44, 0x65,
+	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61,
+	0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x61,
+	0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x12, 0x37, 0x0a, 0x0a, 0x74,
+	0x6f, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x42,
+	0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72,
+	0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x09, 0x74, 0x6f, 0x41, 0x64, 0x64,
+	0x72, 0x65, 0x73, 0x73, 0x3a, 0x15, 0x82, 0xe7, 0xb0, 0x2a, 0x10, 0x6e, 0x61, 0x6d, 0x65, 0x5f,
+	0x64, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x14, 0x0a, 0x12, 0x4d,
+	0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65, 0x4e, 0x66, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x32, 0xc6, 0x1c, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x62, 0x0a, 0x06, 0x43, 0x6f, 0x6d,
+	0x6d, 0x69, 0x74, 0x12, 0x27, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
+	0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x1a, 0x2f, 0x2e, 0x64,
+	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d,
+	0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43,
+	0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x62, 0x0a,
+	0x06, 0x52, 0x65, 0x76, 0x65, 0x61, 0x6c, 0x12, 0x27, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x76, 0x65, 0x61, 0x6c,
+	0x1a, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e,
+	0x4d, 0x73, 0x67, 0x52, 0x65, 0x76, 0x65, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x74, 0x0a, 0x0c, 0x53, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
 	0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31,
 	0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x5f, 0x0a, 0x05, 0x52, 0x65, 0x6e, 0x65,
-	0x77, 0x12, 0x26, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
-	0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31,
-	0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6e, 0x65, 0x77, 0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6e, 0x65,
-	0x77, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x68, 0x0a, 0x08, 0x50, 0x6c, 0x61,
-	0x63, 0x65, 0x42, 0x69, 0x64, 0x12, 0x29, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x42, 0x69, 0x64,
-	0x1a, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x1a, 0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
 	0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e,
-	0x4d, 0x73, 0x67, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x42, 0x69, 0x64,
-	0x12, 0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x5f, 0x0a, 0x05, 0x52, 0x65, 0x6e, 0x65, 0x77,
+	0x12, 0x26, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
 	0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e,
-	0x4d, 0x73, 0x67, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x42, 0x69, 0x64, 0x1a, 0x32, 0x2e, 0x64,
-	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d,
-	0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x41,
-	0x63, 0x63, 0x65, 0x70, 0x74, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x6b, 0x0a, 0x09, 0x52, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x12, 0x2a, 0x2e,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61,
-	0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67,
-	0x52, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x1a, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6a, 0x65,
-	0x63, 0x74, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x68, 0x0a,
-	0x08, 0x43, 0x6c, 0x61, 0x69, 0x6d, 0x42, 0x69, 0x64, 0x12, 0x29, 0x2e, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x6c, 0x61, 0x69,
-	0x6d, 0x42, 0x69, 0x64, 0x1a, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x4d, 0x73, 0x67, 0x52, 0x65, 0x6e, 0x65, 0x77, 0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6e, 0x65, 0x77,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x68, 0x0a, 0x08, 0x50, 0x6c, 0x61, 0x63,
+	0x65, 0x42, 0x69, 0x64, 0x12, 0x29, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x6c, 0x61, 0x69, 0x6d, 0x42, 0x69, 0x64, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x7a, 0x0a, 0x0e, 0x53, 0x65, 0x74, 0x44, 0x65,
-	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f,
+	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x42, 0x69, 0x64, 0x1a,
+	0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
+	0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d,
+	0x73, 0x67, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x42, 0x69, 0x64, 0x12,
+	0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
+	0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d,
+	0x73, 0x67, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x42, 0x69, 0x64, 0x1a, 0x32, 0x2e, 0x64, 0x79,
+	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x41, 0x63,
+	0x63, 0x65, 0x70, 0x74, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x6b, 0x0a, 0x09, 0x52, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x12, 0x2a, 0x2e, 0x64,
+	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d,
+	0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x52,
+	0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x1a, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x6a, 0x65, 0x63,
+	0x74, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x68, 0x0a, 0x08,
+	0x43, 0x6c, 0x61, 0x69, 0x6d, 0x42, 0x69, 0x64, 0x12, 0x29, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x6c, 0x61, 0x69, 0x6d,
+	0x42, 0x69, 0x64, 0x1a, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
+	0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x6c, 0x61, 0x69, 0x6d, 0x42, 0x69, 0x64, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x7a, 0x0a, 0x0e, 0x53, 0x65, 0x74, 0x44, 0x65, 0x73,
+	0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65,
+	0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x1a, 0x37, 0x2e, 0x64, 0x79, 0x73, 0x6f,
 	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65,
 	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44,
-	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x1a, 0x37, 0x2e, 0x64, 0x79, 0x73,
-	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74,
-	0x44, 0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x12, 0x7a, 0x0a, 0x0e, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x4d, 0x65, 0x74,
-	0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
+	0x65, 0x73, 0x74, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x7a, 0x0a, 0x0e, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x4d, 0x65, 0x74, 0x61,
+	0x64, 0x61, 0x74, 0x61, 0x12, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x4d, 0x65, 0x74,
+	0x61, 0x64, 0x61, 0x74, 0x61, 0x1a, 0x37, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
 	0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x4d, 0x65,
-	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x1a, 0x37, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69,
-	0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x4d,
-	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x8c, 0x01, 0x0a, 0x14, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x45,
-	0x78, 0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x12, 0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46,
-	0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x45, 0x78, 0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x1a,
-	0x3d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
-	0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d,
-	0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x45, 0x78, 0x74,
-	0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x95,
-	0x01, 0x0a, 0x17, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c,
-	0x77, 0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x12, 0x38, 0x2e, 0x64, 0x79, 0x73,
-	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74,
-	0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c, 0x69,
-	0x73, 0x74, 0x65, 0x64, 0x1a, 0x40, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x8c,
+	0x01, 0x0a, 0x14, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x45, 0x78,
+	0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x12, 0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54,
+	0x43, 0x6c, 0x61, 0x73, 0x73, 0x45, 0x78, 0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x1a, 0x3d,
+	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e,
+	0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
+	0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x45, 0x78, 0x74, 0x72,
+	0x61, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x95, 0x01,
+	0x0a, 0x17, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c, 0x77,
+	0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x12, 0x38, 0x2e, 0x64, 0x79, 0x73, 0x6f,
+	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e,
+	0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c, 0x69, 0x73,
+	0x74, 0x65, 0x64, 0x1a, 0x40, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
+	0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73,
+	0x73, 0x41, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x9e, 0x01, 0x0a, 0x1a, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54,
+	0x43, 0x6c, 0x61, 0x73, 0x73, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65,
+	0x65, 0x50, 0x63, 0x74, 0x12, 0x3b, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
 	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61,
-	0x73, 0x73, 0x41, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x8c, 0x01, 0x0a, 0x14, 0x53, 0x65, 0x74, 0x4e, 0x46,
-	0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6e, 0x6e, 0x75, 0x61, 0x6c, 0x50, 0x63, 0x74, 0x12,
-	0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
-	0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d,
-	0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6e, 0x6e,
-	0x75, 0x61, 0x6c, 0x50, 0x63, 0x74, 0x1a, 0x3d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x73, 0x73, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x63,
+	0x74, 0x1a, 0x43, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31,
+	0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x56,
+	0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x63, 0x74, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x9e, 0x01, 0x0a, 0x1a, 0x53, 0x65, 0x74, 0x4e, 0x46,
+	0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x50,
+	0x65, 0x72, 0x69, 0x6f, 0x64, 0x12, 0x3b, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c,
+	0x61, 0x73, 0x73, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x50, 0x65, 0x72, 0x69,
+	0x6f, 0x64, 0x1a, 0x43, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
+	0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76,
+	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73,
+	0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x8f, 0x01, 0x0a, 0x15, 0x53, 0x65, 0x74, 0x4e,
+	0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x42, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75,
+	0x74, 0x12, 0x36, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31,
+	0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x42,
+	0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x1a, 0x3e, 0x2e, 0x64, 0x79, 0x73, 0x6f,
+	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e,
+	0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x42, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75,
+	0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x98, 0x01, 0x0a, 0x18, 0x53, 0x65,
+	0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64,
+	0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x12, 0x39, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69,
 	0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43,
-	0x6c, 0x61, 0x73, 0x73, 0x41, 0x6e, 0x6e, 0x75, 0x61, 0x6c, 0x50, 0x63, 0x74, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x53, 0x65, 0x74, 0x4c, 0x69, 0x73, 0x74,
-	0x65, 0x64, 0x12, 0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76,
-	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x1a, 0x32,
-	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e,
-	0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
-	0x67, 0x53, 0x65, 0x74, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x74, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61,
-	0x6d, 0x73, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76,
-	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d,
-	0x73, 0x1a, 0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x61, 0x73, 0x73, 0x41, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x44, 0x65, 0x6e, 0x6f, 0x6d,
+	0x73, 0x1a, 0x41, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
 	0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31,
-	0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x4d, 0x69, 0x6e, 0x74,
-	0x43, 0x6f, 0x69, 0x6e, 0x73, 0x12, 0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x43, 0x6f, 0x69, 0x6e,
-	0x73, 0x1a, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
-	0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31,
-	0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x42, 0x75, 0x72, 0x6e, 0x43, 0x6f, 0x69,
-	0x6e, 0x73, 0x12, 0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76,
-	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x1a, 0x32,
-	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e,
-	0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
-	0x67, 0x42, 0x75, 0x72, 0x6e, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x80, 0x01, 0x0a, 0x10, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d,
-	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e,
-	0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x1a, 0x39, 0x2e, 0x64, 0x79, 0x73,
+	0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x41,
+	0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0xc5, 0x01, 0x0a, 0x27, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43,
+	0x6c, 0x61, 0x73, 0x73, 0x52, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x56, 0x61, 0x6c,
+	0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74,
+	0x12, 0x48, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e,
+	0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x52, 0x65,
+	0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x46, 0x65, 0x65, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x1a, 0x50, 0x2e, 0x64, 0x79, 0x73,
 	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73,
 	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74,
-	0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x53, 0x61, 0x76, 0x65, 0x43, 0x6c, 0x61,
-	0x73, 0x73, 0x12, 0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76,
-	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x61, 0x76, 0x65, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x1a, 0x32,
-	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e,
-	0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
-	0x67, 0x53, 0x61, 0x76, 0x65, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x65, 0x0a, 0x07, 0x4d, 0x69, 0x6e, 0x74, 0x4e, 0x46, 0x54, 0x12, 0x28, 0x2e,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61,
-	0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67,
-	0x4d, 0x69, 0x6e, 0x74, 0x4e, 0x46, 0x54, 0x1a, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x4e, 0x46,
-	0x54, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x65, 0x0a, 0x07, 0x42, 0x75, 0x72,
-	0x6e, 0x4e, 0x46, 0x54, 0x12, 0x28, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x52, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69,
+	0x64, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x65, 0x72,
+	0x63, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0xbc, 0x01, 0x0a,
+	0x24, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x4d, 0x69, 0x6e, 0x69,
+	0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63,
+	0x72, 0x65, 0x61, 0x73, 0x65, 0x12, 0x45, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c,
+	0x61, 0x73, 0x73, 0x4d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64, 0x50, 0x65, 0x72,
+	0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x1a, 0x4d, 0x2e, 0x64,
+	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d,
+	0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53,
+	0x65, 0x74, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x4d, 0x69, 0x6e, 0x69, 0x6d, 0x75,
+	0x6d, 0x42, 0x69, 0x64, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65,
+	0x61, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x53,
+	0x65, 0x74, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x12, 0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4c, 0x69,
+	0x73, 0x74, 0x65, 0x64, 0x1a, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x4e, 0x46, 0x54, 0x1a, 0x30,
-	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e,
-	0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
-	0x67, 0x42, 0x75, 0x72, 0x6e, 0x4e, 0x46, 0x54, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x6b, 0x0a, 0x09, 0x4d, 0x6f, 0x76, 0x65, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x12, 0x2a, 0x2e,
+	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x74, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x1a, 0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b,
+	0x0a, 0x09, 0x4d, 0x69, 0x6e, 0x74, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x12, 0x2a, 0x2e, 0x64, 0x79,
+	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x69,
+	0x6e, 0x74, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x1a, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x43, 0x6f,
+	0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x42,
+	0x75, 0x72, 0x6e, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x12, 0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x43,
+	0x6f, 0x69, 0x6e, 0x73, 0x1a, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x43, 0x6f, 0x69, 0x6e, 0x73,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x80, 0x01, 0x0a, 0x10, 0x53, 0x65, 0x74,
+	0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x31, 0x2e,
 	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61,
 	0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67,
-	0x4d, 0x6f, 0x76, 0x65, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x1a, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65,
-	0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x65, 0x0a,
-	0x07, 0x4d, 0x6f, 0x76, 0x65, 0x4e, 0x66, 0x74, 0x12, 0x28, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61,
+	0x1a, 0x39, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e,
+	0x4d, 0x73, 0x67, 0x53, 0x65, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x4d, 0x65, 0x74, 0x61, 0x64,
+	0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x53,
+	0x61, 0x76, 0x65, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x12, 0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x61, 0x76, 0x65, 0x43,
+	0x6c, 0x61, 0x73, 0x73, 0x1a, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x53, 0x61, 0x76, 0x65, 0x43, 0x6c, 0x61, 0x73, 0x73,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x65, 0x0a, 0x07, 0x4d, 0x69, 0x6e, 0x74,
+	0x4e, 0x46, 0x54, 0x12, 0x28, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
+	0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x69, 0x6e, 0x74, 0x4e, 0x46, 0x54, 0x1a, 0x30, 0x2e,
+	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61,
+	0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67,
+	0x4d, 0x69, 0x6e, 0x74, 0x4e, 0x46, 0x54, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x65, 0x0a, 0x07, 0x42, 0x75, 0x72, 0x6e, 0x4e, 0x46, 0x54, 0x12, 0x28, 0x2e, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72,
+	0x6e, 0x4e, 0x46, 0x54, 0x1a, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x42, 0x75, 0x72, 0x6e, 0x4e, 0x46, 0x54, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6b, 0x0a, 0x09, 0x4d, 0x6f, 0x76, 0x65, 0x43, 0x6f,
+	0x69, 0x6e, 0x73, 0x12, 0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
+	0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x1a,
+	0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
+	0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d,
+	0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x65, 0x0a, 0x07, 0x4d, 0x6f, 0x76, 0x65, 0x4e, 0x66, 0x74, 0x12, 0x28,
+	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e,
+	0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73,
+	0x67, 0x4d, 0x6f, 0x76, 0x65, 0x4e, 0x66, 0x74, 0x1a, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
 	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65, 0x4e,
-	0x66, 0x74, 0x1a, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76,
-	0x31, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x6f, 0x76, 0x65, 0x4e, 0x66, 0x74, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x86, 0x01, 0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x45,
-	0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x33, 0x2e, 0x64, 0x79,
-	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65,
-	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x72,
-	0x65, 0x61, 0x74, 0x65, 0x45, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x4e, 0x61, 0x6d, 0x65,
-	0x1a, 0x3b, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e,
-	0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x45, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61,
-	0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x1a, 0x05, 0x80,
-	0xe7, 0xb0, 0x2a, 0x01, 0x42, 0x27, 0x5a, 0x25, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61, 0x6d, 0x65,
-	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x66, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x86, 0x01, 0x0a, 0x12, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x45, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x4e, 0x61, 0x6d,
+	0x65, 0x12, 0x33, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31,
+	0x2e, 0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x45, 0x78, 0x74, 0x65, 0x72, 0x6e,
+	0x61, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x1a, 0x3b, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x45,
+	0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x4e, 0x61, 0x6d, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x1a, 0x05, 0x80, 0xe7, 0xb0, 0x2a, 0x01, 0x42, 0x27, 0x5a, 0x25, 0x64, 0x79,
+	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
+	0x78, 0x2f, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x74, 0x79,
+	0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -25436,129 +30572,152 @@ func file_dysonprotocol_nameservice_v1_tx_proto_rawDescGZIP() []byte {
 	return file_dysonprotocol_nameservice_v1_tx_proto_rawDescData
 }
 
-var file_dysonprotocol_nameservice_v1_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
+var file_dysonprotocol_nameservice_v1_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 58)
 var file_dysonprotocol_nameservice_v1_tx_proto_goTypes = []interface{}{
-	(*MsgCommit)(nil),                          // 0: dysonprotocol.nameservice.v1.MsgCommit
-	(*MsgCommitResponse)(nil),                  // 1: dysonprotocol.nameservice.v1.MsgCommitResponse
-	(*MsgReveal)(nil),                          // 2: dysonprotocol.nameservice.v1.MsgReveal
-	(*MsgRevealResponse)(nil),                  // 3: dysonprotocol.nameservice.v1.MsgRevealResponse
-	(*MsgCreateExternalName)(nil),              // 4: dysonprotocol.nameservice.v1.MsgCreateExternalName
-	(*MsgCreateExternalNameResponse)(nil),      // 5: dysonprotocol.nameservice.v1.MsgCreateExternalNameResponse
-	(*MsgSetValuation)(nil),                    // 6: dysonprotocol.nameservice.v1.MsgSetValuation
-	(*MsgSetValuationResponse)(nil),            // 7: dysonprotocol.nameservice.v1.MsgSetValuationResponse
-	(*MsgRenew)(nil),                           // 8: dysonprotocol.nameservice.v1.MsgRenew
-	(*MsgRenewResponse)(nil),                   // 9: dysonprotocol.nameservice.v1.MsgRenewResponse
-	(*MsgPlaceBid)(nil),                        // 10: dysonprotocol.nameservice.v1.MsgPlaceBid
-	(*MsgPlaceBidResponse)(nil),                // 11: dysonprotocol.nameservice.v1.MsgPlaceBidResponse
-	(*MsgAcceptBid)(nil),                       // 12: dysonprotocol.nameservice.v1.MsgAcceptBid
-	(*MsgAcceptBidResponse)(nil),               // 13: dysonprotocol.nameservice.v1.MsgAcceptBidResponse
-	(*MsgRejectBid)(nil),                       // 14: dysonprotocol.nameservice.v1.MsgRejectBid
-	(*MsgRejectBidResponse)(nil),               // 15: dysonprotocol.nameservice.v1.MsgRejectBidResponse
-	(*MsgClaimBid)(nil),                        // 16: dysonprotocol.nameservice.v1.MsgClaimBid
-	(*MsgClaimBidResponse)(nil),                // 17: dysonprotocol.nameservice.v1.MsgClaimBidResponse
-	(*MsgSetDestination)(nil),                  // 18: dysonprotocol.nameservice.v1.MsgSetDestination
-	(*MsgSetDestinationResponse)(nil),          // 19: dysonprotocol.nameservice.v1.MsgSetDestinationResponse
-	(*MsgSetNFTMetadata)(nil),                  // 20: dysonprotocol.nameservice.v1.MsgSetNFTMetadata
-	(*MsgSetNFTMetadataResponse)(nil),          // 21: dysonprotocol.nameservice.v1.MsgSetNFTMetadataResponse
-	(*MsgSetNFTClassExtraData)(nil),            // 22: dysonprotocol.nameservice.v1.MsgSetNFTClassExtraData
-	(*MsgSetNFTClassExtraDataResponse)(nil),    // 23: dysonprotocol.nameservice.v1.MsgSetNFTClassExtraDataResponse
-	(*MsgSetNFTClassAlwaysListed)(nil),         // 24: dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed
-	(*MsgSetNFTClassAlwaysListedResponse)(nil), // 25: dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListedResponse
-	(*MsgSetNFTClassAnnualPct)(nil),            // 26: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct
-	(*MsgSetNFTClassAnnualPctResponse)(nil),    // 27: dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse
-	(*MsgSetListed)(nil),                       // 28: dysonprotocol.nameservice.v1.MsgSetListed
-	(*MsgSetListedResponse)(nil),               // 29: dysonprotocol.nameservice.v1.MsgSetListedResponse
-	(*MsgUpdateParams)(nil),                    // 30: dysonprotocol.nameservice.v1.MsgUpdateParams
-	(*MsgUpdateParamsResponse)(nil),            // 31: dysonprotocol.nameservice.v1.MsgUpdateParamsResponse
-	(*MsgMintCoins)(nil),                       // 32: dysonprotocol.nameservice.v1.MsgMintCoins
-	(*MsgMintCoinsResponse)(nil),               // 33: dysonprotocol.nameservice.v1.MsgMintCoinsResponse
-	(*MsgBurnCoins)(nil),                       // 34: dysonprotocol.nameservice.v1.MsgBurnCoins
-	(*MsgBurnCoinsResponse)(nil),               // 35: dysonprotocol.nameservice.v1.MsgBurnCoinsResponse
-	(*MsgSetDenomMetadata)(nil),                // 36: dysonprotocol.nameservice.v1.MsgSetDenomMetadata
-	(*MsgSetDenomMetadataResponse)(nil),        // 37: dysonprotocol.nameservice.v1.MsgSetDenomMetadataResponse
-	(*MsgSaveClass)(nil),                       // 38: dysonprotocol.nameservice.v1.MsgSaveClass
-	(*MsgSaveClassResponse)(nil),               // 39: dysonprotocol.nameservice.v1.MsgSaveClassResponse
-	(*MsgMintNFT)(nil),                         // 40: dysonprotocol.nameservice.v1.MsgMintNFT
-	(*MsgMintNFTResponse)(nil),                 // 41: dysonprotocol.nameservice.v1.MsgMintNFTResponse
-	(*MsgBurnNFT)(nil),                         // 42: dysonprotocol.nameservice.v1.MsgBurnNFT
-	(*MsgBurnNFTResponse)(nil),                 // 43: dysonprotocol.nameservice.v1.MsgBurnNFTResponse
-	(*MsgMoveCoins)(nil),                       // 44: dysonprotocol.nameservice.v1.MsgMoveCoins
-	(*MsgMoveCoinsResponse)(nil),               // 45: dysonprotocol.nameservice.v1.MsgMoveCoinsResponse
-	(*MsgMoveNft)(nil),                         // 46: dysonprotocol.nameservice.v1.MsgMoveNft
-	(*MsgMoveNftResponse)(nil),                 // 47: dysonprotocol.nameservice.v1.MsgMoveNftResponse
-	(*v1beta1.Coin)(nil),                       // 48: cosmos.base.v1beta1.Coin
-	(*timestamppb.Timestamp)(nil),              // 49: google.protobuf.Timestamp
-	(*Params)(nil),                             // 50: dysonprotocol.nameservice.v1.Params
-	(*v1beta11.Metadata)(nil),                  // 51: cosmos.bank.v1beta1.Metadata
-	(*v1beta11.Input)(nil),                     // 52: cosmos.bank.v1beta1.Input
-	(*v1beta11.Output)(nil),                    // 53: cosmos.bank.v1beta1.Output
+	(*MsgCommit)(nil),                                          // 0: dysonprotocol.nameservice.v1.MsgCommit
+	(*MsgCommitResponse)(nil),                                  // 1: dysonprotocol.nameservice.v1.MsgCommitResponse
+	(*MsgReveal)(nil),                                          // 2: dysonprotocol.nameservice.v1.MsgReveal
+	(*MsgRevealResponse)(nil),                                  // 3: dysonprotocol.nameservice.v1.MsgRevealResponse
+	(*MsgCreateExternalName)(nil),                              // 4: dysonprotocol.nameservice.v1.MsgCreateExternalName
+	(*MsgCreateExternalNameResponse)(nil),                      // 5: dysonprotocol.nameservice.v1.MsgCreateExternalNameResponse
+	(*MsgSetValuation)(nil),                                    // 6: dysonprotocol.nameservice.v1.MsgSetValuation
+	(*MsgSetValuationResponse)(nil),                            // 7: dysonprotocol.nameservice.v1.MsgSetValuationResponse
+	(*MsgRenew)(nil),                                           // 8: dysonprotocol.nameservice.v1.MsgRenew
+	(*MsgRenewResponse)(nil),                                   // 9: dysonprotocol.nameservice.v1.MsgRenewResponse
+	(*MsgPlaceBid)(nil),                                        // 10: dysonprotocol.nameservice.v1.MsgPlaceBid
+	(*MsgPlaceBidResponse)(nil),                                // 11: dysonprotocol.nameservice.v1.MsgPlaceBidResponse
+	(*MsgAcceptBid)(nil),                                       // 12: dysonprotocol.nameservice.v1.MsgAcceptBid
+	(*MsgAcceptBidResponse)(nil),                               // 13: dysonprotocol.nameservice.v1.MsgAcceptBidResponse
+	(*MsgRejectBid)(nil),                                       // 14: dysonprotocol.nameservice.v1.MsgRejectBid
+	(*MsgRejectBidResponse)(nil),                               // 15: dysonprotocol.nameservice.v1.MsgRejectBidResponse
+	(*MsgClaimBid)(nil),                                        // 16: dysonprotocol.nameservice.v1.MsgClaimBid
+	(*MsgClaimBidResponse)(nil),                                // 17: dysonprotocol.nameservice.v1.MsgClaimBidResponse
+	(*MsgSetDestination)(nil),                                  // 18: dysonprotocol.nameservice.v1.MsgSetDestination
+	(*MsgSetDestinationResponse)(nil),                          // 19: dysonprotocol.nameservice.v1.MsgSetDestinationResponse
+	(*MsgSetNFTMetadata)(nil),                                  // 20: dysonprotocol.nameservice.v1.MsgSetNFTMetadata
+	(*MsgSetNFTMetadataResponse)(nil),                          // 21: dysonprotocol.nameservice.v1.MsgSetNFTMetadataResponse
+	(*MsgSetNFTClassExtraData)(nil),                            // 22: dysonprotocol.nameservice.v1.MsgSetNFTClassExtraData
+	(*MsgSetNFTClassExtraDataResponse)(nil),                    // 23: dysonprotocol.nameservice.v1.MsgSetNFTClassExtraDataResponse
+	(*MsgSetNFTClassAlwaysListed)(nil),                         // 24: dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed
+	(*MsgSetNFTClassAlwaysListedResponse)(nil),                 // 25: dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListedResponse
+	(*MsgSetNFTClassValuationFeePct)(nil),                      // 26: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct
+	(*MsgSetNFTClassValuationFeePctResponse)(nil),              // 27: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse
+	(*MsgSetNFTClassValuationPeriod)(nil),                      // 28: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod
+	(*MsgSetNFTClassValuationPeriodResponse)(nil),              // 29: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse
+	(*MsgSetNFTClassBidTimeout)(nil),                           // 30: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout
+	(*MsgSetNFTClassBidTimeoutResponse)(nil),                   // 31: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse
+	(*MsgSetNFTClassAllowedDenoms)(nil),                        // 32: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms
+	(*MsgSetNFTClassAllowedDenomsResponse)(nil),                // 33: dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse
+	(*MsgSetNFTClassRejectBidValuationFeePercent)(nil),         // 34: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent
+	(*MsgSetNFTClassRejectBidValuationFeePercentResponse)(nil), // 35: dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse
+	(*MsgSetNFTClassMinimumBidPercentIncrease)(nil),            // 36: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease
+	(*MsgSetNFTClassMinimumBidPercentIncreaseResponse)(nil),    // 37: dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse
+	(*MsgSetListed)(nil),                                       // 38: dysonprotocol.nameservice.v1.MsgSetListed
+	(*MsgSetListedResponse)(nil),                               // 39: dysonprotocol.nameservice.v1.MsgSetListedResponse
+	(*MsgUpdateParams)(nil),                                    // 40: dysonprotocol.nameservice.v1.MsgUpdateParams
+	(*MsgUpdateParamsResponse)(nil),                            // 41: dysonprotocol.nameservice.v1.MsgUpdateParamsResponse
+	(*MsgMintCoins)(nil),                                       // 42: dysonprotocol.nameservice.v1.MsgMintCoins
+	(*MsgMintCoinsResponse)(nil),                               // 43: dysonprotocol.nameservice.v1.MsgMintCoinsResponse
+	(*MsgBurnCoins)(nil),                                       // 44: dysonprotocol.nameservice.v1.MsgBurnCoins
+	(*MsgBurnCoinsResponse)(nil),                               // 45: dysonprotocol.nameservice.v1.MsgBurnCoinsResponse
+	(*MsgSetDenomMetadata)(nil),                                // 46: dysonprotocol.nameservice.v1.MsgSetDenomMetadata
+	(*MsgSetDenomMetadataResponse)(nil),                        // 47: dysonprotocol.nameservice.v1.MsgSetDenomMetadataResponse
+	(*MsgSaveClass)(nil),                                       // 48: dysonprotocol.nameservice.v1.MsgSaveClass
+	(*MsgSaveClassResponse)(nil),                               // 49: dysonprotocol.nameservice.v1.MsgSaveClassResponse
+	(*MsgMintNFT)(nil),                                         // 50: dysonprotocol.nameservice.v1.MsgMintNFT
+	(*MsgMintNFTResponse)(nil),                                 // 51: dysonprotocol.nameservice.v1.MsgMintNFTResponse
+	(*MsgBurnNFT)(nil),                                         // 52: dysonprotocol.nameservice.v1.MsgBurnNFT
+	(*MsgBurnNFTResponse)(nil),                                 // 53: dysonprotocol.nameservice.v1.MsgBurnNFTResponse
+	(*MsgMoveCoins)(nil),                                       // 54: dysonprotocol.nameservice.v1.MsgMoveCoins
+	(*MsgMoveCoinsResponse)(nil),                               // 55: dysonprotocol.nameservice.v1.MsgMoveCoinsResponse
+	(*MsgMoveNft)(nil),                                         // 56: dysonprotocol.nameservice.v1.MsgMoveNft
+	(*MsgMoveNftResponse)(nil),                                 // 57: dysonprotocol.nameservice.v1.MsgMoveNftResponse
+	(*v1beta1.Coin)(nil),                                       // 58: cosmos.base.v1beta1.Coin
+	(*timestamppb.Timestamp)(nil),                              // 59: google.protobuf.Timestamp
+	(*durationpb.Duration)(nil),                                // 60: google.protobuf.Duration
+	(*Params)(nil),                                             // 61: dysonprotocol.nameservice.v1.Params
+	(*v1beta11.Metadata)(nil),                                  // 62: cosmos.bank.v1beta1.Metadata
+	(*v1beta11.Input)(nil),                                     // 63: cosmos.bank.v1beta1.Input
+	(*v1beta11.Output)(nil),                                    // 64: cosmos.bank.v1beta1.Output
 }
 var file_dysonprotocol_nameservice_v1_tx_proto_depIdxs = []int32{
-	48, // 0: dysonprotocol.nameservice.v1.MsgCommit.valuation:type_name -> cosmos.base.v1beta1.Coin
-	48, // 1: dysonprotocol.nameservice.v1.MsgSetValuation.valuation:type_name -> cosmos.base.v1beta1.Coin
-	49, // 2: dysonprotocol.nameservice.v1.MsgRenewResponse.expiry:type_name -> google.protobuf.Timestamp
-	48, // 3: dysonprotocol.nameservice.v1.MsgPlaceBid.bid_amount:type_name -> cosmos.base.v1beta1.Coin
-	48, // 4: dysonprotocol.nameservice.v1.MsgRejectBid.new_valuation:type_name -> cosmos.base.v1beta1.Coin
-	48, // 5: dysonprotocol.nameservice.v1.MsgRejectBidResponse.rejection_fee:type_name -> cosmos.base.v1beta1.Coin
-	50, // 6: dysonprotocol.nameservice.v1.MsgUpdateParams.params:type_name -> dysonprotocol.nameservice.v1.Params
-	48, // 7: dysonprotocol.nameservice.v1.MsgMintCoins.amount:type_name -> cosmos.base.v1beta1.Coin
-	48, // 8: dysonprotocol.nameservice.v1.MsgBurnCoins.amount:type_name -> cosmos.base.v1beta1.Coin
-	51, // 9: dysonprotocol.nameservice.v1.MsgSetDenomMetadata.metadata:type_name -> cosmos.bank.v1beta1.Metadata
-	52, // 10: dysonprotocol.nameservice.v1.MsgMoveCoins.inputs:type_name -> cosmos.bank.v1beta1.Input
-	53, // 11: dysonprotocol.nameservice.v1.MsgMoveCoins.outputs:type_name -> cosmos.bank.v1beta1.Output
-	0,  // 12: dysonprotocol.nameservice.v1.Msg.Commit:input_type -> dysonprotocol.nameservice.v1.MsgCommit
-	2,  // 13: dysonprotocol.nameservice.v1.Msg.Reveal:input_type -> dysonprotocol.nameservice.v1.MsgReveal
-	6,  // 14: dysonprotocol.nameservice.v1.Msg.SetValuation:input_type -> dysonprotocol.nameservice.v1.MsgSetValuation
-	8,  // 15: dysonprotocol.nameservice.v1.Msg.Renew:input_type -> dysonprotocol.nameservice.v1.MsgRenew
-	10, // 16: dysonprotocol.nameservice.v1.Msg.PlaceBid:input_type -> dysonprotocol.nameservice.v1.MsgPlaceBid
-	12, // 17: dysonprotocol.nameservice.v1.Msg.AcceptBid:input_type -> dysonprotocol.nameservice.v1.MsgAcceptBid
-	14, // 18: dysonprotocol.nameservice.v1.Msg.RejectBid:input_type -> dysonprotocol.nameservice.v1.MsgRejectBid
-	16, // 19: dysonprotocol.nameservice.v1.Msg.ClaimBid:input_type -> dysonprotocol.nameservice.v1.MsgClaimBid
-	18, // 20: dysonprotocol.nameservice.v1.Msg.SetDestination:input_type -> dysonprotocol.nameservice.v1.MsgSetDestination
-	20, // 21: dysonprotocol.nameservice.v1.Msg.SetNFTMetadata:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTMetadata
-	22, // 22: dysonprotocol.nameservice.v1.Msg.SetNFTClassExtraData:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassExtraData
-	24, // 23: dysonprotocol.nameservice.v1.Msg.SetNFTClassAlwaysListed:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed
-	26, // 24: dysonprotocol.nameservice.v1.Msg.SetNFTClassAnnualPct:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct
-	28, // 25: dysonprotocol.nameservice.v1.Msg.SetListed:input_type -> dysonprotocol.nameservice.v1.MsgSetListed
-	30, // 26: dysonprotocol.nameservice.v1.Msg.UpdateParams:input_type -> dysonprotocol.nameservice.v1.MsgUpdateParams
-	32, // 27: dysonprotocol.nameservice.v1.Msg.MintCoins:input_type -> dysonprotocol.nameservice.v1.MsgMintCoins
-	34, // 28: dysonprotocol.nameservice.v1.Msg.BurnCoins:input_type -> dysonprotocol.nameservice.v1.MsgBurnCoins
-	36, // 29: dysonprotocol.nameservice.v1.Msg.SetDenomMetadata:input_type -> dysonprotocol.nameservice.v1.MsgSetDenomMetadata
-	38, // 30: dysonprotocol.nameservice.v1.Msg.SaveClass:input_type -> dysonprotocol.nameservice.v1.MsgSaveClass
-	40, // 31: dysonprotocol.nameservice.v1.Msg.MintNFT:input_type -> dysonprotocol.nameservice.v1.MsgMintNFT
-	42, // 32: dysonprotocol.nameservice.v1.Msg.BurnNFT:input_type -> dysonprotocol.nameservice.v1.MsgBurnNFT
-	44, // 33: dysonprotocol.nameservice.v1.Msg.MoveCoins:input_type -> dysonprotocol.nameservice.v1.MsgMoveCoins
-	46, // 34: dysonprotocol.nameservice.v1.Msg.MoveNft:input_type -> dysonprotocol.nameservice.v1.MsgMoveNft
-	4,  // 35: dysonprotocol.nameservice.v1.Msg.CreateExternalName:input_type -> dysonprotocol.nameservice.v1.MsgCreateExternalName
-	1,  // 36: dysonprotocol.nameservice.v1.Msg.Commit:output_type -> dysonprotocol.nameservice.v1.MsgCommitResponse
-	3,  // 37: dysonprotocol.nameservice.v1.Msg.Reveal:output_type -> dysonprotocol.nameservice.v1.MsgRevealResponse
-	7,  // 38: dysonprotocol.nameservice.v1.Msg.SetValuation:output_type -> dysonprotocol.nameservice.v1.MsgSetValuationResponse
-	9,  // 39: dysonprotocol.nameservice.v1.Msg.Renew:output_type -> dysonprotocol.nameservice.v1.MsgRenewResponse
-	11, // 40: dysonprotocol.nameservice.v1.Msg.PlaceBid:output_type -> dysonprotocol.nameservice.v1.MsgPlaceBidResponse
-	13, // 41: dysonprotocol.nameservice.v1.Msg.AcceptBid:output_type -> dysonprotocol.nameservice.v1.MsgAcceptBidResponse
-	15, // 42: dysonprotocol.nameservice.v1.Msg.RejectBid:output_type -> dysonprotocol.nameservice.v1.MsgRejectBidResponse
-	17, // 43: dysonprotocol.nameservice.v1.Msg.ClaimBid:output_type -> dysonprotocol.nameservice.v1.MsgClaimBidResponse
-	19, // 44: dysonprotocol.nameservice.v1.Msg.SetDestination:output_type -> dysonprotocol.nameservice.v1.MsgSetDestinationResponse
-	21, // 45: dysonprotocol.nameservice.v1.Msg.SetNFTMetadata:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTMetadataResponse
-	23, // 46: dysonprotocol.nameservice.v1.Msg.SetNFTClassExtraData:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassExtraDataResponse
-	25, // 47: dysonprotocol.nameservice.v1.Msg.SetNFTClassAlwaysListed:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListedResponse
-	27, // 48: dysonprotocol.nameservice.v1.Msg.SetNFTClassAnnualPct:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse
-	29, // 49: dysonprotocol.nameservice.v1.Msg.SetListed:output_type -> dysonprotocol.nameservice.v1.MsgSetListedResponse
-	31, // 50: dysonprotocol.nameservice.v1.Msg.UpdateParams:output_type -> dysonprotocol.nameservice.v1.MsgUpdateParamsResponse
-	33, // 51: dysonprotocol.nameservice.v1.Msg.MintCoins:output_type -> dysonprotocol.nameservice.v1.MsgMintCoinsResponse
-	35, // 52: dysonprotocol.nameservice.v1.Msg.BurnCoins:output_type -> dysonprotocol.nameservice.v1.MsgBurnCoinsResponse
-	37, // 53: dysonprotocol.nameservice.v1.Msg.SetDenomMetadata:output_type -> dysonprotocol.nameservice.v1.MsgSetDenomMetadataResponse
-	39, // 54: dysonprotocol.nameservice.v1.Msg.SaveClass:output_type -> dysonprotocol.nameservice.v1.MsgSaveClassResponse
-	41, // 55: dysonprotocol.nameservice.v1.Msg.MintNFT:output_type -> dysonprotocol.nameservice.v1.MsgMintNFTResponse
-	43, // 56: dysonprotocol.nameservice.v1.Msg.BurnNFT:output_type -> dysonprotocol.nameservice.v1.MsgBurnNFTResponse
-	45, // 57: dysonprotocol.nameservice.v1.Msg.MoveCoins:output_type -> dysonprotocol.nameservice.v1.MsgMoveCoinsResponse
-	47, // 58: dysonprotocol.nameservice.v1.Msg.MoveNft:output_type -> dysonprotocol.nameservice.v1.MsgMoveNftResponse
-	5,  // 59: dysonprotocol.nameservice.v1.Msg.CreateExternalName:output_type -> dysonprotocol.nameservice.v1.MsgCreateExternalNameResponse
-	36, // [36:60] is the sub-list for method output_type
-	12, // [12:36] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	58, // 0: dysonprotocol.nameservice.v1.MsgCommit.valuation:type_name -> cosmos.base.v1beta1.Coin
+	58, // 1: dysonprotocol.nameservice.v1.MsgSetValuation.valuation:type_name -> cosmos.base.v1beta1.Coin
+	59, // 2: dysonprotocol.nameservice.v1.MsgRenewResponse.expiry:type_name -> google.protobuf.Timestamp
+	58, // 3: dysonprotocol.nameservice.v1.MsgPlaceBid.bid_amount:type_name -> cosmos.base.v1beta1.Coin
+	58, // 4: dysonprotocol.nameservice.v1.MsgRejectBid.new_valuation:type_name -> cosmos.base.v1beta1.Coin
+	58, // 5: dysonprotocol.nameservice.v1.MsgRejectBidResponse.rejection_fee:type_name -> cosmos.base.v1beta1.Coin
+	60, // 6: dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.valuation_period:type_name -> google.protobuf.Duration
+	60, // 7: dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.bid_timeout:type_name -> google.protobuf.Duration
+	61, // 8: dysonprotocol.nameservice.v1.MsgUpdateParams.params:type_name -> dysonprotocol.nameservice.v1.Params
+	58, // 9: dysonprotocol.nameservice.v1.MsgMintCoins.amount:type_name -> cosmos.base.v1beta1.Coin
+	58, // 10: dysonprotocol.nameservice.v1.MsgBurnCoins.amount:type_name -> cosmos.base.v1beta1.Coin
+	62, // 11: dysonprotocol.nameservice.v1.MsgSetDenomMetadata.metadata:type_name -> cosmos.bank.v1beta1.Metadata
+	63, // 12: dysonprotocol.nameservice.v1.MsgMoveCoins.inputs:type_name -> cosmos.bank.v1beta1.Input
+	64, // 13: dysonprotocol.nameservice.v1.MsgMoveCoins.outputs:type_name -> cosmos.bank.v1beta1.Output
+	0,  // 14: dysonprotocol.nameservice.v1.Msg.Commit:input_type -> dysonprotocol.nameservice.v1.MsgCommit
+	2,  // 15: dysonprotocol.nameservice.v1.Msg.Reveal:input_type -> dysonprotocol.nameservice.v1.MsgReveal
+	6,  // 16: dysonprotocol.nameservice.v1.Msg.SetValuation:input_type -> dysonprotocol.nameservice.v1.MsgSetValuation
+	8,  // 17: dysonprotocol.nameservice.v1.Msg.Renew:input_type -> dysonprotocol.nameservice.v1.MsgRenew
+	10, // 18: dysonprotocol.nameservice.v1.Msg.PlaceBid:input_type -> dysonprotocol.nameservice.v1.MsgPlaceBid
+	12, // 19: dysonprotocol.nameservice.v1.Msg.AcceptBid:input_type -> dysonprotocol.nameservice.v1.MsgAcceptBid
+	14, // 20: dysonprotocol.nameservice.v1.Msg.RejectBid:input_type -> dysonprotocol.nameservice.v1.MsgRejectBid
+	16, // 21: dysonprotocol.nameservice.v1.Msg.ClaimBid:input_type -> dysonprotocol.nameservice.v1.MsgClaimBid
+	18, // 22: dysonprotocol.nameservice.v1.Msg.SetDestination:input_type -> dysonprotocol.nameservice.v1.MsgSetDestination
+	20, // 23: dysonprotocol.nameservice.v1.Msg.SetNFTMetadata:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTMetadata
+	22, // 24: dysonprotocol.nameservice.v1.Msg.SetNFTClassExtraData:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassExtraData
+	24, // 25: dysonprotocol.nameservice.v1.Msg.SetNFTClassAlwaysListed:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed
+	26, // 26: dysonprotocol.nameservice.v1.Msg.SetNFTClassValuationFeePct:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct
+	28, // 27: dysonprotocol.nameservice.v1.Msg.SetNFTClassValuationPeriod:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod
+	30, // 28: dysonprotocol.nameservice.v1.Msg.SetNFTClassBidTimeout:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout
+	32, // 29: dysonprotocol.nameservice.v1.Msg.SetNFTClassAllowedDenoms:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms
+	34, // 30: dysonprotocol.nameservice.v1.Msg.SetNFTClassRejectBidValuationFeePercent:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent
+	36, // 31: dysonprotocol.nameservice.v1.Msg.SetNFTClassMinimumBidPercentIncrease:input_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease
+	38, // 32: dysonprotocol.nameservice.v1.Msg.SetListed:input_type -> dysonprotocol.nameservice.v1.MsgSetListed
+	40, // 33: dysonprotocol.nameservice.v1.Msg.UpdateParams:input_type -> dysonprotocol.nameservice.v1.MsgUpdateParams
+	42, // 34: dysonprotocol.nameservice.v1.Msg.MintCoins:input_type -> dysonprotocol.nameservice.v1.MsgMintCoins
+	44, // 35: dysonprotocol.nameservice.v1.Msg.BurnCoins:input_type -> dysonprotocol.nameservice.v1.MsgBurnCoins
+	46, // 36: dysonprotocol.nameservice.v1.Msg.SetDenomMetadata:input_type -> dysonprotocol.nameservice.v1.MsgSetDenomMetadata
+	48, // 37: dysonprotocol.nameservice.v1.Msg.SaveClass:input_type -> dysonprotocol.nameservice.v1.MsgSaveClass
+	50, // 38: dysonprotocol.nameservice.v1.Msg.MintNFT:input_type -> dysonprotocol.nameservice.v1.MsgMintNFT
+	52, // 39: dysonprotocol.nameservice.v1.Msg.BurnNFT:input_type -> dysonprotocol.nameservice.v1.MsgBurnNFT
+	54, // 40: dysonprotocol.nameservice.v1.Msg.MoveCoins:input_type -> dysonprotocol.nameservice.v1.MsgMoveCoins
+	56, // 41: dysonprotocol.nameservice.v1.Msg.MoveNft:input_type -> dysonprotocol.nameservice.v1.MsgMoveNft
+	4,  // 42: dysonprotocol.nameservice.v1.Msg.CreateExternalName:input_type -> dysonprotocol.nameservice.v1.MsgCreateExternalName
+	1,  // 43: dysonprotocol.nameservice.v1.Msg.Commit:output_type -> dysonprotocol.nameservice.v1.MsgCommitResponse
+	3,  // 44: dysonprotocol.nameservice.v1.Msg.Reveal:output_type -> dysonprotocol.nameservice.v1.MsgRevealResponse
+	7,  // 45: dysonprotocol.nameservice.v1.Msg.SetValuation:output_type -> dysonprotocol.nameservice.v1.MsgSetValuationResponse
+	9,  // 46: dysonprotocol.nameservice.v1.Msg.Renew:output_type -> dysonprotocol.nameservice.v1.MsgRenewResponse
+	11, // 47: dysonprotocol.nameservice.v1.Msg.PlaceBid:output_type -> dysonprotocol.nameservice.v1.MsgPlaceBidResponse
+	13, // 48: dysonprotocol.nameservice.v1.Msg.AcceptBid:output_type -> dysonprotocol.nameservice.v1.MsgAcceptBidResponse
+	15, // 49: dysonprotocol.nameservice.v1.Msg.RejectBid:output_type -> dysonprotocol.nameservice.v1.MsgRejectBidResponse
+	17, // 50: dysonprotocol.nameservice.v1.Msg.ClaimBid:output_type -> dysonprotocol.nameservice.v1.MsgClaimBidResponse
+	19, // 51: dysonprotocol.nameservice.v1.Msg.SetDestination:output_type -> dysonprotocol.nameservice.v1.MsgSetDestinationResponse
+	21, // 52: dysonprotocol.nameservice.v1.Msg.SetNFTMetadata:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTMetadataResponse
+	23, // 53: dysonprotocol.nameservice.v1.Msg.SetNFTClassExtraData:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassExtraDataResponse
+	25, // 54: dysonprotocol.nameservice.v1.Msg.SetNFTClassAlwaysListed:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListedResponse
+	27, // 55: dysonprotocol.nameservice.v1.Msg.SetNFTClassValuationFeePct:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse
+	29, // 56: dysonprotocol.nameservice.v1.Msg.SetNFTClassValuationPeriod:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse
+	31, // 57: dysonprotocol.nameservice.v1.Msg.SetNFTClassBidTimeout:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse
+	33, // 58: dysonprotocol.nameservice.v1.Msg.SetNFTClassAllowedDenoms:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse
+	35, // 59: dysonprotocol.nameservice.v1.Msg.SetNFTClassRejectBidValuationFeePercent:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse
+	37, // 60: dysonprotocol.nameservice.v1.Msg.SetNFTClassMinimumBidPercentIncrease:output_type -> dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse
+	39, // 61: dysonprotocol.nameservice.v1.Msg.SetListed:output_type -> dysonprotocol.nameservice.v1.MsgSetListedResponse
+	41, // 62: dysonprotocol.nameservice.v1.Msg.UpdateParams:output_type -> dysonprotocol.nameservice.v1.MsgUpdateParamsResponse
+	43, // 63: dysonprotocol.nameservice.v1.Msg.MintCoins:output_type -> dysonprotocol.nameservice.v1.MsgMintCoinsResponse
+	45, // 64: dysonprotocol.nameservice.v1.Msg.BurnCoins:output_type -> dysonprotocol.nameservice.v1.MsgBurnCoinsResponse
+	47, // 65: dysonprotocol.nameservice.v1.Msg.SetDenomMetadata:output_type -> dysonprotocol.nameservice.v1.MsgSetDenomMetadataResponse
+	49, // 66: dysonprotocol.nameservice.v1.Msg.SaveClass:output_type -> dysonprotocol.nameservice.v1.MsgSaveClassResponse
+	51, // 67: dysonprotocol.nameservice.v1.Msg.MintNFT:output_type -> dysonprotocol.nameservice.v1.MsgMintNFTResponse
+	53, // 68: dysonprotocol.nameservice.v1.Msg.BurnNFT:output_type -> dysonprotocol.nameservice.v1.MsgBurnNFTResponse
+	55, // 69: dysonprotocol.nameservice.v1.Msg.MoveCoins:output_type -> dysonprotocol.nameservice.v1.MsgMoveCoinsResponse
+	57, // 70: dysonprotocol.nameservice.v1.Msg.MoveNft:output_type -> dysonprotocol.nameservice.v1.MsgMoveNftResponse
+	5,  // 71: dysonprotocol.nameservice.v1.Msg.CreateExternalName:output_type -> dysonprotocol.nameservice.v1.MsgCreateExternalNameResponse
+	43, // [43:72] is the sub-list for method output_type
+	14, // [14:43] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_dysonprotocol_nameservice_v1_tx_proto_init() }
@@ -25881,7 +31040,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSetNFTClassAnnualPct); i {
+			switch v := v.(*MsgSetNFTClassValuationFeePct); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -25893,7 +31052,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSetNFTClassAnnualPctResponse); i {
+			switch v := v.(*MsgSetNFTClassValuationFeePctResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -25905,7 +31064,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSetListed); i {
+			switch v := v.(*MsgSetNFTClassValuationPeriod); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -25917,7 +31076,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSetListedResponse); i {
+			switch v := v.(*MsgSetNFTClassValuationPeriodResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -25929,7 +31088,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgUpdateParams); i {
+			switch v := v.(*MsgSetNFTClassBidTimeout); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -25941,7 +31100,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgUpdateParamsResponse); i {
+			switch v := v.(*MsgSetNFTClassBidTimeoutResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -25953,7 +31112,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgMintCoins); i {
+			switch v := v.(*MsgSetNFTClassAllowedDenoms); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -25965,7 +31124,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgMintCoinsResponse); i {
+			switch v := v.(*MsgSetNFTClassAllowedDenomsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -25977,7 +31136,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgBurnCoins); i {
+			switch v := v.(*MsgSetNFTClassRejectBidValuationFeePercent); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -25989,7 +31148,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgBurnCoinsResponse); i {
+			switch v := v.(*MsgSetNFTClassRejectBidValuationFeePercentResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26001,7 +31160,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSetDenomMetadata); i {
+			switch v := v.(*MsgSetNFTClassMinimumBidPercentIncrease); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26013,7 +31172,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSetDenomMetadataResponse); i {
+			switch v := v.(*MsgSetNFTClassMinimumBidPercentIncreaseResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26025,7 +31184,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSaveClass); i {
+			switch v := v.(*MsgSetListed); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26037,7 +31196,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSaveClassResponse); i {
+			switch v := v.(*MsgSetListedResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26049,7 +31208,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgMintNFT); i {
+			switch v := v.(*MsgUpdateParams); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26061,7 +31220,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgMintNFTResponse); i {
+			switch v := v.(*MsgUpdateParamsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26073,7 +31232,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgBurnNFT); i {
+			switch v := v.(*MsgMintCoins); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26085,7 +31244,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgBurnNFTResponse); i {
+			switch v := v.(*MsgMintCoinsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26097,7 +31256,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgMoveCoins); i {
+			switch v := v.(*MsgBurnCoins); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26109,7 +31268,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgMoveCoinsResponse); i {
+			switch v := v.(*MsgBurnCoinsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26121,7 +31280,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgMoveNft); i {
+			switch v := v.(*MsgSetDenomMetadata); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -26133,6 +31292,126 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			}
 		}
 		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgSetDenomMetadataResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgSaveClass); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[49].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgSaveClassResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[50].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgMintNFT); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[51].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgMintNFTResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[52].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgBurnNFT); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[53].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgBurnNFTResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[54].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgMoveCoins); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[55].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgMoveCoinsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[56].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgMoveNft); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_tx_proto_msgTypes[57].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MsgMoveNftResponse); i {
 			case 0:
 				return &v.state
@@ -26151,7 +31430,7 @@ func file_dysonprotocol_nameservice_v1_tx_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dysonprotocol_nameservice_v1_tx_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   48,
+			NumMessages:   58,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

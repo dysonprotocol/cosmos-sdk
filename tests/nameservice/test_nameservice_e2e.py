@@ -56,17 +56,10 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     # Step 1: Check module parameters
     params = dysond_bin("query", "nameservice", "params")
     assert "params" in params, "Parameters missing from query result"
-    assert "bid_timeout" in params["params"], "Parameters missing bid_timeout"
-    assert "allowed_denoms" in params["params"], "Parameters missing allowed_denoms"
-    assert "udys" in params["params"]["allowed_denoms"], "DYS not in allowed denoms"
+    # After refactor, global params expose bounds and mint fee only
+    assert "mint_fee_per_coin" in params["params"], "Parameters missing mint_fee_per_coin"
     print(f"Module parameters: {json.dumps(params, indent=2)}")
-    
-    bid_timeout = params["params"]["bid_timeout"]
-    print(f"Bid timeout: {bid_timeout}")
-    
-    # Check if the timeout is short enough for our test
-    wait_for_timeout = bid_timeout == "5s"
-    print("Bid timeout is set to 5 seconds, will wait for timeout in the claim-bid test") if wait_for_timeout else None
+    # Per-class timeouts are verified in dedicated tests
     
     # Step 2: Name Registration
     # Generate a random name and salt
@@ -236,34 +229,26 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     assert unauthorized_always_listed_result["code"] != 0, "Bob was able to set always_listed for Alice's class" + unauthorized_always_listed_result["raw_log"]
     print("Verified authorization: Bob correctly cannot set always_listed for Alice's class")
     
-    # Step 7.2: Test NFT Class Annual Percentage Setting
-    # Test setting various annual percentage values
-    test_annual_pcts = [0.0, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0]  # Test normal, boundary values
+    # Step 7.2: Test NFT Class Valuation Fee Settings
+    test_fee_pcts = [0.0, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0]
+    for pct in test_fee_pcts:
+        res = dysond_bin("tx", "nameservice", "set-nft-class-valuation-fee-pct", "--class-id", name, "--valuation-fee-pct", str(pct), "--from", alice_name)
+        params_after = dysond_bin("query", "nameservice", "params")
+        info_after = dysond_bin("query", "nft", "class", name)
+        assert res["code"] == 0, f"set valuation fee pct ({pct}) failed. Raw log: {res.get('raw_log')}. Params: {params_after}. Class: {info_after}"
+        assert "class" in info_after, f"NFT class {name} not found after setting valuation_fee_pct. Full: {info_after}"
     
-    for annual_pct in test_annual_pcts:
-        annual_pct_result = dysond_bin("tx", "nameservice", "set-nft-class-annual-pct", "--class-id", name, "--annual-pct", str(annual_pct), "--from", alice_name)
-        assert annual_pct_result["code"] == 0, f"Set NFT class annual pct ({annual_pct}) transaction failed"
-        print(f"Successfully set annual_pct={annual_pct} for class {name}")
-        
-        # Query the NFT class to verify annual_pct was set
-        class_info_after_annual_pct = dysond_bin("query", "nft", "class", name)
-        assert "class" in class_info_after_annual_pct, f"NFT class {name} not found after setting annual_pct"
-        print(f"Verified annual_pct={annual_pct} was updated for class {name}")
-    
-    # Test authorization - Bob should not be able to set annual_pct (should fail)
-    unauthorized_annual_pct_result = dysond_bin("tx", "nameservice", "set-nft-class-annual-pct", "--class-id", name, "--annual-pct", "15.5", "--from", bob_name)
-    # This should fail, but if it returns a code, it should be non-zero
-    assert unauthorized_annual_pct_result["code"] != 0, "Bob was able to set annual_pct for Alice's class" + unauthorized_annual_pct_result["raw_log"]
-    print("Verified authorization: Bob correctly cannot set annual_pct for Alice's class")
+    # Test authorization - Bob should not be able to set valuation_fee_pct (should fail)
+    unauthorized_res = dysond_bin("tx", "nameservice", "set-nft-class-valuation-fee-pct", "--class-id", name, "--valuation-fee-pct", "0.155", "--from", bob_name)
+    assert unauthorized_res["code"] != 0, "Bob was able to set valuation_fee_pct for Alice's class" + unauthorized_res["raw_log"]
     
     # Test the new settings on the sub-class as well
     sub_always_listed_result = dysond_bin("tx", "nameservice", "set-nft-class-always-listed", "--class-id", sub_class_id, "--always-listed", "--from", alice_name)
     assert sub_always_listed_result["code"] == 0, "Set NFT sub-class always listed transaction failed"
     print(f"Successfully set always_listed=true for sub-class {sub_class_id}")
     
-    sub_annual_pct_result = dysond_bin("tx", "nameservice", "set-nft-class-annual-pct", "--class-id", sub_class_id, "--annual-pct", "0.0725", "--from", alice_name)
-    assert sub_annual_pct_result["code"] == 0, "Set NFT sub-class annual pct transaction failed" + sub_annual_pct_result["raw_log"]
-    print(f"Successfully set annual_pct=0.0725 for sub-class {sub_class_id}")
+    sub_res = dysond_bin("tx", "nameservice", "set-nft-class-valuation-fee-pct", "--class-id", sub_class_id, "--valuation-fee-pct", "0.0", "--from", alice_name)
+    assert sub_res["code"] == 0, "Set NFT sub-class valuation fee pct failed" + sub_res["raw_log"]
     
     # Step 7.3: Test Individual NFT Listed Setting
     # Test setting listed=true for the main NFT
@@ -431,7 +416,8 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     # Step 9.4: Bob rejects Charlie's bid with a higher valuation
     # Compute minimum acceptable valuation based on module param (e.g., 1% above current bid)
     params = dysond_bin("query", "nameservice", "params")
-    min_inc_str = params.get("params", {}).get("minimum_bid_percent_increase", "0.01")
+    # Use default expected min increase since it is now class-level; pick 0.01 for computation
+    min_inc_str = "0.01"
     min_inc = Decimal(min_inc_str)
     min_required = int((Decimal(charlie_bid_amount) * (Decimal(1) + min_inc)).to_integral_value(rounding=ROUND_CEILING))
     new_bidding_valuation = max(min_required, charlie_bid_amount + random.randint(10, 30))
@@ -447,8 +433,7 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     print("Verified bid was rejected and valuation updated")
     
     # Step 9.5: Test claim-bid functionality
-    # Set a short bid timeout via governance proposal for fast testing
-    set_bid_timeout_via_gov(dysond_bin, alice_name, "100ms")
+    # For global tests we skip modifying class-level timeout here
     
     # Create a separate name for testing bid timeout
     timeout_name = f"timeout-{test_id}.dys"
@@ -478,17 +463,16 @@ def test_nameservice_e2e(chainnet, generate_account, faucet):
     timeout_nft_data = timeout_nft_info["nft"].get("data", {}).get("value", {})
     assert timeout_nft_data.get("current_bid", {}).get("amount") == str(timeout_bid_amount), "Charlie's bid on timeout name not recorded correctly"
     
-    # Wait for bid timeout by polling block time
-    block = dysond_bin("query", "block")
-    start_block = int(block["header"]["height"])
+    # Wait for bid timeout by polling blocks. Default nameservice.dys timeout is ~2s.
+    # With ~500ms block time, wait for >= 6 blocks since the bid.
+    bid_block_height = int(timeout_bid_result["height"])
 
     def timeout_elapsed():
         out = dysond_bin("query", "block")
         current_block = int(out["header"]["height"])
-        # With 100ms timeout and ~500ms block time, should pass after 1 block
-        return (current_block - start_block) >= 1
+        return (current_block - bid_block_height) >= 6
 
-    poll_until_condition(timeout_elapsed, timeout=10, error_message="Bid timeout did not elapse")
+    poll_until_condition(timeout_elapsed, timeout=15, error_message="Bid timeout did not elapse")
 
     claim_bid_result = dysond_bin("tx", "nameservice", "claim-bid", "--nft-class-id", "nameservice.dys", "--nft-id", timeout_name, "--from", charlie_name)
     assert claim_bid_result["code"] == 0, "Charlie's claim bid on timeout name failed" + claim_bid_result["raw_log"]

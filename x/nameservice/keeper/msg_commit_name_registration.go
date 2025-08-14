@@ -28,8 +28,13 @@ func (k Keeper) Commit(ctx context.Context, msg *nameservicev1.MsgCommit) (*name
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "commitment already exists")
 	}
 
+	// Ensure the default nameservice class exists so valuation rules can be resolved
+	if err := k.EnsureNamesClassExists(ctx); err != nil {
+		return nil, err
+	}
+
 	// Validate the valuation
-	err = k.ValidateValuation(ctx, msg.Valuation)
+	err = k.ValidateValuation(ctx, NamesClassID, msg.Valuation)
 	if err != nil {
 		return nil, err
 	}

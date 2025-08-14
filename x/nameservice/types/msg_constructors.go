@@ -25,11 +25,11 @@ func NewMsgReveal(committer, name, salt string) *MsgReveal {
 // NewMsgSetValuation creates a new MsgSetValuation instance
 func NewMsgSetValuation(owner, nftClassId, nftId string, valuation sdk.Coin) *MsgSetValuation {
 	return &MsgSetValuation{
-		Owner:           owner,
-		NftClassId:      nftClassId,
-		NftId:           nftId,
-		Valuation:       valuation,
-		MaxAnnualPctFee: "", // Initialize as empty string
+		Owner:              owner,
+		NftClassId:         nftClassId,
+		NftId:              nftId,
+		Valuation:          valuation,
+		MaxValuationFeePct: "", // Initialize as empty string
 	}
 }
 

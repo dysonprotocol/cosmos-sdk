@@ -48,7 +48,7 @@ func (k Keeper) SetValuation(ctx context.Context, msg *nameservicev1.MsgSetValua
 	}
 
 	// Validate the valuation using the keeper's validation method
-	if err := k.ValidateValuation(ctx, msg.Valuation); err != nil {
+	if err := k.ValidateValuation(ctx, msg.NftClassId, msg.Valuation); err != nil {
 		return nil, err
 	}
 
@@ -60,16 +60,23 @@ func (k Keeper) SetValuation(ctx context.Context, msg *nameservicev1.MsgSetValua
 			"cannot set valuation while there is an active bid, use MsgRejectBid to reject the bid with a new valuation")
 	}
 
-	// Fetch NFT class data to obtain annual_pct for fee calculation
+	// Fetch NFT class data to obtain valuation fee parameters for fee calculation
 	classData, err := k.GetNFTClassData(ctx, msg.NftClassId)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to get NFT class data for fee calculation")
 	}
 
 	feePercentStr := "0"
-	if classData.AnnualPct != "" {
-		feePercentStr = classData.AnnualPct
+	if classData.ValuationFeePct != "" {
+		feePercentStr = classData.ValuationFeePct
 	}
+	k.Logger.Info("SetValuation: fee inputs",
+		"class_id", msg.NftClassId,
+		"nft_id", msg.NftId,
+		"valuation_fee_pct_raw", feePercentStr,
+		"valuation_period", classData.ValuationPeriod.String(),
+		"valuation_expiry", nftData.ValuationExpiry.String(),
+	)
 
 	// Calculate the incremental valuation (only if increasing)
 	var oldValuation sdk.Coins
@@ -89,14 +96,18 @@ func (k Keeper) SetValuation(ctx context.Context, msg *nameservicev1.MsgSetValua
 		currentTime := sdkCtx.BlockTime()
 		expiryTime := nftData.ValuationExpiry
 
-		// Calculate time proportion - using LegacyDec for decimal precision
+		// Calculate time proportion using class valuation_period (defaults handled elsewhere)
 		remainingSeconds := expiryTime.Unix() - currentTime.Unix()
 		if remainingSeconds <= 0 {
 			k.Logger.Info("SetValuation: Valuation already expired, skipping fee calculation")
 			remainingSeconds = 0
 		}
+		periodSeconds := int64(classData.ValuationPeriod.Seconds())
+		if periodSeconds <= 0 {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "valuation_period not set for class %s", msg.NftClassId)
+		}
 		portionRemaining := math.LegacyNewDecFromInt(math.NewInt(remainingSeconds)).
-			Quo(math.LegacyNewDecFromInt(math.NewInt(SecondsInYear)))
+			Quo(math.LegacyNewDecFromInt(math.NewInt(periodSeconds)))
 
 		// Convert the percentage string to a decimal
 		feePercent, err := math.LegacyNewDecFromStr(feePercentStr)
@@ -110,27 +121,30 @@ func (k Keeper) SetValuation(ctx context.Context, msg *nameservicev1.MsgSetValua
 		decProportionalFee := decAnnualFee.MulDec(portionRemaining)
 		feeCoins, _ := decProportionalFee.TruncateDecimal()
 
-		k.Logger.Info("Charging proportional annual fee for increased valuation",
+		k.Logger.Info("SetValuation: fee calc",
 			"class_id", msg.NftClassId,
 			"nft_id", msg.NftId,
 			"old_valuation", oldValuation.String(),
 			"new_valuation", newValuation.String(),
 			"incremental_valuation", incrementalValuation.String(),
+			"remaining_seconds", remainingSeconds,
+			"period_seconds", periodSeconds,
 			"time_proportion", portionRemaining.String(),
+			"valuation_fee_pct_dec", feePercent.String(),
 			"fee", feeCoins.String())
 
-		// Check if fee exceeds max_annual_pct_fee
-		if msg.MaxAnnualPctFee != "" {
-			maxAnnualPct, err := math.LegacyNewDecFromStr(msg.MaxAnnualPctFee)
+		// Check if fee exceeds max_valuation_fee_pct
+		if msg.MaxValuationFeePct != "" {
+			maxPct, err := math.LegacyNewDecFromStr(msg.MaxValuationFeePct)
 			if err != nil {
 				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-					"invalid max_annual_pct_fee format: %s", msg.MaxAnnualPctFee)
+					"invalid max_valuation_fee_pct format: %s", msg.MaxValuationFeePct)
 			}
 
-			if feePercent.GT(maxAnnualPct) {
+			if feePercent.GT(maxPct) {
 				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest,
-					"calculated annual fee percentage %s exceeds maximum allowed %s",
-					feePercent.String(), maxAnnualPct.String())
+					"calculated valuation fee percentage %s exceeds maximum allowed %s",
+					feePercent.String(), maxPct.String())
 			}
 		}
 

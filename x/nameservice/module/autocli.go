@@ -88,6 +88,74 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 			EnhanceCustomCommand: true,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
+					RpcMethod: "SetNFTClassBidTimeout",
+					Use:       "set-nft-class-bid-timeout --class-id=<class-id> --bid-timeout=<duration>",
+					Short:     "Set the per-class bid timeout duration",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+						"bid_timeout": {
+							Name:         "bid-timeout",
+							Usage:        "Duration like 2s, 24h, 7d",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
+					RpcMethod: "SetNFTClassAllowedDenoms",
+					Use:       "set-nft-class-allowed-denoms --class-id=<class-id> --allowed-denoms=<denom1,denom2>",
+					Short:     "Set the per-class allowed denoms list",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+						"allowed_denoms": {
+							Name:         "allowed-denoms",
+							Usage:        "Comma-separated list of allowed denoms",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
+					RpcMethod: "SetNFTClassRejectBidValuationFeePercent",
+					Use:       "set-nft-class-reject-fee --class-id=<class-id> --reject-fee=<dec>",
+					Short:     "Set the per-class reject bid fee percent",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+						"reject_bid_valuation_fee_percent": {
+							Name:         "reject-fee",
+							Usage:        "Decimal in [0,1]",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
+					RpcMethod: "SetNFTClassMinimumBidPercentIncrease",
+					Use:       "set-nft-class-min-bid-increase --class-id=<class-id> --min-bid-increase=<dec>",
+					Short:     "Set the per-class minimum bid percent increase",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+						"minimum_bid_percent_increase": {
+							Name:         "min-bid-increase",
+							Usage:        "Decimal >= 0",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
 					RpcMethod: "Commit",
 					Use:       "commit",
 					Short:     "Commit to registering a name",
@@ -156,6 +224,11 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						"valuation": {
 							Name:         "valuation",
 							Usage:        "The new valuation (format: 100udys)",
+							DefaultValue: "",
+						},
+						"max_valuation_fee_pct": {
+							Name:         "max-valuation-fee-pct",
+							Usage:        "Optional cap on valuation fee percent (decimal, e.g. 0.025)",
 							DefaultValue: "",
 						},
 					},
@@ -366,18 +439,103 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
-					RpcMethod: "SetNFTClassAnnualPct",
-					Use:       "set-nft-class-annual-pct --class-id=<class-id> --annual-pct=<annual-pct>",
-					Short:     "Set the annual percentage rate for an NFT class",
+					RpcMethod: "SetNFTClassValuationFeePct",
+					Use:       "set-nft-class-valuation-fee-pct --class-id=<class-id> --valuation-fee-pct=<dec>",
+					Short:     "Set the per-class valuation fee percent",
 					FlagOptions: map[string]*autocliv1.FlagOptions{
 						"class_id": {
 							Name:         "class-id",
 							Usage:        "The class ID",
 							DefaultValue: "",
 						},
-						"annual_pct": {
-							Name:         "annual-pct",
-							Usage:        "The annual percentage rate (0.0 to 100.0)",
+						"valuation_fee_pct": {
+							Name:         "valuation-fee-pct",
+							Usage:        "Decimal in [0,1]",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
+					RpcMethod: "SetNFTClassValuationPeriod",
+					Use:       "set-nft-class-valuation-period --class-id=<class-id> --valuation-period=<duration>",
+					Short:     "Set the per-class valuation fee period",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+						"valuation_period": {
+							Name:         "valuation-period",
+							Usage:        "Duration like 1h, 24h, 365d",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
+					RpcMethod: "SetNFTClassBidTimeout",
+					Use:       "set-nft-class-bid-timeout --class-id=<class-id> --bid-timeout=<duration>",
+					Short:     "Set the per-class bid timeout duration",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+						"bid_timeout": {
+							Name:         "bid-timeout",
+							Usage:        "Duration like 2s, 24h, 7d",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
+					RpcMethod: "SetNFTClassAllowedDenoms",
+					Use:       "set-nft-class-allowed-denoms --class-id=<class-id> --allowed-denoms=<denom1,denom2>",
+					Short:     "Set the per-class allowed denoms list",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+						"allowed_denoms": {
+							Name:         "allowed-denoms",
+							Usage:        "Comma-separated list of allowed denoms",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
+					RpcMethod: "SetNFTClassRejectBidValuationFeePercent",
+					Use:       "set-nft-class-reject-fee --class-id=<class-id> --reject-fee=<dec>",
+					Short:     "Set the per-class reject bid fee percent",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+						"reject_bid_valuation_fee_percent": {
+							Name:         "reject-fee",
+							Usage:        "Decimal in [0,1]",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
+					RpcMethod: "SetNFTClassMinimumBidPercentIncrease",
+					Use:       "set-nft-class-min-bid-increase --class-id=<class-id> --min-bid-increase=<dec>",
+					Short:     "Set the per-class minimum bid percent increase",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+						"minimum_bid_percent_increase": {
+							Name:         "min-bid-increase",
+							Usage:        "Decimal >= 0",
 							DefaultValue: "",
 						},
 					},

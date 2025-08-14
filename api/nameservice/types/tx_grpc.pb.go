@@ -19,30 +19,35 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Msg_Commit_FullMethodName                  = "/dysonprotocol.nameservice.v1.Msg/Commit"
-	Msg_Reveal_FullMethodName                  = "/dysonprotocol.nameservice.v1.Msg/Reveal"
-	Msg_SetValuation_FullMethodName            = "/dysonprotocol.nameservice.v1.Msg/SetValuation"
-	Msg_Renew_FullMethodName                   = "/dysonprotocol.nameservice.v1.Msg/Renew"
-	Msg_PlaceBid_FullMethodName                = "/dysonprotocol.nameservice.v1.Msg/PlaceBid"
-	Msg_AcceptBid_FullMethodName               = "/dysonprotocol.nameservice.v1.Msg/AcceptBid"
-	Msg_RejectBid_FullMethodName               = "/dysonprotocol.nameservice.v1.Msg/RejectBid"
-	Msg_ClaimBid_FullMethodName                = "/dysonprotocol.nameservice.v1.Msg/ClaimBid"
-	Msg_SetDestination_FullMethodName          = "/dysonprotocol.nameservice.v1.Msg/SetDestination"
-	Msg_SetNFTMetadata_FullMethodName          = "/dysonprotocol.nameservice.v1.Msg/SetNFTMetadata"
-	Msg_SetNFTClassExtraData_FullMethodName    = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassExtraData"
-	Msg_SetNFTClassAlwaysListed_FullMethodName = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassAlwaysListed"
-	Msg_SetNFTClassAnnualPct_FullMethodName    = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassAnnualPct"
-	Msg_SetListed_FullMethodName               = "/dysonprotocol.nameservice.v1.Msg/SetListed"
-	Msg_UpdateParams_FullMethodName            = "/dysonprotocol.nameservice.v1.Msg/UpdateParams"
-	Msg_MintCoins_FullMethodName               = "/dysonprotocol.nameservice.v1.Msg/MintCoins"
-	Msg_BurnCoins_FullMethodName               = "/dysonprotocol.nameservice.v1.Msg/BurnCoins"
-	Msg_SetDenomMetadata_FullMethodName        = "/dysonprotocol.nameservice.v1.Msg/SetDenomMetadata"
-	Msg_SaveClass_FullMethodName               = "/dysonprotocol.nameservice.v1.Msg/SaveClass"
-	Msg_MintNFT_FullMethodName                 = "/dysonprotocol.nameservice.v1.Msg/MintNFT"
-	Msg_BurnNFT_FullMethodName                 = "/dysonprotocol.nameservice.v1.Msg/BurnNFT"
-	Msg_MoveCoins_FullMethodName               = "/dysonprotocol.nameservice.v1.Msg/MoveCoins"
-	Msg_MoveNft_FullMethodName                 = "/dysonprotocol.nameservice.v1.Msg/MoveNft"
-	Msg_CreateExternalName_FullMethodName      = "/dysonprotocol.nameservice.v1.Msg/CreateExternalName"
+	Msg_Commit_FullMethodName                                  = "/dysonprotocol.nameservice.v1.Msg/Commit"
+	Msg_Reveal_FullMethodName                                  = "/dysonprotocol.nameservice.v1.Msg/Reveal"
+	Msg_SetValuation_FullMethodName                            = "/dysonprotocol.nameservice.v1.Msg/SetValuation"
+	Msg_Renew_FullMethodName                                   = "/dysonprotocol.nameservice.v1.Msg/Renew"
+	Msg_PlaceBid_FullMethodName                                = "/dysonprotocol.nameservice.v1.Msg/PlaceBid"
+	Msg_AcceptBid_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/AcceptBid"
+	Msg_RejectBid_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/RejectBid"
+	Msg_ClaimBid_FullMethodName                                = "/dysonprotocol.nameservice.v1.Msg/ClaimBid"
+	Msg_SetDestination_FullMethodName                          = "/dysonprotocol.nameservice.v1.Msg/SetDestination"
+	Msg_SetNFTMetadata_FullMethodName                          = "/dysonprotocol.nameservice.v1.Msg/SetNFTMetadata"
+	Msg_SetNFTClassExtraData_FullMethodName                    = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassExtraData"
+	Msg_SetNFTClassAlwaysListed_FullMethodName                 = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassAlwaysListed"
+	Msg_SetNFTClassValuationFeePct_FullMethodName              = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassValuationFeePct"
+	Msg_SetNFTClassValuationPeriod_FullMethodName              = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassValuationPeriod"
+	Msg_SetNFTClassBidTimeout_FullMethodName                   = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassBidTimeout"
+	Msg_SetNFTClassAllowedDenoms_FullMethodName                = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassAllowedDenoms"
+	Msg_SetNFTClassRejectBidValuationFeePercent_FullMethodName = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassRejectBidValuationFeePercent"
+	Msg_SetNFTClassMinimumBidPercentIncrease_FullMethodName    = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassMinimumBidPercentIncrease"
+	Msg_SetListed_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/SetListed"
+	Msg_UpdateParams_FullMethodName                            = "/dysonprotocol.nameservice.v1.Msg/UpdateParams"
+	Msg_MintCoins_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/MintCoins"
+	Msg_BurnCoins_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/BurnCoins"
+	Msg_SetDenomMetadata_FullMethodName                        = "/dysonprotocol.nameservice.v1.Msg/SetDenomMetadata"
+	Msg_SaveClass_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/SaveClass"
+	Msg_MintNFT_FullMethodName                                 = "/dysonprotocol.nameservice.v1.Msg/MintNFT"
+	Msg_BurnNFT_FullMethodName                                 = "/dysonprotocol.nameservice.v1.Msg/BurnNFT"
+	Msg_MoveCoins_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/MoveCoins"
+	Msg_MoveNft_FullMethodName                                 = "/dysonprotocol.nameservice.v1.Msg/MoveNft"
+	Msg_CreateExternalName_FullMethodName                      = "/dysonprotocol.nameservice.v1.Msg/CreateExternalName"
 )
 
 // MsgClient is the client API for Msg service.
@@ -67,8 +72,14 @@ type MsgClient interface {
 	SetNFTClassExtraData(ctx context.Context, in *MsgSetNFTClassExtraData, opts ...grpc.CallOption) (*MsgSetNFTClassExtraDataResponse, error)
 	// SetNFTClassAlwaysListed sets the always_listed flag for an NFT class
 	SetNFTClassAlwaysListed(ctx context.Context, in *MsgSetNFTClassAlwaysListed, opts ...grpc.CallOption) (*MsgSetNFTClassAlwaysListedResponse, error)
-	// SetNFTClassAnnualPct sets the annual percentage rate for an NFT class
-	SetNFTClassAnnualPct(ctx context.Context, in *MsgSetNFTClassAnnualPct, opts ...grpc.CallOption) (*MsgSetNFTClassAnnualPctResponse, error)
+	// Set per-class valuation fee percent and period
+	SetNFTClassValuationFeePct(ctx context.Context, in *MsgSetNFTClassValuationFeePct, opts ...grpc.CallOption) (*MsgSetNFTClassValuationFeePctResponse, error)
+	SetNFTClassValuationPeriod(ctx context.Context, in *MsgSetNFTClassValuationPeriod, opts ...grpc.CallOption) (*MsgSetNFTClassValuationPeriodResponse, error)
+	// Per-class bidding params setters
+	SetNFTClassBidTimeout(ctx context.Context, in *MsgSetNFTClassBidTimeout, opts ...grpc.CallOption) (*MsgSetNFTClassBidTimeoutResponse, error)
+	SetNFTClassAllowedDenoms(ctx context.Context, in *MsgSetNFTClassAllowedDenoms, opts ...grpc.CallOption) (*MsgSetNFTClassAllowedDenomsResponse, error)
+	SetNFTClassRejectBidValuationFeePercent(ctx context.Context, in *MsgSetNFTClassRejectBidValuationFeePercent, opts ...grpc.CallOption) (*MsgSetNFTClassRejectBidValuationFeePercentResponse, error)
+	SetNFTClassMinimumBidPercentIncrease(ctx context.Context, in *MsgSetNFTClassMinimumBidPercentIncrease, opts ...grpc.CallOption) (*MsgSetNFTClassMinimumBidPercentIncreaseResponse, error)
 	// SetListed sets the listed status for a specific NFT
 	SetListed(ctx context.Context, in *MsgSetListed, opts ...grpc.CallOption) (*MsgSetListedResponse, error)
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
@@ -211,10 +222,60 @@ func (c *msgClient) SetNFTClassAlwaysListed(ctx context.Context, in *MsgSetNFTCl
 	return out, nil
 }
 
-func (c *msgClient) SetNFTClassAnnualPct(ctx context.Context, in *MsgSetNFTClassAnnualPct, opts ...grpc.CallOption) (*MsgSetNFTClassAnnualPctResponse, error) {
+func (c *msgClient) SetNFTClassValuationFeePct(ctx context.Context, in *MsgSetNFTClassValuationFeePct, opts ...grpc.CallOption) (*MsgSetNFTClassValuationFeePctResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(MsgSetNFTClassAnnualPctResponse)
-	err := c.cc.Invoke(ctx, Msg_SetNFTClassAnnualPct_FullMethodName, in, out, cOpts...)
+	out := new(MsgSetNFTClassValuationFeePctResponse)
+	err := c.cc.Invoke(ctx, Msg_SetNFTClassValuationFeePct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassValuationPeriod(ctx context.Context, in *MsgSetNFTClassValuationPeriod, opts ...grpc.CallOption) (*MsgSetNFTClassValuationPeriodResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetNFTClassValuationPeriodResponse)
+	err := c.cc.Invoke(ctx, Msg_SetNFTClassValuationPeriod_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassBidTimeout(ctx context.Context, in *MsgSetNFTClassBidTimeout, opts ...grpc.CallOption) (*MsgSetNFTClassBidTimeoutResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetNFTClassBidTimeoutResponse)
+	err := c.cc.Invoke(ctx, Msg_SetNFTClassBidTimeout_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassAllowedDenoms(ctx context.Context, in *MsgSetNFTClassAllowedDenoms, opts ...grpc.CallOption) (*MsgSetNFTClassAllowedDenomsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetNFTClassAllowedDenomsResponse)
+	err := c.cc.Invoke(ctx, Msg_SetNFTClassAllowedDenoms_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassRejectBidValuationFeePercent(ctx context.Context, in *MsgSetNFTClassRejectBidValuationFeePercent, opts ...grpc.CallOption) (*MsgSetNFTClassRejectBidValuationFeePercentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetNFTClassRejectBidValuationFeePercentResponse)
+	err := c.cc.Invoke(ctx, Msg_SetNFTClassRejectBidValuationFeePercent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassMinimumBidPercentIncrease(ctx context.Context, in *MsgSetNFTClassMinimumBidPercentIncrease, opts ...grpc.CallOption) (*MsgSetNFTClassMinimumBidPercentIncreaseResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetNFTClassMinimumBidPercentIncreaseResponse)
+	err := c.cc.Invoke(ctx, Msg_SetNFTClassMinimumBidPercentIncrease_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -353,8 +414,14 @@ type MsgServer interface {
 	SetNFTClassExtraData(context.Context, *MsgSetNFTClassExtraData) (*MsgSetNFTClassExtraDataResponse, error)
 	// SetNFTClassAlwaysListed sets the always_listed flag for an NFT class
 	SetNFTClassAlwaysListed(context.Context, *MsgSetNFTClassAlwaysListed) (*MsgSetNFTClassAlwaysListedResponse, error)
-	// SetNFTClassAnnualPct sets the annual percentage rate for an NFT class
-	SetNFTClassAnnualPct(context.Context, *MsgSetNFTClassAnnualPct) (*MsgSetNFTClassAnnualPctResponse, error)
+	// Set per-class valuation fee percent and period
+	SetNFTClassValuationFeePct(context.Context, *MsgSetNFTClassValuationFeePct) (*MsgSetNFTClassValuationFeePctResponse, error)
+	SetNFTClassValuationPeriod(context.Context, *MsgSetNFTClassValuationPeriod) (*MsgSetNFTClassValuationPeriodResponse, error)
+	// Per-class bidding params setters
+	SetNFTClassBidTimeout(context.Context, *MsgSetNFTClassBidTimeout) (*MsgSetNFTClassBidTimeoutResponse, error)
+	SetNFTClassAllowedDenoms(context.Context, *MsgSetNFTClassAllowedDenoms) (*MsgSetNFTClassAllowedDenomsResponse, error)
+	SetNFTClassRejectBidValuationFeePercent(context.Context, *MsgSetNFTClassRejectBidValuationFeePercent) (*MsgSetNFTClassRejectBidValuationFeePercentResponse, error)
+	SetNFTClassMinimumBidPercentIncrease(context.Context, *MsgSetNFTClassMinimumBidPercentIncrease) (*MsgSetNFTClassMinimumBidPercentIncreaseResponse, error)
 	// SetListed sets the listed status for a specific NFT
 	SetListed(context.Context, *MsgSetListed) (*MsgSetListedResponse, error)
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
@@ -413,8 +480,23 @@ func (UnimplementedMsgServer) SetNFTClassExtraData(context.Context, *MsgSetNFTCl
 func (UnimplementedMsgServer) SetNFTClassAlwaysListed(context.Context, *MsgSetNFTClassAlwaysListed) (*MsgSetNFTClassAlwaysListedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassAlwaysListed not implemented")
 }
-func (UnimplementedMsgServer) SetNFTClassAnnualPct(context.Context, *MsgSetNFTClassAnnualPct) (*MsgSetNFTClassAnnualPctResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassAnnualPct not implemented")
+func (UnimplementedMsgServer) SetNFTClassValuationFeePct(context.Context, *MsgSetNFTClassValuationFeePct) (*MsgSetNFTClassValuationFeePctResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassValuationFeePct not implemented")
+}
+func (UnimplementedMsgServer) SetNFTClassValuationPeriod(context.Context, *MsgSetNFTClassValuationPeriod) (*MsgSetNFTClassValuationPeriodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassValuationPeriod not implemented")
+}
+func (UnimplementedMsgServer) SetNFTClassBidTimeout(context.Context, *MsgSetNFTClassBidTimeout) (*MsgSetNFTClassBidTimeoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassBidTimeout not implemented")
+}
+func (UnimplementedMsgServer) SetNFTClassAllowedDenoms(context.Context, *MsgSetNFTClassAllowedDenoms) (*MsgSetNFTClassAllowedDenomsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassAllowedDenoms not implemented")
+}
+func (UnimplementedMsgServer) SetNFTClassRejectBidValuationFeePercent(context.Context, *MsgSetNFTClassRejectBidValuationFeePercent) (*MsgSetNFTClassRejectBidValuationFeePercentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassRejectBidValuationFeePercent not implemented")
+}
+func (UnimplementedMsgServer) SetNFTClassMinimumBidPercentIncrease(context.Context, *MsgSetNFTClassMinimumBidPercentIncrease) (*MsgSetNFTClassMinimumBidPercentIncreaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassMinimumBidPercentIncrease not implemented")
 }
 func (UnimplementedMsgServer) SetListed(context.Context, *MsgSetListed) (*MsgSetListedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetListed not implemented")
@@ -686,20 +768,110 @@ func _Msg_SetNFTClassAlwaysListed_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_SetNFTClassAnnualPct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSetNFTClassAnnualPct)
+func _Msg_SetNFTClassValuationFeePct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassValuationFeePct)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).SetNFTClassAnnualPct(ctx, in)
+		return srv.(MsgServer).SetNFTClassValuationFeePct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Msg_SetNFTClassAnnualPct_FullMethodName,
+		FullMethod: Msg_SetNFTClassValuationFeePct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).SetNFTClassAnnualPct(ctx, req.(*MsgSetNFTClassAnnualPct))
+		return srv.(MsgServer).SetNFTClassValuationFeePct(ctx, req.(*MsgSetNFTClassValuationFeePct))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassValuationPeriod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassValuationPeriod)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassValuationPeriod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetNFTClassValuationPeriod_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassValuationPeriod(ctx, req.(*MsgSetNFTClassValuationPeriod))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassBidTimeout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassBidTimeout)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassBidTimeout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetNFTClassBidTimeout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassBidTimeout(ctx, req.(*MsgSetNFTClassBidTimeout))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassAllowedDenoms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassAllowedDenoms)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassAllowedDenoms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetNFTClassAllowedDenoms_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassAllowedDenoms(ctx, req.(*MsgSetNFTClassAllowedDenoms))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassRejectBidValuationFeePercent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassRejectBidValuationFeePercent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassRejectBidValuationFeePercent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetNFTClassRejectBidValuationFeePercent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassRejectBidValuationFeePercent(ctx, req.(*MsgSetNFTClassRejectBidValuationFeePercent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassMinimumBidPercentIncrease_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassMinimumBidPercentIncrease)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassMinimumBidPercentIncrease(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetNFTClassMinimumBidPercentIncrease_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassMinimumBidPercentIncrease(ctx, req.(*MsgSetNFTClassMinimumBidPercentIncrease))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -958,8 +1130,28 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_SetNFTClassAlwaysListed_Handler,
 		},
 		{
-			MethodName: "SetNFTClassAnnualPct",
-			Handler:    _Msg_SetNFTClassAnnualPct_Handler,
+			MethodName: "SetNFTClassValuationFeePct",
+			Handler:    _Msg_SetNFTClassValuationFeePct_Handler,
+		},
+		{
+			MethodName: "SetNFTClassValuationPeriod",
+			Handler:    _Msg_SetNFTClassValuationPeriod_Handler,
+		},
+		{
+			MethodName: "SetNFTClassBidTimeout",
+			Handler:    _Msg_SetNFTClassBidTimeout_Handler,
+		},
+		{
+			MethodName: "SetNFTClassAllowedDenoms",
+			Handler:    _Msg_SetNFTClassAllowedDenoms_Handler,
+		},
+		{
+			MethodName: "SetNFTClassRejectBidValuationFeePercent",
+			Handler:    _Msg_SetNFTClassRejectBidValuationFeePercent_Handler,
+		},
+		{
+			MethodName: "SetNFTClassMinimumBidPercentIncrease",
+			Handler:    _Msg_SetNFTClassMinimumBidPercentIncrease_Handler,
 		},
 		{
 			MethodName: "SetListed",

@@ -9,6 +9,7 @@ import "dysonprotocol/nameservice/v1/params.proto";
 import "google/protobuf/timestamp.proto";
 import "amino/amino.proto";
 import "cosmos/bank/v1beta1/bank.proto";
+import "google/protobuf/duration.proto";
 option go_package = "dysonprotocol.com/x/nameservice/types";
 
 // Msg defines the Msg service.
@@ -32,9 +33,22 @@ service Msg {
   // SetNFTClassAlwaysListed sets the always_listed flag for an NFT class
   rpc SetNFTClassAlwaysListed(MsgSetNFTClassAlwaysListed)
       returns (MsgSetNFTClassAlwaysListedResponse);
-  // SetNFTClassAnnualPct sets the annual percentage rate for an NFT class
-  rpc SetNFTClassAnnualPct(MsgSetNFTClassAnnualPct)
-      returns (MsgSetNFTClassAnnualPctResponse);
+  // Set per-class valuation fee percent and period
+  rpc SetNFTClassValuationFeePct(MsgSetNFTClassValuationFeePct)
+      returns (MsgSetNFTClassValuationFeePctResponse);
+  rpc SetNFTClassValuationPeriod(MsgSetNFTClassValuationPeriod)
+      returns (MsgSetNFTClassValuationPeriodResponse);
+  // Per-class bidding params setters
+  rpc SetNFTClassBidTimeout(MsgSetNFTClassBidTimeout)
+      returns (MsgSetNFTClassBidTimeoutResponse);
+  rpc SetNFTClassAllowedDenoms(MsgSetNFTClassAllowedDenoms)
+      returns (MsgSetNFTClassAllowedDenomsResponse);
+  rpc SetNFTClassRejectBidValuationFeePercent(
+      MsgSetNFTClassRejectBidValuationFeePercent)
+      returns (MsgSetNFTClassRejectBidValuationFeePercentResponse);
+  rpc SetNFTClassMinimumBidPercentIncrease(
+      MsgSetNFTClassMinimumBidPercentIncrease)
+      returns (MsgSetNFTClassMinimumBidPercentIncreaseResponse);
   // SetListed sets the listed status for a specific NFT
   rpc SetListed(MsgSetListed) returns (MsgSetListedResponse);
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
@@ -85,11 +99,11 @@ message MsgSetValuation {
   // valuation is the new valuation of the NFT
   cosmos.base.v1beta1.Coin valuation = 4
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-  // max_annual_pct_fee (optional) is the maximum annual percentage fee the user
-  // is willing to pay for setting the new valuation (e.g. "0.025" for 2.5%).
-  // This guards against unexpected fee amounts if the name owner changes the
-  // annual_pct.
-  string max_annual_pct_fee = 5;
+  // max_valuation_fee_pct (optional) is the maximum valuation fee percent the
+  // user is willing to pay for setting the new valuation (e.g. "0.025" for
+  // 2.5% per valuation period). This guards against unexpected fee amounts if
+  // the class updates valuation_fee_pct.
+  string max_valuation_fee_pct = 5;
 }
 message MsgSetValuationResponse {}
 
@@ -191,24 +205,71 @@ message MsgSetNFTClassAlwaysListed {
 // MsgSetNFTClassAlwaysListed
 message MsgSetNFTClassAlwaysListedResponse {}
 
-// MsgSetNFTClassAnnualPct sets the annual percentage rate for an NFT class.
-// Only the owner of the NFT class root name can update this setting.
-message MsgSetNFTClassAnnualPct {
+// Set per-class valuation fee percent (cosmos.Dec string)
+message MsgSetNFTClassValuationFeePct {
   option (cosmos.msg.v1.signer) = "name_destination";
-  // name_destination is the resolved destination address of the NFT class root
-  // name
   string name_destination = 1
       [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
-  // class_id is the identifier of the NFT class to update
   string class_id = 2;
-  // annual_pct is the annual percentage rate as a string (e.g. "5.5" for 5.5%)
-  // representing the yearly rate for this NFT class
-  string annual_pct = 3;
+  string valuation_fee_pct = 3; // plain string; parsed as Dec in keeper
 }
+message MsgSetNFTClassValuationFeePctResponse {}
 
-// MsgSetNFTClassAnnualPctResponse defines the response for
-// MsgSetNFTClassAnnualPct
-message MsgSetNFTClassAnnualPctResponse {}
+// Set per-class valuation period (duration)
+message MsgSetNFTClassValuationPeriod {
+  option (cosmos.msg.v1.signer) = "name_destination";
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string class_id = 2;
+  google.protobuf.Duration valuation_period = 3
+      [ (gogoproto.stdduration) = true, (gogoproto.nullable) = false ];
+}
+message MsgSetNFTClassValuationPeriodResponse {}
+
+// MsgSetNFTClassBidTimeout sets the per-class bid timeout duration.
+message MsgSetNFTClassBidTimeout {
+  option (cosmos.msg.v1.signer) = "name_destination";
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string class_id = 2;
+  google.protobuf.Duration bid_timeout = 3
+      [ (gogoproto.stdduration) = true, (gogoproto.nullable) = false ];
+}
+message MsgSetNFTClassBidTimeoutResponse {}
+
+// MsgSetNFTClassAllowedDenoms sets the per-class allowed denoms list.
+message MsgSetNFTClassAllowedDenoms {
+  option (cosmos.msg.v1.signer) = "name_destination";
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string class_id = 2;
+  repeated string allowed_denoms = 3;
+}
+message MsgSetNFTClassAllowedDenomsResponse {}
+
+// MsgSetNFTClassRejectBidValuationFeePercent sets the per-class reject fee
+// percent.
+message MsgSetNFTClassRejectBidValuationFeePercent {
+  option (cosmos.msg.v1.signer) = "name_destination";
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string class_id = 2;
+  string reject_bid_valuation_fee_percent =
+      3; // plain string; parsed as Dec in keeper
+}
+message MsgSetNFTClassRejectBidValuationFeePercentResponse {}
+
+// MsgSetNFTClassMinimumBidPercentIncrease sets the per-class minimum bid
+// increase percent.
+message MsgSetNFTClassMinimumBidPercentIncrease {
+  option (cosmos.msg.v1.signer) = "name_destination";
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string class_id = 2;
+  string minimum_bid_percent_increase =
+      3; // plain string; parsed as Dec in keeper
+}
+message MsgSetNFTClassMinimumBidPercentIncreaseResponse {}
 
 // MsgSetListed sets the listed status for a specific NFT.
 // Only the owner of the NFT can update this setting.

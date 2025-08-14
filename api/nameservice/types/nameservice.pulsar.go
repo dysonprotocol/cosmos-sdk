@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoiface "google.golang.org/protobuf/runtime/protoiface"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	reflect "reflect"
@@ -724,19 +725,75 @@ func (x *fastReflection_Commitment) ProtoMethods() *protoiface.Methods {
 	}
 }
 
+var _ protoreflect.List = (*_NFTClassData_5_list)(nil)
+
+type _NFTClassData_5_list struct {
+	list *[]string
+}
+
+func (x *_NFTClassData_5_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_NFTClassData_5_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfString((*x.list)[i])
+}
+
+func (x *_NFTClassData_5_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.String()
+	concreteValue := valueUnwrapped
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_NFTClassData_5_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.String()
+	concreteValue := valueUnwrapped
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_NFTClassData_5_list) AppendMutable() protoreflect.Value {
+	panic(fmt.Errorf("AppendMutable can not be called on message NFTClassData at list field AllowedDenoms as it is not of Message kind"))
+}
+
+func (x *_NFTClassData_5_list) Truncate(n int) {
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_NFTClassData_5_list) NewElement() protoreflect.Value {
+	v := ""
+	return protoreflect.ValueOfString(v)
+}
+
+func (x *_NFTClassData_5_list) IsValid() bool {
+	return x.list != nil
+}
+
 var (
-	md_NFTClassData               protoreflect.MessageDescriptor
-	fd_NFTClassData_always_listed protoreflect.FieldDescriptor
-	fd_NFTClassData_annual_pct    protoreflect.FieldDescriptor
-	fd_NFTClassData_extra_data    protoreflect.FieldDescriptor
+	md_NFTClassData                                  protoreflect.MessageDescriptor
+	fd_NFTClassData_always_listed                    protoreflect.FieldDescriptor
+	fd_NFTClassData_valuation_fee_pct                protoreflect.FieldDescriptor
+	fd_NFTClassData_extra_data                       protoreflect.FieldDescriptor
+	fd_NFTClassData_valuation_period                 protoreflect.FieldDescriptor
+	fd_NFTClassData_bid_timeout                      protoreflect.FieldDescriptor
+	fd_NFTClassData_allowed_denoms                   protoreflect.FieldDescriptor
+	fd_NFTClassData_reject_bid_valuation_fee_percent protoreflect.FieldDescriptor
+	fd_NFTClassData_minimum_bid_percent_increase     protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_dysonprotocol_nameservice_v1_nameservice_proto_init()
 	md_NFTClassData = File_dysonprotocol_nameservice_v1_nameservice_proto.Messages().ByName("NFTClassData")
 	fd_NFTClassData_always_listed = md_NFTClassData.Fields().ByName("always_listed")
-	fd_NFTClassData_annual_pct = md_NFTClassData.Fields().ByName("annual_pct")
+	fd_NFTClassData_valuation_fee_pct = md_NFTClassData.Fields().ByName("valuation_fee_pct")
 	fd_NFTClassData_extra_data = md_NFTClassData.Fields().ByName("extra_data")
+	fd_NFTClassData_valuation_period = md_NFTClassData.Fields().ByName("valuation_period")
+	fd_NFTClassData_bid_timeout = md_NFTClassData.Fields().ByName("bid_timeout")
+	fd_NFTClassData_allowed_denoms = md_NFTClassData.Fields().ByName("allowed_denoms")
+	fd_NFTClassData_reject_bid_valuation_fee_percent = md_NFTClassData.Fields().ByName("reject_bid_valuation_fee_percent")
+	fd_NFTClassData_minimum_bid_percent_increase = md_NFTClassData.Fields().ByName("minimum_bid_percent_increase")
 }
 
 var _ protoreflect.Message = (*fastReflection_NFTClassData)(nil)
@@ -810,15 +867,45 @@ func (x *fastReflection_NFTClassData) Range(f func(protoreflect.FieldDescriptor,
 			return
 		}
 	}
-	if x.AnnualPct != "" {
-		value := protoreflect.ValueOfString(x.AnnualPct)
-		if !f(fd_NFTClassData_annual_pct, value) {
+	if x.ValuationFeePct != "" {
+		value := protoreflect.ValueOfString(x.ValuationFeePct)
+		if !f(fd_NFTClassData_valuation_fee_pct, value) {
 			return
 		}
 	}
 	if x.ExtraData != "" {
 		value := protoreflect.ValueOfString(x.ExtraData)
 		if !f(fd_NFTClassData_extra_data, value) {
+			return
+		}
+	}
+	if x.ValuationPeriod != nil {
+		value := protoreflect.ValueOfMessage(x.ValuationPeriod.ProtoReflect())
+		if !f(fd_NFTClassData_valuation_period, value) {
+			return
+		}
+	}
+	if x.BidTimeout != nil {
+		value := protoreflect.ValueOfMessage(x.BidTimeout.ProtoReflect())
+		if !f(fd_NFTClassData_bid_timeout, value) {
+			return
+		}
+	}
+	if len(x.AllowedDenoms) != 0 {
+		value := protoreflect.ValueOfList(&_NFTClassData_5_list{list: &x.AllowedDenoms})
+		if !f(fd_NFTClassData_allowed_denoms, value) {
+			return
+		}
+	}
+	if x.RejectBidValuationFeePercent != "" {
+		value := protoreflect.ValueOfString(x.RejectBidValuationFeePercent)
+		if !f(fd_NFTClassData_reject_bid_valuation_fee_percent, value) {
+			return
+		}
+	}
+	if x.MinimumBidPercentIncrease != "" {
+		value := protoreflect.ValueOfString(x.MinimumBidPercentIncrease)
+		if !f(fd_NFTClassData_minimum_bid_percent_increase, value) {
 			return
 		}
 	}
@@ -839,10 +926,20 @@ func (x *fastReflection_NFTClassData) Has(fd protoreflect.FieldDescriptor) bool 
 	switch fd.FullName() {
 	case "dysonprotocol.nameservice.v1.NFTClassData.always_listed":
 		return x.AlwaysListed != false
-	case "dysonprotocol.nameservice.v1.NFTClassData.annual_pct":
-		return x.AnnualPct != ""
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_fee_pct":
+		return x.ValuationFeePct != ""
 	case "dysonprotocol.nameservice.v1.NFTClassData.extra_data":
 		return x.ExtraData != ""
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_period":
+		return x.ValuationPeriod != nil
+	case "dysonprotocol.nameservice.v1.NFTClassData.bid_timeout":
+		return x.BidTimeout != nil
+	case "dysonprotocol.nameservice.v1.NFTClassData.allowed_denoms":
+		return len(x.AllowedDenoms) != 0
+	case "dysonprotocol.nameservice.v1.NFTClassData.reject_bid_valuation_fee_percent":
+		return x.RejectBidValuationFeePercent != ""
+	case "dysonprotocol.nameservice.v1.NFTClassData.minimum_bid_percent_increase":
+		return x.MinimumBidPercentIncrease != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.NFTClassData"))
@@ -861,10 +958,20 @@ func (x *fastReflection_NFTClassData) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
 	case "dysonprotocol.nameservice.v1.NFTClassData.always_listed":
 		x.AlwaysListed = false
-	case "dysonprotocol.nameservice.v1.NFTClassData.annual_pct":
-		x.AnnualPct = ""
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_fee_pct":
+		x.ValuationFeePct = ""
 	case "dysonprotocol.nameservice.v1.NFTClassData.extra_data":
 		x.ExtraData = ""
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_period":
+		x.ValuationPeriod = nil
+	case "dysonprotocol.nameservice.v1.NFTClassData.bid_timeout":
+		x.BidTimeout = nil
+	case "dysonprotocol.nameservice.v1.NFTClassData.allowed_denoms":
+		x.AllowedDenoms = nil
+	case "dysonprotocol.nameservice.v1.NFTClassData.reject_bid_valuation_fee_percent":
+		x.RejectBidValuationFeePercent = ""
+	case "dysonprotocol.nameservice.v1.NFTClassData.minimum_bid_percent_increase":
+		x.MinimumBidPercentIncrease = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.NFTClassData"))
@@ -884,11 +991,29 @@ func (x *fastReflection_NFTClassData) Get(descriptor protoreflect.FieldDescripto
 	case "dysonprotocol.nameservice.v1.NFTClassData.always_listed":
 		value := x.AlwaysListed
 		return protoreflect.ValueOfBool(value)
-	case "dysonprotocol.nameservice.v1.NFTClassData.annual_pct":
-		value := x.AnnualPct
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_fee_pct":
+		value := x.ValuationFeePct
 		return protoreflect.ValueOfString(value)
 	case "dysonprotocol.nameservice.v1.NFTClassData.extra_data":
 		value := x.ExtraData
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_period":
+		value := x.ValuationPeriod
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.NFTClassData.bid_timeout":
+		value := x.BidTimeout
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.NFTClassData.allowed_denoms":
+		if len(x.AllowedDenoms) == 0 {
+			return protoreflect.ValueOfList(&_NFTClassData_5_list{})
+		}
+		listValue := &_NFTClassData_5_list{list: &x.AllowedDenoms}
+		return protoreflect.ValueOfList(listValue)
+	case "dysonprotocol.nameservice.v1.NFTClassData.reject_bid_valuation_fee_percent":
+		value := x.RejectBidValuationFeePercent
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.NFTClassData.minimum_bid_percent_increase":
+		value := x.MinimumBidPercentIncrease
 		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
@@ -912,10 +1037,22 @@ func (x *fastReflection_NFTClassData) Set(fd protoreflect.FieldDescriptor, value
 	switch fd.FullName() {
 	case "dysonprotocol.nameservice.v1.NFTClassData.always_listed":
 		x.AlwaysListed = value.Bool()
-	case "dysonprotocol.nameservice.v1.NFTClassData.annual_pct":
-		x.AnnualPct = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_fee_pct":
+		x.ValuationFeePct = value.Interface().(string)
 	case "dysonprotocol.nameservice.v1.NFTClassData.extra_data":
 		x.ExtraData = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_period":
+		x.ValuationPeriod = value.Message().Interface().(*durationpb.Duration)
+	case "dysonprotocol.nameservice.v1.NFTClassData.bid_timeout":
+		x.BidTimeout = value.Message().Interface().(*durationpb.Duration)
+	case "dysonprotocol.nameservice.v1.NFTClassData.allowed_denoms":
+		lv := value.List()
+		clv := lv.(*_NFTClassData_5_list)
+		x.AllowedDenoms = *clv.list
+	case "dysonprotocol.nameservice.v1.NFTClassData.reject_bid_valuation_fee_percent":
+		x.RejectBidValuationFeePercent = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.NFTClassData.minimum_bid_percent_increase":
+		x.MinimumBidPercentIncrease = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.NFTClassData"))
@@ -936,12 +1073,32 @@ func (x *fastReflection_NFTClassData) Set(fd protoreflect.FieldDescriptor, value
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_NFTClassData) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_period":
+		if x.ValuationPeriod == nil {
+			x.ValuationPeriod = new(durationpb.Duration)
+		}
+		return protoreflect.ValueOfMessage(x.ValuationPeriod.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.NFTClassData.bid_timeout":
+		if x.BidTimeout == nil {
+			x.BidTimeout = new(durationpb.Duration)
+		}
+		return protoreflect.ValueOfMessage(x.BidTimeout.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.NFTClassData.allowed_denoms":
+		if x.AllowedDenoms == nil {
+			x.AllowedDenoms = []string{}
+		}
+		value := &_NFTClassData_5_list{list: &x.AllowedDenoms}
+		return protoreflect.ValueOfList(value)
 	case "dysonprotocol.nameservice.v1.NFTClassData.always_listed":
 		panic(fmt.Errorf("field always_listed of message dysonprotocol.nameservice.v1.NFTClassData is not mutable"))
-	case "dysonprotocol.nameservice.v1.NFTClassData.annual_pct":
-		panic(fmt.Errorf("field annual_pct of message dysonprotocol.nameservice.v1.NFTClassData is not mutable"))
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_fee_pct":
+		panic(fmt.Errorf("field valuation_fee_pct of message dysonprotocol.nameservice.v1.NFTClassData is not mutable"))
 	case "dysonprotocol.nameservice.v1.NFTClassData.extra_data":
 		panic(fmt.Errorf("field extra_data of message dysonprotocol.nameservice.v1.NFTClassData is not mutable"))
+	case "dysonprotocol.nameservice.v1.NFTClassData.reject_bid_valuation_fee_percent":
+		panic(fmt.Errorf("field reject_bid_valuation_fee_percent of message dysonprotocol.nameservice.v1.NFTClassData is not mutable"))
+	case "dysonprotocol.nameservice.v1.NFTClassData.minimum_bid_percent_increase":
+		panic(fmt.Errorf("field minimum_bid_percent_increase of message dysonprotocol.nameservice.v1.NFTClassData is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.NFTClassData"))
@@ -957,9 +1114,22 @@ func (x *fastReflection_NFTClassData) NewField(fd protoreflect.FieldDescriptor) 
 	switch fd.FullName() {
 	case "dysonprotocol.nameservice.v1.NFTClassData.always_listed":
 		return protoreflect.ValueOfBool(false)
-	case "dysonprotocol.nameservice.v1.NFTClassData.annual_pct":
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_fee_pct":
 		return protoreflect.ValueOfString("")
 	case "dysonprotocol.nameservice.v1.NFTClassData.extra_data":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.NFTClassData.valuation_period":
+		m := new(durationpb.Duration)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.NFTClassData.bid_timeout":
+		m := new(durationpb.Duration)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.NFTClassData.allowed_denoms":
+		list := []string{}
+		return protoreflect.ValueOfList(&_NFTClassData_5_list{list: &list})
+	case "dysonprotocol.nameservice.v1.NFTClassData.reject_bid_valuation_fee_percent":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.NFTClassData.minimum_bid_percent_increase":
 		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
@@ -1033,11 +1203,33 @@ func (x *fastReflection_NFTClassData) ProtoMethods() *protoiface.Methods {
 		if x.AlwaysListed {
 			n += 2
 		}
-		l = len(x.AnnualPct)
+		l = len(x.ValuationFeePct)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
 		l = len(x.ExtraData)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.ValuationPeriod != nil {
+			l = options.Size(x.ValuationPeriod)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.BidTimeout != nil {
+			l = options.Size(x.BidTimeout)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if len(x.AllowedDenoms) > 0 {
+			for _, s := range x.AllowedDenoms {
+				l = len(s)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		l = len(x.RejectBidValuationFeePercent)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MinimumBidPercentIncrease)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
@@ -1070,6 +1262,57 @@ func (x *fastReflection_NFTClassData) ProtoMethods() *protoiface.Methods {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
+		if x.ValuationPeriod != nil {
+			encoded, err := options.Marshal(x.ValuationPeriod)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x42
+		}
+		if len(x.MinimumBidPercentIncrease) > 0 {
+			i -= len(x.MinimumBidPercentIncrease)
+			copy(dAtA[i:], x.MinimumBidPercentIncrease)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MinimumBidPercentIncrease)))
+			i--
+			dAtA[i] = 0x3a
+		}
+		if len(x.RejectBidValuationFeePercent) > 0 {
+			i -= len(x.RejectBidValuationFeePercent)
+			copy(dAtA[i:], x.RejectBidValuationFeePercent)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.RejectBidValuationFeePercent)))
+			i--
+			dAtA[i] = 0x32
+		}
+		if len(x.AllowedDenoms) > 0 {
+			for iNdEx := len(x.AllowedDenoms) - 1; iNdEx >= 0; iNdEx-- {
+				i -= len(x.AllowedDenoms[iNdEx])
+				copy(dAtA[i:], x.AllowedDenoms[iNdEx])
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(x.AllowedDenoms[iNdEx])))
+				i--
+				dAtA[i] = 0x2a
+			}
+		}
+		if x.BidTimeout != nil {
+			encoded, err := options.Marshal(x.BidTimeout)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x22
+		}
 		if len(x.ExtraData) > 0 {
 			i -= len(x.ExtraData)
 			copy(dAtA[i:], x.ExtraData)
@@ -1077,10 +1320,10 @@ func (x *fastReflection_NFTClassData) ProtoMethods() *protoiface.Methods {
 			i--
 			dAtA[i] = 0x1a
 		}
-		if len(x.AnnualPct) > 0 {
-			i -= len(x.AnnualPct)
-			copy(dAtA[i:], x.AnnualPct)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.AnnualPct)))
+		if len(x.ValuationFeePct) > 0 {
+			i -= len(x.ValuationFeePct)
+			copy(dAtA[i:], x.ValuationFeePct)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ValuationFeePct)))
 			i--
 			dAtA[i] = 0x12
 		}
@@ -1165,7 +1408,7 @@ func (x *fastReflection_NFTClassData) ProtoMethods() *protoiface.Methods {
 				x.AlwaysListed = bool(v != 0)
 			case 2:
 				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AnnualPct", wireType)
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ValuationFeePct", wireType)
 				}
 				var stringLen uint64
 				for shift := uint(0); ; shift += 7 {
@@ -1193,7 +1436,7 @@ func (x *fastReflection_NFTClassData) ProtoMethods() *protoiface.Methods {
 				if postIndex > l {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
-				x.AnnualPct = string(dAtA[iNdEx:postIndex])
+				x.ValuationFeePct = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			case 3:
 				if wireType != 2 {
@@ -1226,6 +1469,174 @@ func (x *fastReflection_NFTClassData) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
 				x.ExtraData = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 8:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ValuationPeriod", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.ValuationPeriod == nil {
+					x.ValuationPeriod = &durationpb.Duration{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ValuationPeriod); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field BidTimeout", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.BidTimeout == nil {
+					x.BidTimeout = &durationpb.Duration{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.BidTimeout); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 5:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AllowedDenoms", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.AllowedDenoms = append(x.AllowedDenoms, string(dAtA[iNdEx:postIndex]))
+				iNdEx = postIndex
+			case 6:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field RejectBidValuationFeePercent", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.RejectBidValuationFeePercent = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 7:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinimumBidPercentIncrease", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
@@ -2197,15 +2608,65 @@ func (x *Commitment) GetValuation() *v1beta1.Coin {
 	return nil
 }
 
-// NFTClassData represents metadata for an NFT class
+// NFTClassData represents metadata for an NFT class.
+//
+// Fields here control listing defaults, economics, and per-class bidding
+// behavior. They are evaluated by the nameservice keeper when processing
+// place/reject/claim bid flows and when enforcing authorization on class-scope
+// operations.
+//
+// Notes on behavior:
+// - Per-class bidding parameters (bid_timeout, allowed_denoms,
+// reject_bid_valuation_fee_percent,
+//
+//	minimum_bid_percent_increase) override any implicit defaults and are
+//	validated against the global bounds exposed in nameservice Params.
+//
+// - If a per-class field is unset/zero-value, keeper logic falls back to
+// module-wide defaults.
+// - All percent values are cosmos.Dec strings with high precision.
 type NFTClassData struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AlwaysListed bool   `protobuf:"varint,1,opt,name=always_listed,json=alwaysListed,proto3" json:"always_listed,omitempty"` // If true, all NFTs of this class are always listed for sale
-	AnnualPct    string `protobuf:"bytes,2,opt,name=annual_pct,json=annualPct,proto3" json:"annual_pct,omitempty"`           // Annual percentage for fee calculation, default 0
-	ExtraData    string `protobuf:"bytes,3,opt,name=extra_data,json=extraData,proto3" json:"extra_data,omitempty"`           // Additional arbitrary metadata for the NFT class
+	// If true, all NFTs of this class are always listed for sale. When true,
+	// individual NFT `listed` flags are ignored and the marketplace treats them
+	// as listed by default.
+	AlwaysListed bool `protobuf:"varint,1,opt,name=always_listed,json=alwaysListed,proto3" json:"always_listed,omitempty"`
+	// valuation_fee_pct is the percentage applied per `valuation_period` to
+	// compute fee accruals on valuation increases. This is a decimal string
+	// (cosmos.Dec). Example: "0.01" for 1% per period. Default is "0".
+	ValuationFeePct string `protobuf:"bytes,2,opt,name=valuation_fee_pct,json=valuationFeePct,proto3" json:"valuation_fee_pct,omitempty"`
+	// Free-form JSON/text for class-level metadata extensions. Not interpreted
+	// by core logic; emitted in queries for client consumption.
+	ExtraData string `protobuf:"bytes,3,opt,name=extra_data,json=extraData,proto3" json:"extra_data,omitempty"`
+	// valuation_period defines the time duration to which `valuation_fee_pct`
+	// applies. For example, if valuation_fee_pct is "0.01" and valuation_period
+	// is 1h, then a 1% fee per hour is applied proportionally to the remaining
+	// time until the valuation expiry.
+	ValuationPeriod *durationpb.Duration `protobuf:"bytes,8,opt,name=valuation_period,json=valuationPeriod,proto3" json:"valuation_period,omitempty"`
+	// bid_timeout defines the minimum duration a placed bid must remain pending
+	// before it can be claimed by the bidder. A claim before this timeout elapses
+	// will fail with an error. Must be within [Params.min_bid_timeout_class,
+	// Params.max_bid_timeout_class]. Example:  "2s", "100ms", "1h".
+	BidTimeout *durationpb.Duration `protobuf:"bytes,4,opt,name=bid_timeout,json=bidTimeout,proto3" json:"bid_timeout,omitempty"`
+	// allowed_denoms restricts the set of coin denoms that can be used for
+	// valuations and bids in this class. The denom "udys" must be present.
+	// Attempts to set valuations or place bids using other denoms will be
+	// rejected.
+	AllowedDenoms []string `protobuf:"bytes,5,rep,name=allowed_denoms,json=allowedDenoms,proto3" json:"allowed_denoms,omitempty"`
+	// reject_bid_valuation_fee_percent is the fee charged (as a percentage of
+	// the new valuation) when the owner rejects the current highest bid and sets
+	// a new valuation. This is a decimal string (cosmos.Dec), validated against
+	// Params.{min,max}_reject_bid_valuation_fee_percent.
+	RejectBidValuationFeePercent string `protobuf:"bytes,6,opt,name=reject_bid_valuation_fee_percent,json=rejectBidValuationFeePercent,proto3" json:"reject_bid_valuation_fee_percent,omitempty"`
+	// minimum_bid_percent_increase specifies the minimum percentage increase
+	// required over the current valuation for a new bid to be accepted. This is
+	// a decimal string (cosmos.Dec), validated against
+	// Params.{min,max}_minimum_bid_percent_increase. Example: "0.01" requires at
+	// least 1% higher than the current valuation.
+	MinimumBidPercentIncrease string `protobuf:"bytes,7,opt,name=minimum_bid_percent_increase,json=minimumBidPercentIncrease,proto3" json:"minimum_bid_percent_increase,omitempty"`
 }
 
 func (x *NFTClassData) Reset() {
@@ -2235,9 +2696,9 @@ func (x *NFTClassData) GetAlwaysListed() bool {
 	return false
 }
 
-func (x *NFTClassData) GetAnnualPct() string {
+func (x *NFTClassData) GetValuationFeePct() string {
 	if x != nil {
-		return x.AnnualPct
+		return x.ValuationFeePct
 	}
 	return ""
 }
@@ -2245,6 +2706,41 @@ func (x *NFTClassData) GetAnnualPct() string {
 func (x *NFTClassData) GetExtraData() string {
 	if x != nil {
 		return x.ExtraData
+	}
+	return ""
+}
+
+func (x *NFTClassData) GetValuationPeriod() *durationpb.Duration {
+	if x != nil {
+		return x.ValuationPeriod
+	}
+	return nil
+}
+
+func (x *NFTClassData) GetBidTimeout() *durationpb.Duration {
+	if x != nil {
+		return x.BidTimeout
+	}
+	return nil
+}
+
+func (x *NFTClassData) GetAllowedDenoms() []string {
+	if x != nil {
+		return x.AllowedDenoms
+	}
+	return nil
+}
+
+func (x *NFTClassData) GetRejectBidValuationFeePercent() string {
+	if x != nil {
+		return x.RejectBidValuationFeePercent
+	}
+	return ""
+}
+
+func (x *NFTClassData) GetMinimumBidPercentIncrease() string {
+	if x != nil {
+		return x.MinimumBidPercentIncrease
 	}
 	return ""
 }
@@ -2350,6 +2846,8 @@ var file_dysonprotocol_nameservice_v1_nameservice_proto_rawDesc = []byte{
 	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x19, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x5f, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x1a, 0x1e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75,
+	0x66, 0x2f, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x22, 0xd3, 0x01, 0x0a, 0x0a, 0x43, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x6d, 0x65, 0x6e, 0x74, 0x12,
 	0x18, 0x0a, 0x07, 0x68, 0x65, 0x78, 0x68, 0x61, 0x73, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x07, 0x68, 0x65, 0x78, 0x68, 0x61, 0x73, 0x68, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74,
@@ -2363,41 +2861,65 @@ var file_dysonprotocol_nameservice_v1_nameservice_proto_rawDesc = []byte{
 	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73,
 	0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31,
 	0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x09, 0x76, 0x61, 0x6c,
-	0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x71, 0x0a, 0x0c, 0x4e, 0x46, 0x54, 0x43, 0x6c, 0x61,
-	0x73, 0x73, 0x44, 0x61, 0x74, 0x61, 0x12, 0x23, 0x0a, 0x0d, 0x61, 0x6c, 0x77, 0x61, 0x79, 0x73,
-	0x5f, 0x6c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0c, 0x61,
-	0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x12, 0x1d, 0x0a, 0x0a, 0x61,
-	0x6e, 0x6e, 0x75, 0x61, 0x6c, 0x5f, 0x70, 0x63, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x09, 0x61, 0x6e, 0x6e, 0x75, 0x61, 0x6c, 0x50, 0x63, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x65, 0x78,
-	0x74, 0x72, 0x61, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09,
-	0x65, 0x78, 0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x22, 0xfd, 0x02, 0x0a, 0x07, 0x4e, 0x46,
-	0x54, 0x44, 0x61, 0x74, 0x61, 0x12, 0x16, 0x0a, 0x06, 0x6c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x6c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x12, 0x3d, 0x0a,
-	0x09, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76,
-	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f,
-	0x00, 0x52, 0x09, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x4f, 0x0a, 0x10,
-	0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x65, 0x78, 0x70, 0x69, 0x72, 0x79,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61,
-	0x6d, 0x70, 0x42, 0x08, 0xc8, 0xde, 0x1f, 0x00, 0x90, 0xdf, 0x1f, 0x01, 0x52, 0x0f, 0x76, 0x61,
-	0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x45, 0x78, 0x70, 0x69, 0x72, 0x79, 0x12, 0x25, 0x0a,
-	0x0e, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x5f, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x18,
-	0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x42, 0x69,
-	0x64, 0x64, 0x65, 0x72, 0x12, 0x40, 0x0a, 0x0b, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x5f,
-	0x62, 0x69, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d,
-	0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e,
-	0x43, 0x6f, 0x69, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x0a, 0x63, 0x75, 0x72, 0x72,
-	0x65, 0x6e, 0x74, 0x42, 0x69, 0x64, 0x12, 0x45, 0x0a, 0x0d, 0x62, 0x69, 0x64, 0x5f, 0x74, 0x69,
-	0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e,
-	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
-	0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x42, 0x04, 0x90, 0xdf, 0x1f, 0x01, 0x52,
-	0x0c, 0x62, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x12, 0x1a, 0x0a,
-	0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x42, 0x27, 0x5a, 0x25, 0x64, 0x79, 0x73,
-	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78,
-	0x2f, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x74, 0x79, 0x70,
-	0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0xf4, 0x03, 0x0a, 0x0c, 0x4e, 0x46, 0x54, 0x43, 0x6c,
+	0x61, 0x73, 0x73, 0x44, 0x61, 0x74, 0x61, 0x12, 0x23, 0x0a, 0x0d, 0x61, 0x6c, 0x77, 0x61, 0x79,
+	0x73, 0x5f, 0x6c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0c,
+	0x61, 0x6c, 0x77, 0x61, 0x79, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x64, 0x12, 0x3a, 0x0a, 0x11,
+	0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x63,
+	0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0e, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73,
+	0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x0f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x63, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x65, 0x78, 0x74, 0x72,
+	0x61, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x65, 0x78,
+	0x74, 0x72, 0x61, 0x44, 0x61, 0x74, 0x61, 0x12, 0x4e, 0x0a, 0x10, 0x76, 0x61, 0x6c, 0x75, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x18, 0x08, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x08, 0xc8, 0xde,
+	0x1f, 0x00, 0x98, 0xdf, 0x1f, 0x01, 0x52, 0x0f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x12, 0x44, 0x0a, 0x0b, 0x62, 0x69, 0x64, 0x5f, 0x74,
+	0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67,
+	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44,
+	0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x08, 0xc8, 0xde, 0x1f, 0x00, 0x98, 0xdf, 0x1f,
+	0x01, 0x52, 0x0a, 0x62, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x12, 0x25, 0x0a,
+	0x0e, 0x61, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x73, 0x18,
+	0x05, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0d, 0x61, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x44, 0x65,
+	0x6e, 0x6f, 0x6d, 0x73, 0x12, 0x56, 0x0a, 0x20, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x5f, 0x62,
+	0x69, 0x64, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65,
+	0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0e,
+	0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x1c,
+	0x72, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x12, 0x4f, 0x0a, 0x1c,
+	0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x70, 0x65, 0x72, 0x63,
+	0x65, 0x6e, 0x74, 0x5f, 0x69, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x18, 0x07, 0x20, 0x01,
+	0x28, 0x09, 0x42, 0x0e, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44,
+	0x65, 0x63, 0x52, 0x19, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64, 0x50, 0x65,
+	0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x22, 0xfd, 0x02,
+	0x0a, 0x07, 0x4e, 0x46, 0x54, 0x44, 0x61, 0x74, 0x61, 0x12, 0x16, 0x0a, 0x06, 0x6c, 0x69, 0x73,
+	0x74, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x6c, 0x69, 0x73, 0x74, 0x65,
+	0x64, 0x12, 0x3d, 0x0a, 0x09, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61,
+	0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42,
+	0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x09, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x12, 0x4f, 0x0a, 0x10, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x65, 0x78,
+	0x70, 0x69, 0x72, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f,
+	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d,
+	0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x42, 0x08, 0xc8, 0xde, 0x1f, 0x00, 0x90, 0xdf, 0x1f, 0x01,
+	0x52, 0x0f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x45, 0x78, 0x70, 0x69, 0x72,
+	0x79, 0x12, 0x25, 0x0a, 0x0e, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x5f, 0x62, 0x69, 0x64,
+	0x64, 0x65, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x63, 0x75, 0x72, 0x72, 0x65,
+	0x6e, 0x74, 0x42, 0x69, 0x64, 0x64, 0x65, 0x72, 0x12, 0x40, 0x0a, 0x0b, 0x63, 0x75, 0x72, 0x72,
+	0x65, 0x6e, 0x74, 0x5f, 0x62, 0x69, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65,
+	0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x0a,
+	0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x42, 0x69, 0x64, 0x12, 0x45, 0x0a, 0x0d, 0x62, 0x69,
+	0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18, 0x06, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x42, 0x04, 0x90,
+	0xdf, 0x1f, 0x01, 0x52, 0x0c, 0x62, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d,
+	0x70, 0x12, 0x1a, 0x0a, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x08, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x42, 0x27, 0x5a,
+	0x25, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63,
+	0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2419,19 +2941,22 @@ var file_dysonprotocol_nameservice_v1_nameservice_proto_goTypes = []interface{}{
 	(*NFTData)(nil),               // 2: dysonprotocol.nameservice.v1.NFTData
 	(*timestamppb.Timestamp)(nil), // 3: google.protobuf.Timestamp
 	(*v1beta1.Coin)(nil),          // 4: cosmos.base.v1beta1.Coin
+	(*durationpb.Duration)(nil),   // 5: google.protobuf.Duration
 }
 var file_dysonprotocol_nameservice_v1_nameservice_proto_depIdxs = []int32{
 	3, // 0: dysonprotocol.nameservice.v1.Commitment.timestamp:type_name -> google.protobuf.Timestamp
 	4, // 1: dysonprotocol.nameservice.v1.Commitment.valuation:type_name -> cosmos.base.v1beta1.Coin
-	4, // 2: dysonprotocol.nameservice.v1.NFTData.valuation:type_name -> cosmos.base.v1beta1.Coin
-	3, // 3: dysonprotocol.nameservice.v1.NFTData.valuation_expiry:type_name -> google.protobuf.Timestamp
-	4, // 4: dysonprotocol.nameservice.v1.NFTData.current_bid:type_name -> cosmos.base.v1beta1.Coin
-	3, // 5: dysonprotocol.nameservice.v1.NFTData.bid_timestamp:type_name -> google.protobuf.Timestamp
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	5, // 2: dysonprotocol.nameservice.v1.NFTClassData.valuation_period:type_name -> google.protobuf.Duration
+	5, // 3: dysonprotocol.nameservice.v1.NFTClassData.bid_timeout:type_name -> google.protobuf.Duration
+	4, // 4: dysonprotocol.nameservice.v1.NFTData.valuation:type_name -> cosmos.base.v1beta1.Coin
+	3, // 5: dysonprotocol.nameservice.v1.NFTData.valuation_expiry:type_name -> google.protobuf.Timestamp
+	4, // 6: dysonprotocol.nameservice.v1.NFTData.current_bid:type_name -> cosmos.base.v1beta1.Coin
+	3, // 7: dysonprotocol.nameservice.v1.NFTData.bid_timestamp:type_name -> google.protobuf.Timestamp
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_dysonprotocol_nameservice_v1_nameservice_proto_init() }

@@ -15,69 +15,35 @@ import (
 	sync "sync"
 )
 
-var _ protoreflect.List = (*_Params_2_list)(nil)
-
-type _Params_2_list struct {
-	list *[]string
-}
-
-func (x *_Params_2_list) Len() int {
-	if x.list == nil {
-		return 0
-	}
-	return len(*x.list)
-}
-
-func (x *_Params_2_list) Get(i int) protoreflect.Value {
-	return protoreflect.ValueOfString((*x.list)[i])
-}
-
-func (x *_Params_2_list) Set(i int, value protoreflect.Value) {
-	valueUnwrapped := value.String()
-	concreteValue := valueUnwrapped
-	(*x.list)[i] = concreteValue
-}
-
-func (x *_Params_2_list) Append(value protoreflect.Value) {
-	valueUnwrapped := value.String()
-	concreteValue := valueUnwrapped
-	*x.list = append(*x.list, concreteValue)
-}
-
-func (x *_Params_2_list) AppendMutable() protoreflect.Value {
-	panic(fmt.Errorf("AppendMutable can not be called on message Params at list field AllowedDenoms as it is not of Message kind"))
-}
-
-func (x *_Params_2_list) Truncate(n int) {
-	*x.list = (*x.list)[:n]
-}
-
-func (x *_Params_2_list) NewElement() protoreflect.Value {
-	v := ""
-	return protoreflect.ValueOfString(v)
-}
-
-func (x *_Params_2_list) IsValid() bool {
-	return x.list != nil
-}
-
 var (
-	md_Params                                  protoreflect.MessageDescriptor
-	fd_Params_bid_timeout                      protoreflect.FieldDescriptor
-	fd_Params_allowed_denoms                   protoreflect.FieldDescriptor
-	fd_Params_reject_bid_valuation_fee_percent protoreflect.FieldDescriptor
-	fd_Params_minimum_bid_percent_increase     protoreflect.FieldDescriptor
-	fd_Params_mint_fee_per_coin                protoreflect.FieldDescriptor
+	md_Params                                      protoreflect.MessageDescriptor
+	fd_Params_mint_fee_per_coin                    protoreflect.FieldDescriptor
+	fd_Params_min_bid_timeout_class                protoreflect.FieldDescriptor
+	fd_Params_max_bid_timeout_class                protoreflect.FieldDescriptor
+	fd_Params_min_reject_bid_valuation_fee_percent protoreflect.FieldDescriptor
+	fd_Params_max_reject_bid_valuation_fee_percent protoreflect.FieldDescriptor
+	fd_Params_min_minimum_bid_percent_increase     protoreflect.FieldDescriptor
+	fd_Params_max_minimum_bid_percent_increase     protoreflect.FieldDescriptor
+	fd_Params_min_valuation_fee_pct                protoreflect.FieldDescriptor
+	fd_Params_max_valuation_fee_pct                protoreflect.FieldDescriptor
+	fd_Params_min_valuation_period                 protoreflect.FieldDescriptor
+	fd_Params_max_valuation_period                 protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_dysonprotocol_nameservice_v1_params_proto_init()
 	md_Params = File_dysonprotocol_nameservice_v1_params_proto.Messages().ByName("Params")
-	fd_Params_bid_timeout = md_Params.Fields().ByName("bid_timeout")
-	fd_Params_allowed_denoms = md_Params.Fields().ByName("allowed_denoms")
-	fd_Params_reject_bid_valuation_fee_percent = md_Params.Fields().ByName("reject_bid_valuation_fee_percent")
-	fd_Params_minimum_bid_percent_increase = md_Params.Fields().ByName("minimum_bid_percent_increase")
 	fd_Params_mint_fee_per_coin = md_Params.Fields().ByName("mint_fee_per_coin")
+	fd_Params_min_bid_timeout_class = md_Params.Fields().ByName("min_bid_timeout_class")
+	fd_Params_max_bid_timeout_class = md_Params.Fields().ByName("max_bid_timeout_class")
+	fd_Params_min_reject_bid_valuation_fee_percent = md_Params.Fields().ByName("min_reject_bid_valuation_fee_percent")
+	fd_Params_max_reject_bid_valuation_fee_percent = md_Params.Fields().ByName("max_reject_bid_valuation_fee_percent")
+	fd_Params_min_minimum_bid_percent_increase = md_Params.Fields().ByName("min_minimum_bid_percent_increase")
+	fd_Params_max_minimum_bid_percent_increase = md_Params.Fields().ByName("max_minimum_bid_percent_increase")
+	fd_Params_min_valuation_fee_pct = md_Params.Fields().ByName("min_valuation_fee_pct")
+	fd_Params_max_valuation_fee_pct = md_Params.Fields().ByName("max_valuation_fee_pct")
+	fd_Params_min_valuation_period = md_Params.Fields().ByName("min_valuation_period")
+	fd_Params_max_valuation_period = md_Params.Fields().ByName("max_valuation_period")
 }
 
 var _ protoreflect.Message = (*fastReflection_Params)(nil)
@@ -145,33 +111,69 @@ func (x *fastReflection_Params) Interface() protoreflect.ProtoMessage {
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if x.BidTimeout != nil {
-		value := protoreflect.ValueOfMessage(x.BidTimeout.ProtoReflect())
-		if !f(fd_Params_bid_timeout, value) {
-			return
-		}
-	}
-	if len(x.AllowedDenoms) != 0 {
-		value := protoreflect.ValueOfList(&_Params_2_list{list: &x.AllowedDenoms})
-		if !f(fd_Params_allowed_denoms, value) {
-			return
-		}
-	}
-	if x.RejectBidValuationFeePercent != "" {
-		value := protoreflect.ValueOfString(x.RejectBidValuationFeePercent)
-		if !f(fd_Params_reject_bid_valuation_fee_percent, value) {
-			return
-		}
-	}
-	if x.MinimumBidPercentIncrease != "" {
-		value := protoreflect.ValueOfString(x.MinimumBidPercentIncrease)
-		if !f(fd_Params_minimum_bid_percent_increase, value) {
-			return
-		}
-	}
 	if x.MintFeePerCoin != "" {
 		value := protoreflect.ValueOfString(x.MintFeePerCoin)
 		if !f(fd_Params_mint_fee_per_coin, value) {
+			return
+		}
+	}
+	if x.MinBidTimeoutClass != nil {
+		value := protoreflect.ValueOfMessage(x.MinBidTimeoutClass.ProtoReflect())
+		if !f(fd_Params_min_bid_timeout_class, value) {
+			return
+		}
+	}
+	if x.MaxBidTimeoutClass != nil {
+		value := protoreflect.ValueOfMessage(x.MaxBidTimeoutClass.ProtoReflect())
+		if !f(fd_Params_max_bid_timeout_class, value) {
+			return
+		}
+	}
+	if x.MinRejectBidValuationFeePercent != "" {
+		value := protoreflect.ValueOfString(x.MinRejectBidValuationFeePercent)
+		if !f(fd_Params_min_reject_bid_valuation_fee_percent, value) {
+			return
+		}
+	}
+	if x.MaxRejectBidValuationFeePercent != "" {
+		value := protoreflect.ValueOfString(x.MaxRejectBidValuationFeePercent)
+		if !f(fd_Params_max_reject_bid_valuation_fee_percent, value) {
+			return
+		}
+	}
+	if x.MinMinimumBidPercentIncrease != "" {
+		value := protoreflect.ValueOfString(x.MinMinimumBidPercentIncrease)
+		if !f(fd_Params_min_minimum_bid_percent_increase, value) {
+			return
+		}
+	}
+	if x.MaxMinimumBidPercentIncrease != "" {
+		value := protoreflect.ValueOfString(x.MaxMinimumBidPercentIncrease)
+		if !f(fd_Params_max_minimum_bid_percent_increase, value) {
+			return
+		}
+	}
+	if x.MinValuationFeePct != "" {
+		value := protoreflect.ValueOfString(x.MinValuationFeePct)
+		if !f(fd_Params_min_valuation_fee_pct, value) {
+			return
+		}
+	}
+	if x.MaxValuationFeePct != "" {
+		value := protoreflect.ValueOfString(x.MaxValuationFeePct)
+		if !f(fd_Params_max_valuation_fee_pct, value) {
+			return
+		}
+	}
+	if x.MinValuationPeriod != nil {
+		value := protoreflect.ValueOfMessage(x.MinValuationPeriod.ProtoReflect())
+		if !f(fd_Params_min_valuation_period, value) {
+			return
+		}
+	}
+	if x.MaxValuationPeriod != nil {
+		value := protoreflect.ValueOfMessage(x.MaxValuationPeriod.ProtoReflect())
+		if !f(fd_Params_max_valuation_period, value) {
 			return
 		}
 	}
@@ -190,16 +192,28 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 // a repeated field is populated if it is non-empty.
 func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.Params.bid_timeout":
-		return x.BidTimeout != nil
-	case "dysonprotocol.nameservice.v1.Params.allowed_denoms":
-		return len(x.AllowedDenoms) != 0
-	case "dysonprotocol.nameservice.v1.Params.reject_bid_valuation_fee_percent":
-		return x.RejectBidValuationFeePercent != ""
-	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
-		return x.MinimumBidPercentIncrease != ""
 	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
 		return x.MintFeePerCoin != ""
+	case "dysonprotocol.nameservice.v1.Params.min_bid_timeout_class":
+		return x.MinBidTimeoutClass != nil
+	case "dysonprotocol.nameservice.v1.Params.max_bid_timeout_class":
+		return x.MaxBidTimeoutClass != nil
+	case "dysonprotocol.nameservice.v1.Params.min_reject_bid_valuation_fee_percent":
+		return x.MinRejectBidValuationFeePercent != ""
+	case "dysonprotocol.nameservice.v1.Params.max_reject_bid_valuation_fee_percent":
+		return x.MaxRejectBidValuationFeePercent != ""
+	case "dysonprotocol.nameservice.v1.Params.min_minimum_bid_percent_increase":
+		return x.MinMinimumBidPercentIncrease != ""
+	case "dysonprotocol.nameservice.v1.Params.max_minimum_bid_percent_increase":
+		return x.MaxMinimumBidPercentIncrease != ""
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_fee_pct":
+		return x.MinValuationFeePct != ""
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_fee_pct":
+		return x.MaxValuationFeePct != ""
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_period":
+		return x.MinValuationPeriod != nil
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_period":
+		return x.MaxValuationPeriod != nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -216,16 +230,28 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 // Clear is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.Params.bid_timeout":
-		x.BidTimeout = nil
-	case "dysonprotocol.nameservice.v1.Params.allowed_denoms":
-		x.AllowedDenoms = nil
-	case "dysonprotocol.nameservice.v1.Params.reject_bid_valuation_fee_percent":
-		x.RejectBidValuationFeePercent = ""
-	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
-		x.MinimumBidPercentIncrease = ""
 	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
 		x.MintFeePerCoin = ""
+	case "dysonprotocol.nameservice.v1.Params.min_bid_timeout_class":
+		x.MinBidTimeoutClass = nil
+	case "dysonprotocol.nameservice.v1.Params.max_bid_timeout_class":
+		x.MaxBidTimeoutClass = nil
+	case "dysonprotocol.nameservice.v1.Params.min_reject_bid_valuation_fee_percent":
+		x.MinRejectBidValuationFeePercent = ""
+	case "dysonprotocol.nameservice.v1.Params.max_reject_bid_valuation_fee_percent":
+		x.MaxRejectBidValuationFeePercent = ""
+	case "dysonprotocol.nameservice.v1.Params.min_minimum_bid_percent_increase":
+		x.MinMinimumBidPercentIncrease = ""
+	case "dysonprotocol.nameservice.v1.Params.max_minimum_bid_percent_increase":
+		x.MaxMinimumBidPercentIncrease = ""
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_fee_pct":
+		x.MinValuationFeePct = ""
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_fee_pct":
+		x.MaxValuationFeePct = ""
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_period":
+		x.MinValuationPeriod = nil
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_period":
+		x.MaxValuationPeriod = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -242,24 +268,39 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 // of the value; to obtain a mutable reference, use Mutable.
 func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "dysonprotocol.nameservice.v1.Params.bid_timeout":
-		value := x.BidTimeout
-		return protoreflect.ValueOfMessage(value.ProtoReflect())
-	case "dysonprotocol.nameservice.v1.Params.allowed_denoms":
-		if len(x.AllowedDenoms) == 0 {
-			return protoreflect.ValueOfList(&_Params_2_list{})
-		}
-		listValue := &_Params_2_list{list: &x.AllowedDenoms}
-		return protoreflect.ValueOfList(listValue)
-	case "dysonprotocol.nameservice.v1.Params.reject_bid_valuation_fee_percent":
-		value := x.RejectBidValuationFeePercent
-		return protoreflect.ValueOfString(value)
-	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
-		value := x.MinimumBidPercentIncrease
-		return protoreflect.ValueOfString(value)
 	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
 		value := x.MintFeePerCoin
 		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.Params.min_bid_timeout_class":
+		value := x.MinBidTimeoutClass
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.Params.max_bid_timeout_class":
+		value := x.MaxBidTimeoutClass
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.Params.min_reject_bid_valuation_fee_percent":
+		value := x.MinRejectBidValuationFeePercent
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.Params.max_reject_bid_valuation_fee_percent":
+		value := x.MaxRejectBidValuationFeePercent
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.Params.min_minimum_bid_percent_increase":
+		value := x.MinMinimumBidPercentIncrease
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.Params.max_minimum_bid_percent_increase":
+		value := x.MaxMinimumBidPercentIncrease
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_fee_pct":
+		value := x.MinValuationFeePct
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_fee_pct":
+		value := x.MaxValuationFeePct
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_period":
+		value := x.MinValuationPeriod
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_period":
+		value := x.MaxValuationPeriod
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -280,18 +321,28 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 // Set is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.Params.bid_timeout":
-		x.BidTimeout = value.Message().Interface().(*durationpb.Duration)
-	case "dysonprotocol.nameservice.v1.Params.allowed_denoms":
-		lv := value.List()
-		clv := lv.(*_Params_2_list)
-		x.AllowedDenoms = *clv.list
-	case "dysonprotocol.nameservice.v1.Params.reject_bid_valuation_fee_percent":
-		x.RejectBidValuationFeePercent = value.Interface().(string)
-	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
-		x.MinimumBidPercentIncrease = value.Interface().(string)
 	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
 		x.MintFeePerCoin = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.Params.min_bid_timeout_class":
+		x.MinBidTimeoutClass = value.Message().Interface().(*durationpb.Duration)
+	case "dysonprotocol.nameservice.v1.Params.max_bid_timeout_class":
+		x.MaxBidTimeoutClass = value.Message().Interface().(*durationpb.Duration)
+	case "dysonprotocol.nameservice.v1.Params.min_reject_bid_valuation_fee_percent":
+		x.MinRejectBidValuationFeePercent = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.Params.max_reject_bid_valuation_fee_percent":
+		x.MaxRejectBidValuationFeePercent = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.Params.min_minimum_bid_percent_increase":
+		x.MinMinimumBidPercentIncrease = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.Params.max_minimum_bid_percent_increase":
+		x.MaxMinimumBidPercentIncrease = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_fee_pct":
+		x.MinValuationFeePct = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_fee_pct":
+		x.MaxValuationFeePct = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_period":
+		x.MinValuationPeriod = value.Message().Interface().(*durationpb.Duration)
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_period":
+		x.MaxValuationPeriod = value.Message().Interface().(*durationpb.Duration)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -312,23 +363,40 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.Params.bid_timeout":
-		if x.BidTimeout == nil {
-			x.BidTimeout = new(durationpb.Duration)
+	case "dysonprotocol.nameservice.v1.Params.min_bid_timeout_class":
+		if x.MinBidTimeoutClass == nil {
+			x.MinBidTimeoutClass = new(durationpb.Duration)
 		}
-		return protoreflect.ValueOfMessage(x.BidTimeout.ProtoReflect())
-	case "dysonprotocol.nameservice.v1.Params.allowed_denoms":
-		if x.AllowedDenoms == nil {
-			x.AllowedDenoms = []string{}
+		return protoreflect.ValueOfMessage(x.MinBidTimeoutClass.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.Params.max_bid_timeout_class":
+		if x.MaxBidTimeoutClass == nil {
+			x.MaxBidTimeoutClass = new(durationpb.Duration)
 		}
-		value := &_Params_2_list{list: &x.AllowedDenoms}
-		return protoreflect.ValueOfList(value)
-	case "dysonprotocol.nameservice.v1.Params.reject_bid_valuation_fee_percent":
-		panic(fmt.Errorf("field reject_bid_valuation_fee_percent of message dysonprotocol.nameservice.v1.Params is not mutable"))
-	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
-		panic(fmt.Errorf("field minimum_bid_percent_increase of message dysonprotocol.nameservice.v1.Params is not mutable"))
+		return protoreflect.ValueOfMessage(x.MaxBidTimeoutClass.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_period":
+		if x.MinValuationPeriod == nil {
+			x.MinValuationPeriod = new(durationpb.Duration)
+		}
+		return protoreflect.ValueOfMessage(x.MinValuationPeriod.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_period":
+		if x.MaxValuationPeriod == nil {
+			x.MaxValuationPeriod = new(durationpb.Duration)
+		}
+		return protoreflect.ValueOfMessage(x.MaxValuationPeriod.ProtoReflect())
 	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
 		panic(fmt.Errorf("field mint_fee_per_coin of message dysonprotocol.nameservice.v1.Params is not mutable"))
+	case "dysonprotocol.nameservice.v1.Params.min_reject_bid_valuation_fee_percent":
+		panic(fmt.Errorf("field min_reject_bid_valuation_fee_percent of message dysonprotocol.nameservice.v1.Params is not mutable"))
+	case "dysonprotocol.nameservice.v1.Params.max_reject_bid_valuation_fee_percent":
+		panic(fmt.Errorf("field max_reject_bid_valuation_fee_percent of message dysonprotocol.nameservice.v1.Params is not mutable"))
+	case "dysonprotocol.nameservice.v1.Params.min_minimum_bid_percent_increase":
+		panic(fmt.Errorf("field min_minimum_bid_percent_increase of message dysonprotocol.nameservice.v1.Params is not mutable"))
+	case "dysonprotocol.nameservice.v1.Params.max_minimum_bid_percent_increase":
+		panic(fmt.Errorf("field max_minimum_bid_percent_increase of message dysonprotocol.nameservice.v1.Params is not mutable"))
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_fee_pct":
+		panic(fmt.Errorf("field min_valuation_fee_pct of message dysonprotocol.nameservice.v1.Params is not mutable"))
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_fee_pct":
+		panic(fmt.Errorf("field max_valuation_fee_pct of message dysonprotocol.nameservice.v1.Params is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -342,18 +410,32 @@ func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protore
 // For lists, maps, and messages, this returns a new, empty, mutable value.
 func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "dysonprotocol.nameservice.v1.Params.bid_timeout":
-		m := new(durationpb.Duration)
-		return protoreflect.ValueOfMessage(m.ProtoReflect())
-	case "dysonprotocol.nameservice.v1.Params.allowed_denoms":
-		list := []string{}
-		return protoreflect.ValueOfList(&_Params_2_list{list: &list})
-	case "dysonprotocol.nameservice.v1.Params.reject_bid_valuation_fee_percent":
-		return protoreflect.ValueOfString("")
-	case "dysonprotocol.nameservice.v1.Params.minimum_bid_percent_increase":
-		return protoreflect.ValueOfString("")
 	case "dysonprotocol.nameservice.v1.Params.mint_fee_per_coin":
 		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.Params.min_bid_timeout_class":
+		m := new(durationpb.Duration)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.Params.max_bid_timeout_class":
+		m := new(durationpb.Duration)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.Params.min_reject_bid_valuation_fee_percent":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.Params.max_reject_bid_valuation_fee_percent":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.Params.min_minimum_bid_percent_increase":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.Params.max_minimum_bid_percent_increase":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_fee_pct":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_fee_pct":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.Params.min_valuation_period":
+		m := new(durationpb.Duration)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.Params.max_valuation_period":
+		m := new(durationpb.Duration)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.Params"))
@@ -423,27 +505,49 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
-		if x.BidTimeout != nil {
-			l = options.Size(x.BidTimeout)
-			n += 1 + l + runtime.Sov(uint64(l))
-		}
-		if len(x.AllowedDenoms) > 0 {
-			for _, s := range x.AllowedDenoms {
-				l = len(s)
-				n += 1 + l + runtime.Sov(uint64(l))
-			}
-		}
-		l = len(x.RejectBidValuationFeePercent)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
-		}
-		l = len(x.MinimumBidPercentIncrease)
-		if l > 0 {
-			n += 1 + l + runtime.Sov(uint64(l))
-		}
 		l = len(x.MintFeePerCoin)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.MinBidTimeoutClass != nil {
+			l = options.Size(x.MinBidTimeoutClass)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.MaxBidTimeoutClass != nil {
+			l = options.Size(x.MaxBidTimeoutClass)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MinRejectBidValuationFeePercent)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MaxRejectBidValuationFeePercent)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MinMinimumBidPercentIncrease)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MaxMinimumBidPercentIncrease)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MinValuationFeePct)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MaxValuationFeePct)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.MinValuationPeriod != nil {
+			l = options.Size(x.MinValuationPeriod)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.MaxValuationPeriod != nil {
+			l = options.Size(x.MaxValuationPeriod)
+			n += 2 + l + runtime.Sov(uint64(l))
 		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
@@ -474,38 +578,8 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if len(x.MintFeePerCoin) > 0 {
-			i -= len(x.MintFeePerCoin)
-			copy(dAtA[i:], x.MintFeePerCoin)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MintFeePerCoin)))
-			i--
-			dAtA[i] = 0x32
-		}
-		if len(x.MinimumBidPercentIncrease) > 0 {
-			i -= len(x.MinimumBidPercentIncrease)
-			copy(dAtA[i:], x.MinimumBidPercentIncrease)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MinimumBidPercentIncrease)))
-			i--
-			dAtA[i] = 0x2a
-		}
-		if len(x.RejectBidValuationFeePercent) > 0 {
-			i -= len(x.RejectBidValuationFeePercent)
-			copy(dAtA[i:], x.RejectBidValuationFeePercent)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.RejectBidValuationFeePercent)))
-			i--
-			dAtA[i] = 0x22
-		}
-		if len(x.AllowedDenoms) > 0 {
-			for iNdEx := len(x.AllowedDenoms) - 1; iNdEx >= 0; iNdEx-- {
-				i -= len(x.AllowedDenoms[iNdEx])
-				copy(dAtA[i:], x.AllowedDenoms[iNdEx])
-				i = runtime.EncodeVarint(dAtA, i, uint64(len(x.AllowedDenoms[iNdEx])))
-				i--
-				dAtA[i] = 0x12
-			}
-		}
-		if x.BidTimeout != nil {
-			encoded, err := options.Marshal(x.BidTimeout)
+		if x.MaxValuationPeriod != nil {
+			encoded, err := options.Marshal(x.MaxValuationPeriod)
 			if err != nil {
 				return protoiface.MarshalOutput{
 					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -516,7 +590,100 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 			copy(dAtA[i:], encoded)
 			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
 			i--
-			dAtA[i] = 0xa
+			dAtA[i] = 0x1
+			i--
+			dAtA[i] = 0x82
+		}
+		if x.MinValuationPeriod != nil {
+			encoded, err := options.Marshal(x.MinValuationPeriod)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x7a
+		}
+		if len(x.MaxValuationFeePct) > 0 {
+			i -= len(x.MaxValuationFeePct)
+			copy(dAtA[i:], x.MaxValuationFeePct)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MaxValuationFeePct)))
+			i--
+			dAtA[i] = 0x72
+		}
+		if len(x.MinValuationFeePct) > 0 {
+			i -= len(x.MinValuationFeePct)
+			copy(dAtA[i:], x.MinValuationFeePct)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MinValuationFeePct)))
+			i--
+			dAtA[i] = 0x6a
+		}
+		if len(x.MaxMinimumBidPercentIncrease) > 0 {
+			i -= len(x.MaxMinimumBidPercentIncrease)
+			copy(dAtA[i:], x.MaxMinimumBidPercentIncrease)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MaxMinimumBidPercentIncrease)))
+			i--
+			dAtA[i] = 0x62
+		}
+		if len(x.MinMinimumBidPercentIncrease) > 0 {
+			i -= len(x.MinMinimumBidPercentIncrease)
+			copy(dAtA[i:], x.MinMinimumBidPercentIncrease)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MinMinimumBidPercentIncrease)))
+			i--
+			dAtA[i] = 0x5a
+		}
+		if len(x.MaxRejectBidValuationFeePercent) > 0 {
+			i -= len(x.MaxRejectBidValuationFeePercent)
+			copy(dAtA[i:], x.MaxRejectBidValuationFeePercent)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MaxRejectBidValuationFeePercent)))
+			i--
+			dAtA[i] = 0x52
+		}
+		if len(x.MinRejectBidValuationFeePercent) > 0 {
+			i -= len(x.MinRejectBidValuationFeePercent)
+			copy(dAtA[i:], x.MinRejectBidValuationFeePercent)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MinRejectBidValuationFeePercent)))
+			i--
+			dAtA[i] = 0x4a
+		}
+		if x.MaxBidTimeoutClass != nil {
+			encoded, err := options.Marshal(x.MaxBidTimeoutClass)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x42
+		}
+		if x.MinBidTimeoutClass != nil {
+			encoded, err := options.Marshal(x.MinBidTimeoutClass)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x3a
+		}
+		if len(x.MintFeePerCoin) > 0 {
+			i -= len(x.MintFeePerCoin)
+			copy(dAtA[i:], x.MintFeePerCoin)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MintFeePerCoin)))
+			i--
+			dAtA[i] = 0x32
 		}
 		if input.Buf != nil {
 			input.Buf = append(input.Buf, dAtA...)
@@ -567,138 +734,6 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: Params: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
-			case 1:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field BidTimeout", wireType)
-				}
-				var msglen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					msglen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if msglen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + msglen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				if x.BidTimeout == nil {
-					x.BidTimeout = &durationpb.Duration{}
-				}
-				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.BidTimeout); err != nil {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
-				}
-				iNdEx = postIndex
-			case 2:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AllowedDenoms", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.AllowedDenoms = append(x.AllowedDenoms, string(dAtA[iNdEx:postIndex]))
-				iNdEx = postIndex
-			case 4:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field RejectBidValuationFeePercent", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.RejectBidValuationFeePercent = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
-			case 5:
-				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinimumBidPercentIncrease", wireType)
-				}
-				var stringLen uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
-					}
-					if iNdEx >= l {
-						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					stringLen |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				intStringLen := int(stringLen)
-				if intStringLen < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				postIndex := iNdEx + intStringLen
-				if postIndex < 0 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
-				}
-				if postIndex > l {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
-				}
-				x.MinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
-				iNdEx = postIndex
 			case 6:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MintFeePerCoin", wireType)
@@ -730,6 +765,342 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
 				x.MintFeePerCoin = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 7:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinBidTimeoutClass", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.MinBidTimeoutClass == nil {
+					x.MinBidTimeoutClass = &durationpb.Duration{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.MinBidTimeoutClass); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 8:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxBidTimeoutClass", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.MaxBidTimeoutClass == nil {
+					x.MaxBidTimeoutClass = &durationpb.Duration{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.MaxBidTimeoutClass); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 9:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinRejectBidValuationFeePercent", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MinRejectBidValuationFeePercent = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 10:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxRejectBidValuationFeePercent", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MaxRejectBidValuationFeePercent = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 11:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinMinimumBidPercentIncrease", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MinMinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 12:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxMinimumBidPercentIncrease", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MaxMinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 13:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinValuationFeePct", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MinValuationFeePct = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 14:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxValuationFeePct", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MaxValuationFeePct = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 15:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinValuationPeriod", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.MinValuationPeriod == nil {
+					x.MinValuationPeriod = &durationpb.Duration{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.MinValuationPeriod); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 16:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxValuationPeriod", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.MaxValuationPeriod == nil {
+					x.MaxValuationPeriod = &durationpb.Duration{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.MaxValuationPeriod); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
 				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
@@ -785,20 +1156,30 @@ type Params struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// bid_timeout defines the duration after which a bid can be claimed by the
-	// bidder
-	BidTimeout *durationpb.Duration `protobuf:"bytes,1,opt,name=bid_timeout,json=bidTimeout,proto3" json:"bid_timeout,omitempty"`
-	// allowed_denoms defines the denominations that are allowed to be used for
-	// valuations and bids
-	AllowedDenoms []string `protobuf:"bytes,2,rep,name=allowed_denoms,json=allowedDenoms,proto3" json:"allowed_denoms,omitempty"`
-	// reject_bid_valuation_fee_percent defines the percentage of the new
-	// valuation to charge as a fee when rejecting a bid
-	RejectBidValuationFeePercent string `protobuf:"bytes,4,opt,name=reject_bid_valuation_fee_percent,json=rejectBidValuationFeePercent,proto3" json:"reject_bid_valuation_fee_percent,omitempty"`
-	// minimum_bid_percent_increase defines the minimum percentage increase
-	// required for a new bid compared to the previous bid
-	MinimumBidPercentIncrease string `protobuf:"bytes,5,opt,name=minimum_bid_percent_increase,json=minimumBidPercentIncrease,proto3" json:"minimum_bid_percent_increase,omitempty"`
 	// mint_fee_per_coin defines the fee in udys charged per coin minted
 	MintFeePerCoin string `protobuf:"bytes,6,opt,name=mint_fee_per_coin,json=mintFeePerCoin,proto3" json:"mint_fee_per_coin,omitempty"`
+	// Bounds for per-class bidding parameters
+	// Class bid_timeout must be within [min_bid_timeout_class,
+	// max_bid_timeout_class]
+	MinBidTimeoutClass *durationpb.Duration `protobuf:"bytes,7,opt,name=min_bid_timeout_class,json=minBidTimeoutClass,proto3" json:"min_bid_timeout_class,omitempty"`
+	MaxBidTimeoutClass *durationpb.Duration `protobuf:"bytes,8,opt,name=max_bid_timeout_class,json=maxBidTimeoutClass,proto3" json:"max_bid_timeout_class,omitempty"`
+	// Class reject fee percent must be within
+	// [min_reject_bid_valuation_fee_percent,
+	// max_reject_bid_valuation_fee_percent]
+	MinRejectBidValuationFeePercent string `protobuf:"bytes,9,opt,name=min_reject_bid_valuation_fee_percent,json=minRejectBidValuationFeePercent,proto3" json:"min_reject_bid_valuation_fee_percent,omitempty"`
+	MaxRejectBidValuationFeePercent string `protobuf:"bytes,10,opt,name=max_reject_bid_valuation_fee_percent,json=maxRejectBidValuationFeePercent,proto3" json:"max_reject_bid_valuation_fee_percent,omitempty"`
+	// Class minimum bid percent increase must be within
+	// [min_minimum_bid_percent_increase, max_minimum_bid_percent_increase]
+	MinMinimumBidPercentIncrease string `protobuf:"bytes,11,opt,name=min_minimum_bid_percent_increase,json=minMinimumBidPercentIncrease,proto3" json:"min_minimum_bid_percent_increase,omitempty"`
+	MaxMinimumBidPercentIncrease string `protobuf:"bytes,12,opt,name=max_minimum_bid_percent_increase,json=maxMinimumBidPercentIncrease,proto3" json:"max_minimum_bid_percent_increase,omitempty"`
+	// Class valuation fee percent must be within
+	// [min_valuation_fee_pct, max_valuation_fee_pct]
+	MinValuationFeePct string `protobuf:"bytes,13,opt,name=min_valuation_fee_pct,json=minValuationFeePct,proto3" json:"min_valuation_fee_pct,omitempty"`
+	MaxValuationFeePct string `protobuf:"bytes,14,opt,name=max_valuation_fee_pct,json=maxValuationFeePct,proto3" json:"max_valuation_fee_pct,omitempty"`
+	// Class valuation period bounds must be within
+	// [min_valuation_period, max_valuation_period]
+	MinValuationPeriod *durationpb.Duration `protobuf:"bytes,15,opt,name=min_valuation_period,json=minValuationPeriod,proto3" json:"min_valuation_period,omitempty"`
+	MaxValuationPeriod *durationpb.Duration `protobuf:"bytes,16,opt,name=max_valuation_period,json=maxValuationPeriod,proto3" json:"max_valuation_period,omitempty"`
 }
 
 func (x *Params) Reset() {
@@ -821,39 +1202,81 @@ func (*Params) Descriptor() ([]byte, []int) {
 	return file_dysonprotocol_nameservice_v1_params_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Params) GetBidTimeout() *durationpb.Duration {
-	if x != nil {
-		return x.BidTimeout
-	}
-	return nil
-}
-
-func (x *Params) GetAllowedDenoms() []string {
-	if x != nil {
-		return x.AllowedDenoms
-	}
-	return nil
-}
-
-func (x *Params) GetRejectBidValuationFeePercent() string {
-	if x != nil {
-		return x.RejectBidValuationFeePercent
-	}
-	return ""
-}
-
-func (x *Params) GetMinimumBidPercentIncrease() string {
-	if x != nil {
-		return x.MinimumBidPercentIncrease
-	}
-	return ""
-}
-
 func (x *Params) GetMintFeePerCoin() string {
 	if x != nil {
 		return x.MintFeePerCoin
 	}
 	return ""
+}
+
+func (x *Params) GetMinBidTimeoutClass() *durationpb.Duration {
+	if x != nil {
+		return x.MinBidTimeoutClass
+	}
+	return nil
+}
+
+func (x *Params) GetMaxBidTimeoutClass() *durationpb.Duration {
+	if x != nil {
+		return x.MaxBidTimeoutClass
+	}
+	return nil
+}
+
+func (x *Params) GetMinRejectBidValuationFeePercent() string {
+	if x != nil {
+		return x.MinRejectBidValuationFeePercent
+	}
+	return ""
+}
+
+func (x *Params) GetMaxRejectBidValuationFeePercent() string {
+	if x != nil {
+		return x.MaxRejectBidValuationFeePercent
+	}
+	return ""
+}
+
+func (x *Params) GetMinMinimumBidPercentIncrease() string {
+	if x != nil {
+		return x.MinMinimumBidPercentIncrease
+	}
+	return ""
+}
+
+func (x *Params) GetMaxMinimumBidPercentIncrease() string {
+	if x != nil {
+		return x.MaxMinimumBidPercentIncrease
+	}
+	return ""
+}
+
+func (x *Params) GetMinValuationFeePct() string {
+	if x != nil {
+		return x.MinValuationFeePct
+	}
+	return ""
+}
+
+func (x *Params) GetMaxValuationFeePct() string {
+	if x != nil {
+		return x.MaxValuationFeePct
+	}
+	return ""
+}
+
+func (x *Params) GetMinValuationPeriod() *durationpb.Duration {
+	if x != nil {
+		return x.MinValuationPeriod
+	}
+	return nil
+}
+
+func (x *Params) GetMaxValuationPeriod() *durationpb.Duration {
+	if x != nil {
+		return x.MaxValuationPeriod
+	}
+	return nil
 }
 
 var File_dysonprotocol_nameservice_v1_params_proto protoreflect.FileDescriptor
@@ -868,42 +1291,93 @@ var file_dysonprotocol_nameservice_v1_params_proto_rawDesc = []byte{
 	0x1e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
 	0x2f, 0x64, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a,
 	0x19, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x63, 0x6f,
-	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xf9, 0x03, 0x0a, 0x06, 0x50,
-	0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x5a, 0x0a, 0x0b, 0x62, 0x69, 0x64, 0x5f, 0x74, 0x69, 0x6d,
-	0x65, 0x6f, 0x75, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f,
-	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x1e, 0xc8, 0xde, 0x1f, 0x00, 0xf2, 0xde, 0x1f, 0x12, 0x79,
-	0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x62, 0x69, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74,
-	0x22, 0x98, 0xdf, 0x1f, 0x01, 0x52, 0x0a, 0x62, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75,
-	0x74, 0x12, 0x40, 0x0a, 0x0e, 0x61, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x5f, 0x64, 0x65, 0x6e,
-	0x6f, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x42, 0x19, 0xf2, 0xde, 0x1f, 0x15, 0x79,
-	0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x61, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x5f, 0x64, 0x65, 0x6e,
-	0x6f, 0x6d, 0x73, 0x22, 0x52, 0x0d, 0x61, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x64, 0x44, 0x65, 0x6e,
-	0x6f, 0x6d, 0x73, 0x12, 0x81, 0x01, 0x0a, 0x20, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x5f, 0x62,
-	0x69, 0x64, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65,
-	0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x42, 0x39,
-	0xf2, 0xde, 0x1f, 0x27, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74,
+	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xa7, 0x0a, 0x0a, 0x06, 0x50,
+	0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x55, 0x0a, 0x11, 0x6d, 0x69, 0x6e, 0x74, 0x5f, 0x66, 0x65,
+	0x65, 0x5f, 0x70, 0x65, 0x72, 0x5f, 0x63, 0x6f, 0x69, 0x6e, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09,
+	0x42, 0x2a, 0xf2, 0xde, 0x1f, 0x18, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x69, 0x6e, 0x74,
+	0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x65, 0x72, 0x5f, 0x63, 0x6f, 0x69, 0x6e, 0x22, 0xd2, 0xb4,
+	0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x0e, 0x6d, 0x69,
+	0x6e, 0x74, 0x46, 0x65, 0x65, 0x50, 0x65, 0x72, 0x43, 0x6f, 0x69, 0x6e, 0x12, 0x76, 0x0a, 0x15,
+	0x6d, 0x69, 0x6e, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x5f,
+	0x63, 0x6c, 0x61, 0x73, 0x73, 0x18, 0x07, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f,
+	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75,
+	0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x28, 0xc8, 0xde, 0x1f, 0x00, 0xf2, 0xde, 0x1f, 0x1c,
+	0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x69, 0x6e, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x74, 0x69,
+	0x6d, 0x65, 0x6f, 0x75, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x22, 0x98, 0xdf, 0x1f, 0x01,
+	0x52, 0x12, 0x6d, 0x69, 0x6e, 0x42, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x43,
+	0x6c, 0x61, 0x73, 0x73, 0x12, 0x76, 0x0a, 0x15, 0x6d, 0x61, 0x78, 0x5f, 0x62, 0x69, 0x64, 0x5f,
+	0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x5f, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x18, 0x08, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x28,
+	0xc8, 0xde, 0x1f, 0x00, 0xf2, 0xde, 0x1f, 0x1c, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x61,
+	0x78, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x5f, 0x63, 0x6c,
+	0x61, 0x73, 0x73, 0x22, 0x98, 0xdf, 0x1f, 0x01, 0x52, 0x12, 0x6d, 0x61, 0x78, 0x42, 0x69, 0x64,
+	0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x43, 0x6c, 0x61, 0x73, 0x73, 0x12, 0x8c, 0x01, 0x0a,
+	0x24, 0x6d, 0x69, 0x6e, 0x5f, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x5f, 0x62, 0x69, 0x64, 0x5f,
+	0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x65,
+	0x72, 0x63, 0x65, 0x6e, 0x74, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x42, 0x3d, 0xf2, 0xde, 0x1f,
+	0x2b, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x69, 0x6e, 0x5f, 0x72, 0x65, 0x6a, 0x65, 0x63,
+	0x74, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f,
+	0x66, 0x65, 0x65, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x22, 0xd2, 0xb4, 0x2d, 0x0a,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x1f, 0x6d, 0x69, 0x6e, 0x52,
+	0x65, 0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x46, 0x65, 0x65, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x12, 0x8c, 0x01, 0x0a, 0x24,
+	0x6d, 0x61, 0x78, 0x5f, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x76,
+	0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x65, 0x72,
+	0x63, 0x65, 0x6e, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x42, 0x3d, 0xf2, 0xde, 0x1f, 0x2b,
+	0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x61, 0x78, 0x5f, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74,
 	0x5f, 0x62, 0x69, 0x64, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66,
 	0x65, 0x65, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x22, 0xd2, 0xb4, 0x2d, 0x0a, 0x63,
-	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x1c, 0x72, 0x65, 0x6a, 0x65, 0x63,
-	0x74, 0x42, 0x69, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65,
-	0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x12, 0x76, 0x0a, 0x1c, 0x6d, 0x69, 0x6e, 0x69, 0x6d,
-	0x75, 0x6d, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x5f, 0x69,
-	0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x42, 0x35, 0xf2,
-	0xde, 0x1f, 0x23, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d,
+	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x1f, 0x6d, 0x61, 0x78, 0x52, 0x65,
+	0x6a, 0x65, 0x63, 0x74, 0x42, 0x69, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x46, 0x65, 0x65, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x12, 0x81, 0x01, 0x0a, 0x20, 0x6d,
+	0x69, 0x6e, 0x5f, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x70,
+	0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x18,
+	0x0b, 0x20, 0x01, 0x28, 0x09, 0x42, 0x39, 0xf2, 0xde, 0x1f, 0x27, 0x79, 0x61, 0x6d, 0x6c, 0x3a,
+	0x22, 0x6d, 0x69, 0x6e, 0x5f, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x5f, 0x62, 0x69, 0x64,
+	0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73,
+	0x65, 0x22, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63,
+	0x52, 0x1c, 0x6d, 0x69, 0x6e, 0x4d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64, 0x50,
+	0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x12, 0x81,
+	0x01, 0x0a, 0x20, 0x6d, 0x61, 0x78, 0x5f, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x5f, 0x62,
+	0x69, 0x64, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x6e, 0x63, 0x72, 0x65,
+	0x61, 0x73, 0x65, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x09, 0x42, 0x39, 0xf2, 0xde, 0x1f, 0x27, 0x79,
+	0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x61, 0x78, 0x5f, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d,
 	0x5f, 0x62, 0x69, 0x64, 0x5f, 0x70, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x6e, 0x63,
 	0x72, 0x65, 0x61, 0x73, 0x65, 0x22, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
-	0x2e, 0x44, 0x65, 0x63, 0x52, 0x19, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64,
-	0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x12,
-	0x55, 0x0a, 0x11, 0x6d, 0x69, 0x6e, 0x74, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x65, 0x72, 0x5f,
-	0x63, 0x6f, 0x69, 0x6e, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x42, 0x2a, 0xf2, 0xde, 0x1f, 0x18,
-	0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x69, 0x6e, 0x74, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70,
-	0x65, 0x72, 0x5f, 0x63, 0x6f, 0x69, 0x6e, 0x22, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d,
-	0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x0e, 0x6d, 0x69, 0x6e, 0x74, 0x46, 0x65, 0x65, 0x50,
-	0x65, 0x72, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x27, 0x5a, 0x25, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61,
-	0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x2e, 0x44, 0x65, 0x63, 0x52, 0x1c, 0x6d, 0x61, 0x78, 0x4d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d,
+	0x42, 0x69, 0x64, 0x50, 0x65, 0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61,
+	0x73, 0x65, 0x12, 0x61, 0x0a, 0x15, 0x6d, 0x69, 0x6e, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x63, 0x74, 0x18, 0x0d, 0x20, 0x01, 0x28,
+	0x09, 0x42, 0x2e, 0xf2, 0xde, 0x1f, 0x1c, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x69, 0x6e,
+	0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70,
+	0x63, 0x74, 0x22, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65,
+	0x63, 0x52, 0x12, 0x6d, 0x69, 0x6e, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x46,
+	0x65, 0x65, 0x50, 0x63, 0x74, 0x12, 0x61, 0x0a, 0x15, 0x6d, 0x61, 0x78, 0x5f, 0x76, 0x61, 0x6c,
+	0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x70, 0x63, 0x74, 0x18, 0x0e,
+	0x20, 0x01, 0x28, 0x09, 0x42, 0x2e, 0xf2, 0xde, 0x1f, 0x1c, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22,
+	0x6d, 0x61, 0x78, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65,
+	0x65, 0x5f, 0x70, 0x63, 0x74, 0x22, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x2e, 0x44, 0x65, 0x63, 0x52, 0x12, 0x6d, 0x61, 0x78, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x46, 0x65, 0x65, 0x50, 0x63, 0x74, 0x12, 0x74, 0x0a, 0x14, 0x6d, 0x69, 0x6e, 0x5f,
+	0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64,
+	0x18, 0x0f, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x42, 0x27, 0xc8, 0xde, 0x1f, 0x00, 0xf2, 0xde, 0x1f, 0x1b, 0x79, 0x61, 0x6d, 0x6c, 0x3a,
+	0x22, 0x6d, 0x69, 0x6e, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x70,
+	0x65, 0x72, 0x69, 0x6f, 0x64, 0x22, 0x98, 0xdf, 0x1f, 0x01, 0x52, 0x12, 0x6d, 0x69, 0x6e, 0x56,
+	0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x12, 0x74,
+	0x0a, 0x14, 0x6d, 0x61, 0x78, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f,
+	0x70, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x18, 0x10, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67,
+	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44,
+	0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x27, 0xc8, 0xde, 0x1f, 0x00, 0xf2, 0xde, 0x1f,
+	0x1b, 0x79, 0x61, 0x6d, 0x6c, 0x3a, 0x22, 0x6d, 0x61, 0x78, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x22, 0x98, 0xdf, 0x1f, 0x01,
+	0x52, 0x12, 0x6d, 0x61, 0x78, 0x56, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x50, 0x65,
+	0x72, 0x69, 0x6f, 0x64, 0x42, 0x27, 0x5a, 0x25, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61, 0x6d, 0x65,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -924,12 +1398,15 @@ var file_dysonprotocol_nameservice_v1_params_proto_goTypes = []interface{}{
 	(*durationpb.Duration)(nil), // 1: google.protobuf.Duration
 }
 var file_dysonprotocol_nameservice_v1_params_proto_depIdxs = []int32{
-	1, // 0: dysonprotocol.nameservice.v1.Params.bid_timeout:type_name -> google.protobuf.Duration
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	1, // 0: dysonprotocol.nameservice.v1.Params.min_bid_timeout_class:type_name -> google.protobuf.Duration
+	1, // 1: dysonprotocol.nameservice.v1.Params.max_bid_timeout_class:type_name -> google.protobuf.Duration
+	1, // 2: dysonprotocol.nameservice.v1.Params.min_valuation_period:type_name -> google.protobuf.Duration
+	1, // 3: dysonprotocol.nameservice.v1.Params.max_valuation_period:type_name -> google.protobuf.Duration
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_dysonprotocol_nameservice_v1_params_proto_init() }

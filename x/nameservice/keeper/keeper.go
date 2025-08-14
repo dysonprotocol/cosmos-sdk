@@ -310,7 +310,7 @@ func (k Keeper) GetNFTClassData(ctx context.Context, classID string) (nameservic
 			return nameservicev1.NFTClassData{}, cosmossdkerrors.Wrap(err, "failed to unmarshal class data")
 		}
 
-		k.Logger.Info("GetNFTClassData: Successfully unmarshaled data", "class_id", classID, "always_listed", nftClassData.AlwaysListed, "annual_pct", nftClassData.AnnualPct)
+		k.Logger.Info("GetNFTClassData: Successfully unmarshaled data", "class_id", classID, "always_listed", nftClassData.AlwaysListed, "valuation_fee_pct", nftClassData.ValuationFeePct)
 
 	} else {
 		k.Logger.Info("GetNFTClassData: Class data is nil", "class_id", classID)
@@ -375,7 +375,7 @@ func (k Keeper) SetNFTData(ctx context.Context, classId string, nftId string, nf
 // - has a denom
 // - amount > 0
 // - denom is in the allowed denoms list from params
-func (k Keeper) ValidateValuation(ctx context.Context, valuation sdk.Coin) error {
+func (k Keeper) ValidateValuation(ctx context.Context, classId string, valuation sdk.Coin) error {
 	// Validate that the valuation is not zero
 	if valuation.IsZero() {
 		return cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "valuation cannot be zero")
@@ -391,19 +391,20 @@ func (k Keeper) ValidateValuation(ctx context.Context, valuation sdk.Coin) error
 		return cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "valuation amount must be greater than 0")
 	}
 
-	// Get module parameters
-	params := k.GetParams(ctx)
-
-	// Check if the valuation denomination is allowed
+	// Check if the valuation denomination is allowed by class configuration
+	classData, err := k.GetNFTClassData(ctx, classId)
+	if err != nil {
+		return cosmossdkerrors.Wrap(err, "failed to get class data for valuation validation")
+	}
 	denomAllowed := false
-	for _, denom := range params.AllowedDenoms {
+	for _, denom := range classData.AllowedDenoms {
 		if valuation.Denom == denom {
 			denomAllowed = true
 			break
 		}
 	}
 	if !denomAllowed {
-		return cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "valuation denomination is not in the list of allowed denoms")
+		return cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "valuation denomination is not allowed for this class")
 	}
 
 	return nil

@@ -2385,41 +2385,50 @@ paths:
                 description: params holds all the parameters of this module.
                 type: object
                 properties:
-                  bid_timeout:
-                    type: string
-                    title: >-
-                      bid_timeout defines the duration after which a bid can be
-                      claimed by the
-
-                      bidder
-                  allowed_denoms:
-                    type: array
-                    items:
-                      type: string
-                    title: >-
-                      allowed_denoms defines the denominations that are allowed
-                      to be used for
-
-                      valuations and bids
-                  reject_bid_valuation_fee_percent:
-                    type: string
-                    title: >-
-                      reject_bid_valuation_fee_percent defines the percentage of
-                      the new
-
-                      valuation to charge as a fee when rejecting a bid
-                  minimum_bid_percent_increase:
-                    type: string
-                    title: >-
-                      minimum_bid_percent_increase defines the minimum
-                      percentage increase
-
-                      required for a new bid compared to the previous bid
                   mint_fee_per_coin:
                     type: string
                     title: >-
                       mint_fee_per_coin defines the fee in udys charged per coin
                       minted
+                  min_bid_timeout_class:
+                    type: string
+                    title: |-
+                      Bounds for per-class bidding parameters
+                      Class bid_timeout must be within [min_bid_timeout_class,
+                      max_bid_timeout_class]
+                  max_bid_timeout_class:
+                    type: string
+                  min_reject_bid_valuation_fee_percent:
+                    type: string
+                    title: |-
+                      Class reject fee percent must be within
+                      [min_reject_bid_valuation_fee_percent,
+                      max_reject_bid_valuation_fee_percent]
+                  max_reject_bid_valuation_fee_percent:
+                    type: string
+                  min_minimum_bid_percent_increase:
+                    type: string
+                    title: >-
+                      Class minimum bid percent increase must be within
+
+                      [min_minimum_bid_percent_increase,
+                      max_minimum_bid_percent_increase]
+                  max_minimum_bid_percent_increase:
+                    type: string
+                  min_valuation_fee_pct:
+                    type: string
+                    title: |-
+                      Class valuation fee percent must be within
+                      [min_valuation_fee_pct, max_valuation_fee_pct]
+                  max_valuation_fee_pct:
+                    type: string
+                  min_valuation_period:
+                    type: string
+                    title: |-
+                      Class valuation period bounds must be within
+                      [min_valuation_period, max_valuation_period]
+                  max_valuation_period:
+                    type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -17543,35 +17552,46 @@ definitions:
   dysonprotocol.nameservice.v1.Params:
     type: object
     properties:
-      bid_timeout:
-        type: string
-        title: >-
-          bid_timeout defines the duration after which a bid can be claimed by
-          the
-
-          bidder
-      allowed_denoms:
-        type: array
-        items:
-          type: string
-        title: >-
-          allowed_denoms defines the denominations that are allowed to be used
-          for
-
-          valuations and bids
-      reject_bid_valuation_fee_percent:
-        type: string
-        title: |-
-          reject_bid_valuation_fee_percent defines the percentage of the new
-          valuation to charge as a fee when rejecting a bid
-      minimum_bid_percent_increase:
-        type: string
-        title: |-
-          minimum_bid_percent_increase defines the minimum percentage increase
-          required for a new bid compared to the previous bid
       mint_fee_per_coin:
         type: string
         title: mint_fee_per_coin defines the fee in udys charged per coin minted
+      min_bid_timeout_class:
+        type: string
+        title: |-
+          Bounds for per-class bidding parameters
+          Class bid_timeout must be within [min_bid_timeout_class,
+          max_bid_timeout_class]
+      max_bid_timeout_class:
+        type: string
+      min_reject_bid_valuation_fee_percent:
+        type: string
+        title: |-
+          Class reject fee percent must be within
+          [min_reject_bid_valuation_fee_percent,
+          max_reject_bid_valuation_fee_percent]
+      max_reject_bid_valuation_fee_percent:
+        type: string
+      min_minimum_bid_percent_increase:
+        type: string
+        title: |-
+          Class minimum bid percent increase must be within
+          [min_minimum_bid_percent_increase, max_minimum_bid_percent_increase]
+      max_minimum_bid_percent_increase:
+        type: string
+      min_valuation_fee_pct:
+        type: string
+        title: |-
+          Class valuation fee percent must be within
+          [min_valuation_fee_pct, max_valuation_fee_pct]
+      max_valuation_fee_pct:
+        type: string
+      min_valuation_period:
+        type: string
+        title: |-
+          Class valuation period bounds must be within
+          [min_valuation_period, max_valuation_period]
+      max_valuation_period:
+        type: string
     description: Params defines the parameters for the nameservice module.
   dysonprotocol.nameservice.v1.QueryDenomByNameResponse:
     type: object
@@ -17675,37 +17695,48 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
         properties:
-          bid_timeout:
-            type: string
-            title: >-
-              bid_timeout defines the duration after which a bid can be claimed
-              by the
-
-              bidder
-          allowed_denoms:
-            type: array
-            items:
-              type: string
-            title: >-
-              allowed_denoms defines the denominations that are allowed to be
-              used for
-
-              valuations and bids
-          reject_bid_valuation_fee_percent:
-            type: string
-            title: |-
-              reject_bid_valuation_fee_percent defines the percentage of the new
-              valuation to charge as a fee when rejecting a bid
-          minimum_bid_percent_increase:
-            type: string
-            title: >-
-              minimum_bid_percent_increase defines the minimum percentage
-              increase
-
-              required for a new bid compared to the previous bid
           mint_fee_per_coin:
             type: string
             title: mint_fee_per_coin defines the fee in udys charged per coin minted
+          min_bid_timeout_class:
+            type: string
+            title: |-
+              Bounds for per-class bidding parameters
+              Class bid_timeout must be within [min_bid_timeout_class,
+              max_bid_timeout_class]
+          max_bid_timeout_class:
+            type: string
+          min_reject_bid_valuation_fee_percent:
+            type: string
+            title: |-
+              Class reject fee percent must be within
+              [min_reject_bid_valuation_fee_percent,
+              max_reject_bid_valuation_fee_percent]
+          max_reject_bid_valuation_fee_percent:
+            type: string
+          min_minimum_bid_percent_increase:
+            type: string
+            title: >-
+              Class minimum bid percent increase must be within
+
+              [min_minimum_bid_percent_increase,
+              max_minimum_bid_percent_increase]
+          max_minimum_bid_percent_increase:
+            type: string
+          min_valuation_fee_pct:
+            type: string
+            title: |-
+              Class valuation fee percent must be within
+              [min_valuation_fee_pct, max_valuation_fee_pct]
+          max_valuation_fee_pct:
+            type: string
+          min_valuation_period:
+            type: string
+            title: |-
+              Class valuation period bounds must be within
+              [min_valuation_period, max_valuation_period]
+          max_valuation_period:
+            type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   dysonprotocol.nameservice.v1.QueryResolveNameResponse:
     type: object

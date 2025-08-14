@@ -30,20 +30,30 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params defines the parameters for the nameservice module.
 type Params struct {
-	// bid_timeout defines the duration after which a bid can be claimed by the
-	// bidder
-	BidTimeout time.Duration `protobuf:"bytes,1,opt,name=bid_timeout,json=bidTimeout,proto3,stdduration" json:"bid_timeout" yaml:"bid_timeout"`
-	// allowed_denoms defines the denominations that are allowed to be used for
-	// valuations and bids
-	AllowedDenoms []string `protobuf:"bytes,2,rep,name=allowed_denoms,json=allowedDenoms,proto3" json:"allowed_denoms,omitempty" yaml:"allowed_denoms"`
-	// reject_bid_valuation_fee_percent defines the percentage of the new
-	// valuation to charge as a fee when rejecting a bid
-	RejectBidValuationFeePercent string `protobuf:"bytes,4,opt,name=reject_bid_valuation_fee_percent,json=rejectBidValuationFeePercent,proto3" json:"reject_bid_valuation_fee_percent,omitempty" yaml:"reject_bid_valuation_fee_percent"`
-	// minimum_bid_percent_increase defines the minimum percentage increase
-	// required for a new bid compared to the previous bid
-	MinimumBidPercentIncrease string `protobuf:"bytes,5,opt,name=minimum_bid_percent_increase,json=minimumBidPercentIncrease,proto3" json:"minimum_bid_percent_increase,omitempty" yaml:"minimum_bid_percent_increase"`
 	// mint_fee_per_coin defines the fee in udys charged per coin minted
 	MintFeePerCoin string `protobuf:"bytes,6,opt,name=mint_fee_per_coin,json=mintFeePerCoin,proto3" json:"mint_fee_per_coin,omitempty" yaml:"mint_fee_per_coin"`
+	// Bounds for per-class bidding parameters
+	// Class bid_timeout must be within [min_bid_timeout_class,
+	// max_bid_timeout_class]
+	MinBidTimeoutClass time.Duration `protobuf:"bytes,7,opt,name=min_bid_timeout_class,json=minBidTimeoutClass,proto3,stdduration" json:"min_bid_timeout_class" yaml:"min_bid_timeout_class"`
+	MaxBidTimeoutClass time.Duration `protobuf:"bytes,8,opt,name=max_bid_timeout_class,json=maxBidTimeoutClass,proto3,stdduration" json:"max_bid_timeout_class" yaml:"max_bid_timeout_class"`
+	// Class reject fee percent must be within
+	// [min_reject_bid_valuation_fee_percent,
+	// max_reject_bid_valuation_fee_percent]
+	MinRejectBidValuationFeePercent string `protobuf:"bytes,9,opt,name=min_reject_bid_valuation_fee_percent,json=minRejectBidValuationFeePercent,proto3" json:"min_reject_bid_valuation_fee_percent,omitempty" yaml:"min_reject_bid_valuation_fee_percent"`
+	MaxRejectBidValuationFeePercent string `protobuf:"bytes,10,opt,name=max_reject_bid_valuation_fee_percent,json=maxRejectBidValuationFeePercent,proto3" json:"max_reject_bid_valuation_fee_percent,omitempty" yaml:"max_reject_bid_valuation_fee_percent"`
+	// Class minimum bid percent increase must be within
+	// [min_minimum_bid_percent_increase, max_minimum_bid_percent_increase]
+	MinMinimumBidPercentIncrease string `protobuf:"bytes,11,opt,name=min_minimum_bid_percent_increase,json=minMinimumBidPercentIncrease,proto3" json:"min_minimum_bid_percent_increase,omitempty" yaml:"min_minimum_bid_percent_increase"`
+	MaxMinimumBidPercentIncrease string `protobuf:"bytes,12,opt,name=max_minimum_bid_percent_increase,json=maxMinimumBidPercentIncrease,proto3" json:"max_minimum_bid_percent_increase,omitempty" yaml:"max_minimum_bid_percent_increase"`
+	// Class valuation fee percent must be within
+	// [min_valuation_fee_pct, max_valuation_fee_pct]
+	MinValuationFeePct string `protobuf:"bytes,13,opt,name=min_valuation_fee_pct,json=minValuationFeePct,proto3" json:"min_valuation_fee_pct,omitempty" yaml:"min_valuation_fee_pct"`
+	MaxValuationFeePct string `protobuf:"bytes,14,opt,name=max_valuation_fee_pct,json=maxValuationFeePct,proto3" json:"max_valuation_fee_pct,omitempty" yaml:"max_valuation_fee_pct"`
+	// Class valuation period bounds must be within
+	// [min_valuation_period, max_valuation_period]
+	MinValuationPeriod time.Duration `protobuf:"bytes,15,opt,name=min_valuation_period,json=minValuationPeriod,proto3,stdduration" json:"min_valuation_period" yaml:"min_valuation_period"`
+	MaxValuationPeriod time.Duration `protobuf:"bytes,16,opt,name=max_valuation_period,json=maxValuationPeriod,proto3,stdduration" json:"max_valuation_period" yaml:"max_valuation_period"`
 }
 
 func (m *Params) Reset()         { *m = Params{} }
@@ -79,39 +89,81 @@ func (m *Params) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Params proto.InternalMessageInfo
 
-func (m *Params) GetBidTimeout() time.Duration {
-	if m != nil {
-		return m.BidTimeout
-	}
-	return 0
-}
-
-func (m *Params) GetAllowedDenoms() []string {
-	if m != nil {
-		return m.AllowedDenoms
-	}
-	return nil
-}
-
-func (m *Params) GetRejectBidValuationFeePercent() string {
-	if m != nil {
-		return m.RejectBidValuationFeePercent
-	}
-	return ""
-}
-
-func (m *Params) GetMinimumBidPercentIncrease() string {
-	if m != nil {
-		return m.MinimumBidPercentIncrease
-	}
-	return ""
-}
-
 func (m *Params) GetMintFeePerCoin() string {
 	if m != nil {
 		return m.MintFeePerCoin
 	}
 	return ""
+}
+
+func (m *Params) GetMinBidTimeoutClass() time.Duration {
+	if m != nil {
+		return m.MinBidTimeoutClass
+	}
+	return 0
+}
+
+func (m *Params) GetMaxBidTimeoutClass() time.Duration {
+	if m != nil {
+		return m.MaxBidTimeoutClass
+	}
+	return 0
+}
+
+func (m *Params) GetMinRejectBidValuationFeePercent() string {
+	if m != nil {
+		return m.MinRejectBidValuationFeePercent
+	}
+	return ""
+}
+
+func (m *Params) GetMaxRejectBidValuationFeePercent() string {
+	if m != nil {
+		return m.MaxRejectBidValuationFeePercent
+	}
+	return ""
+}
+
+func (m *Params) GetMinMinimumBidPercentIncrease() string {
+	if m != nil {
+		return m.MinMinimumBidPercentIncrease
+	}
+	return ""
+}
+
+func (m *Params) GetMaxMinimumBidPercentIncrease() string {
+	if m != nil {
+		return m.MaxMinimumBidPercentIncrease
+	}
+	return ""
+}
+
+func (m *Params) GetMinValuationFeePct() string {
+	if m != nil {
+		return m.MinValuationFeePct
+	}
+	return ""
+}
+
+func (m *Params) GetMaxValuationFeePct() string {
+	if m != nil {
+		return m.MaxValuationFeePct
+	}
+	return ""
+}
+
+func (m *Params) GetMinValuationPeriod() time.Duration {
+	if m != nil {
+		return m.MinValuationPeriod
+	}
+	return 0
+}
+
+func (m *Params) GetMaxValuationPeriod() time.Duration {
+	if m != nil {
+		return m.MaxValuationPeriod
+	}
+	return 0
 }
 
 func init() {
@@ -123,35 +175,43 @@ func init() {
 }
 
 var fileDescriptor_62c7384e3f0b6965 = []byte{
-	// 440 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x92, 0x41, 0x8b, 0xd3, 0x40,
-	0x18, 0x86, 0x1b, 0x57, 0x0b, 0x3b, 0x8b, 0x0b, 0x06, 0x85, 0x74, 0x29, 0x49, 0x89, 0x88, 0x55,
-	0x30, 0x61, 0x15, 0x0f, 0x7a, 0x51, 0x62, 0x11, 0xbc, 0x2d, 0x45, 0x3d, 0xec, 0x25, 0xa4, 0x93,
-	0x6f, 0xcb, 0x48, 0x66, 0xbe, 0x90, 0x99, 0x44, 0x7b, 0xf4, 0x1f, 0x78, 0xf4, 0x87, 0xf8, 0x23,
-	0xf6, 0xb8, 0x78, 0xf2, 0x14, 0xa5, 0xfd, 0x07, 0xb9, 0x79, 0x93, 0xce, 0x4c, 0x65, 0xb3, 0x07,
-	0xbd, 0xe5, 0x9b, 0xf7, 0x79, 0xdf, 0x77, 0x32, 0x7c, 0xe4, 0x41, 0xbe, 0x92, 0x28, 0xca, 0x0a,
-	0x15, 0x52, 0x2c, 0x62, 0x91, 0x71, 0x90, 0x50, 0x35, 0x8c, 0x42, 0xdc, 0x1c, 0xc7, 0x65, 0x56,
-	0x65, 0x5c, 0x46, 0x5a, 0x76, 0xc7, 0x3d, 0x34, 0xba, 0x84, 0x46, 0xcd, 0xf1, 0xd1, 0xed, 0x25,
-	0x2e, 0x51, 0x8b, 0xf1, 0xf6, 0xcb, 0x78, 0x8e, 0xfc, 0x25, 0xe2, 0xb2, 0x80, 0x58, 0x4f, 0x8b,
-	0xfa, 0x2c, 0xce, 0xeb, 0x2a, 0x53, 0x0c, 0x85, 0xd5, 0x47, 0x14, 0x25, 0x47, 0x99, 0x1a, 0xa3,
-	0x19, 0x8c, 0x14, 0xfe, 0xde, 0x23, 0xc3, 0x13, 0xdd, 0xef, 0x9e, 0x92, 0x83, 0x05, 0xcb, 0x53,
-	0xc5, 0x38, 0x60, 0xad, 0x3c, 0x67, 0xe2, 0x4c, 0x0f, 0x1e, 0x8f, 0x22, 0x93, 0x1d, 0xed, 0xb2,
-	0xa3, 0x99, 0xcd, 0x4e, 0xfc, 0xf3, 0x36, 0x18, 0x74, 0x6d, 0xe0, 0xae, 0x32, 0x5e, 0x3c, 0x0f,
-	0x2f, 0x79, 0xc3, 0xaf, 0x3f, 0x03, 0x67, 0x4e, 0x16, 0x2c, 0x7f, 0x6b, 0x0e, 0xdc, 0x97, 0xe4,
-	0x30, 0x2b, 0x0a, 0xfc, 0x08, 0x79, 0x9a, 0x83, 0x40, 0x2e, 0xbd, 0x6b, 0x93, 0xbd, 0xe9, 0x7e,
-	0x32, 0xea, 0xda, 0xe0, 0x8e, 0xf1, 0xf7, 0xf5, 0x70, 0x7e, 0xd3, 0x1e, 0xcc, 0xf4, 0xec, 0x7e,
-	0x76, 0xc8, 0xa4, 0x82, 0x0f, 0x40, 0x55, 0xba, 0x6d, 0x6a, 0xb2, 0xa2, 0xd6, 0xd7, 0x48, 0xcf,
-	0x00, 0xd2, 0x12, 0x2a, 0x0a, 0x42, 0x79, 0xd7, 0x27, 0xce, 0x74, 0x3f, 0x79, 0xd6, 0xb5, 0xc1,
-	0x7d, 0x13, 0xfa, 0x3f, 0x47, 0xf8, 0xfd, 0xdb, 0x23, 0x62, 0x1f, 0x64, 0x06, 0x74, 0x3e, 0x36,
-	0x86, 0x84, 0xe5, 0xef, 0x77, 0xf8, 0x6b, 0x80, 0x13, 0x03, 0xbb, 0x0d, 0x19, 0x73, 0x26, 0x18,
-	0xaf, 0xb9, 0x4e, 0xb4, 0x19, 0x29, 0x13, 0xb4, 0x82, 0x4c, 0x82, 0x77, 0x43, 0xd7, 0x3f, 0xed,
-	0xda, 0xe0, 0xae, 0xa9, 0xff, 0x17, 0x7d, 0xb5, 0x7a, 0x64, 0xe1, 0x84, 0xe5, 0xb6, 0xef, 0x8d,
-	0x25, 0xdd, 0x77, 0xe4, 0x16, 0x67, 0x42, 0xed, 0x2e, 0x9e, 0x52, 0x64, 0xc2, 0x1b, 0xea, 0xb2,
-	0x87, 0x5d, 0x1b, 0x78, 0x7f, 0xcb, 0xfa, 0xc8, 0xd5, 0x86, 0xc3, 0x2d, 0x61, 0x7e, 0xe7, 0x15,
-	0x32, 0x91, 0xbc, 0x38, 0x5f, 0xfb, 0xce, 0xc5, 0xda, 0x77, 0x7e, 0xad, 0x7d, 0xe7, 0xcb, 0xc6,
-	0x1f, 0x5c, 0x6c, 0xfc, 0xc1, 0x8f, 0x8d, 0x3f, 0x38, 0xbd, 0xd7, 0x5f, 0x42, 0x8a, 0x3c, 0xfe,
-	0xd4, 0xdb, 0x5a, 0xb5, 0x2a, 0x41, 0x2e, 0x86, 0x9a, 0x78, 0xf2, 0x27, 0x00, 0x00, 0xff, 0xff,
-	0x09, 0xea, 0xcb, 0xa8, 0xdf, 0x02, 0x00, 0x00,
+	// 567 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x94, 0x4f, 0x8b, 0xd3, 0x40,
+	0x18, 0x87, 0x9b, 0x4b, 0x75, 0x67, 0x75, 0xd5, 0xb2, 0x42, 0x76, 0x2d, 0x49, 0x29, 0xca, 0x56,
+	0xc5, 0x84, 0xd5, 0x93, 0x82, 0x08, 0xd9, 0x45, 0xf0, 0x20, 0x94, 0xa2, 0x1e, 0xbc, 0x84, 0xe9,
+	0x64, 0xb6, 0x8c, 0x64, 0x66, 0x42, 0x32, 0x09, 0xe9, 0xd1, 0xbb, 0x07, 0x8f, 0x7e, 0x03, 0xbf,
+	0x80, 0x1f, 0x62, 0x8f, 0x8b, 0x27, 0x4f, 0x51, 0xda, 0x6f, 0xd0, 0x4f, 0x20, 0x99, 0x49, 0xb7,
+	0xe6, 0x8f, 0xed, 0xf6, 0xd6, 0xf0, 0xfe, 0xde, 0xf7, 0x79, 0xf2, 0xd2, 0x37, 0xe0, 0xa1, 0x37,
+	0x8d, 0x38, 0x0b, 0x42, 0x2e, 0x38, 0xe2, 0xbe, 0xcd, 0x20, 0xc5, 0x11, 0x0e, 0x13, 0x82, 0xb0,
+	0x9d, 0x1c, 0xdb, 0x01, 0x0c, 0x21, 0x8d, 0x2c, 0x59, 0xee, 0x74, 0x4b, 0x51, 0xeb, 0x9f, 0xa8,
+	0x95, 0x1c, 0x1f, 0xee, 0x4f, 0xf8, 0x84, 0xcb, 0xa2, 0x9d, 0xff, 0x52, 0x3d, 0x87, 0xc6, 0x84,
+	0xf3, 0x89, 0x8f, 0x6d, 0xf9, 0x34, 0x8e, 0xcf, 0x6c, 0x2f, 0x0e, 0xa1, 0x20, 0x9c, 0x15, 0xf5,
+	0x03, 0xc4, 0x23, 0xca, 0x23, 0x57, 0x35, 0xaa, 0x07, 0x55, 0xea, 0x7f, 0x07, 0xa0, 0x3d, 0x94,
+	0xfc, 0xce, 0x7b, 0x70, 0x87, 0x12, 0x26, 0xdc, 0x33, 0x8c, 0xdd, 0x00, 0x87, 0x2e, 0xe2, 0x84,
+	0xe9, 0xed, 0x9e, 0x36, 0xd8, 0x71, 0x1e, 0x2d, 0x32, 0x53, 0x9f, 0x42, 0xea, 0xbf, 0xe8, 0xd7,
+	0x22, 0xfd, 0x9f, 0x3f, 0x9e, 0x80, 0x62, 0xe6, 0x29, 0x46, 0xa3, 0xbd, 0x3c, 0xf1, 0x1a, 0xe3,
+	0x21, 0x0e, 0x4f, 0x38, 0x61, 0x9d, 0x04, 0xdc, 0xa5, 0x84, 0xb9, 0x63, 0xe2, 0xb9, 0x82, 0x50,
+	0xcc, 0x63, 0xe1, 0x22, 0x1f, 0x46, 0x91, 0x7e, 0xad, 0xa7, 0x0d, 0x76, 0x9f, 0x1e, 0x58, 0x4a,
+	0xde, 0x5a, 0xca, 0x5b, 0xa7, 0x85, 0xbc, 0x33, 0x38, 0xcf, 0xcc, 0xd6, 0x22, 0x33, 0xbb, 0x97,
+	0xe4, 0xfa, 0x94, 0xfe, 0xb7, 0xdf, 0xa6, 0x36, 0xea, 0x50, 0xc2, 0x1c, 0xe2, 0xbd, 0x53, 0x95,
+	0x93, 0xbc, 0x20, 0xb9, 0x30, 0x6d, 0xe0, 0x5e, 0xdf, 0x96, 0xdb, 0x34, 0x65, 0xc9, 0x85, 0x69,
+	0x95, 0xfb, 0x45, 0x03, 0xf7, 0x73, 0xd5, 0x10, 0x7f, 0xc2, 0x48, 0xc8, 0xce, 0x04, 0xfa, 0xb1,
+	0x1c, 0xbd, 0x5c, 0x1c, 0xc2, 0x4c, 0xe8, 0x3b, 0x72, 0xb5, 0x2f, 0x17, 0x99, 0xf9, 0x78, 0xf5,
+	0x82, 0x9b, 0xba, 0xaa, 0xdb, 0x36, 0x29, 0x61, 0x23, 0xd9, 0xe3, 0x10, 0xef, 0xc3, 0xb2, 0x43,
+	0xad, 0x3f, 0xcf, 0x2b, 0x1d, 0x98, 0x6e, 0xd6, 0x01, 0x35, 0x9d, 0x2b, 0x74, 0xd5, 0x75, 0x60,
+	0xba, 0x56, 0xe7, 0xb3, 0x06, 0x7a, 0xf9, 0x7b, 0x52, 0xc2, 0x08, 0x8d, 0xa9, 0x9c, 0x5c, 0xcc,
+	0x72, 0x09, 0x43, 0x21, 0x86, 0x11, 0xd6, 0x77, 0xa5, 0xca, 0xf3, 0x45, 0x66, 0x1e, 0xad, 0x36,
+	0xb3, 0xae, 0xa3, 0xaa, 0xd1, 0xa5, 0x84, 0xbd, 0x55, 0x79, 0x87, 0x78, 0x05, 0xfb, 0x4d, 0x11,
+	0x56, 0x0e, 0x30, 0x5d, 0xef, 0x70, 0xa3, 0xe6, 0xb0, 0xa1, 0xa3, 0xee, 0x00, 0xd3, 0xff, 0x3b,
+	0x40, 0x75, 0x15, 0x95, 0xa5, 0x22, 0xa1, 0xdf, 0x94, 0x5c, 0xab, 0xfc, 0xb7, 0xaf, 0xc5, 0xaa,
+	0xb0, 0xfc, 0x00, 0x4a, 0xeb, 0x46, 0x42, 0x22, 0x60, 0xda, 0x80, 0xd8, 0xab, 0x21, 0x9a, 0x62,
+	0x75, 0x04, 0x4c, 0xab, 0x08, 0x01, 0xf6, 0xcb, 0x7a, 0x01, 0x0e, 0x09, 0xf7, 0xf4, 0x5b, 0x9b,
+	0x4e, 0xec, 0xa8, 0x38, 0xb1, 0x7b, 0x4d, 0xef, 0xa8, 0x86, 0xac, 0x2e, 0xfb, 0x92, 0x3a, 0x94,
+	0x05, 0x49, 0x2d, 0x19, 0x17, 0xd4, 0xdb, 0xdb, 0x52, 0x1b, 0x86, 0xac, 0xee, 0xba, 0x42, 0x75,
+	0x5e, 0x9d, 0xcf, 0x0c, 0xed, 0x62, 0x66, 0x68, 0x7f, 0x66, 0x86, 0xf6, 0x75, 0x6e, 0xb4, 0x2e,
+	0xe6, 0x46, 0xeb, 0xd7, 0xdc, 0x68, 0x7d, 0x7c, 0x50, 0xfe, 0x64, 0x23, 0x4e, 0xed, 0xb4, 0xf4,
+	0x8d, 0x17, 0xd3, 0x00, 0x47, 0xe3, 0xb6, 0x4c, 0x3c, 0xfb, 0x1b, 0x00, 0x00, 0xff, 0xff, 0xbd,
+	0xe3, 0xb5, 0x36, 0x0d, 0x06, 0x00, 0x00,
 }
 
 func (m *Params) Marshal() (dAtA []byte, err error) {
@@ -174,6 +234,82 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	n1, err1 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.MaxValuationPeriod, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MaxValuationPeriod):])
+	if err1 != nil {
+		return 0, err1
+	}
+	i -= n1
+	i = encodeVarintParams(dAtA, i, uint64(n1))
+	i--
+	dAtA[i] = 0x1
+	i--
+	dAtA[i] = 0x82
+	n2, err2 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.MinValuationPeriod, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MinValuationPeriod):])
+	if err2 != nil {
+		return 0, err2
+	}
+	i -= n2
+	i = encodeVarintParams(dAtA, i, uint64(n2))
+	i--
+	dAtA[i] = 0x7a
+	if len(m.MaxValuationFeePct) > 0 {
+		i -= len(m.MaxValuationFeePct)
+		copy(dAtA[i:], m.MaxValuationFeePct)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.MaxValuationFeePct)))
+		i--
+		dAtA[i] = 0x72
+	}
+	if len(m.MinValuationFeePct) > 0 {
+		i -= len(m.MinValuationFeePct)
+		copy(dAtA[i:], m.MinValuationFeePct)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.MinValuationFeePct)))
+		i--
+		dAtA[i] = 0x6a
+	}
+	if len(m.MaxMinimumBidPercentIncrease) > 0 {
+		i -= len(m.MaxMinimumBidPercentIncrease)
+		copy(dAtA[i:], m.MaxMinimumBidPercentIncrease)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.MaxMinimumBidPercentIncrease)))
+		i--
+		dAtA[i] = 0x62
+	}
+	if len(m.MinMinimumBidPercentIncrease) > 0 {
+		i -= len(m.MinMinimumBidPercentIncrease)
+		copy(dAtA[i:], m.MinMinimumBidPercentIncrease)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.MinMinimumBidPercentIncrease)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if len(m.MaxRejectBidValuationFeePercent) > 0 {
+		i -= len(m.MaxRejectBidValuationFeePercent)
+		copy(dAtA[i:], m.MaxRejectBidValuationFeePercent)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.MaxRejectBidValuationFeePercent)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if len(m.MinRejectBidValuationFeePercent) > 0 {
+		i -= len(m.MinRejectBidValuationFeePercent)
+		copy(dAtA[i:], m.MinRejectBidValuationFeePercent)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.MinRejectBidValuationFeePercent)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	n3, err3 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.MaxBidTimeoutClass, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MaxBidTimeoutClass):])
+	if err3 != nil {
+		return 0, err3
+	}
+	i -= n3
+	i = encodeVarintParams(dAtA, i, uint64(n3))
+	i--
+	dAtA[i] = 0x42
+	n4, err4 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.MinBidTimeoutClass, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MinBidTimeoutClass):])
+	if err4 != nil {
+		return 0, err4
+	}
+	i -= n4
+	i = encodeVarintParams(dAtA, i, uint64(n4))
+	i--
+	dAtA[i] = 0x3a
 	if len(m.MintFeePerCoin) > 0 {
 		i -= len(m.MintFeePerCoin)
 		copy(dAtA[i:], m.MintFeePerCoin)
@@ -181,37 +317,6 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x32
 	}
-	if len(m.MinimumBidPercentIncrease) > 0 {
-		i -= len(m.MinimumBidPercentIncrease)
-		copy(dAtA[i:], m.MinimumBidPercentIncrease)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.MinimumBidPercentIncrease)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.RejectBidValuationFeePercent) > 0 {
-		i -= len(m.RejectBidValuationFeePercent)
-		copy(dAtA[i:], m.RejectBidValuationFeePercent)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.RejectBidValuationFeePercent)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.AllowedDenoms) > 0 {
-		for iNdEx := len(m.AllowedDenoms) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.AllowedDenoms[iNdEx])
-			copy(dAtA[i:], m.AllowedDenoms[iNdEx])
-			i = encodeVarintParams(dAtA, i, uint64(len(m.AllowedDenoms[iNdEx])))
-			i--
-			dAtA[i] = 0x12
-		}
-	}
-	n1, err1 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.BidTimeout, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.BidTimeout):])
-	if err1 != nil {
-		return 0, err1
-	}
-	i -= n1
-	i = encodeVarintParams(dAtA, i, uint64(n1))
-	i--
-	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -232,26 +337,42 @@ func (m *Params) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.BidTimeout)
-	n += 1 + l + sovParams(uint64(l))
-	if len(m.AllowedDenoms) > 0 {
-		for _, s := range m.AllowedDenoms {
-			l = len(s)
-			n += 1 + l + sovParams(uint64(l))
-		}
-	}
-	l = len(m.RejectBidValuationFeePercent)
-	if l > 0 {
-		n += 1 + l + sovParams(uint64(l))
-	}
-	l = len(m.MinimumBidPercentIncrease)
-	if l > 0 {
-		n += 1 + l + sovParams(uint64(l))
-	}
 	l = len(m.MintFeePerCoin)
 	if l > 0 {
 		n += 1 + l + sovParams(uint64(l))
 	}
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MinBidTimeoutClass)
+	n += 1 + l + sovParams(uint64(l))
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MaxBidTimeoutClass)
+	n += 1 + l + sovParams(uint64(l))
+	l = len(m.MinRejectBidValuationFeePercent)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.MaxRejectBidValuationFeePercent)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.MinMinimumBidPercentIncrease)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.MaxMinimumBidPercentIncrease)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.MinValuationFeePct)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = len(m.MaxValuationFeePct)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MinValuationPeriod)
+	n += 1 + l + sovParams(uint64(l))
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.MaxValuationPeriod)
+	n += 2 + l + sovParams(uint64(l))
 	return n
 }
 
@@ -290,135 +411,6 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: Params: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BidTimeout", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.BidTimeout, dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AllowedDenoms", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.AllowedDenoms = append(m.AllowedDenoms, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RejectBidValuationFeePercent", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RejectBidValuationFeePercent = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinimumBidPercentIncrease", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.MinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MintFeePerCoin", wireType)
@@ -450,6 +442,330 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.MintFeePerCoin = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinBidTimeoutClass", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.MinBidTimeoutClass, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxBidTimeoutClass", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.MaxBidTimeoutClass, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinRejectBidValuationFeePercent", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MinRejectBidValuationFeePercent = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxRejectBidValuationFeePercent", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MaxRejectBidValuationFeePercent = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinMinimumBidPercentIncrease", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MinMinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxMinimumBidPercentIncrease", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MaxMinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinValuationFeePct", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MinValuationFeePct = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxValuationFeePct", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MaxValuationFeePct = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 15:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinValuationPeriod", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.MinValuationPeriod, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 16:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxValuationPeriod", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.MaxValuationPeriod, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

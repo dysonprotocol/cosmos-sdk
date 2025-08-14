@@ -19,6 +19,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	_ "google.golang.org/protobuf/types/known/durationpb"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	math "math"
@@ -327,11 +328,11 @@ type MsgSetValuation struct {
 	NftId      string `protobuf:"bytes,3,opt,name=nft_id,json=nftId,proto3" json:"nft_id,omitempty"`
 	// valuation is the new valuation of the NFT
 	Valuation types.Coin `protobuf:"bytes,4,opt,name=valuation,proto3" json:"valuation"`
-	// max_annual_pct_fee (optional) is the maximum annual percentage fee the user
-	// is willing to pay for setting the new valuation (e.g. "0.025" for 2.5%).
-	// This guards against unexpected fee amounts if the name owner changes the
-	// annual_pct.
-	MaxAnnualPctFee string `protobuf:"bytes,5,opt,name=max_annual_pct_fee,json=maxAnnualPctFee,proto3" json:"max_annual_pct_fee,omitempty"`
+	// max_valuation_fee_pct (optional) is the maximum valuation fee percent the
+	// user is willing to pay for setting the new valuation (e.g. "0.025" for
+	// 2.5% per valuation period). This guards against unexpected fee amounts if
+	// the class updates valuation_fee_pct.
+	MaxValuationFeePct string `protobuf:"bytes,5,opt,name=max_valuation_fee_pct,json=maxValuationFeePct,proto3" json:"max_valuation_fee_pct,omitempty"`
 }
 
 func (m *MsgSetValuation) Reset()         { *m = MsgSetValuation{} }
@@ -395,9 +396,9 @@ func (m *MsgSetValuation) GetValuation() types.Coin {
 	return types.Coin{}
 }
 
-func (m *MsgSetValuation) GetMaxAnnualPctFee() string {
+func (m *MsgSetValuation) GetMaxValuationFeePct() string {
 	if m != nil {
-		return m.MaxAnnualPctFee
+		return m.MaxValuationFeePct
 	}
 	return ""
 }
@@ -1360,31 +1361,25 @@ func (m *MsgSetNFTClassAlwaysListedResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSetNFTClassAlwaysListedResponse proto.InternalMessageInfo
 
-// MsgSetNFTClassAnnualPct sets the annual percentage rate for an NFT class.
-// Only the owner of the NFT class root name can update this setting.
-type MsgSetNFTClassAnnualPct struct {
-	// name_destination is the resolved destination address of the NFT class root
-	// name
+// Set per-class valuation fee percent (cosmos.Dec string)
+type MsgSetNFTClassValuationFeePct struct {
 	NameDestination string `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
-	// class_id is the identifier of the NFT class to update
-	ClassId string `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
-	// annual_pct is the annual percentage rate as a string (e.g. "5.5" for 5.5%)
-	// representing the yearly rate for this NFT class
-	AnnualPct string `protobuf:"bytes,3,opt,name=annual_pct,json=annualPct,proto3" json:"annual_pct,omitempty"`
+	ClassId         string `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	ValuationFeePct string `protobuf:"bytes,3,opt,name=valuation_fee_pct,json=valuationFeePct,proto3" json:"valuation_fee_pct,omitempty"`
 }
 
-func (m *MsgSetNFTClassAnnualPct) Reset()         { *m = MsgSetNFTClassAnnualPct{} }
-func (m *MsgSetNFTClassAnnualPct) String() string { return proto.CompactTextString(m) }
-func (*MsgSetNFTClassAnnualPct) ProtoMessage()    {}
-func (*MsgSetNFTClassAnnualPct) Descriptor() ([]byte, []int) {
+func (m *MsgSetNFTClassValuationFeePct) Reset()         { *m = MsgSetNFTClassValuationFeePct{} }
+func (m *MsgSetNFTClassValuationFeePct) String() string { return proto.CompactTextString(m) }
+func (*MsgSetNFTClassValuationFeePct) ProtoMessage()    {}
+func (*MsgSetNFTClassValuationFeePct) Descriptor() ([]byte, []int) {
 	return fileDescriptor_870e08f0445a3564, []int{26}
 }
-func (m *MsgSetNFTClassAnnualPct) XXX_Unmarshal(b []byte) error {
+func (m *MsgSetNFTClassValuationFeePct) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSetNFTClassAnnualPct) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSetNFTClassValuationFeePct) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSetNFTClassAnnualPct.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSetNFTClassValuationFeePct.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1394,56 +1389,54 @@ func (m *MsgSetNFTClassAnnualPct) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return b[:n], nil
 	}
 }
-func (m *MsgSetNFTClassAnnualPct) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSetNFTClassAnnualPct.Merge(m, src)
+func (m *MsgSetNFTClassValuationFeePct) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassValuationFeePct.Merge(m, src)
 }
-func (m *MsgSetNFTClassAnnualPct) XXX_Size() int {
+func (m *MsgSetNFTClassValuationFeePct) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSetNFTClassAnnualPct) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSetNFTClassAnnualPct.DiscardUnknown(m)
+func (m *MsgSetNFTClassValuationFeePct) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassValuationFeePct.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSetNFTClassAnnualPct proto.InternalMessageInfo
+var xxx_messageInfo_MsgSetNFTClassValuationFeePct proto.InternalMessageInfo
 
-func (m *MsgSetNFTClassAnnualPct) GetNameDestination() string {
+func (m *MsgSetNFTClassValuationFeePct) GetNameDestination() string {
 	if m != nil {
 		return m.NameDestination
 	}
 	return ""
 }
 
-func (m *MsgSetNFTClassAnnualPct) GetClassId() string {
+func (m *MsgSetNFTClassValuationFeePct) GetClassId() string {
 	if m != nil {
 		return m.ClassId
 	}
 	return ""
 }
 
-func (m *MsgSetNFTClassAnnualPct) GetAnnualPct() string {
+func (m *MsgSetNFTClassValuationFeePct) GetValuationFeePct() string {
 	if m != nil {
-		return m.AnnualPct
+		return m.ValuationFeePct
 	}
 	return ""
 }
 
-// MsgSetNFTClassAnnualPctResponse defines the response for
-// MsgSetNFTClassAnnualPct
-type MsgSetNFTClassAnnualPctResponse struct {
+type MsgSetNFTClassValuationFeePctResponse struct {
 }
 
-func (m *MsgSetNFTClassAnnualPctResponse) Reset()         { *m = MsgSetNFTClassAnnualPctResponse{} }
-func (m *MsgSetNFTClassAnnualPctResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgSetNFTClassAnnualPctResponse) ProtoMessage()    {}
-func (*MsgSetNFTClassAnnualPctResponse) Descriptor() ([]byte, []int) {
+func (m *MsgSetNFTClassValuationFeePctResponse) Reset()         { *m = MsgSetNFTClassValuationFeePctResponse{} }
+func (m *MsgSetNFTClassValuationFeePctResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSetNFTClassValuationFeePctResponse) ProtoMessage()    {}
+func (*MsgSetNFTClassValuationFeePctResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_870e08f0445a3564, []int{27}
 }
-func (m *MsgSetNFTClassAnnualPctResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgSetNFTClassValuationFeePctResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSetNFTClassAnnualPctResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSetNFTClassValuationFeePctResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSetNFTClassAnnualPctResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSetNFTClassValuationFeePctResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1453,17 +1446,518 @@ func (m *MsgSetNFTClassAnnualPctResponse) XXX_Marshal(b []byte, deterministic bo
 		return b[:n], nil
 	}
 }
-func (m *MsgSetNFTClassAnnualPctResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSetNFTClassAnnualPctResponse.Merge(m, src)
+func (m *MsgSetNFTClassValuationFeePctResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassValuationFeePctResponse.Merge(m, src)
 }
-func (m *MsgSetNFTClassAnnualPctResponse) XXX_Size() int {
+func (m *MsgSetNFTClassValuationFeePctResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSetNFTClassAnnualPctResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSetNFTClassAnnualPctResponse.DiscardUnknown(m)
+func (m *MsgSetNFTClassValuationFeePctResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassValuationFeePctResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSetNFTClassAnnualPctResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgSetNFTClassValuationFeePctResponse proto.InternalMessageInfo
+
+// Set per-class valuation period (duration)
+type MsgSetNFTClassValuationPeriod struct {
+	NameDestination string        `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId         string        `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	ValuationPeriod time.Duration `protobuf:"bytes,3,opt,name=valuation_period,json=valuationPeriod,proto3,stdduration" json:"valuation_period"`
+}
+
+func (m *MsgSetNFTClassValuationPeriod) Reset()         { *m = MsgSetNFTClassValuationPeriod{} }
+func (m *MsgSetNFTClassValuationPeriod) String() string { return proto.CompactTextString(m) }
+func (*MsgSetNFTClassValuationPeriod) ProtoMessage()    {}
+func (*MsgSetNFTClassValuationPeriod) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{28}
+}
+func (m *MsgSetNFTClassValuationPeriod) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassValuationPeriod) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassValuationPeriod.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassValuationPeriod) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassValuationPeriod.Merge(m, src)
+}
+func (m *MsgSetNFTClassValuationPeriod) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassValuationPeriod) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassValuationPeriod.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassValuationPeriod proto.InternalMessageInfo
+
+func (m *MsgSetNFTClassValuationPeriod) GetNameDestination() string {
+	if m != nil {
+		return m.NameDestination
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassValuationPeriod) GetClassId() string {
+	if m != nil {
+		return m.ClassId
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassValuationPeriod) GetValuationPeriod() time.Duration {
+	if m != nil {
+		return m.ValuationPeriod
+	}
+	return 0
+}
+
+type MsgSetNFTClassValuationPeriodResponse struct {
+}
+
+func (m *MsgSetNFTClassValuationPeriodResponse) Reset()         { *m = MsgSetNFTClassValuationPeriodResponse{} }
+func (m *MsgSetNFTClassValuationPeriodResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSetNFTClassValuationPeriodResponse) ProtoMessage()    {}
+func (*MsgSetNFTClassValuationPeriodResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{29}
+}
+func (m *MsgSetNFTClassValuationPeriodResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassValuationPeriodResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassValuationPeriodResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassValuationPeriodResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassValuationPeriodResponse.Merge(m, src)
+}
+func (m *MsgSetNFTClassValuationPeriodResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassValuationPeriodResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassValuationPeriodResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassValuationPeriodResponse proto.InternalMessageInfo
+
+// MsgSetNFTClassBidTimeout sets the per-class bid timeout duration.
+type MsgSetNFTClassBidTimeout struct {
+	NameDestination string        `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId         string        `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	BidTimeout      time.Duration `protobuf:"bytes,3,opt,name=bid_timeout,json=bidTimeout,proto3,stdduration" json:"bid_timeout"`
+}
+
+func (m *MsgSetNFTClassBidTimeout) Reset()         { *m = MsgSetNFTClassBidTimeout{} }
+func (m *MsgSetNFTClassBidTimeout) String() string { return proto.CompactTextString(m) }
+func (*MsgSetNFTClassBidTimeout) ProtoMessage()    {}
+func (*MsgSetNFTClassBidTimeout) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{30}
+}
+func (m *MsgSetNFTClassBidTimeout) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassBidTimeout) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassBidTimeout.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassBidTimeout) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassBidTimeout.Merge(m, src)
+}
+func (m *MsgSetNFTClassBidTimeout) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassBidTimeout) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassBidTimeout.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassBidTimeout proto.InternalMessageInfo
+
+func (m *MsgSetNFTClassBidTimeout) GetNameDestination() string {
+	if m != nil {
+		return m.NameDestination
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassBidTimeout) GetClassId() string {
+	if m != nil {
+		return m.ClassId
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassBidTimeout) GetBidTimeout() time.Duration {
+	if m != nil {
+		return m.BidTimeout
+	}
+	return 0
+}
+
+type MsgSetNFTClassBidTimeoutResponse struct {
+}
+
+func (m *MsgSetNFTClassBidTimeoutResponse) Reset()         { *m = MsgSetNFTClassBidTimeoutResponse{} }
+func (m *MsgSetNFTClassBidTimeoutResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSetNFTClassBidTimeoutResponse) ProtoMessage()    {}
+func (*MsgSetNFTClassBidTimeoutResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{31}
+}
+func (m *MsgSetNFTClassBidTimeoutResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassBidTimeoutResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassBidTimeoutResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassBidTimeoutResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassBidTimeoutResponse.Merge(m, src)
+}
+func (m *MsgSetNFTClassBidTimeoutResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassBidTimeoutResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassBidTimeoutResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassBidTimeoutResponse proto.InternalMessageInfo
+
+// MsgSetNFTClassAllowedDenoms sets the per-class allowed denoms list.
+type MsgSetNFTClassAllowedDenoms struct {
+	NameDestination string   `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId         string   `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	AllowedDenoms   []string `protobuf:"bytes,3,rep,name=allowed_denoms,json=allowedDenoms,proto3" json:"allowed_denoms,omitempty"`
+}
+
+func (m *MsgSetNFTClassAllowedDenoms) Reset()         { *m = MsgSetNFTClassAllowedDenoms{} }
+func (m *MsgSetNFTClassAllowedDenoms) String() string { return proto.CompactTextString(m) }
+func (*MsgSetNFTClassAllowedDenoms) ProtoMessage()    {}
+func (*MsgSetNFTClassAllowedDenoms) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{32}
+}
+func (m *MsgSetNFTClassAllowedDenoms) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassAllowedDenoms) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassAllowedDenoms.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassAllowedDenoms) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassAllowedDenoms.Merge(m, src)
+}
+func (m *MsgSetNFTClassAllowedDenoms) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassAllowedDenoms) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassAllowedDenoms.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassAllowedDenoms proto.InternalMessageInfo
+
+func (m *MsgSetNFTClassAllowedDenoms) GetNameDestination() string {
+	if m != nil {
+		return m.NameDestination
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassAllowedDenoms) GetClassId() string {
+	if m != nil {
+		return m.ClassId
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassAllowedDenoms) GetAllowedDenoms() []string {
+	if m != nil {
+		return m.AllowedDenoms
+	}
+	return nil
+}
+
+type MsgSetNFTClassAllowedDenomsResponse struct {
+}
+
+func (m *MsgSetNFTClassAllowedDenomsResponse) Reset()         { *m = MsgSetNFTClassAllowedDenomsResponse{} }
+func (m *MsgSetNFTClassAllowedDenomsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSetNFTClassAllowedDenomsResponse) ProtoMessage()    {}
+func (*MsgSetNFTClassAllowedDenomsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{33}
+}
+func (m *MsgSetNFTClassAllowedDenomsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassAllowedDenomsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassAllowedDenomsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassAllowedDenomsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassAllowedDenomsResponse.Merge(m, src)
+}
+func (m *MsgSetNFTClassAllowedDenomsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassAllowedDenomsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassAllowedDenomsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassAllowedDenomsResponse proto.InternalMessageInfo
+
+// MsgSetNFTClassRejectBidValuationFeePercent sets the per-class reject fee
+// percent.
+type MsgSetNFTClassRejectBidValuationFeePercent struct {
+	NameDestination              string `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId                      string `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	RejectBidValuationFeePercent string `protobuf:"bytes,3,opt,name=reject_bid_valuation_fee_percent,json=rejectBidValuationFeePercent,proto3" json:"reject_bid_valuation_fee_percent,omitempty"`
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) Reset() {
+	*m = MsgSetNFTClassRejectBidValuationFeePercent{}
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgSetNFTClassRejectBidValuationFeePercent) ProtoMessage() {}
+func (*MsgSetNFTClassRejectBidValuationFeePercent) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{34}
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassRejectBidValuationFeePercent.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassRejectBidValuationFeePercent.Merge(m, src)
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassRejectBidValuationFeePercent.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassRejectBidValuationFeePercent proto.InternalMessageInfo
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) GetNameDestination() string {
+	if m != nil {
+		return m.NameDestination
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) GetClassId() string {
+	if m != nil {
+		return m.ClassId
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) GetRejectBidValuationFeePercent() string {
+	if m != nil {
+		return m.RejectBidValuationFeePercent
+	}
+	return ""
+}
+
+type MsgSetNFTClassRejectBidValuationFeePercentResponse struct {
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) Reset() {
+	*m = MsgSetNFTClassRejectBidValuationFeePercentResponse{}
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgSetNFTClassRejectBidValuationFeePercentResponse) ProtoMessage() {}
+func (*MsgSetNFTClassRejectBidValuationFeePercentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{35}
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassRejectBidValuationFeePercentResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassRejectBidValuationFeePercentResponse.Merge(m, src)
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassRejectBidValuationFeePercentResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassRejectBidValuationFeePercentResponse proto.InternalMessageInfo
+
+// MsgSetNFTClassMinimumBidPercentIncrease sets the per-class minimum bid
+// increase percent.
+type MsgSetNFTClassMinimumBidPercentIncrease struct {
+	NameDestination           string `protobuf:"bytes,1,opt,name=name_destination,json=nameDestination,proto3" json:"name_destination,omitempty"`
+	ClassId                   string `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	MinimumBidPercentIncrease string `protobuf:"bytes,3,opt,name=minimum_bid_percent_increase,json=minimumBidPercentIncrease,proto3" json:"minimum_bid_percent_increase,omitempty"`
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) Reset() {
+	*m = MsgSetNFTClassMinimumBidPercentIncrease{}
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) String() string { return proto.CompactTextString(m) }
+func (*MsgSetNFTClassMinimumBidPercentIncrease) ProtoMessage()    {}
+func (*MsgSetNFTClassMinimumBidPercentIncrease) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{36}
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassMinimumBidPercentIncrease.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassMinimumBidPercentIncrease.Merge(m, src)
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassMinimumBidPercentIncrease.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassMinimumBidPercentIncrease proto.InternalMessageInfo
+
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) GetNameDestination() string {
+	if m != nil {
+		return m.NameDestination
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) GetClassId() string {
+	if m != nil {
+		return m.ClassId
+	}
+	return ""
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) GetMinimumBidPercentIncrease() string {
+	if m != nil {
+		return m.MinimumBidPercentIncrease
+	}
+	return ""
+}
+
+type MsgSetNFTClassMinimumBidPercentIncreaseResponse struct {
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) Reset() {
+	*m = MsgSetNFTClassMinimumBidPercentIncreaseResponse{}
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgSetNFTClassMinimumBidPercentIncreaseResponse) ProtoMessage() {}
+func (*MsgSetNFTClassMinimumBidPercentIncreaseResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_870e08f0445a3564, []int{37}
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSetNFTClassMinimumBidPercentIncreaseResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSetNFTClassMinimumBidPercentIncreaseResponse.Merge(m, src)
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSetNFTClassMinimumBidPercentIncreaseResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSetNFTClassMinimumBidPercentIncreaseResponse proto.InternalMessageInfo
 
 // MsgSetListed sets the listed status for a specific NFT.
 // Only the owner of the NFT can update this setting.
@@ -1483,7 +1977,7 @@ func (m *MsgSetListed) Reset()         { *m = MsgSetListed{} }
 func (m *MsgSetListed) String() string { return proto.CompactTextString(m) }
 func (*MsgSetListed) ProtoMessage()    {}
 func (*MsgSetListed) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{28}
+	return fileDescriptor_870e08f0445a3564, []int{38}
 }
 func (m *MsgSetListed) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1548,7 +2042,7 @@ func (m *MsgSetListedResponse) Reset()         { *m = MsgSetListedResponse{} }
 func (m *MsgSetListedResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSetListedResponse) ProtoMessage()    {}
 func (*MsgSetListedResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{29}
+	return fileDescriptor_870e08f0445a3564, []int{39}
 }
 func (m *MsgSetListedResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1592,7 +2086,7 @@ func (m *MsgUpdateParams) Reset()         { *m = MsgUpdateParams{} }
 func (m *MsgUpdateParams) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParams) ProtoMessage()    {}
 func (*MsgUpdateParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{30}
+	return fileDescriptor_870e08f0445a3564, []int{40}
 }
 func (m *MsgUpdateParams) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1644,7 +2138,7 @@ func (m *MsgUpdateParamsResponse) Reset()         { *m = MsgUpdateParamsResponse
 func (m *MsgUpdateParamsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParamsResponse) ProtoMessage()    {}
 func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{31}
+	return fileDescriptor_870e08f0445a3564, []int{41}
 }
 func (m *MsgUpdateParamsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1688,7 +2182,7 @@ func (m *MsgMintCoins) Reset()         { *m = MsgMintCoins{} }
 func (m *MsgMintCoins) String() string { return proto.CompactTextString(m) }
 func (*MsgMintCoins) ProtoMessage()    {}
 func (*MsgMintCoins) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{32}
+	return fileDescriptor_870e08f0445a3564, []int{42}
 }
 func (m *MsgMintCoins) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1739,7 +2233,7 @@ func (m *MsgMintCoinsResponse) Reset()         { *m = MsgMintCoinsResponse{} }
 func (m *MsgMintCoinsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgMintCoinsResponse) ProtoMessage()    {}
 func (*MsgMintCoinsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{33}
+	return fileDescriptor_870e08f0445a3564, []int{43}
 }
 func (m *MsgMintCoinsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1781,7 +2275,7 @@ func (m *MsgBurnCoins) Reset()         { *m = MsgBurnCoins{} }
 func (m *MsgBurnCoins) String() string { return proto.CompactTextString(m) }
 func (*MsgBurnCoins) ProtoMessage()    {}
 func (*MsgBurnCoins) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{34}
+	return fileDescriptor_870e08f0445a3564, []int{44}
 }
 func (m *MsgBurnCoins) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1832,7 +2326,7 @@ func (m *MsgBurnCoinsResponse) Reset()         { *m = MsgBurnCoinsResponse{} }
 func (m *MsgBurnCoinsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgBurnCoinsResponse) ProtoMessage()    {}
 func (*MsgBurnCoinsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{35}
+	return fileDescriptor_870e08f0445a3564, []int{45}
 }
 func (m *MsgBurnCoinsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1875,7 +2369,7 @@ func (m *MsgSetDenomMetadata) Reset()         { *m = MsgSetDenomMetadata{} }
 func (m *MsgSetDenomMetadata) String() string { return proto.CompactTextString(m) }
 func (*MsgSetDenomMetadata) ProtoMessage()    {}
 func (*MsgSetDenomMetadata) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{36}
+	return fileDescriptor_870e08f0445a3564, []int{46}
 }
 func (m *MsgSetDenomMetadata) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1927,7 +2421,7 @@ func (m *MsgSetDenomMetadataResponse) Reset()         { *m = MsgSetDenomMetadata
 func (m *MsgSetDenomMetadataResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSetDenomMetadataResponse) ProtoMessage()    {}
 func (*MsgSetDenomMetadataResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{37}
+	return fileDescriptor_870e08f0445a3564, []int{47}
 }
 func (m *MsgSetDenomMetadataResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1971,7 +2465,7 @@ func (m *MsgSaveClass) Reset()         { *m = MsgSaveClass{} }
 func (m *MsgSaveClass) String() string { return proto.CompactTextString(m) }
 func (*MsgSaveClass) ProtoMessage()    {}
 func (*MsgSaveClass) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{38}
+	return fileDescriptor_870e08f0445a3564, []int{48}
 }
 func (m *MsgSaveClass) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2056,7 +2550,7 @@ func (m *MsgSaveClassResponse) Reset()         { *m = MsgSaveClassResponse{} }
 func (m *MsgSaveClassResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSaveClassResponse) ProtoMessage()    {}
 func (*MsgSaveClassResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{39}
+	return fileDescriptor_870e08f0445a3564, []int{49}
 }
 func (m *MsgSaveClassResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2098,7 +2592,7 @@ func (m *MsgMintNFT) Reset()         { *m = MsgMintNFT{} }
 func (m *MsgMintNFT) String() string { return proto.CompactTextString(m) }
 func (*MsgMintNFT) ProtoMessage()    {}
 func (*MsgMintNFT) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{40}
+	return fileDescriptor_870e08f0445a3564, []int{50}
 }
 func (m *MsgMintNFT) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2169,7 +2663,7 @@ func (m *MsgMintNFTResponse) Reset()         { *m = MsgMintNFTResponse{} }
 func (m *MsgMintNFTResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgMintNFTResponse) ProtoMessage()    {}
 func (*MsgMintNFTResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{41}
+	return fileDescriptor_870e08f0445a3564, []int{51}
 }
 func (m *MsgMintNFTResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2209,7 +2703,7 @@ func (m *MsgBurnNFT) Reset()         { *m = MsgBurnNFT{} }
 func (m *MsgBurnNFT) String() string { return proto.CompactTextString(m) }
 func (*MsgBurnNFT) ProtoMessage()    {}
 func (*MsgBurnNFT) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{42}
+	return fileDescriptor_870e08f0445a3564, []int{52}
 }
 func (m *MsgBurnNFT) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2266,7 +2760,7 @@ func (m *MsgBurnNFTResponse) Reset()         { *m = MsgBurnNFTResponse{} }
 func (m *MsgBurnNFTResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgBurnNFTResponse) ProtoMessage()    {}
 func (*MsgBurnNFTResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{43}
+	return fileDescriptor_870e08f0445a3564, []int{53}
 }
 func (m *MsgBurnNFTResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2311,7 +2805,7 @@ func (m *MsgMoveCoins) Reset()         { *m = MsgMoveCoins{} }
 func (m *MsgMoveCoins) String() string { return proto.CompactTextString(m) }
 func (*MsgMoveCoins) ProtoMessage()    {}
 func (*MsgMoveCoins) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{44}
+	return fileDescriptor_870e08f0445a3564, []int{54}
 }
 func (m *MsgMoveCoins) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2368,7 +2862,7 @@ func (m *MsgMoveCoinsResponse) Reset()         { *m = MsgMoveCoinsResponse{} }
 func (m *MsgMoveCoinsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgMoveCoinsResponse) ProtoMessage()    {}
 func (*MsgMoveCoinsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{45}
+	return fileDescriptor_870e08f0445a3564, []int{55}
 }
 func (m *MsgMoveCoinsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2414,7 +2908,7 @@ func (m *MsgMoveNft) Reset()         { *m = MsgMoveNft{} }
 func (m *MsgMoveNft) String() string { return proto.CompactTextString(m) }
 func (*MsgMoveNft) ProtoMessage()    {}
 func (*MsgMoveNft) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{46}
+	return fileDescriptor_870e08f0445a3564, []int{56}
 }
 func (m *MsgMoveNft) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2478,7 +2972,7 @@ func (m *MsgMoveNftResponse) Reset()         { *m = MsgMoveNftResponse{} }
 func (m *MsgMoveNftResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgMoveNftResponse) ProtoMessage()    {}
 func (*MsgMoveNftResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_870e08f0445a3564, []int{47}
+	return fileDescriptor_870e08f0445a3564, []int{57}
 }
 func (m *MsgMoveNftResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2534,8 +3028,18 @@ func init() {
 	proto.RegisterType((*MsgSetNFTClassExtraDataResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassExtraDataResponse")
 	proto.RegisterType((*MsgSetNFTClassAlwaysListed)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed")
 	proto.RegisterType((*MsgSetNFTClassAlwaysListedResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListedResponse")
-	proto.RegisterType((*MsgSetNFTClassAnnualPct)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct")
-	proto.RegisterType((*MsgSetNFTClassAnnualPctResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPctResponse")
+	proto.RegisterType((*MsgSetNFTClassValuationFeePct)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct")
+	proto.RegisterType((*MsgSetNFTClassValuationFeePctResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse")
+	proto.RegisterType((*MsgSetNFTClassValuationPeriod)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod")
+	proto.RegisterType((*MsgSetNFTClassValuationPeriodResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse")
+	proto.RegisterType((*MsgSetNFTClassBidTimeout)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout")
+	proto.RegisterType((*MsgSetNFTClassBidTimeoutResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse")
+	proto.RegisterType((*MsgSetNFTClassAllowedDenoms)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms")
+	proto.RegisterType((*MsgSetNFTClassAllowedDenomsResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse")
+	proto.RegisterType((*MsgSetNFTClassRejectBidValuationFeePercent)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent")
+	proto.RegisterType((*MsgSetNFTClassRejectBidValuationFeePercentResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse")
+	proto.RegisterType((*MsgSetNFTClassMinimumBidPercentIncrease)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease")
+	proto.RegisterType((*MsgSetNFTClassMinimumBidPercentIncreaseResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse")
 	proto.RegisterType((*MsgSetListed)(nil), "dysonprotocol.nameservice.v1.MsgSetListed")
 	proto.RegisterType((*MsgSetListedResponse)(nil), "dysonprotocol.nameservice.v1.MsgSetListedResponse")
 	proto.RegisterType((*MsgUpdateParams)(nil), "dysonprotocol.nameservice.v1.MsgUpdateParams")
@@ -2563,123 +3067,144 @@ func init() {
 }
 
 var fileDescriptor_870e08f0445a3564 = []byte{
-	// 1848 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x5a, 0xcd, 0x6f, 0x1b, 0x5b,
-	0x15, 0xcf, 0x34, 0x89, 0x63, 0x9f, 0xa4, 0xaf, 0x79, 0xf3, 0x92, 0x36, 0x99, 0x92, 0x0f, 0xcc,
-	0x03, 0xd2, 0xa0, 0xda, 0x4d, 0xaa, 0x7e, 0x90, 0x52, 0x95, 0x38, 0x6d, 0x44, 0x24, 0x92, 0x46,
-	0x4e, 0x60, 0xc1, 0xc6, 0xba, 0x9e, 0xb9, 0xb6, 0x87, 0x78, 0x66, 0xac, 0xb9, 0xd7, 0x8e, 0x0d,
-	0x0b, 0x2a, 0x50, 0x59, 0xb1, 0xe8, 0x86, 0x4d, 0x25, 0x58, 0x22, 0x84, 0x90, 0xc8, 0x82, 0x05,
-	0xff, 0x01, 0x15, 0x0b, 0xa8, 0x60, 0xc3, 0x8a, 0x42, 0x2b, 0x94, 0x3f, 0x81, 0x2d, 0xba, 0x77,
-	0xee, 0x5c, 0x8f, 0xbf, 0xaf, 0xfd, 0xda, 0x74, 0xd3, 0xce, 0xc7, 0x39, 0xf7, 0xfc, 0x7e, 0xe7,
-	0x9c, 0x39, 0xf7, 0x9c, 0xeb, 0xc0, 0x57, 0xad, 0x06, 0xf1, 0xdc, 0x8a, 0xef, 0x51, 0xcf, 0xf4,
-	0xca, 0x69, 0x17, 0x39, 0x98, 0x60, 0xbf, 0x66, 0x9b, 0x38, 0x5d, 0xdb, 0x48, 0xd3, 0x7a, 0x8a,
-	0xbf, 0xd2, 0xbf, 0xd4, 0x22, 0x96, 0x8a, 0x88, 0xa5, 0x6a, 0x1b, 0xc6, 0xb2, 0xe9, 0x11, 0xc7,
-	0x23, 0xe9, 0x3c, 0x22, 0x4c, 0x2d, 0x8f, 0x29, 0xda, 0x48, 0x9b, 0x9e, 0xed, 0x06, 0xda, 0xc6,
-	0x5c, 0xd1, 0x2b, 0x7a, 0xfc, 0x32, 0xcd, 0xae, 0xc4, 0xd3, 0xc5, 0x40, 0x2b, 0x17, 0xbc, 0x08,
-	0x6e, 0xc4, 0xab, 0x6b, 0x62, 0x41, 0x87, 0x14, 0x19, 0x0c, 0x87, 0x14, 0xc5, 0x8b, 0x1b, 0x7d,
-	0xe1, 0x56, 0x90, 0x8f, 0x9c, 0x70, 0x8d, 0x95, 0xa2, 0xe7, 0x15, 0xcb, 0x38, 0xcd, 0xef, 0xf2,
-	0xd5, 0x42, 0x9a, 0xda, 0x0e, 0x26, 0x14, 0x39, 0x15, 0x21, 0xf0, 0x29, 0x72, 0x6c, 0xd7, 0x4b,
-	0xf3, 0x7f, 0xc5, 0xa3, 0x26, 0x11, 0xf7, 0x44, 0x12, 0x61, 0x37, 0xc1, 0xfb, 0xe4, 0xef, 0x35,
-	0x48, 0xec, 0x93, 0xe2, 0x8e, 0xe7, 0x38, 0x36, 0xd5, 0xef, 0x42, 0xc2, 0xe4, 0x57, 0x14, 0xfb,
-	0x0b, 0xda, 0xaa, 0xb6, 0x96, 0xc8, 0x2c, 0xfc, 0xfd, 0x8f, 0x37, 0xe7, 0x04, 0x95, 0x6d, 0xcb,
-	0xf2, 0x31, 0x21, 0x47, 0xd4, 0xb7, 0xdd, 0x62, 0xb6, 0x29, 0xaa, 0x2f, 0xc0, 0x54, 0x09, 0xd7,
-	0x4b, 0x88, 0x94, 0x16, 0x2e, 0x31, 0xad, 0x6c, 0x78, 0xab, 0x3f, 0x84, 0x44, 0x0d, 0x95, 0xab,
-	0x88, 0xda, 0x9e, 0xbb, 0x30, 0xbe, 0xaa, 0xad, 0x4d, 0x6f, 0x2e, 0xa6, 0xc4, 0x72, 0xcc, 0xb9,
-	0x29, 0x81, 0x29, 0xb5, 0xe3, 0xd9, 0x6e, 0x66, 0xe2, 0xd5, 0xbf, 0x56, 0xc6, 0xb2, 0x4d, 0x8d,
-	0xad, 0x4f, 0x7e, 0x7a, 0x7e, 0xb6, 0xde, 0x34, 0x94, 0xfc, 0x0c, 0x3e, 0x95, 0x68, 0xb3, 0x98,
-	0x54, 0x3c, 0x97, 0xe0, 0xe4, 0x8f, 0x39, 0x85, 0x2c, 0xae, 0x61, 0x54, 0x1e, 0x99, 0x82, 0x0e,
-	0x13, 0xcc, 0xf7, 0x02, 0x3f, 0xbf, 0x66, 0xcf, 0x08, 0x2a, 0x53, 0x8e, 0x3b, 0x91, 0xe5, 0xd7,
-	0x3d, 0x10, 0x05, 0xc6, 0x25, 0x22, 0x02, 0xf3, 0x0c, 0xa6, 0x8f, 0x11, 0xc5, 0x4f, 0xea, 0x14,
-	0xfb, 0x2e, 0x2a, 0x1f, 0xb0, 0x15, 0xef, 0x42, 0x02, 0x55, 0x69, 0xc9, 0xf3, 0x6d, 0xda, 0x18,
-	0x8c, 0x4e, 0x8a, 0x76, 0x43, 0x27, 0x90, 0x48, 0x99, 0xe4, 0x0a, 0x2c, 0x75, 0x35, 0x2a, 0x51,
-	0xfd, 0x4f, 0x83, 0x2b, 0xfb, 0xa4, 0x78, 0x84, 0xe9, 0xf7, 0x43, 0x07, 0xeb, 0x29, 0x98, 0xf4,
-	0x4e, 0x5d, 0x05, 0x57, 0x05, 0x62, 0xfa, 0x2a, 0xcc, 0xb8, 0x05, 0x9a, 0x33, 0xcb, 0x88, 0x90,
-	0x9c, 0x6d, 0x09, 0x40, 0xe0, 0x16, 0xe8, 0x0e, 0x7b, 0xb4, 0x67, 0xe9, 0xf3, 0x10, 0x63, 0x12,
-	0xb6, 0x25, 0xdc, 0x36, 0xe9, 0x16, 0xe8, 0x9e, 0xa5, 0x67, 0xa2, 0x89, 0x30, 0x31, 0x28, 0x11,
-	0x12, 0x2c, 0x11, 0x7e, 0x7b, 0x7e, 0xb6, 0xae, 0x45, 0xb2, 0x41, 0xff, 0x06, 0xe8, 0x0e, 0xaa,
-	0xe7, 0x90, 0xeb, 0x56, 0x51, 0x39, 0x57, 0x31, 0x69, 0xae, 0x80, 0xf1, 0xc2, 0x24, 0x37, 0x73,
-	0xc5, 0x41, 0xf5, 0x6d, 0xfe, 0xe2, 0xd0, 0xa4, 0xbb, 0x18, 0x6f, 0x01, 0x73, 0x4f, 0x80, 0x3a,
-	0xb9, 0x08, 0xd7, 0xda, 0x88, 0x4b, 0xa7, 0xfc, 0x04, 0xe2, 0x3c, 0x7e, 0x2e, 0x3e, 0x65, 0xce,
-	0xa8, 0xa0, 0x86, 0x8a, 0x33, 0xb8, 0xd8, 0xc8, 0xce, 0x10, 0xd8, 0xf8, 0x22, 0xc9, 0x43, 0x98,
-	0x0d, 0x01, 0x84, 0xa0, 0xf4, 0x6f, 0x41, 0x0c, 0xd7, 0x2b, 0xb6, 0x1f, 0xe4, 0xc8, 0xf4, 0xa6,
-	0x91, 0x0a, 0x3e, 0xfd, 0x54, 0xf8, 0xe9, 0xa7, 0x8e, 0xc3, 0x4f, 0x3f, 0x13, 0x67, 0xae, 0x7a,
-	0xf1, 0x66, 0x45, 0xcb, 0x0a, 0x9d, 0xe4, 0x5f, 0x34, 0x98, 0xde, 0x27, 0xc5, 0xc3, 0x32, 0x32,
-	0x71, 0xc6, 0xb6, 0xf4, 0x5b, 0x10, 0xcb, 0xdb, 0x96, 0xa5, 0xc0, 0x4b, 0xc8, 0x8d, 0x1e, 0xe5,
-	0x1d, 0x80, 0xbc, 0x6d, 0xe5, 0x90, 0xe3, 0x55, 0x5d, 0x3a, 0x5c, 0x98, 0xf3, 0xb6, 0xb5, 0xcd,
-	0xd5, 0xb6, 0xa6, 0x99, 0x77, 0x04, 0x94, 0xe4, 0x3c, 0x7c, 0x16, 0xe1, 0x22, 0xc3, 0xf6, 0x33,
-	0x0d, 0x66, 0xf6, 0x49, 0x71, 0xdb, 0x34, 0x71, 0x85, 0x32, 0x92, 0x17, 0x95, 0xc8, 0x2d, 0x79,
-	0x75, 0x15, 0xe6, 0xa2, 0x20, 0x24, 0xba, 0xbf, 0x06, 0xe8, 0xb2, 0xf8, 0x87, 0xd8, 0xbc, 0x50,
-	0x74, 0xfa, 0x1e, 0x5c, 0x76, 0xf1, 0x69, 0x6e, 0xb4, 0x4f, 0x6d, 0xc6, 0xc5, 0xa7, 0xf2, 0x0b,
-	0x69, 0x21, 0x8a, 0x38, 0x51, 0xc9, 0x47, 0x26, 0xea, 0x1e, 0x5c, 0xf6, 0xf9, 0x43, 0xdb, 0x73,
-	0xf9, 0xc7, 0xa8, 0xad, 0x8e, 0xab, 0x9b, 0x93, 0xaa, 0xbb, 0x18, 0x27, 0x9f, 0x07, 0x59, 0xbb,
-	0x53, 0x46, 0xb6, 0x73, 0xb1, 0x59, 0xdb, 0x2d, 0xe1, 0x42, 0x18, 0x32, 0xa4, 0xcf, 0x35, 0x5e,
-	0xe8, 0x8f, 0x30, 0x7d, 0x8c, 0x09, 0xb5, 0xdd, 0xd1, 0xca, 0x67, 0xb7, 0x5d, 0x66, 0x15, 0xa6,
-	0xad, 0xe6, 0x92, 0x02, 0x59, 0xf4, 0x51, 0x4b, 0x24, 0xae, 0xc3, 0x62, 0x07, 0x0c, 0x09, 0xf2,
-	0x6f, 0x12, 0xe4, 0xc1, 0xee, 0xf1, 0x3e, 0xa6, 0xc8, 0x42, 0x14, 0xe9, 0x3b, 0x30, 0xcb, 0x0c,
-	0xe5, 0xa2, 0x56, 0x06, 0xe1, 0xbd, 0xc2, 0x34, 0xa2, 0x4c, 0x17, 0x21, 0xde, 0xe6, 0xd8, 0x29,
-	0xb3, 0x7f, 0x2a, 0x1a, 0x10, 0x77, 0x04, 0x04, 0x9e, 0x85, 0x89, 0xac, 0xbc, 0xd7, 0x67, 0x61,
-	0xbc, 0xea, 0xdb, 0xa2, 0x74, 0xb3, 0xcb, 0xad, 0x79, 0xc6, 0xb1, 0x03, 0x67, 0x93, 0x6e, 0x84,
-	0x90, 0xa4, 0xfb, 0x07, 0x2d, 0xac, 0xeb, 0x07, 0xbb, 0xc7, 0x3c, 0xc6, 0x4f, 0xea, 0xd4, 0x47,
-	0x8f, 0x2f, 0x82, 0xf4, 0x12, 0x00, 0x66, 0xc6, 0x72, 0x9c, 0x5f, 0x40, 0x3c, 0x81, 0x43, 0xf3,
-	0xbd, 0xe8, 0x7c, 0x19, 0x56, 0x7a, 0x00, 0x96, 0xa4, 0xfe, 0xa4, 0x81, 0xd1, 0x2a, 0xb3, 0x5d,
-	0x3e, 0x45, 0x0d, 0xf2, 0x5d, 0x9b, 0x50, 0x6c, 0x7d, 0x70, 0x5e, 0x5f, 0x81, 0xcb, 0x88, 0xdb,
-	0xcb, 0x95, 0xb9, 0x41, 0x4e, 0x2d, 0x9e, 0x9d, 0x41, 0x11, 0x10, 0xbd, 0xd8, 0x7d, 0x0e, 0xc9,
-	0xde, 0xc8, 0xfb, 0x44, 0x4d, 0xee, 0xdb, 0x17, 0x11, 0xb5, 0x66, 0xf7, 0x10, 0x46, 0x0d, 0x85,
-	0xe6, 0x95, 0xa3, 0x26, 0x01, 0x4b, 0x52, 0xbf, 0x09, 0x2a, 0xfe, 0x11, 0xa6, 0x22, 0x4e, 0x77,
-	0x20, 0xc1, 0x3e, 0x0a, 0xb5, 0xea, 0x10, 0x77, 0x0b, 0xf4, 0xe9, 0x17, 0x2b, 0xfc, 0x57, 0x21,
-	0x26, 0x02, 0x36, 0xc1, 0x03, 0x26, 0xee, 0x44, 0x97, 0x28, 0xa1, 0x88, 0x2d, 0x4b, 0xe2, 0x94,
-	0x04, 0x7e, 0x15, 0x34, 0x87, 0xdf, 0xab, 0x58, 0x88, 0xe2, 0x43, 0x3e, 0x76, 0x8c, 0xdc, 0xad,
-	0x66, 0x20, 0x16, 0x0c, 0x2e, 0x1c, 0xfe, 0xf4, 0xe6, 0xe7, 0xa9, 0x7e, 0xc3, 0x56, 0x2a, 0xb0,
-	0x26, 0x9a, 0x7f, 0xa1, 0xd9, 0xd1, 0xdd, 0x06, 0x2d, 0x5c, 0x14, 0x9e, 0x84, 0xfe, 0xdf, 0xc0,
-	0xf7, 0xfb, 0xb6, 0x4b, 0xd9, 0x16, 0x43, 0xde, 0x4f, 0x16, 0x35, 0x20, 0x26, 0xda, 0x98, 0x4b,
-	0x83, 0xf6, 0xb4, 0x5d, 0x86, 0xfc, 0x77, 0x6f, 0x56, 0xd6, 0x8a, 0x36, 0x2d, 0x55, 0xf3, 0x29,
-	0xd3, 0x73, 0xc4, 0xf4, 0x27, 0xfe, 0xbb, 0x49, 0xac, 0x93, 0x34, 0x6d, 0x54, 0x30, 0xe1, 0x0a,
-	0xe4, 0xe5, 0xf9, 0xd9, 0xfa, 0x4c, 0x19, 0x17, 0x91, 0xd9, 0xc8, 0xb1, 0xa9, 0x92, 0x04, 0x1b,
-	0xa2, 0x30, 0xd8, 0x2b, 0x0d, 0x83, 0xd0, 0x49, 0x9a, 0xd1, 0xaa, 0xcf, 0xf8, 0x67, 0xaa, 0xbe,
-	0xfb, 0x1e, 0xf9, 0x9b, 0xea, 0xfc, 0x6f, 0x0d, 0xcb, 0x5f, 0x8d, 0xa9, 0x24, 0x24, 0x99, 0xfe,
-	0x5a, 0xe3, 0x9b, 0x33, 0xdf, 0xfd, 0x5c, 0xcf, 0x91, 0x3b, 0xdc, 0xa8, 0x89, 0xfa, 0x28, 0xb2,
-	0x45, 0x05, 0xa9, 0xba, 0xd4, 0x64, 0xe9, 0x9e, 0x48, 0x96, 0xa1, 0x21, 0x91, 0xa3, 0x52, 0xa9,
-	0x23, 0x4b, 0x97, 0xe0, 0x7a, 0x17, 0x7c, 0x12, 0xff, 0xb3, 0x4b, 0x41, 0x95, 0x40, 0x35, 0xcc,
-	0x3f, 0xe7, 0x0f, 0x5e, 0xef, 0xc2, 0x7e, 0x63, 0x3c, 0xd2, 0x6f, 0x5c, 0x85, 0x18, 0x69, 0x38,
-	0x79, 0xaf, 0x2c, 0x76, 0x65, 0x71, 0x27, 0xfa, 0x10, 0xd3, 0xb7, 0x2b, 0x1c, 0xc6, 0xa4, 0xec,
-	0x43, 0xc2, 0x47, 0xe1, 0xae, 0x1d, 0x93, 0xbb, 0x36, 0x33, 0x5d, 0xf5, 0xed, 0x1c, 0x9f, 0xfc,
-	0xa7, 0x02, 0xd3, 0x55, 0xdf, 0xfe, 0x0e, 0x22, 0xa5, 0xfe, 0xa1, 0x95, 0x1e, 0x90, 0xae, 0xf9,
-	0xb3, 0x06, 0x20, 0xb2, 0xfb, 0x60, 0xf7, 0xf8, 0x63, 0xf5, 0x2c, 0x82, 0xe1, 0x44, 0x77, 0x86,
-	0x93, 0x4a, 0x0c, 0xe7, 0x40, 0x6f, 0x12, 0x91, 0xfc, 0x5e, 0x06, 0xfc, 0x58, 0x4e, 0x7f, 0x3c,
-	0x7e, 0xfd, 0x21, 0x0b, 0x6c, 0x12, 0xf2, 0x7f, 0x44, 0x5d, 0xf5, 0x6a, 0xf8, 0x3d, 0xd6, 0x95,
-	0xfb, 0x10, 0xb3, 0xdd, 0x4a, 0x95, 0x12, 0x51, 0x57, 0x8c, 0xae, 0x5f, 0xdc, 0x1e, 0x13, 0x09,
-	0xb7, 0x84, 0x40, 0x5e, 0x7f, 0x00, 0x53, 0x5e, 0x95, 0x72, 0xd5, 0x71, 0xae, 0x7a, 0xbd, 0xab,
-	0xea, 0x53, 0x2e, 0x23, 0x74, 0x43, 0x8d, 0x01, 0x35, 0x35, 0xa4, 0x28, 0xb9, 0xff, 0x43, 0xa4,
-	0xa3, 0x57, 0xc3, 0x07, 0x05, 0xfa, 0xb1, 0xd2, 0xf1, 0x1e, 0x00, 0xf5, 0x72, 0x28, 0x58, 0x36,
-	0xc8, 0xca, 0x7e, 0x85, 0x8d, 0x7a, 0xe2, 0xc1, 0x80, 0xd4, 0x0c, 0x48, 0x85, 0x5c, 0x37, 0xdf,
-	0xcc, 0xc3, 0xf8, 0x3e, 0x29, 0xea, 0x79, 0x88, 0x89, 0x73, 0xc0, 0xaf, 0xf7, 0xdf, 0xb0, 0xe5,
-	0x11, 0x9c, 0x91, 0x56, 0x14, 0x94, 0x03, 0x63, 0x1e, 0x62, 0xe2, 0xa0, 0x6e, 0xb0, 0x8d, 0x40,
-	0x50, 0xc1, 0x46, 0xeb, 0xe9, 0x9b, 0x4e, 0x61, 0xa6, 0xe5, 0x8c, 0xeb, 0xe6, 0xc0, 0x05, 0xa2,
-	0xe2, 0xc6, 0x9d, 0xa1, 0xc4, 0xa5, 0xd5, 0x1c, 0x4c, 0x06, 0xa7, 0x48, 0x5f, 0x53, 0xc0, 0xeb,
-	0xe2, 0x53, 0x23, 0xa5, 0x26, 0x27, 0x0d, 0x94, 0x20, 0x2e, 0x8f, 0x74, 0x6e, 0x0c, 0xd4, 0x0d,
-	0x45, 0x8d, 0x0d, 0x65, 0x51, 0x69, 0xe9, 0x04, 0x12, 0xcd, 0x83, 0x95, 0xf5, 0x81, 0xfa, 0x52,
-	0xd6, 0xd8, 0x54, 0x97, 0x8d, 0x1a, 0x6b, 0x9e, 0x93, 0xac, 0x2b, 0xf8, 0x44, 0xc8, 0x2a, 0x18,
-	0xeb, 0x3c, 0xaf, 0x28, 0x41, 0x5c, 0x1e, 0x30, 0x0c, 0xf6, 0x61, 0x28, 0xaa, 0xe0, 0xc3, 0xf6,
-	0xf3, 0x02, 0xfd, 0x47, 0xf0, 0x49, 0xdb, 0x59, 0x41, 0x5a, 0x25, 0xaf, 0x22, 0x0a, 0xc6, 0xbd,
-	0x21, 0x15, 0xda, 0x6c, 0x47, 0x8f, 0x00, 0x94, 0x6c, 0x47, 0x14, 0xd4, 0x6c, 0x77, 0x99, 0xc9,
-	0xf5, 0x5f, 0x68, 0x30, 0xd7, 0x75, 0x20, 0xbf, 0xa3, 0xb8, 0x62, 0xab, 0x9a, 0xf1, 0x70, 0x24,
-	0x35, 0x09, 0xe7, 0x97, 0x1a, 0x5c, 0xeb, 0x35, 0x4a, 0xdf, 0x1f, 0x66, 0xe9, 0xa8, 0xa6, 0xf1,
-	0xed, 0x51, 0x35, 0x7b, 0xb9, 0xa9, 0x39, 0x01, 0x0f, 0xe5, 0x26, 0xa9, 0x36, 0x9c, 0x9b, 0x3a,
-	0xc6, 0x57, 0xf6, 0x11, 0x36, 0x47, 0xd7, 0x75, 0x95, 0xb5, 0x84, 0x27, 0x36, 0xd5, 0x65, 0xa3,
-	0xf5, 0xb9, 0x65, 0xcc, 0x1c, 0x5c, 0x9f, 0xa3, 0xe2, 0x0a, 0xf5, 0xb9, 0xdb, 0x94, 0xc8, 0x28,
-	0x36, 0x27, 0xc4, 0xc1, 0x14, 0xa5, 0xac, 0x02, 0xc5, 0x8e, 0x91, 0x8c, 0x19, 0x6b, 0x8e, 0x63,
-	0x83, 0x8d, 0x49, 0x59, 0x05, 0x63, 0x1d, 0x53, 0x91, 0xfe, 0x4c, 0x83, 0xd9, 0x8e, 0x91, 0x68,
-	0x43, 0xad, 0x78, 0x44, 0x54, 0x8c, 0x6f, 0x0e, 0xad, 0xd2, 0x92, 0x3f, 0x72, 0xa8, 0x51, 0xc8,
-	0x9f, 0x50, 0x56, 0x25, 0x7f, 0xda, 0x47, 0x05, 0x1d, 0xc3, 0x54, 0x38, 0x26, 0xac, 0x29, 0xc5,
-	0xe6, 0x60, 0xf7, 0xd8, 0xb8, 0xa5, 0x2a, 0x19, 0x35, 0x13, 0x76, 0xeb, 0x6b, 0x4a, 0x51, 0x51,
-	0x33, 0xd3, 0xd6, 0x65, 0xf3, 0xbc, 0x94, 0x1d, 0xb6, 0x42, 0x5e, 0x86, 0xb2, 0x2a, 0x79, 0xd9,
-	0xde, 0xd6, 0x72, 0xd7, 0x89, 0x96, 0x76, 0x4d, 0x49, 0xfd, 0xa0, 0x40, 0x55, 0x5c, 0xd7, 0xda,
-	0x51, 0xea, 0x3f, 0xd7, 0x40, 0xef, 0xf2, 0xeb, 0xe7, 0xed, 0xc1, 0xdb, 0x68, 0x87, 0x92, 0xf1,
-	0x60, 0x04, 0xa5, 0x10, 0x88, 0x31, 0xf9, 0xec, 0xfc, 0x6c, 0x5d, 0xcb, 0x3c, 0x7a, 0xf5, 0x76,
-	0x59, 0x7b, 0xfd, 0x76, 0x59, 0xfb, 0xf7, 0xdb, 0x65, 0xed, 0xc5, 0xbb, 0xe5, 0xb1, 0xd7, 0xef,
-	0x96, 0xc7, 0xfe, 0xf9, 0x6e, 0x79, 0xec, 0x07, 0xad, 0x7f, 0x2d, 0xc0, 0x4f, 0x2e, 0xea, 0x2d,
-	0x3f, 0xc2, 0xf3, 0x53, 0x8b, 0x7c, 0x8c, 0x4b, 0xdc, 0xfe, 0x7f, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0x4d, 0x84, 0xbe, 0x06, 0x5d, 0x20, 0x00, 0x00,
+	// 2191 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x5a, 0xcd, 0x6f, 0x1c, 0x49,
+	0x15, 0x4f, 0xc7, 0xf1, 0xd8, 0xf3, 0xec, 0x24, 0x4e, 0xaf, 0x9d, 0x8c, 0x3b, 0x89, 0x6d, 0x66,
+	0x13, 0xe2, 0x1d, 0x29, 0x33, 0xb1, 0x97, 0x64, 0x77, 0x13, 0x96, 0xe0, 0xb1, 0x63, 0xad, 0x25,
+	0xc6, 0x6b, 0x4d, 0x0c, 0x07, 0x2e, 0xad, 0x9a, 0xee, 0xf2, 0xb8, 0xc9, 0x74, 0xf7, 0xa8, 0xbb,
+	0x66, 0x6c, 0xc3, 0x81, 0x08, 0xb4, 0x9c, 0x90, 0xd8, 0x0b, 0xd2, 0x6a, 0x25, 0xf6, 0x88, 0x10,
+	0x42, 0x22, 0x07, 0x0e, 0x48, 0x70, 0x42, 0x02, 0x56, 0x1c, 0x60, 0x05, 0x07, 0x38, 0xb1, 0x90,
+	0x08, 0x72, 0xe0, 0x6f, 0x40, 0x5a, 0xd5, 0x47, 0xd7, 0x74, 0xcf, 0x67, 0xcd, 0xac, 0x9d, 0x5c,
+	0x92, 0xee, 0x9a, 0xf7, 0xea, 0xfd, 0x7e, 0xaf, 0x5e, 0x55, 0xbd, 0xf7, 0xda, 0x70, 0xdd, 0x3e,
+	0x0a, 0x7d, 0xaf, 0x1e, 0xf8, 0xc4, 0xb7, 0xfc, 0x5a, 0xc1, 0x43, 0x2e, 0x0e, 0x71, 0xd0, 0x74,
+	0x2c, 0x5c, 0x68, 0xae, 0x14, 0xc8, 0x61, 0x9e, 0xfd, 0xa4, 0x5f, 0x49, 0x88, 0xe5, 0x63, 0x62,
+	0xf9, 0xe6, 0x8a, 0xb1, 0x60, 0xf9, 0xa1, 0xeb, 0x87, 0x85, 0x0a, 0x0a, 0xa9, 0x5a, 0x05, 0x13,
+	0xb4, 0x52, 0xb0, 0x7c, 0xc7, 0xe3, 0xda, 0xc6, 0x6c, 0xd5, 0xaf, 0xfa, 0xec, 0xb1, 0x40, 0x9f,
+	0xc4, 0xe8, 0x3c, 0xd7, 0x32, 0xf9, 0x0f, 0xfc, 0x45, 0xfc, 0x74, 0x49, 0x4c, 0xe8, 0x86, 0x55,
+	0x0a, 0xc3, 0x0d, 0xab, 0xe2, 0x87, 0xd7, 0xfa, 0xc2, 0xad, 0xa3, 0x00, 0xb9, 0xd1, 0x1c, 0x8b,
+	0x55, 0xdf, 0xaf, 0xd6, 0x70, 0x81, 0xbd, 0x55, 0x1a, 0x7b, 0x05, 0xe2, 0xb8, 0x38, 0x24, 0xc8,
+	0xad, 0x0b, 0x81, 0x0b, 0xc8, 0x75, 0x3c, 0xbf, 0xc0, 0xfe, 0x15, 0x43, 0x2d, 0x22, 0xde, 0x23,
+	0x49, 0x84, 0xbe, 0x44, 0xbf, 0xb7, 0xcf, 0x69, 0x37, 0x02, 0x44, 0x1c, 0x5f, 0x10, 0xcd, 0xfe,
+	0x42, 0x83, 0x74, 0x29, 0xac, 0xae, 0xfb, 0xae, 0xeb, 0x10, 0xfd, 0x0e, 0xa4, 0x2d, 0xf6, 0x44,
+	0x70, 0x90, 0xd1, 0x96, 0xb4, 0xe5, 0x74, 0x31, 0xf3, 0xd7, 0x5f, 0xdd, 0x9c, 0x15, 0x54, 0xd7,
+	0x6c, 0x3b, 0xc0, 0x61, 0xf8, 0x90, 0x04, 0x8e, 0x57, 0x2d, 0xb7, 0x44, 0xf5, 0x0c, 0x4c, 0xec,
+	0xe3, 0xc3, 0x7d, 0x14, 0xee, 0x67, 0x4e, 0x53, 0xad, 0x72, 0xf4, 0xaa, 0xbf, 0x0d, 0xe9, 0x26,
+	0xaa, 0x35, 0x98, 0xc9, 0xcc, 0xd8, 0x92, 0xb6, 0x3c, 0xb5, 0x3a, 0x9f, 0x17, 0xd3, 0x51, 0xe7,
+	0xe7, 0x05, 0xe6, 0xfc, 0xba, 0xef, 0x78, 0xc5, 0x33, 0x1f, 0xff, 0x73, 0xf1, 0x54, 0xb9, 0xa5,
+	0x71, 0xf7, 0xdc, 0xf7, 0x9e, 0x3f, 0xc9, 0xb5, 0x0c, 0x65, 0x5f, 0x81, 0x0b, 0x12, 0x6d, 0x19,
+	0x87, 0x75, 0xdf, 0x0b, 0x71, 0xf6, 0x3b, 0x8c, 0x42, 0x19, 0x37, 0x31, 0xaa, 0x8d, 0x4c, 0x41,
+	0x87, 0x33, 0x74, 0x6d, 0x04, 0x7e, 0xf6, 0x4c, 0xc7, 0x42, 0x54, 0x23, 0x0c, 0x77, 0xba, 0xcc,
+	0x9e, 0x7b, 0x20, 0xe2, 0xc6, 0x25, 0xa2, 0x10, 0xe6, 0x28, 0xcc, 0x00, 0x23, 0x82, 0x1f, 0x1c,
+	0x12, 0x1c, 0x78, 0xa8, 0xb6, 0x4d, 0x67, 0xbc, 0x03, 0x69, 0xd4, 0x20, 0xfb, 0x7e, 0xe0, 0x90,
+	0xa3, 0xc1, 0xe8, 0xa4, 0x68, 0x37, 0x74, 0x02, 0x89, 0x94, 0xc9, 0x2e, 0xc2, 0xd5, 0xae, 0x46,
+	0x25, 0xaa, 0xff, 0x6b, 0x70, 0xbe, 0x14, 0x56, 0x1f, 0x62, 0xf2, 0x8d, 0xc8, 0xc1, 0x7a, 0x1e,
+	0xc6, 0xfd, 0x03, 0x4f, 0xc1, 0x55, 0x5c, 0x4c, 0x5f, 0x82, 0x69, 0x6f, 0x8f, 0x98, 0x56, 0x0d,
+	0x85, 0xa1, 0xe9, 0xd8, 0x02, 0x10, 0x78, 0x7b, 0x64, 0x9d, 0x0e, 0x6d, 0xd9, 0xfa, 0x1c, 0xa4,
+	0xa8, 0x84, 0x63, 0x0b, 0xb7, 0x8d, 0x7b, 0x7b, 0x64, 0xcb, 0xd6, 0x8b, 0xf1, 0x40, 0x38, 0x33,
+	0x28, 0x10, 0xd2, 0x34, 0x10, 0x7e, 0xf6, 0xfc, 0x49, 0x4e, 0x8b, 0x45, 0x83, 0xbe, 0x02, 0x73,
+	0x2e, 0x3a, 0x34, 0xe5, 0x80, 0xb9, 0x87, 0xb1, 0x59, 0xb7, 0x48, 0x66, 0x9c, 0x59, 0xd2, 0x5d,
+	0x74, 0x28, 0x99, 0x6d, 0x62, 0xbc, 0x63, 0x91, 0xbb, 0x40, 0x9d, 0xc4, 0xb1, 0x67, 0xe7, 0xe1,
+	0x52, 0x1b, 0x7d, 0xe9, 0x9a, 0xef, 0xc2, 0x24, 0x5b, 0x45, 0x0f, 0x1f, 0x50, 0x97, 0xd4, 0xd1,
+	0x91, 0x8a, 0x4b, 0x98, 0xd8, 0xc8, 0x2e, 0x11, 0xd8, 0xd8, 0x24, 0xd9, 0x1d, 0x98, 0x89, 0x00,
+	0x44, 0xa0, 0xf4, 0x2f, 0x43, 0x0a, 0x1f, 0xd6, 0x9d, 0x80, 0x47, 0xca, 0xd4, 0xaa, 0x91, 0xe7,
+	0x9b, 0x39, 0x1f, 0x6d, 0xe6, 0xfc, 0x6e, 0x74, 0x40, 0x14, 0x27, 0xa9, 0xc3, 0xde, 0xff, 0x74,
+	0x51, 0x2b, 0x0b, 0x9d, 0xec, 0x9f, 0x34, 0x98, 0x2a, 0x85, 0xd5, 0x9d, 0x1a, 0xb2, 0x70, 0xd1,
+	0xb1, 0xf5, 0x5b, 0x90, 0xaa, 0x38, 0xb6, 0xad, 0xc0, 0x4b, 0xc8, 0x8d, 0xbe, 0xd6, 0xeb, 0x00,
+	0x15, 0xc7, 0x36, 0x91, 0xeb, 0x37, 0x3c, 0x32, 0xdc, 0x62, 0x57, 0x1c, 0x7b, 0x8d, 0xa9, 0xdd,
+	0x9d, 0xa2, 0xde, 0x11, 0x50, 0xb2, 0x73, 0xf0, 0x4a, 0x8c, 0x8b, 0x5c, 0xb6, 0xef, 0x6b, 0x30,
+	0x5d, 0x0a, 0xab, 0x6b, 0x96, 0x85, 0xeb, 0x84, 0x92, 0x7c, 0x51, 0xe1, 0x9c, 0x88, 0xab, 0x8b,
+	0x30, 0x1b, 0x07, 0x21, 0xd1, 0xfd, 0x99, 0xa3, 0x2b, 0xe3, 0x6f, 0x61, 0xeb, 0x85, 0xa2, 0xd3,
+	0xb7, 0xe0, 0xac, 0x87, 0x0f, 0xcc, 0xd1, 0x36, 0xdc, 0xb4, 0x87, 0x0f, 0xe4, 0x0e, 0x49, 0x10,
+	0x45, 0x8c, 0xa8, 0xe4, 0x23, 0x03, 0x75, 0x0b, 0xce, 0x06, 0x6c, 0x50, 0xec, 0xc9, 0x8c, 0xb6,
+	0x34, 0xa6, 0x6e, 0x4e, 0xaa, 0x6e, 0x62, 0x9c, 0x7d, 0x8f, 0x47, 0xed, 0x7a, 0x0d, 0x39, 0xee,
+	0x8b, 0x8d, 0xda, 0x6e, 0x01, 0x17, 0xc1, 0x90, 0x4b, 0xfa, 0x9e, 0xc6, 0x8e, 0xfb, 0x87, 0x98,
+	0x6c, 0xe0, 0x90, 0x38, 0xde, 0x68, 0x87, 0x68, 0xb7, 0xbb, 0x66, 0x09, 0xa6, 0xec, 0xd6, 0x94,
+	0x02, 0x59, 0x7c, 0x28, 0xb1, 0x12, 0x97, 0x61, 0xbe, 0x03, 0x86, 0x04, 0xf9, 0x17, 0x09, 0x72,
+	0x7b, 0x73, 0xb7, 0x84, 0x09, 0xb2, 0x11, 0x41, 0xfa, 0x3a, 0xcc, 0x50, 0x43, 0x66, 0xdc, 0xca,
+	0x20, 0xbc, 0xe7, 0xa9, 0x46, 0x9c, 0xe9, 0x3c, 0x4c, 0xb6, 0x39, 0x76, 0xc2, 0xea, 0x1f, 0x8a,
+	0x06, 0x4c, 0xba, 0x02, 0x02, 0x8b, 0xc2, 0x74, 0x59, 0xbe, 0xeb, 0x33, 0x30, 0xd6, 0x08, 0x1c,
+	0x71, 0x7a, 0xd3, 0xc7, 0xbb, 0x73, 0x94, 0x63, 0x07, 0xce, 0x16, 0xdd, 0x18, 0x21, 0x49, 0xf7,
+	0x97, 0x5a, 0x74, 0xae, 0x6f, 0x6f, 0xee, 0xb2, 0x35, 0x7e, 0x70, 0x48, 0x02, 0xb4, 0xf1, 0x22,
+	0x48, 0x5f, 0x05, 0xc0, 0xd4, 0x98, 0xc9, 0xf8, 0x71, 0xe2, 0x69, 0x1c, 0x99, 0xef, 0x45, 0xe7,
+	0x0b, 0xb0, 0xd8, 0x03, 0xb0, 0x24, 0xf5, 0x6b, 0x0d, 0x8c, 0xa4, 0xcc, 0x5a, 0xed, 0x00, 0x1d,
+	0x85, 0x5f, 0x73, 0x42, 0x82, 0xed, 0x13, 0xe7, 0xf5, 0x2a, 0x9c, 0x45, 0xcc, 0x9e, 0x59, 0x63,
+	0x06, 0x19, 0xb5, 0xc9, 0xf2, 0x34, 0x8a, 0x81, 0xe8, 0xc5, 0xee, 0x1a, 0x64, 0x7b, 0x23, 0x97,
+	0x04, 0x7f, 0xa7, 0xb1, 0x74, 0x25, 0x26, 0xd6, 0x76, 0x75, 0x9f, 0x38, 0xc7, 0x1c, 0x5c, 0xe8,
+	0xcc, 0x24, 0xf8, 0x12, 0x9e, 0x6f, 0xb6, 0xa5, 0x11, 0x3d, 0xa8, 0xde, 0x80, 0xeb, 0x7d, 0x39,
+	0x48, 0xb6, 0xff, 0xed, 0xcd, 0x76, 0x07, 0x07, 0x8e, 0x7f, 0xf2, 0x2b, 0xba, 0x0d, 0x33, 0x2d,
+	0xb6, 0x75, 0x66, 0x53, 0xe6, 0xe3, 0xed, 0x69, 0xc5, 0x86, 0xa8, 0x11, 0x78, 0x56, 0xf1, 0x01,
+	0xcd, 0x2a, 0x5a, 0x1e, 0xe1, 0x78, 0x87, 0xf7, 0x08, 0xd7, 0x93, 0x1e, 0xf9, 0xbb, 0x06, 0x99,
+	0xa4, 0x64, 0xd1, 0xb1, 0x69, 0x3e, 0xe3, 0x37, 0x4e, 0x7e, 0xe9, 0x37, 0x60, 0x8a, 0x26, 0x28,
+	0x84, 0x9b, 0x1b, 0xc6, 0x0f, 0x34, 0xb1, 0x11, 0x28, 0x7b, 0xb9, 0x20, 0x0b, 0x4b, 0xbd, 0x88,
+	0x49, 0xf6, 0xbf, 0xd1, 0xe0, 0x72, 0xfb, 0x26, 0xa9, 0xf9, 0x07, 0xd8, 0xde, 0xc0, 0x9e, 0xef,
+	0x86, 0x27, 0xee, 0x80, 0xeb, 0x70, 0x0e, 0x71, 0x83, 0xa6, 0xcd, 0x2c, 0x66, 0xc6, 0x96, 0xc6,
+	0x96, 0xd3, 0xe5, 0xb3, 0x28, 0x0e, 0xa3, 0x17, 0xc3, 0xeb, 0xf0, 0x6a, 0x1f, 0xf0, 0x92, 0xe4,
+	0xff, 0x34, 0xc8, 0x25, 0xe5, 0x64, 0xea, 0x90, 0xd8, 0x27, 0x38, 0xb0, 0xb0, 0x77, 0xf2, 0x8b,
+	0xbe, 0x09, 0x4b, 0x3c, 0xd5, 0x30, 0xe9, 0xda, 0xb7, 0x6d, 0x7d, 0x8e, 0x41, 0x6c, 0xff, 0x2b,
+	0x41, 0x1f, 0x9c, 0xbd, 0x9c, 0xf2, 0x25, 0x58, 0x55, 0x27, 0x2b, 0x7d, 0xf4, 0x6f, 0x0d, 0x6e,
+	0x24, 0xd5, 0x4a, 0x8e, 0xe7, 0xb8, 0x0d, 0x9a, 0x75, 0x08, 0xd9, 0x2d, 0xcf, 0x0a, 0x30, 0x0a,
+	0xf1, 0x89, 0x3b, 0xe8, 0x3e, 0x5c, 0x71, 0xb9, 0x71, 0xe6, 0x21, 0xe1, 0x13, 0xd3, 0x11, 0xf6,
+	0x85, 0x73, 0xe6, 0xdd, 0x5e, 0x00, 0x7b, 0x79, 0x66, 0x05, 0x0a, 0x8a, 0x14, 0xa5, 0x5b, 0x7e,
+	0xca, 0x53, 0xe7, 0x87, 0x98, 0x88, 0x0b, 0xef, 0x36, 0xa4, 0x69, 0x76, 0xa1, 0x96, 0x66, 0x4d,
+	0x7a, 0x7b, 0xe4, 0xdd, 0xcf, 0x97, 0x41, 0x5f, 0x84, 0x94, 0xb8, 0xf9, 0xce, 0xb0, 0x9b, 0x4f,
+	0xbc, 0x89, 0xa2, 0x5b, 0x42, 0x11, 0xb9, 0xbf, 0xc4, 0x29, 0x09, 0xfc, 0x84, 0xd7, 0xda, 0x5f,
+	0xaf, 0xdb, 0x88, 0xe0, 0x1d, 0xd6, 0xe5, 0x19, 0xb9, 0xf8, 0x2f, 0x42, 0x8a, 0xf7, 0x89, 0x18,
+	0xfc, 0xa9, 0xd5, 0x6b, 0xf9, 0x7e, 0xbd, 0xad, 0x3c, 0xb7, 0x26, 0x7a, 0x29, 0x42, 0xb3, 0xa3,
+	0x59, 0xc0, 0x6b, 0xe1, 0x38, 0x3c, 0x09, 0xfd, 0x3f, 0xdc, 0xf7, 0x25, 0xc7, 0x23, 0x34, 0x57,
+	0x3f, 0xa6, 0xc3, 0xe8, 0x08, 0x52, 0xa2, 0x1e, 0x3c, 0x3d, 0xa8, 0x38, 0xd8, 0xa4, 0xc8, 0x7f,
+	0xfe, 0xe9, 0xe2, 0x72, 0xd5, 0x21, 0xfb, 0x8d, 0x4a, 0xde, 0xf2, 0x5d, 0xd1, 0x6c, 0x13, 0xff,
+	0xdd, 0x0c, 0xed, 0x47, 0x05, 0x72, 0x54, 0xc7, 0x21, 0x53, 0x08, 0x3f, 0x7c, 0xfe, 0x24, 0x37,
+	0x5d, 0xc3, 0x55, 0x64, 0x1d, 0x99, 0x16, 0x1d, 0xe0, 0x95, 0x85, 0x30, 0xd8, 0x2b, 0x2c, 0xf9,
+	0xd2, 0x49, 0x9a, 0xf1, 0xf4, 0x99, 0xf2, 0x2f, 0x36, 0x02, 0xef, 0x18, 0xf9, 0x5b, 0xea, 0xfc,
+	0x6f, 0x0d, 0xcb, 0x5f, 0x8d, 0xa9, 0x24, 0x24, 0x99, 0x7e, 0xa4, 0xb1, 0x2a, 0x87, 0x95, 0x11,
+	0x9e, 0xef, 0xca, 0x52, 0x61, 0xd4, 0x40, 0xbd, 0x1f, 0xcb, 0xf5, 0x79, 0xa8, 0x5e, 0x6d, 0xb1,
+	0xf4, 0x1e, 0x49, 0x96, 0x91, 0x21, 0x11, 0xa3, 0x52, 0xa9, 0x23, 0x4a, 0xaf, 0x46, 0xb7, 0x64,
+	0x02, 0x9f, 0xc4, 0xff, 0xf8, 0x34, 0x3f, 0x25, 0x50, 0x13, 0xb3, 0xed, 0x7c, 0xe2, 0x27, 0x64,
+	0x54, 0xb8, 0x8d, 0xc5, 0x0a, 0xb7, 0x8b, 0x90, 0x0a, 0x8f, 0xdc, 0x8a, 0x5f, 0x13, 0xe5, 0x8d,
+	0x78, 0x13, 0x05, 0x9d, 0x15, 0x38, 0x75, 0x06, 0x63, 0x5c, 0x16, 0x74, 0xd1, 0x50, 0x54, 0xfe,
+	0xa4, 0x64, 0xf9, 0x43, 0x4d, 0x37, 0x02, 0xc7, 0x64, 0x8d, 0xd4, 0x09, 0x6e, 0xba, 0x11, 0x38,
+	0xef, 0xa0, 0x70, 0xbf, 0xff, 0xd2, 0x4a, 0x0f, 0x48, 0xd7, 0xfc, 0x51, 0x03, 0x10, 0xd1, 0xbd,
+	0xbd, 0xb9, 0xfb, 0xb2, 0x8a, 0x3f, 0xc1, 0xf0, 0x4c, 0x77, 0x86, 0xe3, 0x4a, 0x0c, 0x67, 0x41,
+	0x6f, 0x11, 0x91, 0xfc, 0x3e, 0xe4, 0xfc, 0x68, 0x4c, 0xbf, 0x3c, 0x7e, 0xfd, 0x21, 0x0b, 0x6c,
+	0xf1, 0xab, 0x9e, 0x9d, 0xab, 0x7e, 0x13, 0x1f, 0xe3, 0xb9, 0xf2, 0x26, 0xa4, 0x1c, 0xaf, 0xde,
+	0x20, 0xa1, 0x38, 0x57, 0x8c, 0xae, 0x3b, 0x6e, 0x8b, 0x8a, 0x44, 0x57, 0x02, 0x97, 0xd7, 0xef,
+	0xc1, 0x84, 0xdf, 0x20, 0x4c, 0x75, 0x8c, 0xa9, 0x5e, 0xee, 0xaa, 0xfa, 0x2e, 0x93, 0x11, 0xba,
+	0x91, 0xc6, 0x80, 0x33, 0x35, 0xa2, 0x28, 0xb9, 0xff, 0x4d, 0x84, 0xa3, 0xdf, 0xc4, 0xdb, 0x7b,
+	0xe4, 0x65, 0x85, 0xe3, 0x1b, 0x00, 0xc4, 0x37, 0x11, 0x9f, 0x96, 0x47, 0x65, 0xbf, 0x83, 0x8d,
+	0xf8, 0x62, 0x60, 0x40, 0x68, 0x72, 0x52, 0x11, 0xd7, 0xd5, 0x3f, 0x5c, 0x81, 0xb1, 0x52, 0x58,
+	0xd5, 0x2b, 0x90, 0x12, 0x9f, 0x55, 0x6e, 0xf4, 0xbf, 0xb0, 0xe5, 0x17, 0x0d, 0xa3, 0xa0, 0x28,
+	0x28, 0x3b, 0x6f, 0x15, 0x48, 0x89, 0xef, 0x1e, 0x83, 0x6d, 0x70, 0x41, 0x05, 0x1b, 0xc9, 0x8f,
+	0x19, 0x3a, 0x81, 0xe9, 0xc4, 0x27, 0x83, 0x9b, 0x03, 0x27, 0x88, 0x8b, 0x1b, 0xb7, 0x87, 0x12,
+	0x97, 0x56, 0x4d, 0x18, 0xe7, 0xed, 0xf8, 0x2f, 0x2a, 0xe0, 0xf5, 0xf0, 0x81, 0x91, 0x57, 0x93,
+	0x93, 0x06, 0xf6, 0x61, 0x52, 0xf6, 0xc6, 0x5f, 0x1b, 0xa8, 0x1b, 0x89, 0x1a, 0x2b, 0xca, 0xa2,
+	0xd2, 0xd2, 0x23, 0x48, 0xb7, 0x3a, 0xd4, 0xb9, 0x81, 0xfa, 0x52, 0xd6, 0x58, 0x55, 0x97, 0x8d,
+	0x1b, 0x6b, 0x35, 0x9c, 0x73, 0x0a, 0x3e, 0x11, 0xb2, 0x0a, 0xc6, 0x3a, 0x1b, 0xbf, 0xfb, 0x30,
+	0x29, 0x3b, 0xb5, 0x83, 0x7d, 0x18, 0x89, 0x2a, 0xf8, 0xb0, 0xbd, 0xf1, 0xaa, 0x7f, 0x1b, 0xce,
+	0xb5, 0x35, 0x5d, 0x0b, 0x2a, 0x71, 0x15, 0x53, 0x30, 0xde, 0x18, 0x52, 0xa1, 0xcd, 0x76, 0xbc,
+	0x97, 0xaa, 0x64, 0x3b, 0xa6, 0xa0, 0x66, 0xbb, 0x4b, 0x73, 0x53, 0xff, 0xa1, 0x06, 0xb3, 0x5d,
+	0x3b, 0x9b, 0xb7, 0x15, 0x67, 0x4c, 0xaa, 0x19, 0x6f, 0x8f, 0xa4, 0x26, 0xe1, 0xfc, 0x58, 0x83,
+	0x4b, 0xbd, 0x7a, 0x92, 0x6f, 0x0e, 0x33, 0x75, 0x5c, 0xd3, 0xf8, 0xea, 0xa8, 0x9a, 0x12, 0xd7,
+	0x47, 0x1a, 0x18, 0x7d, 0x5a, 0x89, 0xf7, 0x86, 0x31, 0xd0, 0xa6, 0x6c, 0xac, 0x7f, 0x0e, 0xe5,
+	0x81, 0x00, 0x45, 0xf7, 0x6f, 0x34, 0x80, 0x5c, 0x79, 0x44, 0x80, 0xc9, 0x7e, 0x9c, 0xfe, 0x23,
+	0x0d, 0xe6, 0xba, 0x37, 0xe3, 0xee, 0x0c, 0x33, 0x7d, 0x4b, 0xcf, 0xf8, 0xca, 0x68, 0x7a, 0x12,
+	0xd1, 0x07, 0x1a, 0x64, 0x7a, 0x36, 0xc8, 0xde, 0x1a, 0x2e, 0x64, 0x62, 0xaa, 0xc6, 0xda, 0xc8,
+	0xaa, 0x12, 0xda, 0xef, 0x35, 0xb8, 0xa1, 0xda, 0xd6, 0x7a, 0x67, 0x18, 0x73, 0xfd, 0x66, 0x32,
+	0x76, 0x8e, 0x6b, 0x26, 0xc9, 0xe3, 0xb7, 0x1a, 0x5c, 0x53, 0x6a, 0x3d, 0x3d, 0x18, 0xc6, 0x74,
+	0xcf, 0x69, 0x8c, 0xd2, 0xb1, 0x4c, 0x13, 0xbf, 0xeb, 0x5a, 0x1d, 0xa2, 0x9c, 0xca, 0xdc, 0xe2,
+	0xc0, 0x59, 0x55, 0x97, 0x8d, 0xa7, 0x41, 0x89, 0x6e, 0xce, 0xe0, 0x34, 0x28, 0x2e, 0xae, 0x90,
+	0x06, 0x75, 0x6b, 0xc6, 0x50, 0x8a, 0xad, 0x46, 0xcc, 0x60, 0x8a, 0x52, 0x56, 0x81, 0x62, 0x47,
+	0xe7, 0x83, 0x1a, 0x6b, 0x75, 0x3d, 0x06, 0x1b, 0x93, 0xb2, 0x0a, 0xc6, 0x3a, 0x9a, 0x0f, 0xfa,
+	0x63, 0x0d, 0x66, 0x3a, 0x3a, 0x0f, 0x2b, 0x6a, 0x77, 0x74, 0x4c, 0xc5, 0x78, 0x6b, 0x68, 0x95,
+	0x44, 0xfc, 0xc8, 0xde, 0x81, 0x42, 0xfc, 0x44, 0xb2, 0x2a, 0xf1, 0xd3, 0x5e, 0x91, 0xeb, 0x18,
+	0x26, 0xa2, 0x6a, 0x7c, 0x59, 0x69, 0x6d, 0xb6, 0x37, 0x77, 0x8d, 0x5b, 0xaa, 0x92, 0x71, 0x33,
+	0x51, 0x51, 0xbc, 0xac, 0xb4, 0x2a, 0x6a, 0x66, 0xda, 0x8a, 0x59, 0x16, 0x97, 0xb2, 0x90, 0x55,
+	0x88, 0xcb, 0x48, 0x56, 0x25, 0x2e, 0xdb, 0xab, 0x47, 0xe6, 0x3a, 0x51, 0x39, 0x2e, 0x2b, 0xa9,
+	0x6f, 0xef, 0x11, 0x15, 0xd7, 0x25, 0x0b, 0x37, 0xfd, 0x07, 0x1a, 0xe8, 0x5d, 0xfe, 0x66, 0xeb,
+	0xf5, 0xc1, 0xd9, 0x6a, 0x87, 0x92, 0x71, 0x6f, 0x04, 0xa5, 0x08, 0x88, 0x31, 0xfe, 0xf8, 0xf9,
+	0x93, 0x9c, 0x56, 0xbc, 0xff, 0xf1, 0xd3, 0x05, 0xed, 0x93, 0xa7, 0x0b, 0xda, 0xbf, 0x9e, 0x2e,
+	0x68, 0xef, 0x3f, 0x5b, 0x38, 0xf5, 0xc9, 0xb3, 0x85, 0x53, 0xff, 0x78, 0xb6, 0x70, 0xea, 0x9b,
+	0xc9, 0xbf, 0x81, 0x64, 0x0d, 0xc2, 0xc3, 0xc4, 0x9f, 0x16, 0xb2, 0xe6, 0x60, 0x25, 0xc5, 0x24,
+	0x5e, 0xff, 0x2c, 0x00, 0x00, 0xff, 0xff, 0x9f, 0x69, 0xd9, 0xe0, 0x33, 0x29, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2710,8 +3235,14 @@ type MsgClient interface {
 	SetNFTClassExtraData(ctx context.Context, in *MsgSetNFTClassExtraData, opts ...grpc.CallOption) (*MsgSetNFTClassExtraDataResponse, error)
 	// SetNFTClassAlwaysListed sets the always_listed flag for an NFT class
 	SetNFTClassAlwaysListed(ctx context.Context, in *MsgSetNFTClassAlwaysListed, opts ...grpc.CallOption) (*MsgSetNFTClassAlwaysListedResponse, error)
-	// SetNFTClassAnnualPct sets the annual percentage rate for an NFT class
-	SetNFTClassAnnualPct(ctx context.Context, in *MsgSetNFTClassAnnualPct, opts ...grpc.CallOption) (*MsgSetNFTClassAnnualPctResponse, error)
+	// Set per-class valuation fee percent and period
+	SetNFTClassValuationFeePct(ctx context.Context, in *MsgSetNFTClassValuationFeePct, opts ...grpc.CallOption) (*MsgSetNFTClassValuationFeePctResponse, error)
+	SetNFTClassValuationPeriod(ctx context.Context, in *MsgSetNFTClassValuationPeriod, opts ...grpc.CallOption) (*MsgSetNFTClassValuationPeriodResponse, error)
+	// Per-class bidding params setters
+	SetNFTClassBidTimeout(ctx context.Context, in *MsgSetNFTClassBidTimeout, opts ...grpc.CallOption) (*MsgSetNFTClassBidTimeoutResponse, error)
+	SetNFTClassAllowedDenoms(ctx context.Context, in *MsgSetNFTClassAllowedDenoms, opts ...grpc.CallOption) (*MsgSetNFTClassAllowedDenomsResponse, error)
+	SetNFTClassRejectBidValuationFeePercent(ctx context.Context, in *MsgSetNFTClassRejectBidValuationFeePercent, opts ...grpc.CallOption) (*MsgSetNFTClassRejectBidValuationFeePercentResponse, error)
+	SetNFTClassMinimumBidPercentIncrease(ctx context.Context, in *MsgSetNFTClassMinimumBidPercentIncrease, opts ...grpc.CallOption) (*MsgSetNFTClassMinimumBidPercentIncreaseResponse, error)
 	// SetListed sets the listed status for a specific NFT
 	SetListed(ctx context.Context, in *MsgSetListed, opts ...grpc.CallOption) (*MsgSetListedResponse, error)
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
@@ -2842,9 +3373,54 @@ func (c *msgClient) SetNFTClassAlwaysListed(ctx context.Context, in *MsgSetNFTCl
 	return out, nil
 }
 
-func (c *msgClient) SetNFTClassAnnualPct(ctx context.Context, in *MsgSetNFTClassAnnualPct, opts ...grpc.CallOption) (*MsgSetNFTClassAnnualPctResponse, error) {
-	out := new(MsgSetNFTClassAnnualPctResponse)
-	err := c.cc.Invoke(ctx, "/dysonprotocol.nameservice.v1.Msg/SetNFTClassAnnualPct", in, out, opts...)
+func (c *msgClient) SetNFTClassValuationFeePct(ctx context.Context, in *MsgSetNFTClassValuationFeePct, opts ...grpc.CallOption) (*MsgSetNFTClassValuationFeePctResponse, error) {
+	out := new(MsgSetNFTClassValuationFeePctResponse)
+	err := c.cc.Invoke(ctx, "/dysonprotocol.nameservice.v1.Msg/SetNFTClassValuationFeePct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassValuationPeriod(ctx context.Context, in *MsgSetNFTClassValuationPeriod, opts ...grpc.CallOption) (*MsgSetNFTClassValuationPeriodResponse, error) {
+	out := new(MsgSetNFTClassValuationPeriodResponse)
+	err := c.cc.Invoke(ctx, "/dysonprotocol.nameservice.v1.Msg/SetNFTClassValuationPeriod", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassBidTimeout(ctx context.Context, in *MsgSetNFTClassBidTimeout, opts ...grpc.CallOption) (*MsgSetNFTClassBidTimeoutResponse, error) {
+	out := new(MsgSetNFTClassBidTimeoutResponse)
+	err := c.cc.Invoke(ctx, "/dysonprotocol.nameservice.v1.Msg/SetNFTClassBidTimeout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassAllowedDenoms(ctx context.Context, in *MsgSetNFTClassAllowedDenoms, opts ...grpc.CallOption) (*MsgSetNFTClassAllowedDenomsResponse, error) {
+	out := new(MsgSetNFTClassAllowedDenomsResponse)
+	err := c.cc.Invoke(ctx, "/dysonprotocol.nameservice.v1.Msg/SetNFTClassAllowedDenoms", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassRejectBidValuationFeePercent(ctx context.Context, in *MsgSetNFTClassRejectBidValuationFeePercent, opts ...grpc.CallOption) (*MsgSetNFTClassRejectBidValuationFeePercentResponse, error) {
+	out := new(MsgSetNFTClassRejectBidValuationFeePercentResponse)
+	err := c.cc.Invoke(ctx, "/dysonprotocol.nameservice.v1.Msg/SetNFTClassRejectBidValuationFeePercent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNFTClassMinimumBidPercentIncrease(ctx context.Context, in *MsgSetNFTClassMinimumBidPercentIncrease, opts ...grpc.CallOption) (*MsgSetNFTClassMinimumBidPercentIncreaseResponse, error) {
+	out := new(MsgSetNFTClassMinimumBidPercentIncreaseResponse)
+	err := c.cc.Invoke(ctx, "/dysonprotocol.nameservice.v1.Msg/SetNFTClassMinimumBidPercentIncrease", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2968,8 +3544,14 @@ type MsgServer interface {
 	SetNFTClassExtraData(context.Context, *MsgSetNFTClassExtraData) (*MsgSetNFTClassExtraDataResponse, error)
 	// SetNFTClassAlwaysListed sets the always_listed flag for an NFT class
 	SetNFTClassAlwaysListed(context.Context, *MsgSetNFTClassAlwaysListed) (*MsgSetNFTClassAlwaysListedResponse, error)
-	// SetNFTClassAnnualPct sets the annual percentage rate for an NFT class
-	SetNFTClassAnnualPct(context.Context, *MsgSetNFTClassAnnualPct) (*MsgSetNFTClassAnnualPctResponse, error)
+	// Set per-class valuation fee percent and period
+	SetNFTClassValuationFeePct(context.Context, *MsgSetNFTClassValuationFeePct) (*MsgSetNFTClassValuationFeePctResponse, error)
+	SetNFTClassValuationPeriod(context.Context, *MsgSetNFTClassValuationPeriod) (*MsgSetNFTClassValuationPeriodResponse, error)
+	// Per-class bidding params setters
+	SetNFTClassBidTimeout(context.Context, *MsgSetNFTClassBidTimeout) (*MsgSetNFTClassBidTimeoutResponse, error)
+	SetNFTClassAllowedDenoms(context.Context, *MsgSetNFTClassAllowedDenoms) (*MsgSetNFTClassAllowedDenomsResponse, error)
+	SetNFTClassRejectBidValuationFeePercent(context.Context, *MsgSetNFTClassRejectBidValuationFeePercent) (*MsgSetNFTClassRejectBidValuationFeePercentResponse, error)
+	SetNFTClassMinimumBidPercentIncrease(context.Context, *MsgSetNFTClassMinimumBidPercentIncrease) (*MsgSetNFTClassMinimumBidPercentIncreaseResponse, error)
 	// SetListed sets the listed status for a specific NFT
 	SetListed(context.Context, *MsgSetListed) (*MsgSetListedResponse, error)
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
@@ -3024,8 +3606,23 @@ func (*UnimplementedMsgServer) SetNFTClassExtraData(ctx context.Context, req *Ms
 func (*UnimplementedMsgServer) SetNFTClassAlwaysListed(ctx context.Context, req *MsgSetNFTClassAlwaysListed) (*MsgSetNFTClassAlwaysListedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassAlwaysListed not implemented")
 }
-func (*UnimplementedMsgServer) SetNFTClassAnnualPct(ctx context.Context, req *MsgSetNFTClassAnnualPct) (*MsgSetNFTClassAnnualPctResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassAnnualPct not implemented")
+func (*UnimplementedMsgServer) SetNFTClassValuationFeePct(ctx context.Context, req *MsgSetNFTClassValuationFeePct) (*MsgSetNFTClassValuationFeePctResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassValuationFeePct not implemented")
+}
+func (*UnimplementedMsgServer) SetNFTClassValuationPeriod(ctx context.Context, req *MsgSetNFTClassValuationPeriod) (*MsgSetNFTClassValuationPeriodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassValuationPeriod not implemented")
+}
+func (*UnimplementedMsgServer) SetNFTClassBidTimeout(ctx context.Context, req *MsgSetNFTClassBidTimeout) (*MsgSetNFTClassBidTimeoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassBidTimeout not implemented")
+}
+func (*UnimplementedMsgServer) SetNFTClassAllowedDenoms(ctx context.Context, req *MsgSetNFTClassAllowedDenoms) (*MsgSetNFTClassAllowedDenomsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassAllowedDenoms not implemented")
+}
+func (*UnimplementedMsgServer) SetNFTClassRejectBidValuationFeePercent(ctx context.Context, req *MsgSetNFTClassRejectBidValuationFeePercent) (*MsgSetNFTClassRejectBidValuationFeePercentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassRejectBidValuationFeePercent not implemented")
+}
+func (*UnimplementedMsgServer) SetNFTClassMinimumBidPercentIncrease(ctx context.Context, req *MsgSetNFTClassMinimumBidPercentIncrease) (*MsgSetNFTClassMinimumBidPercentIncreaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNFTClassMinimumBidPercentIncrease not implemented")
 }
 func (*UnimplementedMsgServer) SetListed(ctx context.Context, req *MsgSetListed) (*MsgSetListedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetListed not implemented")
@@ -3281,20 +3878,110 @@ func _Msg_SetNFTClassAlwaysListed_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_SetNFTClassAnnualPct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSetNFTClassAnnualPct)
+func _Msg_SetNFTClassValuationFeePct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassValuationFeePct)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).SetNFTClassAnnualPct(ctx, in)
+		return srv.(MsgServer).SetNFTClassValuationFeePct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/dysonprotocol.nameservice.v1.Msg/SetNFTClassAnnualPct",
+		FullMethod: "/dysonprotocol.nameservice.v1.Msg/SetNFTClassValuationFeePct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).SetNFTClassAnnualPct(ctx, req.(*MsgSetNFTClassAnnualPct))
+		return srv.(MsgServer).SetNFTClassValuationFeePct(ctx, req.(*MsgSetNFTClassValuationFeePct))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassValuationPeriod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassValuationPeriod)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassValuationPeriod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dysonprotocol.nameservice.v1.Msg/SetNFTClassValuationPeriod",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassValuationPeriod(ctx, req.(*MsgSetNFTClassValuationPeriod))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassBidTimeout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassBidTimeout)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassBidTimeout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dysonprotocol.nameservice.v1.Msg/SetNFTClassBidTimeout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassBidTimeout(ctx, req.(*MsgSetNFTClassBidTimeout))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassAllowedDenoms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassAllowedDenoms)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassAllowedDenoms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dysonprotocol.nameservice.v1.Msg/SetNFTClassAllowedDenoms",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassAllowedDenoms(ctx, req.(*MsgSetNFTClassAllowedDenoms))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassRejectBidValuationFeePercent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassRejectBidValuationFeePercent)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassRejectBidValuationFeePercent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dysonprotocol.nameservice.v1.Msg/SetNFTClassRejectBidValuationFeePercent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassRejectBidValuationFeePercent(ctx, req.(*MsgSetNFTClassRejectBidValuationFeePercent))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNFTClassMinimumBidPercentIncrease_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNFTClassMinimumBidPercentIncrease)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNFTClassMinimumBidPercentIncrease(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dysonprotocol.nameservice.v1.Msg/SetNFTClassMinimumBidPercentIncrease",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNFTClassMinimumBidPercentIncrease(ctx, req.(*MsgSetNFTClassMinimumBidPercentIncrease))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3551,8 +4238,28 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_SetNFTClassAlwaysListed_Handler,
 		},
 		{
-			MethodName: "SetNFTClassAnnualPct",
-			Handler:    _Msg_SetNFTClassAnnualPct_Handler,
+			MethodName: "SetNFTClassValuationFeePct",
+			Handler:    _Msg_SetNFTClassValuationFeePct_Handler,
+		},
+		{
+			MethodName: "SetNFTClassValuationPeriod",
+			Handler:    _Msg_SetNFTClassValuationPeriod_Handler,
+		},
+		{
+			MethodName: "SetNFTClassBidTimeout",
+			Handler:    _Msg_SetNFTClassBidTimeout_Handler,
+		},
+		{
+			MethodName: "SetNFTClassAllowedDenoms",
+			Handler:    _Msg_SetNFTClassAllowedDenoms_Handler,
+		},
+		{
+			MethodName: "SetNFTClassRejectBidValuationFeePercent",
+			Handler:    _Msg_SetNFTClassRejectBidValuationFeePercent_Handler,
+		},
+		{
+			MethodName: "SetNFTClassMinimumBidPercentIncrease",
+			Handler:    _Msg_SetNFTClassMinimumBidPercentIncrease_Handler,
 		},
 		{
 			MethodName: "SetListed",
@@ -3820,10 +4527,10 @@ func (m *MsgSetValuation) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.MaxAnnualPctFee) > 0 {
-		i -= len(m.MaxAnnualPctFee)
-		copy(dAtA[i:], m.MaxAnnualPctFee)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.MaxAnnualPctFee)))
+	if len(m.MaxValuationFeePct) > 0 {
+		i -= len(m.MaxValuationFeePct)
+		copy(dAtA[i:], m.MaxValuationFeePct)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.MaxValuationFeePct)))
 		i--
 		dAtA[i] = 0x2a
 	}
@@ -4546,7 +5253,7 @@ func (m *MsgSetNFTClassAlwaysListedResponse) MarshalToSizedBuffer(dAtA []byte) (
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgSetNFTClassAnnualPct) Marshal() (dAtA []byte, err error) {
+func (m *MsgSetNFTClassValuationFeePct) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -4556,20 +5263,20 @@ func (m *MsgSetNFTClassAnnualPct) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSetNFTClassAnnualPct) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSetNFTClassValuationFeePct) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSetNFTClassAnnualPct) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSetNFTClassValuationFeePct) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.AnnualPct) > 0 {
-		i -= len(m.AnnualPct)
-		copy(dAtA[i:], m.AnnualPct)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.AnnualPct)))
+	if len(m.ValuationFeePct) > 0 {
+		i -= len(m.ValuationFeePct)
+		copy(dAtA[i:], m.ValuationFeePct)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ValuationFeePct)))
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -4590,7 +5297,7 @@ func (m *MsgSetNFTClassAnnualPct) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgSetNFTClassAnnualPctResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgSetNFTClassValuationFeePctResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -4600,12 +5307,351 @@ func (m *MsgSetNFTClassAnnualPctResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSetNFTClassAnnualPctResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSetNFTClassValuationFeePctResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSetNFTClassAnnualPctResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSetNFTClassValuationFeePctResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassValuationPeriod) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassValuationPeriod) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassValuationPeriod) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	n6, err6 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.ValuationPeriod, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ValuationPeriod):])
+	if err6 != nil {
+		return 0, err6
+	}
+	i -= n6
+	i = encodeVarintTx(dAtA, i, uint64(n6))
+	i--
+	dAtA[i] = 0x1a
+	if len(m.ClassId) > 0 {
+		i -= len(m.ClassId)
+		copy(dAtA[i:], m.ClassId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ClassId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.NameDestination) > 0 {
+		i -= len(m.NameDestination)
+		copy(dAtA[i:], m.NameDestination)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.NameDestination)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassValuationPeriodResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassValuationPeriodResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassValuationPeriodResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassBidTimeout) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassBidTimeout) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassBidTimeout) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	n7, err7 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.BidTimeout, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.BidTimeout):])
+	if err7 != nil {
+		return 0, err7
+	}
+	i -= n7
+	i = encodeVarintTx(dAtA, i, uint64(n7))
+	i--
+	dAtA[i] = 0x1a
+	if len(m.ClassId) > 0 {
+		i -= len(m.ClassId)
+		copy(dAtA[i:], m.ClassId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ClassId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.NameDestination) > 0 {
+		i -= len(m.NameDestination)
+		copy(dAtA[i:], m.NameDestination)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.NameDestination)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassBidTimeoutResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassBidTimeoutResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassBidTimeoutResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassAllowedDenoms) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassAllowedDenoms) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassAllowedDenoms) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.AllowedDenoms) > 0 {
+		for iNdEx := len(m.AllowedDenoms) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.AllowedDenoms[iNdEx])
+			copy(dAtA[i:], m.AllowedDenoms[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.AllowedDenoms[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.ClassId) > 0 {
+		i -= len(m.ClassId)
+		copy(dAtA[i:], m.ClassId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ClassId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.NameDestination) > 0 {
+		i -= len(m.NameDestination)
+		copy(dAtA[i:], m.NameDestination)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.NameDestination)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassAllowedDenomsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassAllowedDenomsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassAllowedDenomsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.RejectBidValuationFeePercent) > 0 {
+		i -= len(m.RejectBidValuationFeePercent)
+		copy(dAtA[i:], m.RejectBidValuationFeePercent)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.RejectBidValuationFeePercent)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.ClassId) > 0 {
+		i -= len(m.ClassId)
+		copy(dAtA[i:], m.ClassId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ClassId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.NameDestination) > 0 {
+		i -= len(m.NameDestination)
+		copy(dAtA[i:], m.NameDestination)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.NameDestination)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.MinimumBidPercentIncrease) > 0 {
+		i -= len(m.MinimumBidPercentIncrease)
+		copy(dAtA[i:], m.MinimumBidPercentIncrease)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.MinimumBidPercentIncrease)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.ClassId) > 0 {
+		i -= len(m.ClassId)
+		copy(dAtA[i:], m.ClassId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ClassId)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.NameDestination) > 0 {
+		i -= len(m.NameDestination)
+		copy(dAtA[i:], m.NameDestination)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.NameDestination)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5463,7 +6509,7 @@ func (m *MsgSetValuation) Size() (n int) {
 	}
 	l = m.Valuation.Size()
 	n += 1 + l + sovTx(uint64(l))
-	l = len(m.MaxAnnualPctFee)
+	l = len(m.MaxValuationFeePct)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -5768,7 +6814,7 @@ func (m *MsgSetNFTClassAlwaysListedResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgSetNFTClassAnnualPct) Size() (n int) {
+func (m *MsgSetNFTClassValuationFeePct) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -5782,14 +6828,162 @@ func (m *MsgSetNFTClassAnnualPct) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	l = len(m.AnnualPct)
+	l = len(m.ValuationFeePct)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
 	return n
 }
 
-func (m *MsgSetNFTClassAnnualPctResponse) Size() (n int) {
+func (m *MsgSetNFTClassValuationFeePctResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgSetNFTClassValuationPeriod) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.NameDestination)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ClassId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ValuationPeriod)
+	n += 1 + l + sovTx(uint64(l))
+	return n
+}
+
+func (m *MsgSetNFTClassValuationPeriodResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgSetNFTClassBidTimeout) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.NameDestination)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ClassId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.BidTimeout)
+	n += 1 + l + sovTx(uint64(l))
+	return n
+}
+
+func (m *MsgSetNFTClassBidTimeoutResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgSetNFTClassAllowedDenoms) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.NameDestination)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ClassId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.AllowedDenoms) > 0 {
+		for _, s := range m.AllowedDenoms {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *MsgSetNFTClassAllowedDenomsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.NameDestination)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ClassId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.RejectBidValuationFeePercent)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.NameDestination)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ClassId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.MinimumBidPercentIncrease)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -6840,7 +8034,7 @@ func (m *MsgSetValuation) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 5:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxAnnualPctFee", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxValuationFeePct", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -6868,7 +8062,7 @@ func (m *MsgSetValuation) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MaxAnnualPctFee = string(dAtA[iNdEx:postIndex])
+			m.MaxValuationFeePct = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -8890,7 +10084,7 @@ func (m *MsgSetNFTClassAlwaysListedResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgSetNFTClassAnnualPct) Unmarshal(dAtA []byte) error {
+func (m *MsgSetNFTClassValuationFeePct) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -8913,10 +10107,10 @@ func (m *MsgSetNFTClassAnnualPct) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSetNFTClassAnnualPct: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSetNFTClassValuationFeePct: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSetNFTClassAnnualPct: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSetNFTClassValuationFeePct: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -8985,7 +10179,7 @@ func (m *MsgSetNFTClassAnnualPct) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AnnualPct", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ValuationFeePct", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -9013,7 +10207,7 @@ func (m *MsgSetNFTClassAnnualPct) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.AnnualPct = string(dAtA[iNdEx:postIndex])
+			m.ValuationFeePct = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -9036,7 +10230,7 @@ func (m *MsgSetNFTClassAnnualPct) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgSetNFTClassAnnualPctResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgSetNFTClassValuationFeePctResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -9059,10 +10253,992 @@ func (m *MsgSetNFTClassAnnualPctResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSetNFTClassAnnualPctResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSetNFTClassValuationFeePctResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSetNFTClassAnnualPctResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSetNFTClassValuationFeePctResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassValuationPeriod) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassValuationPeriod: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassValuationPeriod: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NameDestination = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClassId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValuationPeriod", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.ValuationPeriod, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassValuationPeriodResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassValuationPeriodResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassValuationPeriodResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassBidTimeout) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassBidTimeout: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassBidTimeout: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NameDestination = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClassId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BidTimeout", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.BidTimeout, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassBidTimeoutResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassBidTimeoutResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassBidTimeoutResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassAllowedDenoms) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassAllowedDenoms: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassAllowedDenoms: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NameDestination = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClassId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AllowedDenoms", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AllowedDenoms = append(m.AllowedDenoms, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassAllowedDenomsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassAllowedDenomsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassAllowedDenomsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercent) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassRejectBidValuationFeePercent: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassRejectBidValuationFeePercent: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NameDestination = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClassId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RejectBidValuationFeePercent", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RejectBidValuationFeePercent = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassRejectBidValuationFeePercentResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassRejectBidValuationFeePercentResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassRejectBidValuationFeePercentResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncrease) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassMinimumBidPercentIncrease: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassMinimumBidPercentIncrease: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NameDestination", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NameDestination = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClassId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinimumBidPercentIncrease", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MinimumBidPercentIncrease = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSetNFTClassMinimumBidPercentIncreaseResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSetNFTClassMinimumBidPercentIncreaseResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSetNFTClassMinimumBidPercentIncreaseResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

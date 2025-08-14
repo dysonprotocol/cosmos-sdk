@@ -18,7 +18,7 @@ func (k Keeper) PlaceBid(ctx context.Context, msg *nameservicev1.MsgPlaceBid) (*
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	// Validate the bid amount using shared validation logic
-	if err := k.ValidateValuation(ctx, msg.BidAmount); err != nil {
+	if err := k.ValidateValuation(ctx, msg.NftClassId, msg.BidAmount); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "invalid bid amount")
 	}
 
@@ -57,9 +57,8 @@ func (k Keeper) PlaceBid(ctx context.Context, msg *nameservicev1.MsgPlaceBid) (*
 		}
 	}
 
-	// Get module parameters
-	params := k.GetParams(ctx)
-	k.Logger.Info("PlaceBid: Got params", "allowed_denoms", params.AllowedDenoms)
+	// Get class data for bidding params
+	classDataForBids, _ := k.GetNFTClassData(ctx, msg.NftClassId)
 
 	// Get current timestamp
 	currentTime := sdkCtx.BlockTime()
@@ -103,8 +102,8 @@ func (k Keeper) PlaceBid(ctx context.Context, msg *nameservicev1.MsgPlaceBid) (*
 						msg.BidAmount.Denom, nftData.CurrentBid.Denom))
 			}
 
-			// Get the minimum bid percentage increase from params
-			minBidIncrease, err := params.GetMinimumBidPercentIncreaseAsDec()
+			// Get the minimum bid percentage increase from class data or default 0
+			minBidIncrease, err := math.LegacyNewDecFromStr(classDataForBids.MinimumBidPercentIncrease)
 			if err != nil {
 				k.Logger.Error("PlaceBid: Failed to parse minimum bid percent increase", "error", err)
 				return nil, cosmossdkerrors.Wrap(err, "failed to parse minimum bid percent increase")
@@ -170,7 +169,7 @@ func (k Keeper) PlaceBid(ctx context.Context, msg *nameservicev1.MsgPlaceBid) (*
 
 			k.Logger.Info("PlaceBid: New bid meets minimum percentage increase requirement",
 				"new_bid", msg.BidAmount, "current_bid", nftData.CurrentBid,
-				"min_increase_percent", params.MinimumBidPercentIncrease)
+				"min_increase_percent", classDataForBids.MinimumBidPercentIncrease)
 		}
 		k.Logger.Info("PlaceBid: New bid is higher than current bid",
 			"new_bid", msg.BidAmount, "current_bid", nftData.CurrentBid)

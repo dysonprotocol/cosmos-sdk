@@ -5,6 +5,7 @@ import "cosmos/base/v1beta1/coin.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
+import "google/protobuf/duration.proto";
 
 option go_package = "dysonprotocol.com/x/nameservice/types";
 
@@ -18,12 +19,73 @@ message Commitment {
   cosmos.base.v1beta1.Coin valuation = 5 [ (gogoproto.nullable) = false ];
 }
 
-// NFTClassData represents metadata for an NFT class
+// NFTClassData represents metadata for an NFT class.
+//
+// Fields here control listing defaults, economics, and per-class bidding
+// behavior. They are evaluated by the nameservice keeper when processing
+// place/reject/claim bid flows and when enforcing authorization on class-scope
+// operations.
+//
+// Notes on behavior:
+// - Per-class bidding parameters (bid_timeout, allowed_denoms,
+// reject_bid_valuation_fee_percent,
+//   minimum_bid_percent_increase) override any implicit defaults and are
+//   validated against the global bounds exposed in nameservice Params.
+// - If a per-class field is unset/zero-value, keeper logic falls back to
+// module-wide defaults.
+// - All percent values are cosmos.Dec strings with high precision.
 message NFTClassData {
-  bool always_listed =
-      1; // If true, all NFTs of this class are always listed for sale
-  string annual_pct = 2; // Annual percentage for fee calculation, default 0
-  string extra_data = 3; // Additional arbitrary metadata for the NFT class
+  // If true, all NFTs of this class are always listed for sale. When true,
+  // individual NFT `listed` flags are ignored and the marketplace treats them
+  // as listed by default.
+  bool always_listed = 1;
+
+  // valuation_fee_pct is the percentage applied per `valuation_period` to
+  // compute fee accruals on valuation increases. This is a decimal string
+  // (cosmos.Dec). Example: "0.01" for 1% per period. Default is "0".
+  string valuation_fee_pct = 2 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
+
+  // Free-form JSON/text for class-level metadata extensions. Not interpreted
+  // by core logic; emitted in queries for client consumption.
+  string extra_data = 3;
+
+  // valuation_period defines the time duration to which `valuation_fee_pct`
+  // applies. For example, if valuation_fee_pct is "0.01" and valuation_period
+  // is 1h, then a 1% fee per hour is applied proportionally to the remaining
+  // time until the valuation expiry.
+  google.protobuf.Duration valuation_period = 8
+      [ (gogoproto.stdduration) = true, (gogoproto.nullable) = false ];
+
+  // Per-class bidding parameters (optional; fall back to module Params if
+  // unset).
+
+  // bid_timeout defines the minimum duration a placed bid must remain pending
+  // before it can be claimed by the bidder. A claim before this timeout elapses
+  // will fail with an error. Must be within [Params.min_bid_timeout_class,
+  // Params.max_bid_timeout_class]. Example:  "2s", "100ms", "1h".
+  google.protobuf.Duration bid_timeout = 4
+      [ (gogoproto.stdduration) = true, (gogoproto.nullable) = false ];
+
+  // allowed_denoms restricts the set of coin denoms that can be used for
+  // valuations and bids in this class. The denom "udys" must be present.
+  // Attempts to set valuations or place bids using other denoms will be
+  // rejected.
+  repeated string allowed_denoms = 5;
+
+  // reject_bid_valuation_fee_percent is the fee charged (as a percentage of
+  // the new valuation) when the owner rejects the current highest bid and sets
+  // a new valuation. This is a decimal string (cosmos.Dec), validated against
+  // Params.{min,max}_reject_bid_valuation_fee_percent.
+  string reject_bid_valuation_fee_percent = 6
+      [ (cosmos_proto.scalar) = "cosmos.Dec" ];
+
+  // minimum_bid_percent_increase specifies the minimum percentage increase
+  // required over the current valuation for a new bid to be accepted. This is
+  // a decimal string (cosmos.Dec), validated against
+  // Params.{min,max}_minimum_bid_percent_increase. Example: "0.01" requires at
+  // least 1% higher than the current valuation.
+  string minimum_bid_percent_increase = 7
+      [ (cosmos_proto.scalar) = "cosmos.Dec" ];
 }
 
 // NFTData represents metadata for an individual NFT

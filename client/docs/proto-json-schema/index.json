@@ -266,9 +266,14 @@
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetDenomMetadata.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetDestination.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetListed.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed.json"},
-      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassAnnualPct.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassExtraData.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTMetadata.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetValuation.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgUpdateParams.json"},
@@ -319,5 +324,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":313}
+  {"type":"report","directories":3,"files":318}
 ]

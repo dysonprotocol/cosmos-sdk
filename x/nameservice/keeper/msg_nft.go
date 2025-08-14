@@ -97,6 +97,26 @@ func (k Keeper) SaveClass(ctx context.Context, msg *nameservicev1.MsgSaveClass) 
 		return nil, cosmossdkerrors.Wrap(err, "failed to save NFT class")
 	}
 
+	// Set default per-class bidding params by copying from nameservice.dys
+	if !k.nftKeeper.HasClass(ctx, NamesClassID) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrNotFound, "default class %s not found to seed params", NamesClassID)
+	}
+	defaultData, err := k.GetNFTClassData(ctx, NamesClassID)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to get default class params from nameservice.dys")
+	}
+
+	seed := nameservicev1.NFTClassData{
+		// Only seed per-class bidding params; leave other fields as zero-values
+		BidTimeout:                   defaultData.BidTimeout,
+		AllowedDenoms:                append([]string(nil), defaultData.AllowedDenoms...),
+		RejectBidValuationFeePercent: defaultData.RejectBidValuationFeePercent,
+		MinimumBidPercentIncrease:    defaultData.MinimumBidPercentIncrease,
+	}
+	if err := k.SetNFTClassData(ctx, msg.ClassId, seed); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to set default class params")
+	}
+
 	// Maintain reverse index for this class under its root name
 	root := extractRootName(msg.ClassId)
 	if err := k.SetClassByRootName(ctx, root, msg.ClassId); err != nil {

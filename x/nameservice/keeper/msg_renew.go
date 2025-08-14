@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"time"
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	math "cosmossdk.io/math"
@@ -9,10 +10,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
-
-// Constants for time calculation
-const SecondsInDay = 24 * 60 * 60
-const DaysInYear = 365
 
 // Renew implements the MsgServer.Renew method
 func (k Keeper) Renew(ctx context.Context, msg *nameservicev1.MsgRenew) (*nameservicev1.MsgRenewResponse, error) {
@@ -35,17 +32,18 @@ func (k Keeper) Renew(ctx context.Context, msg *nameservicev1.MsgRenew) (*namese
 	}
 
 	// Validate the valuation from NFT data
-	err = k.ValidateValuation(ctx, nftData.Valuation)
+	err = k.ValidateValuation(ctx, msg.NftClassId, nftData.Valuation)
 	if err != nil {
 		return nil, err
 	}
 
-	// Get the annual fee percentage from the NFT class metadata
-	feePercent, err := k.GetNamesClassAnnualPct(ctx)
+	// Get class data for fee and period
+	classData, err := k.GetNFTClassData(ctx, msg.NftClassId)
 	if err != nil {
-		k.Logger.Error("Renew: Failed to get annual percentage from class metadata", "error", err)
-		return nil, cosmossdkerrors.Wrap(err, "failed to get annual percentage for renewal")
+		k.Logger.Error("Renew: Failed to get class data", "error", err)
+		return nil, cosmossdkerrors.Wrap(err, "failed to get class data for renewal")
 	}
+	feePercent := classData.ValuationFeePct
 
 	// Convert the single coin to a DecCoins for precise math operations
 	decValuation := sdk.NewDecCoinsFromCoins(nftData.Valuation)
@@ -55,27 +53,19 @@ func (k Keeper) Renew(ctx context.Context, msg *nameservicev1.MsgRenew) (*namese
 
 	startTime := nftData.ValuationExpiry
 
-	// Set new expiry date to exactly 1 year from the start time
-	newExpiry := currentTime.AddDate(1, 0, 0)
+	period := classData.ValuationPeriod
+	if period <= 0 {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "valuation_period not set for class %s", msg.NftClassId)
+	}
+	// Set new expiry to now plus valuation_period
+	newExpiry := currentTime.Add(period)
 
 	// Calculate the exact renewal period in seconds using math.Int for precision
 	renewalPeriodSeconds := math.NewInt(newExpiry.Unix() - startTime.Unix())
 
-	// Calculate days as seconds / seconds-per-day
-	renewalPeriodDaysInt := renewalPeriodSeconds.Quo(math.NewInt(SecondsInDay))
-
-	// Create a decimal for more precise calculations with any remainder
-	secondsRemainder := renewalPeriodSeconds.Mod(math.NewInt(SecondsInDay))
-
-	// Get a precise decimal representation of days including partial days
-	renewalPeriodDaysDecimal := math.LegacyNewDecFromInt(renewalPeriodDaysInt)
-	if !secondsRemainder.IsZero() {
-		fractionOfDay := math.LegacyNewDecFromInt(secondsRemainder).Quo(math.LegacyNewDecFromInt(math.NewInt(SecondsInDay)))
-		renewalPeriodDaysDecimal = renewalPeriodDaysDecimal.Add(fractionOfDay)
-	}
-
-	// Calculate the proportion of a year (365 days) that we're renewing for
-	yearProportion := renewalPeriodDaysDecimal.Quo(math.LegacyNewDecFromInt(math.NewInt(DaysInYear)))
+	// Calculate the proportion of one valuation_period we're renewing for
+	denomSeconds := math.NewInt(int64(period / time.Second))
+	periodProportion := math.LegacyNewDecFromInt(renewalPeriodSeconds).Quo(math.LegacyNewDecFromInt(denomSeconds))
 
 	// Convert to LegacyDec for compatibility with SDK DecCoins methods
 	legacyFeePercentDec, err := math.LegacyNewDecFromStr(feePercent)
@@ -83,8 +73,8 @@ func (k Keeper) Renew(ctx context.Context, msg *nameservicev1.MsgRenew) (*namese
 		return nil, cosmossdkerrors.Wrap(err, "failed to convert fee percentage to legacy decimal")
 	}
 
-	// Calculate fee by multiplying the valuation by fee percentage and the year proportion
-	decFees := decValuation.MulDec(legacyFeePercentDec).MulDec(yearProportion)
+	// Calculate fee by multiplying the valuation by fee percentage and the period proportion
+	decFees := decValuation.MulDec(legacyFeePercentDec).MulDec(periodProportion)
 
 	// Convert back to regular Coins for blockchain transactions
 	fee, _ := decFees.TruncateDecimal()
@@ -125,8 +115,8 @@ func (k Keeper) Renew(ctx context.Context, msg *nameservicev1.MsgRenew) (*namese
 	}, nil
 }
 
-// GetNamesClassAnnualPct returns the annual percentage fee from the NFT class metadata
-func (k Keeper) GetNamesClassAnnualPct(ctx context.Context) (string, error) {
+// GetNamesClassValuationFeePct returns the valuation fee percentage from the NFT class metadata
+func (k Keeper) GetNamesClassValuationFeePct(ctx context.Context) (string, error) {
 	// Ensure the class exists before trying to access its data
 	if !k.nftKeeper.HasClass(ctx, NamesClassID) {
 		// Try to create the class if it doesn't exist
@@ -146,11 +136,11 @@ func (k Keeper) GetNamesClassAnnualPct(ctx context.Context) (string, error) {
 		return "", cosmossdkerrors.Wrap(err, "nameservice NFT class data error")
 	}
 
-	// If annual_pct is empty, return an error
-	if nftClassData.AnnualPct == "" {
+	// If valuation_fee_pct is empty, default to 0
+	if nftClassData.ValuationFeePct == "" {
 		return "0", nil
 	}
 
-	// Return the annual percentage from the class data
-	return nftClassData.AnnualPct, nil
+	// Return the valuation fee percentage from the class data
+	return nftClassData.ValuationFeePct, nil
 }

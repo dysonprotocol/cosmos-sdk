@@ -2,76 +2,118 @@ package keeper
 
 import (
 	"context"
-	"strconv"
 
 	cosmossdkerrors "cosmossdk.io/errors"
+	math "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
 )
 
-// SetNFTClassAnnualPct handles a MsgSetNFTClassAnnualPct message
-func (k Keeper) SetNFTClassAnnualPct(ctx context.Context, msg *nameservicev1.MsgSetNFTClassAnnualPct) (*nameservicev1.MsgSetNFTClassAnnualPctResponse, error) {
-    // Verify authorization: signer must match resolved destination of class root name
-    if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
-        return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "unauthorized to set annual_pct: %v", err)
-    }
+// SetNFTClassValuationFeePct handles MsgSetNFTClassValuationFeePct
+func (k Keeper) SetNFTClassValuationFeePct(ctx context.Context, msg *nameservicev1.MsgSetNFTClassValuationFeePct) (*nameservicev1.MsgSetNFTClassValuationFeePctResponse, error) {
+	k.Logger.Info("SetNFTClassValuationFeePct: received",
+		"class_id", msg.ClassId,
+		"name_destination", msg.NameDestination,
+		"valuation_fee_pct_raw", msg.ValuationFeePct,
+	)
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "unauthorized to set valuation fee pct: %v", err)
+	}
 
-	// Parse and validate annual_pct range (0.0 to 1.0)
-	annualPctFloat, err := strconv.ParseFloat(msg.AnnualPct, 64)
+	// Validate bounds against Params and ensure provided pct within [min,max]
+	params := k.GetParams(ctx)
+	k.Logger.Info("SetNFTClassValuationFeePct: params bounds (raw)",
+		"min_valuation_fee_pct", params.MinValuationFeePct,
+		"max_valuation_fee_pct", params.MaxValuationFeePct,
+	)
+	minDec, err := math.LegacyNewDecFromStr(params.MinValuationFeePct)
 	if err != nil {
-		return nil, cosmossdkerrors.Wrapf(
-			sdkerrors.ErrInvalidRequest,
-			"invalid annual_pct format: %s",
-			msg.AnnualPct,
-		)
+		return nil, cosmossdkerrors.Wrap(err, "invalid min_valuation_fee_pct")
+	}
+	maxDec, err := math.LegacyNewDecFromStr(params.MaxValuationFeePct)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "invalid max_valuation_fee_pct")
+	}
+	k.Logger.Info("SetNFTClassValuationFeePct: params bounds (parsed)",
+		"min_valuation_fee_pct_dec", minDec.String(),
+		"max_valuation_fee_pct_dec", maxDec.String(),
+	)
+
+	valDec, err := math.LegacyNewDecFromStr(msg.ValuationFeePct)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "invalid valuation_fee_pct")
+	}
+	k.Logger.Info("SetNFTClassValuationFeePct: parsed valuation pct",
+		"valuation_fee_pct_dec", valDec.String(),
+	)
+	if valDec.LT(minDec) || valDec.GT(maxDec) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "valuation_fee_pct %s out of bounds [%s,%s]", valDec.String(), minDec.String(), maxDec.String())
 	}
 
-	if annualPctFloat < 0.0 || annualPctFloat > 1.0 {
-		return nil, cosmossdkerrors.Wrapf(
-			sdkerrors.ErrInvalidRequest,
-			"annual_pct must be between 0.0 and 1.0, got: %s",
-			msg.AnnualPct,
-		)
-	}
-
-	// Get current NFT class data
 	classData, err := k.GetNFTClassData(ctx, msg.ClassId)
 	if err != nil {
-		k.Logger.Error("SetNFTClassAnnualPct: Failed to get NFT class data",
-			"class_id", msg.ClassId,
-			"error", err)
-		return nil, cosmossdkerrors.Wrapf(
-			err,
-			"NFT class not found: %s",
-			msg.ClassId,
-		)
+		return nil, cosmossdkerrors.Wrapf(err, "NFT class not found: %s", msg.ClassId)
 	}
-
-	// Update the annual_pct field (store as string directly)
-	classData.AnnualPct = msg.AnnualPct
-
-	// Set the updated NFT class data
+	oldPct := classData.ValuationFeePct
+	classData.ValuationFeePct = msg.ValuationFeePct
 	if err := k.SetNFTClassData(ctx, msg.ClassId, classData); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to update NFT class data for class %s", msg.ClassId)
 	}
+	k.Logger.Info("SetNFTClassValuationFeePct: updated class data",
+		"class_id", msg.ClassId,
+		"old_pct", oldPct,
+		"new_pct", classData.ValuationFeePct,
+	)
 
-	// Emit event
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	if evErr := sdkCtx.EventManager().EmitTypedEvent(
-		&nameservicev1.EventNFTClassAnnualPctUpdated{
-			ClassId: msg.ClassId,
-		},
-	); evErr != nil {
-		k.Logger.Error("failed to emit NFT class annual pct updated event", "error", evErr)
-		return nil, cosmossdkerrors.Wrap(evErr, "failed to emit NFT class annual pct updated event")
+	if evErr := sdkCtx.EventManager().EmitTypedEvent(&nameservicev1.EventNFTClassDataUpdated{ClassId: msg.ClassId}); evErr != nil {
+		return nil, cosmossdkerrors.Wrap(evErr, "failed to emit NFT class data updated event")
 	}
+	return &nameservicev1.MsgSetNFTClassValuationFeePctResponse{}, nil
+}
 
-    k.Logger.Info("Successfully updated NFT class annual pct",
-        "class_id", msg.ClassId,
-        "name_destination", msg.NameDestination,
-        "annual_pct", msg.AnnualPct)
+// helper to ensure dec string v is within [min,max]
+// (helper removed; inlined explicit checks in handlers)
 
-	return &nameservicev1.MsgSetNFTClassAnnualPctResponse{}, nil
+// SetNFTClassValuationPeriod handles MsgSetNFTClassValuationPeriod
+func (k Keeper) SetNFTClassValuationPeriod(ctx context.Context, msg *nameservicev1.MsgSetNFTClassValuationPeriod) (*nameservicev1.MsgSetNFTClassValuationPeriodResponse, error) {
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "unauthorized to set valuation period: %v", err)
+	}
+	params := k.GetParams(ctx)
+	k.Logger.Info("SetNFTClassValuationPeriod: bounds and requested",
+		"min_valuation_period", params.MinValuationPeriod.String(),
+		"max_valuation_period", params.MaxValuationPeriod.String(),
+		"requested", msg.ValuationPeriod.String(),
+	)
+	if msg.ValuationPeriod < params.MinValuationPeriod || msg.ValuationPeriod > params.MaxValuationPeriod {
+		return nil, cosmossdkerrors.Wrapf(
+			sdkerrors.ErrInvalidRequest,
+			"valuation_period %s out of bounds [%s,%s]",
+			msg.ValuationPeriod.String(),
+			params.MinValuationPeriod.String(),
+			params.MaxValuationPeriod.String(),
+		)
+	}
+	classData, err := k.GetNFTClassData(ctx, msg.ClassId)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "NFT class not found: %s", msg.ClassId)
+	}
+	oldPeriod := classData.ValuationPeriod
+	classData.ValuationPeriod = msg.ValuationPeriod
+	if err := k.SetNFTClassData(ctx, msg.ClassId, classData); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to update NFT class data for class %s", msg.ClassId)
+	}
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	if evErr := sdkCtx.EventManager().EmitTypedEvent(&nameservicev1.EventNFTClassDataUpdated{ClassId: msg.ClassId}); evErr != nil {
+		return nil, cosmossdkerrors.Wrap(evErr, "failed to emit NFT class data updated event")
+	}
+	k.Logger.Info("SetNFTClassValuationPeriod: updated class data",
+		"class_id", msg.ClassId,
+		"old_period", oldPeriod.String(),
+		"new_period", classData.ValuationPeriod.String(),
+	)
+	return &nameservicev1.MsgSetNFTClassValuationPeriodResponse{}, nil
 }

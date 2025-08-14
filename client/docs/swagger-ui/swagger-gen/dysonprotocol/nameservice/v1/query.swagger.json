@@ -392,28 +392,44 @@
     "dysonprotocol.nameservice.v1.Params": {
       "type": "object",
       "properties": {
-        "bid_timeout": {
-          "type": "string",
-          "title": "bid_timeout defines the duration after which a bid can be claimed by the\nbidder"
-        },
-        "allowed_denoms": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "allowed_denoms defines the denominations that are allowed to be used for\nvaluations and bids"
-        },
-        "reject_bid_valuation_fee_percent": {
-          "type": "string",
-          "title": "reject_bid_valuation_fee_percent defines the percentage of the new\nvaluation to charge as a fee when rejecting a bid"
-        },
-        "minimum_bid_percent_increase": {
-          "type": "string",
-          "title": "minimum_bid_percent_increase defines the minimum percentage increase\nrequired for a new bid compared to the previous bid"
-        },
         "mint_fee_per_coin": {
           "type": "string",
           "title": "mint_fee_per_coin defines the fee in udys charged per coin minted"
+        },
+        "min_bid_timeout_class": {
+          "type": "string",
+          "title": "Bounds for per-class bidding parameters\nClass bid_timeout must be within [min_bid_timeout_class,\nmax_bid_timeout_class]"
+        },
+        "max_bid_timeout_class": {
+          "type": "string"
+        },
+        "min_reject_bid_valuation_fee_percent": {
+          "type": "string",
+          "title": "Class reject fee percent must be within\n[min_reject_bid_valuation_fee_percent,\nmax_reject_bid_valuation_fee_percent]"
+        },
+        "max_reject_bid_valuation_fee_percent": {
+          "type": "string"
+        },
+        "min_minimum_bid_percent_increase": {
+          "type": "string",
+          "title": "Class minimum bid percent increase must be within\n[min_minimum_bid_percent_increase, max_minimum_bid_percent_increase]"
+        },
+        "max_minimum_bid_percent_increase": {
+          "type": "string"
+        },
+        "min_valuation_fee_pct": {
+          "type": "string",
+          "title": "Class valuation fee percent must be within\n[min_valuation_fee_pct, max_valuation_fee_pct]"
+        },
+        "max_valuation_fee_pct": {
+          "type": "string"
+        },
+        "min_valuation_period": {
+          "type": "string",
+          "title": "Class valuation period bounds must be within\n[min_valuation_period, max_valuation_period]"
+        },
+        "max_valuation_period": {
+          "type": "string"
         }
       },
       "description": "Params defines the parameters for the nameservice module."

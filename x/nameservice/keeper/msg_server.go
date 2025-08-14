@@ -5,4 +5,4 @@ import (
 )
 
 // Ensure Keeper implements the MsgServer interface
-var _ nameservicev1.MsgServer = Keeper{}
+var _ nameservicev1.MsgServer = (*Keeper)(nil)

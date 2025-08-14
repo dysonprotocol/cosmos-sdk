@@ -1375,7 +1375,7 @@ class DysEval(object):
         elif isinstance(node, ast.SetComp):
             to_return = set()
         else:  # pragma: no cover
-            raise Exception("should never happen")
+            raise Exception(f"should never happen _eval_comprehension got: {node}") 
 
         self.scope.push({})
 
@@ -1402,14 +1402,14 @@ class DysEval(object):
                     else:
                         if isinstance(node, ast.ListComp):
                             to_return.append(self._eval(node.elt))
-                        if isinstance(node, ast.GeneratorExp):
+                        elif isinstance(node, ast.GeneratorExp):
                             to_return.append(self._eval(node.elt))
                         elif isinstance(node, ast.DictComp):
                             to_return[self._eval(node.key)] = self._eval(node.value)
                         elif isinstance(node, ast.SetComp):
                             to_return.add(self._eval(node.elt))
                         else:  # pragma: no cover
-                            raise Exception("should never happen")
+                            raise Exception(f"should never happen, do_generator: {node}")
 
         do_generator()
 

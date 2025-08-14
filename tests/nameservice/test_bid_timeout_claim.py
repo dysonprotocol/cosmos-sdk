@@ -43,150 +43,34 @@ def register_name(chainnet, generate_account, faucet):
     assert reveal_result["code"] == 0, reveal_result["raw_log"]
     return {"name": name, "alice_name": alice_name, "alice_address": alice_address}
 
-def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
-    """Set bid timeout via governance proposal"""
-    # Get current params
-    current_params = dysond_bin("query", "nameservice", "params")
-    current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["udys"])
-    current_reject_fee_percent = current_params.get("params", {}).get("reject_bid_valuation_fee_percent", "0.03")
-    current_minimum_bid_percent_increase = current_params.get("params", {}).get("minimum_bid_percent_increase", "0.01")
-    current_mint_fee_per_coin = current_params.get("params", {}).get("mint_fee_per_coin", "1.0")
-    
-    # Query gov module account address
-    gov_module_response = dysond_bin("query", "auth", "module-account", "gov")
-    gov_address = gov_module_response.get("account", {}).get("value", {}).get("address", "")
-    assert gov_address
+def set_class_bid_timeout(dysond_bin, signer_name: str, class_id: str, bid_timeout_value: str):
+    """Set per-class bid timeout using the new class-level setter."""
+    res = dysond_bin(
+        "tx",
+        "nameservice",
+        "set-nft-class-bid-timeout",
+        "--class-id",
+        class_id,
+        "--bid-timeout",
+        bid_timeout_value,
+        "--from",
+        signer_name,
+        "--yes",
+    )
+    assert res["code"] == 0, res.get("raw_log", "")
 
-    # Get validator operator address
-    validators = dysond_bin("query", "staking", "validators")
-    validator_operator = validators["validators"][0]["operator_address"]
-    
-    # Delegate tokens from Alice to validator so Alice has voting power
-    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "50000000udys", "--from", "alice", "--yes")
-    assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result['raw_log']}"
-
-    proposal = {
-        "messages": [
-            {
-                "@type": "/dysonprotocol.nameservice.v1.MsgUpdateParams",
-                "authority": gov_address,
-                "params": {
-                    "bid_timeout": bid_timeout_value,
-                    "allowed_denoms": current_allowed_denoms,
-                    "reject_bid_valuation_fee_percent": current_reject_fee_percent,
-                    "minimum_bid_percent_increase": current_minimum_bid_percent_increase,
-                    "mint_fee_per_coin": current_mint_fee_per_coin
-                }
-            }
-        ],
-        "metadata": "ipfs://CID",
-        "deposit": "1udys",
-        "title": "Update Nameservice Parameters",
-        "summary": f"Update bid_timeout to {bid_timeout_value} for testing"
-    }
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=True) as f:
-        json.dump(proposal, f)
-        f.flush()
-        proposal_file = f.name
-        # Submit proposal using Alice (who now has voting power)
-        tx_result = dysond_bin("tx", "gov", "submit-proposal", proposal_file, "--from", "alice", "--keyring-backend", "test", "--yes")
-        
-    print(f"Submit proposal result: {tx_result}")
-    tx_result = dysond_bin("query", "wait-tx", tx_result["txhash"])
-    print(f"Proposal result: {tx_result}")
-
-    # Extract proposal ID using list comprehensions
-    submit_events = [e for e in tx_result.get("events", []) if e.get("type") == "submit_proposal"]
-    assert submit_events, "No submit_proposal event found"
-    
-    proposal_id_attrs = [a for a in submit_events[0].get("attributes", []) if a.get("key") == "proposal_id"]
-    assert proposal_id_attrs, "No proposal_id attribute found"
-    
-    proposal_id = proposal_id_attrs[0].get("value")
-
-    # Vote with Alice (who has voting power through delegation)
-    vote_result = dysond_bin("tx", "gov", "vote", proposal_id, "yes", "--from", "alice", "--keyring-backend", "test", "--yes")
-    vote_tx_result = dysond_bin("query", "wait-tx", vote_result["txhash"])
-    print(f"Vote result: {vote_tx_result}")
-    assert vote_tx_result["code"] == 0, vote_tx_result["raw_log"]
-
-    # Wait for proposal to pass
-    poll_until_proposal_passes(dysond_bin, proposal_id)
-    
-    # Check final proposal status
-    final_proposal = dysond_bin("query", "gov", "proposal", proposal_id)
-    final_status = final_proposal["proposal"]["status"]
-    assert final_status == "PROPOSAL_STATUS_PASSED", f"Governance proposal failed with status: {final_status}"
-
-    # Verify params were updated
-    params_result = dysond_bin("query", "nameservice", "params")
-    print(f"Final nameservice params: {params_result}")
-    assert params_result["params"]["bid_timeout"] == bid_timeout_value, f"Bid timeout not updated correctly"
-
-def test_update_nameservice_params_via_gov(chainnet, generate_account, faucet):
+def test_update_class_bid_timeout(chainnet, generate_account, faucet):
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account('alice')
     faucet(alice_address, denom="udys", amount="25000")
-    
-    # Get validator operator address and delegate tokens for voting power
-    validators = dysond_bin("query", "staking", "validators")
-    validator_operator = validators["validators"][0]["operator_address"]
-    delegate_result = dysond_bin("tx", "staking", "delegate", validator_operator, "50000000udys", "--from", alice_name, "--yes")
-    assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result['raw_log']}"
-    
-    # Get current params
-    current_params = dysond_bin("query", "nameservice", "params")
-    current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["udys"])
-    current_reject_fee_percent = current_params.get("params", {}).get("reject_bid_valuation_fee_percent", "0.03")
-    current_minimum_bid_percent_increase = current_params.get("params", {}).get("minimum_bid_percent_increase", "0.01")
-    # Query gov module account address
-    gov_module_response = dysond_bin("query", "auth", "module-account", "gov")
-    gov_address = gov_module_response.get("account", {}).get("value", {}).get("address", "")
-    assert gov_address
-    proposal = {
-        "messages": [
-            {
-                "@type": "/dysonprotocol.nameservice.v1.MsgUpdateParams",
-                "authority": gov_address,
-                "params": {
-                    "bid_timeout": "1s",
-                    "allowed_denoms": current_allowed_denoms,
-                    "reject_bid_valuation_fee_percent": current_reject_fee_percent,
-                    "minimum_bid_percent_increase": current_minimum_bid_percent_increase
-                }
-            }
-        ],
-        "metadata": "ipfs://CID",
-        "deposit": "1udys",
-        "title": "Update Nameservice Parameters",
-        "summary": "Update bid_timeout to 4s for testing"
-    }
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=True) as f:
-        json.dump(proposal, f)
-        f.flush()
-        proposal_file = f.name
-        tx_result = dysond_bin("tx", "gov", "submit-proposal", proposal_file, "--from", alice_name, "--keyring-backend", "test", "--yes")
-    print(f"Submit proposal result: {tx_result}")
-    tx_result = dysond_bin("query", "wait-tx", tx_result["txhash"])
-    print(f"Proposal result: {tx_result}")
-    #assert tx_result["code"] == 0, tx_result["raw_log"]
-    # Extract proposal ID using list comprehensions
-    submit_events = [e for e in tx_result.get("events", []) if e.get("type") == "submit_proposal"]
-    assert submit_events, "No submit_proposal event found"
-    
-    proposal_id_attrs = [a for a in submit_events[0].get("attributes", []) if a.get("key") == "proposal_id"]
-    assert proposal_id_attrs, "No proposal_id attribute found"
-    
-    proposal_id = proposal_id_attrs[0].get("value")
-    # Vote
-    tx_result = dysond_bin("tx", "gov", "vote", proposal_id, "yes", "--from", alice_name, "--keyring-backend", "test", "--yes")
-    tx_result = dysond_bin("query", "wait-tx", tx_result["txhash"])
-    print(f"Vote result: {tx_result}")
-    assert tx_result["code"] == 0, tx_result["raw_log"]
-    # Wait for proposal to pass
-    poll_until_proposal_passes(dysond_bin, proposal_id)
-    params_result = dysond_bin("query", "nameservice", "params")
-    print(f"Final nameservice params: {params_result}")
+    # Create a class Alice controls under her root name
+    reg = register_name(chainnet, generate_account, faucet)
+    class_id = f"{reg['name']}/col"
+    # Create class
+    res = dysond_bin("tx", "nameservice", "save-class", "--class-id", class_id, "--from", reg["alice_name"])  # signer must be root name owner/destination
+    assert res["code"] == 0, res["raw_log"]
+    # Set bid timeout to 1s using class-level setter, must be signed by root owner
+    set_class_bid_timeout(dysond_bin, reg["alice_name"], class_id, "1s")
 
 
 def test_claim_before_timeout_fails(chainnet, generate_account, faucet):
@@ -194,23 +78,32 @@ def test_claim_before_timeout_fails(chainnet, generate_account, faucet):
     [alice_name, alice_address] = generate_account('alice')
     faucet(alice_address, denom="udys", amount="25000")
     
-    # Set bid timeout to 10 seconds via governance proposal
-    set_bid_timeout_via_gov(dysond_bin, alice_name, "10s")
+    # Create a test class under Alice and set per-class bid timeout to 10s
+    reg = register_name(chainnet, generate_account, faucet)
+    test_class = f"{reg['name']}/col"
+    res = dysond_bin("tx", "nameservice", "save-class", "--class-id", test_class, "--from", reg["alice_name"])  # signer must control root
+    assert res["code"] == 0, res["raw_log"]
+    set_class_bid_timeout(dysond_bin, reg["alice_name"], test_class, "10s")
     
     [bob_name, bob_address] = generate_account('bob')
     faucet(bob_address, denom="udys", amount="1000")
-    registered_name = register_name(chainnet, generate_account, faucet)
-    alice_address = registered_name["alice_address"]
+    registered_name = {"name": f"nft-{bob_address[:8]}", "alice_address": alice_address}
+    # Mint an NFT in the test class and list it
+    nft_id = registered_name["name"]
+    mint_res = dysond_bin("tx", "nameservice", "mint-nft", "--class-id", test_class, "--nft-id", nft_id, "--from", reg["alice_name"])  # use root owner
+    assert mint_res["code"] == 0, mint_res["raw_log"]
+    list_res = dysond_bin("tx", "nameservice", "set-listed", "--nft-class-id", test_class, "--nft-id", nft_id, "--listed", "--from", reg["alice_name"])  # use root owner
+    assert list_res["code"] == 0, list_res["raw_log"]
     
     # Place a bid from Bob
     bid_amount = "500udys"
     print(f"Placing bid of {bid_amount} from Bob")
-    tx_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", registered_name["name"], "--bid-amount", bid_amount, "--from", bob_name, "--keyring-backend", "test", "--yes")
+    tx_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", test_class, "--nft-id", nft_id, "--bid-amount", bid_amount, "--from", bob_name, "--keyring-backend", "test", "--yes")
     assert tx_result["code"] == 0, tx_result["raw_log"]
     
     print(f"Attempting to claim immediately (should fail)")
     # Attempt to claim immediately (should fail)
-    claim_result = dysond_bin("tx", "nameservice", "claim-bid", "--nft-class-id", "nameservice.dys", "--nft-id", registered_name["name"], "--from", bob_name, "--keyring-backend", "test", "--yes")
+    claim_result = dysond_bin("tx", "nameservice", "claim-bid", "--nft-class-id", test_class, "--nft-id", nft_id, "--from", bob_name, "--keyring-backend", "test", "--yes")
     print(f"Claim result: {claim_result}")
     
     # Check that the transaction failed with the expected error
@@ -218,8 +111,9 @@ def test_claim_before_timeout_fails(chainnet, generate_account, faucet):
     assert "bid timeout has not elapsed" in claim_result["raw_log"], f"Expected 'bid timeout has not elapsed' error, but got: {claim_result['raw_log']}"
 
     # Verify ownership was not transferred
-    nft_info = dysond_bin("query", "nft", "owner", "nameservice.dys", registered_name["name"], "--output", "json")
-    assert nft_info["owner"] == alice_address
+    nft_info = dysond_bin("query", "nft", "owner", test_class, nft_id, "--output", "json")
+    # Owner should still be the class root owner who minted/listed the NFT
+    assert nft_info["owner"] == reg["alice_address"]
 
 
 def test_claim_after_timeout_succeeds(chainnet, generate_account, faucet):
@@ -227,18 +121,30 @@ def test_claim_after_timeout_succeeds(chainnet, generate_account, faucet):
     [alice_name, alice_address] = generate_account('alice')
     faucet(alice_address, denom="udys", amount="25000")
     
-    # Set bid timeout to 100ms via governance proposal for fast test
-    set_bid_timeout_via_gov(dysond_bin, alice_name, "100ms")
+    # Create a test class and set bid timeout to 100ms for fast test
+    reg = register_name(chainnet, generate_account, faucet)
+    test_class = f"{reg['name']}/col"
+    res = dysond_bin("tx", "nameservice", "save-class", "--class-id", test_class, "--from", reg["alice_name"])  # signer must control root
+    assert res["code"] == 0, res["raw_log"]
+    set_class_bid_timeout(dysond_bin, reg["alice_name"], test_class, "100ms")
     
     [bob_name, bob_address] = generate_account('bob')
     faucet(bob_address, denom="udys", amount="1000")
-    registered_name = register_name(chainnet, generate_account, faucet)
-    alice_address = registered_name["alice_address"]
+    # Mint and list an NFT in the test class
+    nft_id = f"nft-{bob_address[:8]}"
+    mint_res = dysond_bin("tx", "nameservice", "mint-nft", "--class-id", test_class, "--nft-id", nft_id, "--from", reg["alice_name"])  # use root owner
+    assert mint_res["code"] == 0, mint_res["raw_log"]
+    list_res = dysond_bin("tx", "nameservice", "set-listed", "--nft-class-id", test_class, "--nft-id", nft_id, "--listed", "--from", reg["alice_name"])  # use root owner
+    assert list_res["code"] == 0, list_res["raw_log"]
+    
+    # Record Alice's initial udys balance (owner who minted/listed via reg)
+    alice_bal_before = dysond_bin("query", "bank", "balances", reg["alice_address"])
+    alice_udys_before = next((int(b.get("amount")) for b in alice_bal_before.get("balances", []) if b.get("denom") == "udys"), 0)
     
     # Place a bid from Bob
     bid_amount = "500udys"
     print(f"Placing bid of {bid_amount} from Bob")
-    bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", "nameservice.dys", "--nft-id", registered_name["name"], "--bid-amount", bid_amount, "--from", bob_name, "--keyring-backend", "test", "--yes")
+    bid_result = dysond_bin("tx", "nameservice", "place-bid", "--nft-class-id", test_class, "--nft-id", nft_id, "--bid-amount", bid_amount, "--from", bob_name, "--keyring-backend", "test", "--yes")
     assert bid_result["code"] == 0, bid_result["raw_log"]
     
     # Wait for bid timeout to elapse by waiting for blocks to pass
@@ -254,12 +160,17 @@ def test_claim_after_timeout_succeeds(chainnet, generate_account, faucet):
     
     print(f"Attempting to claim after timeout (should succeed)")
     # Attempt to claim after timeout (should succeed)
-    claim_result = dysond_bin("tx", "nameservice", "claim-bid", "--nft-class-id", "nameservice.dys", "--nft-id", registered_name["name"], "--from", bob_name, "--keyring-backend", "test", "--yes")
+    claim_result = dysond_bin("tx", "nameservice", "claim-bid", "--nft-class-id", test_class, "--nft-id", nft_id, "--from", bob_name, "--keyring-backend", "test", "--yes")
     print(f"Claim result: {claim_result}")
     
     # Check that the transaction succeeded
     assert claim_result["code"] == 0, f"Expected claim transaction to succeed, but got error: {claim_result.get('raw_log', 'Unknown error')}"
     
+    # Verify Alice received the escrowed bid amount (check reg's alice)
+    alice_bal_after = dysond_bin("query", "bank", "balances", reg["alice_address"])
+    alice_udys_after = next((int(b.get("amount")) for b in alice_bal_after.get("balances", []) if b.get("denom") == "udys"), 0)
+    assert alice_udys_after - alice_udys_before >= 500, f"Alice did not receive bid funds: before={alice_udys_before}, after={alice_udys_after}"
+
     # Verify that Bob now owns the NFT
-    owner_result = dysond_bin("query", "nft", "owner", "nameservice.dys", registered_name["name"], "--output", "json")
-    assert owner_result["owner"] == bob_address, f"Expected Bob to own the NFT, but owner is {owner_result['owner']}" 
+    owner_result = dysond_bin("query", "nft", "owner", test_class, nft_id, "--output", "json")
+    assert owner_result["owner"] == bob_address, f"Expected Bob to own the NFT, but owner is {owner_result['owner']}"

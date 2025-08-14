@@ -157,7 +157,7 @@ def make_run_command(dysond_bin, node_home):
                 stdout = "None"
                 stderr = "None"
                 if "--timeout" not in args:
-                    commands += ["--timeout", "100s"]
+                    commands += ["--timeout", "300s"]
                 for i in range(20,0,-1):
                     out = subprocess.run(commands, capture_output=True, text=True)
                     stdout = out.stdout
@@ -194,7 +194,7 @@ def make_run_command(dysond_bin, node_home):
                     tx_response = json.loads(original_out.stdout)
                     if tx_response.get("code") == 0:
                         # Use longer timeout for script update transactions as they may take more time
-                        timeout = "100ms"
+                        timeout = "300ms"
                         wait_tx_response = run_command("query", "wait-tx", tx_response["txhash"], "--timeout", timeout)
                         return wait_tx_response
                     else:
@@ -287,9 +287,9 @@ def chainnet(worker_id, test_base_dir, test_config_path):
     dysond_proc = subprocess.Popen([
         "python3", CHAINNET_SCRIPT, "start",
         "--config-file", str(config_path),
-        "--block-speed", "10ms",
+        "--block-speed", "500ms",
         "--no-blocks-timeout", "20", 
-        #"--logs"
+        "--logs"
     ], preexec_fn=os.setsid)
 
     # Track processes for cleanup
@@ -413,7 +413,7 @@ def faucet(chainnet):
             tx_out = dysond_bin("tx", "bank", "send", "alice", address, str(amount) + denom,
                 "--from", "alice", "--yes", **kwargs)
             txhash = tx_out["txhash"]
-            wait_result = dysond_bin("query", "wait-tx", txhash, "--timeout", "100s")
+            wait_result = dysond_bin("query", "wait-tx", txhash, "--timeout", "300s")
             if wait_result.get("code") == 0:
                 break
             else:

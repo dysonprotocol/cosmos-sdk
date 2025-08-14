@@ -7,89 +7,70 @@ import (
 	"cosmossdk.io/math"
 )
 
-// DefaultBidTimeout is the default value for the bid timeout parameter
-const DefaultBidTimeout = time.Hour * 24 * 7 // 7 days
-// MinBidTimeout is the minimum allowed value for the bid timeout parameter
+// MinBidTimeout is the minimum allowed value for the class bid timeout parameter
 const MinBidTimeout = 0 // 0 seconds
-// MaxBidTimeout is the maximum allowed value for the bid timeout parameter
+// MaxBidTimeout is the maximum allowed value for the class bid timeout parameter
 const MaxBidTimeout = time.Hour * 24 * 90 // 90 days
-
-// DefaultAllowedDenoms is the default list of allowed denominations
-var DefaultAllowedDenoms = []string{"udys"}
-
-// DefaultRejectBidValuationFeePercent is the default percentage of the valuation to charge as a reject bid valuation fee
-var DefaultRejectBidValuationFeePercent = "0.03" // 3%
-
-// DefaultMinimumBidPercentIncrease is the default percentage increase required for a new bid compared to the previous bid
-var DefaultMinimumBidPercentIncrease = "0.01" // 1%
 
 // DefaultMintFeePerCoin is the default fee in udys charged per coin minted
 var DefaultMintFeePerCoin = "1.0" // 1 udys
 
 // NewParams creates a new Params instance with given values
 func NewParams(
-	bidTimeout time.Duration,
-	allowedDenoms []string,
-	rejectBidValuationFeePercent string,
-	minimumBidPercentIncrease string,
 	mintFeePerCoin string,
 ) Params {
 	return Params{
-		BidTimeout:                   bidTimeout,
-		AllowedDenoms:                allowedDenoms,
-		RejectBidValuationFeePercent: rejectBidValuationFeePercent,
-		MinimumBidPercentIncrease:    minimumBidPercentIncrease,
-		MintFeePerCoin:               mintFeePerCoin,
+		MintFeePerCoin: mintFeePerCoin,
 	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams(
-		DefaultBidTimeout,
-		DefaultAllowedDenoms,
-		DefaultRejectBidValuationFeePercent,
-		DefaultMinimumBidPercentIncrease,
+	p := NewParams(
 		DefaultMintFeePerCoin,
 	)
+	// Set permissive but safe defaults for class parameter bounds
+	p.MinBidTimeoutClass = time.Second * 0
+	p.MaxBidTimeoutClass = MaxBidTimeout
+	p.MinRejectBidValuationFeePercent = "0.0"
+	p.MaxRejectBidValuationFeePercent = "1.0"
+	p.MinMinimumBidPercentIncrease = "0.0"
+	p.MaxMinimumBidPercentIncrease = "1.0"
+	// New valuation fee/period bounds
+	p.MinValuationFeePct = "0.0"
+	p.MaxValuationFeePct = "1.0"
+	p.MinValuationPeriod = time.Hour * 1
+	p.MaxValuationPeriod = time.Hour * 24 * 365
+	return p
 }
 
 // Validate validates the params
 func (p Params) Validate() error {
-	if err := validateBidTimeout(p.BidTimeout); err != nil {
-		return err
-	}
-
-	if err := validateAllowedDenoms(p.AllowedDenoms); err != nil {
-		return err
-	}
-
-	if err := validateRejectBidValuationFeePercent(p.RejectBidValuationFeePercent); err != nil {
-		return err
-	}
-
-	if err := validateMinimumBidPercentIncrease(p.MinimumBidPercentIncrease); err != nil {
-		return err
-	}
-
 	if err := validateMintFeePerCoin(p.MintFeePerCoin); err != nil {
 		return err
 	}
 
+	// Validate class bounds
+	if err := validateBidTimeoutBounds(p.MinBidTimeoutClass, p.MaxBidTimeoutClass); err != nil {
+		return err
+	}
+	if err := validateDecBounds(p.MinRejectBidValuationFeePercent, p.MaxRejectBidValuationFeePercent); err != nil {
+		return err
+	}
+	if err := validateDecBounds(p.MinMinimumBidPercentIncrease, p.MaxMinimumBidPercentIncrease); err != nil {
+		return err
+	}
+	if err := validateDecBounds(p.MinValuationFeePct, p.MaxValuationFeePct); err != nil {
+		return err
+	}
+	if err := validateDurationBounds(p.MinValuationPeriod, p.MaxValuationPeriod); err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func validateBidTimeout(timeout time.Duration) error {
-	if timeout < MinBidTimeout {
-		return fmt.Errorf("bid timeout must be at least %v, got: %v", MinBidTimeout, timeout)
-	}
-
-	if timeout > MaxBidTimeout {
-		return fmt.Errorf("bid timeout must be at most %v, got: %v", MaxBidTimeout, timeout)
-	}
-
-	return nil
-}
+// removed: global bid timeout validation (now class-bounded only)
 
 func validateAllowedDenoms(denoms []string) error {
 	// Check if the denoms list is empty
@@ -118,58 +99,51 @@ func validateAllowedDenoms(denoms []string) error {
 	return nil
 }
 
-func validateRejectBidValuationFeePercent(feePercentStr string) error {
-	feePercent, err := math.LegacyNewDecFromStr(feePercentStr)
-	if err != nil {
-		return fmt.Errorf("invalid reject bid valuation fee percent: %s", err)
+func validateBidTimeoutBounds(min time.Duration, max time.Duration) error {
+	if min < MinBidTimeout {
+		return fmt.Errorf("min bid timeout class must be >= %v", MinBidTimeout)
 	}
-
-	// Fee percent must be between 0 and 1 (0% to 100%)
-	if feePercent.IsNegative() {
-		return fmt.Errorf("reject bid valuation fee percent cannot be negative: %s", feePercentStr)
+	if max > MaxBidTimeout {
+		return fmt.Errorf("max bid timeout class must be <= %v", MaxBidTimeout)
 	}
-
-	if feePercent.GT(math.LegacyOneDec()) {
-		return fmt.Errorf("reject bid valuation fee percent cannot be greater than 1 (100%%): %s", feePercentStr)
+	if max < min {
+		return fmt.Errorf("max bid timeout class must be >= min bid timeout class")
 	}
-
 	return nil
 }
 
-func validateMinimumBidPercentIncrease(increasePercentStr string) error {
-	increasePercent, err := math.LegacyNewDecFromStr(increasePercentStr)
-	if err != nil {
-		return fmt.Errorf("invalid minimum bid percent increase: %s", err)
+func validateDurationBounds(min time.Duration, max time.Duration) error {
+	if min < 0 {
+		return fmt.Errorf("min duration must be >= 0")
 	}
-
-	if increasePercent.IsNegative() {
-		return fmt.Errorf("minimum bid percent increase must be non-negative: %s", increasePercent)
+	if max < 0 {
+		return fmt.Errorf("max duration must be >= 0")
 	}
-
-	// Percentage can be any non-negative value
-	// Upper bound not necessary but might be considered if needed
+	if max < min {
+		return fmt.Errorf("max duration must be >= min duration")
+	}
 	return nil
 }
 
-// GetRejectBidValuationFeePercentAsDec returns the reject bid valuation fee percent as a math.Dec
-func (p Params) GetRejectBidValuationFeePercentAsDec() (math.LegacyDec, error) {
-	return math.LegacyNewDecFromStr(p.RejectBidValuationFeePercent)
+func validateDecBounds(minStr, maxStr string) error {
+	min, err := math.LegacyNewDecFromStr(minStr)
+	if err != nil {
+		return fmt.Errorf("invalid min bound: %s", err)
+	}
+	max, err := math.LegacyNewDecFromStr(maxStr)
+	if err != nil {
+		return fmt.Errorf("invalid max bound: %s", err)
+	}
+	if max.LT(min) {
+		return fmt.Errorf("max bound must be >= min bound")
+	}
+	if min.IsNegative() {
+		return fmt.Errorf("min bound cannot be negative")
+	}
+	return nil
 }
 
-// SetRejectBidValuationFeePercentFromDec sets the reject bid valuation fee percent from a math.Dec
-func (p *Params) SetRejectBidValuationFeePercentFromDec(feePercent math.LegacyDec) {
-	p.RejectBidValuationFeePercent = feePercent.String()
-}
-
-// GetMinimumBidPercentIncreaseAsDec returns the minimum bid percent increase as a math.Dec
-func (p Params) GetMinimumBidPercentIncreaseAsDec() (math.LegacyDec, error) {
-	return math.LegacyNewDecFromStr(p.MinimumBidPercentIncrease)
-}
-
-// SetMinimumBidPercentIncreaseFromDec sets the minimum bid percent increase from a math.Dec
-func (p *Params) SetMinimumBidPercentIncreaseFromDec(increasePercent math.LegacyDec) {
-	p.MinimumBidPercentIncrease = increasePercent.String()
-}
+// removed: legacy global percent validators and helpers (now class-bounded)
 
 func validateMintFeePerCoin(mintFeePerCoinStr string) error {
 	mintFeePerCoin, err := math.LegacyNewDecFromStr(mintFeePerCoinStr)

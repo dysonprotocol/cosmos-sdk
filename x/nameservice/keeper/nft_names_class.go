@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"time"
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
@@ -43,8 +44,14 @@ func (k Keeper) EnsureNamesClassExists(ctx context.Context) error {
 
 		// Create NFT class data
 		nftClassData := nameservicev1.NewNFTClassData()
-		nftClassData.AlwaysListed = true // Names are always listed for sale
-		nftClassData.AnnualPct = "0.01"  // 1% annual fee by default (can be adjusted via nft_names_class_params later)
+		nftClassData.AlwaysListed = true                    // Names are always listed for sale
+		nftClassData.ValuationFeePct = "0.01"               // 1% per valuation period by default
+		nftClassData.ValuationPeriod = time.Hour * 24 * 365 // default 1 year
+		// Seed per-class bidding defaults so core flows work out of the box
+		nftClassData.AllowedDenoms = []string{"udys"}
+		nftClassData.BidTimeout = time.Second * 2
+		nftClassData.RejectBidValuationFeePercent = "0.03"
+		nftClassData.MinimumBidPercentIncrease = "0.01"
 
 		// Use the SetNFTClassData helper function to set the class data
 		if err := k.SetNFTClassData(ctx, NamesClassID, *nftClassData); err != nil {
@@ -54,7 +61,7 @@ func (k Keeper) EnsureNamesClassExists(ctx context.Context) error {
 		k.Logger.Info("Successfully created Names NFT class",
 			"class_id", NamesClassID,
 			"always_listed", nftClassData.AlwaysListed,
-			"annual_pct", nftClassData.AnnualPct)
+			"valuation_fee_pct", nftClassData.ValuationFeePct)
 	}
 
 	// Step 2: Ensure the authority NFT exists

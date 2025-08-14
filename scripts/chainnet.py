@@ -175,10 +175,7 @@ def get_genesis_defaults():
             "quorum": "0.00001",
             "threshold": "0.00001"
         },
-        "nameservice_params": {
-            "reject_bid_valuation_fee_percent": "0.03",
-            "bid_timeout": "2s"
-        }
+        # nameservice module no longer sets old global bidding params by default
     }
 
 def apply_genesis_overrides(genesis_data: dict, app_state: dict, global_overrides: dict, denom: str):
@@ -222,13 +219,27 @@ def apply_genesis_overrides(genesis_data: dict, app_state: dict, global_override
             if key != 'inflation':  # Skip inflation as it goes in minter
                 app_state_mint_params[key] = str(value)
     
-    # Nameservice params  
+    # Nameservice params (only allow new fields; old global bidding params removed)
     if 'nameservice_params' in merged_genesis:
         ns_params = merged_genesis['nameservice_params']
         app_state_ns = app_state.setdefault('nameservice', {})
         app_state_ns_params = app_state_ns.setdefault('params', {})
+        allowed_ns_keys = {
+            'mint_fee_per_coin',
+            'min_bid_timeout_class',
+            'max_bid_timeout_class',
+            'min_reject_bid_valuation_fee_percent',
+            'max_reject_bid_valuation_fee_percent',
+            'min_minimum_bid_percent_increase',
+            'max_minimum_bid_percent_increase',
+            'min_valuation_fee_pct',
+            'max_valuation_fee_pct',
+            'min_valuation_period',
+            'max_valuation_period',
+        }
         for key, value in ns_params.items():
-            app_state_ns_params[key] = str(value)
+            if key in allowed_ns_keys:
+                app_state_ns_params[key] = str(value)
     
     # Slashing params
     if 'slashing_params' in merged_genesis:

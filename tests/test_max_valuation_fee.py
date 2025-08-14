@@ -3,8 +3,8 @@ import secrets
 from tests.conftest import poll_until_condition
 
 
-def test_max_annual_pct_fee(chainnet, generate_account, faucet, register_name):
-    """Test that max_annual_pct_fee guards against unexpected annual percentage fees when setting valuation"""
+def test_max_valuation_fee_pct(chainnet, generate_account, faucet, register_name):
+    """Test that max_valuation_fee_pct guards against unexpected valuation fees when setting valuation"""
     dysond_bin = chainnet[0]
     
     # Setup accounts
@@ -18,34 +18,34 @@ def test_max_annual_pct_fee(chainnet, generate_account, faucet, register_name):
     nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", name)
     assert "nft" in nft_info, "NFT not found after registration"
     
-    # Check the NFT class data to see annual_pct
+    # Check the NFT class data to see valuation_fee_pct
     class_info = dysond_bin("query", "nft", "class", "nameservice.dys")
     print(f"NFT class info: {class_info}")
     
-    # Get the annual_pct - assume class_data is always a dict
+    # Get the valuation_fee_pct - assume class_data is always a dict
     class_data = class_info.get("class", {}).get("data", {})
-    annual_pct = class_data.get("value", {}).get("annual_pct", "0")
-    print(f"Annual PCT for nameservice.dys: {annual_pct}")
+    valuation_fee_pct = class_data.get("value", {}).get("valuation_fee_pct", "0")
+    print(f"Valuation fee pct for nameservice.dys: {valuation_fee_pct}")
 
-    # Test 1: Set valuation with sufficient max_annual_pct_fee (should succeed)
+    # Test 1: Set valuation with sufficient max_valuation_fee_pct (should succeed)
     # Increase valuation from 100 to 200 dys
-    # The annual_pct is 0.01 (1%), so we set max to 2% to be safe
+    # The valuation_fee_pct is 0.01 (1%), so we set max to 2% to be safe
     success_result = dysond_bin("tx", "nameservice", "set-valuation", 
                                "--class-id", "nameservice.dys", 
                                "--nft-id", name, 
                                "--valuation", "200udys",
-                               "--max-annual-pct-fee", "0.02",  # 2% max
+                               "--max-valuation-fee-pct", "0.02",  # 2% max
                                "--from", alice_name)
     assert success_result["code"] == 0, f"Transaction should have succeeded: {success_result.get('raw_log', '')}"
-    print("Successfully set valuation to 200udys with max annual pct fee 2%")
+    print("Successfully set valuation to 200udys with max valuation fee pct 2%")
     
     # Verify the valuation was updated
     updated_nft_info = dysond_bin("query", "nft", "nft", "nameservice.dys", name)
     assert "nft" in updated_nft_info, "NFT not found after valuation update"
     
-    # Test 2: Set valuation with insufficient max_annual_pct_fee (should fail)
+    # Test 2: Set valuation with insufficient max_valuation_fee_pct (should fail)
     # Try to increase valuation to 500 dys
-    # The annual_pct is 0.01 (1%), so we set max to 0.005 (0.5%) which should fail
+    # The valuation_fee_pct is 0.01 (1%), so we set max to 0.005 (0.5%) which should fail
     high_valuation = 500
     insufficient_max_pct = "0.005"  # 0.5% - lower than actual 1%
     
@@ -53,25 +53,25 @@ def test_max_annual_pct_fee(chainnet, generate_account, faucet, register_name):
                              "--class-id", "nameservice.dys", 
                              "--nft-id", name, 
                              "--valuation", f"{high_valuation}udys",
-                             "--max-annual-pct-fee", insufficient_max_pct,
+                             "--max-valuation-fee-pct", insufficient_max_pct,
                              "--from", alice_name)
     
     # Check that the transaction failed with the expected error
-    assert failed_result["code"] != 0, "Transaction should have failed with insufficient max annual pct fee"
-    assert "exceeds maximum allowed" in failed_result.get("raw_log", ""), "Expected error message about exceeding max annual pct fee"
-    print(f"Correctly rejected valuation update with insufficient max annual pct fee: {insufficient_max_pct}")
+    assert failed_result["code"] != 0, "Transaction should have failed with insufficient max valuation fee pct"
+    assert "exceeds maximum allowed" in failed_result.get("raw_log", ""), "Expected error message about exceeding max valuation fee pct"
+    print(f"Correctly rejected valuation update with insufficient max valuation fee pct: {insufficient_max_pct}")
     
-    # Test 3: Set valuation without specifying max_annual_pct_fee (backwards compatible)
+    # Test 3: Set valuation without specifying max_valuation_fee_pct
     # This should succeed as it maintains backwards compatibility
     compat_result = dysond_bin("tx", "nameservice", "set-valuation", 
                              "--class-id", "nameservice.dys", 
                              "--nft-id", name, 
                              "--valuation", "250udys",
                              "--from", alice_name)
-    assert compat_result["code"] == 0, f"Backwards compatible transaction should have succeeded: {compat_result.get('raw_log', '')}"
-    print("Successfully set valuation to 250udys without specifying max annual pct fee (backwards compatible)")
+    assert compat_result["code"] == 0, f"Transaction should have succeeded: {compat_result.get('raw_log', '')}"
+    print("Successfully set valuation to 250udys without specifying max valuation fee pct")
     
-    print("All max_annual_pct_fee tests passed!")
+print("All max_valuation_fee_pct tests passed!")
 
 
  

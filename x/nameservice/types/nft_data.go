@@ -48,8 +48,8 @@ func GetNFTDataFromJSON(metadata string) (*NFTData, error) {
 // NewNFTClassData creates a new NFTClassData with default values
 func NewNFTClassData() *NFTClassData {
 	return &NFTClassData{
-		AlwaysListed: false,
-		AnnualPct:    "0",
+		AlwaysListed:    false,
+		ValuationFeePct: "0",
 	}
 }
 
