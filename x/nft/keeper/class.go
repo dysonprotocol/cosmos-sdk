@@ -8,6 +8,7 @@ import (
 	"dysonprotocol.com/x/nft"
 
 	"github.com/cosmos/cosmos-sdk/runtime"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // SaveClass defines a method for creating a new nft class
@@ -74,4 +75,27 @@ func (k Keeper) HasClass(ctx context.Context, classID string) bool {
 		panic(err)
 	}
 	return has
+}
+
+// RemoveClass deletes an existing NFT class. It requires the class to be empty
+// (no NFTs) to avoid orphaning NFTs without a class.
+func (k Keeper) RemoveClass(ctx context.Context, classID string) error {
+	if !k.HasClass(ctx, classID) {
+		return errors.Wrapf(sdkerrors.ErrNotFound, "class not found: %s", classID)
+	}
+	// Ensure the class has no NFTs
+	if total := k.GetTotalSupply(ctx, classID); total != 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot delete non-empty class %s: %d NFTs exist", classID, total)
+	}
+
+	store := k.storeService.OpenKVStore(ctx)
+	// Delete class metadata entry
+	if err := store.Delete(classStoreKey(classID)); err != nil {
+		return err
+	}
+	// Delete total supply key if present
+	if err := store.Delete(classTotalSupply(classID)); err != nil {
+		return err
+	}
+	return nil
 }

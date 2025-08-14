@@ -25,6 +25,9 @@ type BankKeeper interface {
 	SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
 	MintCoins(ctx context.Context, moduleName string, amt sdk.Coins) error
 	BurnCoins(ctx context.Context, moduleName string, amt sdk.Coins) error
+	// Metadata helpers
+	GetDenomMetaData(ctx context.Context, denom string) (banktypes.Metadata, bool)
+	HasDenomMetaData(ctx context.Context, denom string) bool
 	SetDenomMetaData(ctx context.Context, denomMetaData banktypes.Metadata)
 }
 
@@ -40,6 +43,10 @@ type NFTKeeper interface {
 	UpdateClass(ctx context.Context, class nft.Class) error
 	GetClass(ctx context.Context, classID string) (nft.Class, bool)
 	HasClass(ctx context.Context, classID string) bool
+	// GetTotalSupply returns the number of NFTs in the class
+	GetTotalSupply(ctx context.Context, classID string) uint64
+	// RemoveClass deletes an NFT class; must only be called when empty
+	RemoveClass(ctx context.Context, classID string) error
 
 	// NFT methods
 	Mint(ctx context.Context, token nft.NFT, receiver sdk.AccAddress) error

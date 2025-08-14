@@ -205,14 +205,8 @@ func TestEventCoinsMinted(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Test event structure
-			event := &nameservicev1.EventCoinsMinted{
-				Amount:     tt.amount,
-				FeeCharged: tt.feeCharged,
-			}
-
-			require.True(t, tt.amount.Equal(event.Amount))
-			require.True(t, tt.feeCharged.Equal(event.FeeCharged))
+			// Event now has no fields; just ensure it can be constructed
+			_ = &nameservicev1.EventCoinsMinted{}
 		})
 	}
 }

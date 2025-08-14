@@ -88,6 +88,18 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 			EnhanceCustomCommand: true,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
+					RpcMethod: "DeleteClass",
+					Use:       "delete-class --class-id=<class-id>",
+					Short:     "Delete an NFT class (only if empty)",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"class_id": {
+							Name:         "class-id",
+							Usage:        "The class ID",
+							DefaultValue: "",
+						},
+					},
+				},
+				{
 					RpcMethod: "SetNFTClassBidTimeout",
 					Use:       "set-nft-class-bid-timeout --class-id=<class-id> --bid-timeout=<duration>",
 					Short:     "Set the per-class bid timeout duration",

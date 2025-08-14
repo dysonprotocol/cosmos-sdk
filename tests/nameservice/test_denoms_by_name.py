@@ -84,3 +84,23 @@ def test_denoms_removed_when_last_supply_burned(chainnet, generate_account, fauc
     assert doomed not in got, got
 
 
+def test_root_denom_removed_when_last_supply_burned(chainnet, generate_account, faucet, register_name):
+    dysond_bin = chainnet[0]
+
+    [owner_name, owner_addr] = generate_account("owner")
+    faucet(owner_addr, denom="udys", amount="10000000")
+
+    root = register_name(dysond_bin, owner_name, owner_addr)
+
+    # Mint the root denom itself (no subpath)
+    _mint(dysond_bin, owner_name, root, amount="7")
+    assert root in _query_denoms_all(dysond_bin, root)
+
+    # Burn entire supply of the root denom
+    _burn(dysond_bin, owner_name, root, amount="7")
+
+    # After supply reaches zero, root denom should be removed from reverse index
+    got = _query_denoms_all(dysond_bin, root)
+    assert root not in got, got
+
+

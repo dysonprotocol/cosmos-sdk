@@ -254,6 +254,7 @@
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgClaimBid.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgCommit.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgCreateExternalName.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgDeleteClass.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgMintCoins.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgMintNFT.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgMoveCoins.json"},
@@ -263,7 +264,9 @@
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgRenew.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgReveal.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSaveClass.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetDenomDescription.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetDenomMetadata.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetDenomURI.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetDestination.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetListed.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms.json"},
@@ -324,5 +327,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":318}
+  {"type":"report","directories":3,"files":321}
 ]

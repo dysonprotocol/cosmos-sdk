@@ -87,17 +87,16 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 
 	// 6b. Ensure denom entries exist in reverse index. Bank module holds supply, we only index on first mint.
 	for _, coin := range msg.Amount {
+		// auto-create denom metadata on first mint
+		k.ensureDenomMetadata(ctx, coin.Denom)
 		if err := k.setDenomTracked(ctx, coin.Denom); err != nil {
 			return nil, cosmossdkerrors.Wrapf(err, "failed to index denom %s", coin.Denom)
 		}
 	}
 
-	// 7. Emit event with fee information
+	// 7. Emit empty event (fields removed)
 	if evErr := sdk.UnwrapSDKContext(ctx).EventManager().EmitTypedEvent(
-		&nameservicev1.EventCoinsMinted{
-			Amount:     msg.Amount,
-			FeeCharged: feeCharged,
-		},
+		&nameservicev1.EventCoinsMinted{},
 	); evErr != nil {
 		k.Logger.Error("failed to emit coins minted event", "error", evErr)
 		return nil, cosmossdkerrors.Wrap(evErr, "failed to emit coins minted event")

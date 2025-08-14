@@ -42,7 +42,10 @@ const (
 	Msg_MintCoins_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/MintCoins"
 	Msg_BurnCoins_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/BurnCoins"
 	Msg_SetDenomMetadata_FullMethodName                        = "/dysonprotocol.nameservice.v1.Msg/SetDenomMetadata"
+	Msg_SetDenomDescription_FullMethodName                     = "/dysonprotocol.nameservice.v1.Msg/SetDenomDescription"
+	Msg_SetDenomURI_FullMethodName                             = "/dysonprotocol.nameservice.v1.Msg/SetDenomURI"
 	Msg_SaveClass_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/SaveClass"
+	Msg_DeleteClass_FullMethodName                             = "/dysonprotocol.nameservice.v1.Msg/DeleteClass"
 	Msg_MintNFT_FullMethodName                                 = "/dysonprotocol.nameservice.v1.Msg/MintNFT"
 	Msg_BurnNFT_FullMethodName                                 = "/dysonprotocol.nameservice.v1.Msg/BurnNFT"
 	Msg_MoveCoins_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/MoveCoins"
@@ -86,7 +89,13 @@ type MsgClient interface {
 	MintCoins(ctx context.Context, in *MsgMintCoins, opts ...grpc.CallOption) (*MsgMintCoinsResponse, error)
 	BurnCoins(ctx context.Context, in *MsgBurnCoins, opts ...grpc.CallOption) (*MsgBurnCoinsResponse, error)
 	SetDenomMetadata(ctx context.Context, in *MsgSetDenomMetadata, opts ...grpc.CallOption) (*MsgSetDenomMetadataResponse, error)
+	// Allow the denom root owner to set description only
+	SetDenomDescription(ctx context.Context, in *MsgSetDenomDescription, opts ...grpc.CallOption) (*MsgSetDenomDescriptionResponse, error)
+	// Allow the denom root owner to set URI and URI hash only
+	SetDenomURI(ctx context.Context, in *MsgSetDenomURI, opts ...grpc.CallOption) (*MsgSetDenomURIResponse, error)
 	SaveClass(ctx context.Context, in *MsgSaveClass, opts ...grpc.CallOption) (*MsgSaveClassResponse, error)
+	// DeleteClass removes an NFT class. Only allowed if the class has no NFTs.
+	DeleteClass(ctx context.Context, in *MsgDeleteClass, opts ...grpc.CallOption) (*MsgDeleteClassResponse, error)
 	MintNFT(ctx context.Context, in *MsgMintNFT, opts ...grpc.CallOption) (*MsgMintNFTResponse, error)
 	BurnNFT(ctx context.Context, in *MsgBurnNFT, opts ...grpc.CallOption) (*MsgBurnNFTResponse, error)
 	MoveCoins(ctx context.Context, in *MsgMoveCoins, opts ...grpc.CallOption) (*MsgMoveCoinsResponse, error)
@@ -332,10 +341,40 @@ func (c *msgClient) SetDenomMetadata(ctx context.Context, in *MsgSetDenomMetadat
 	return out, nil
 }
 
+func (c *msgClient) SetDenomDescription(ctx context.Context, in *MsgSetDenomDescription, opts ...grpc.CallOption) (*MsgSetDenomDescriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetDenomDescriptionResponse)
+	err := c.cc.Invoke(ctx, Msg_SetDenomDescription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetDenomURI(ctx context.Context, in *MsgSetDenomURI, opts ...grpc.CallOption) (*MsgSetDenomURIResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetDenomURIResponse)
+	err := c.cc.Invoke(ctx, Msg_SetDenomURI_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) SaveClass(ctx context.Context, in *MsgSaveClass, opts ...grpc.CallOption) (*MsgSaveClassResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MsgSaveClassResponse)
 	err := c.cc.Invoke(ctx, Msg_SaveClass_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) DeleteClass(ctx context.Context, in *MsgDeleteClass, opts ...grpc.CallOption) (*MsgDeleteClassResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgDeleteClassResponse)
+	err := c.cc.Invoke(ctx, Msg_DeleteClass_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -428,7 +467,13 @@ type MsgServer interface {
 	MintCoins(context.Context, *MsgMintCoins) (*MsgMintCoinsResponse, error)
 	BurnCoins(context.Context, *MsgBurnCoins) (*MsgBurnCoinsResponse, error)
 	SetDenomMetadata(context.Context, *MsgSetDenomMetadata) (*MsgSetDenomMetadataResponse, error)
+	// Allow the denom root owner to set description only
+	SetDenomDescription(context.Context, *MsgSetDenomDescription) (*MsgSetDenomDescriptionResponse, error)
+	// Allow the denom root owner to set URI and URI hash only
+	SetDenomURI(context.Context, *MsgSetDenomURI) (*MsgSetDenomURIResponse, error)
 	SaveClass(context.Context, *MsgSaveClass) (*MsgSaveClassResponse, error)
+	// DeleteClass removes an NFT class. Only allowed if the class has no NFTs.
+	DeleteClass(context.Context, *MsgDeleteClass) (*MsgDeleteClassResponse, error)
 	MintNFT(context.Context, *MsgMintNFT) (*MsgMintNFTResponse, error)
 	BurnNFT(context.Context, *MsgBurnNFT) (*MsgBurnNFTResponse, error)
 	MoveCoins(context.Context, *MsgMoveCoins) (*MsgMoveCoinsResponse, error)
@@ -513,8 +558,17 @@ func (UnimplementedMsgServer) BurnCoins(context.Context, *MsgBurnCoins) (*MsgBur
 func (UnimplementedMsgServer) SetDenomMetadata(context.Context, *MsgSetDenomMetadata) (*MsgSetDenomMetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetDenomMetadata not implemented")
 }
+func (UnimplementedMsgServer) SetDenomDescription(context.Context, *MsgSetDenomDescription) (*MsgSetDenomDescriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetDenomDescription not implemented")
+}
+func (UnimplementedMsgServer) SetDenomURI(context.Context, *MsgSetDenomURI) (*MsgSetDenomURIResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetDenomURI not implemented")
+}
 func (UnimplementedMsgServer) SaveClass(context.Context, *MsgSaveClass) (*MsgSaveClassResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveClass not implemented")
+}
+func (UnimplementedMsgServer) DeleteClass(context.Context, *MsgDeleteClass) (*MsgDeleteClassResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteClass not implemented")
 }
 func (UnimplementedMsgServer) MintNFT(context.Context, *MsgMintNFT) (*MsgMintNFTResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MintNFT not implemented")
@@ -966,6 +1020,42 @@ func _Msg_SetDenomMetadata_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_SetDenomDescription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetDenomDescription)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetDenomDescription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetDenomDescription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetDenomDescription(ctx, req.(*MsgSetDenomDescription))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetDenomURI_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetDenomURI)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetDenomURI(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetDenomURI_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetDenomURI(ctx, req.(*MsgSetDenomURI))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_SaveClass_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgSaveClass)
 	if err := dec(in); err != nil {
@@ -980,6 +1070,24 @@ func _Msg_SaveClass_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).SaveClass(ctx, req.(*MsgSaveClass))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_DeleteClass_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeleteClass)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DeleteClass(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_DeleteClass_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DeleteClass(ctx, req.(*MsgDeleteClass))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1174,8 +1282,20 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_SetDenomMetadata_Handler,
 		},
 		{
+			MethodName: "SetDenomDescription",
+			Handler:    _Msg_SetDenomDescription_Handler,
+		},
+		{
+			MethodName: "SetDenomURI",
+			Handler:    _Msg_SetDenomURI_Handler,
+		},
+		{
 			MethodName: "SaveClass",
 			Handler:    _Msg_SaveClass_Handler,
+		},
+		{
+			MethodName: "DeleteClass",
+			Handler:    _Msg_DeleteClass_Handler,
 		},
 		{
 			MethodName: "MintNFT",

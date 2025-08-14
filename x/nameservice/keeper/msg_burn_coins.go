@@ -8,6 +8,7 @@ import (
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 )
 
 // BurnCoins implements MsgServer.BurnCoins
@@ -50,6 +51,15 @@ func (k Keeper) BurnCoins(ctx context.Context, msg *nameservicev1.MsgBurnCoins) 
 		if !k.bankKeeper.HasSupply(ctx, coin.Denom) {
 			if err := k.unsetDenomTracked(ctx, coin.Denom); err != nil {
 				return nil, cosmossdkerrors.Wrapf(err, "failed to remove denom %s from index", coin.Denom)
+			}
+
+			// Remove metadata when last supply is gone by accessing the concrete bank keeper.
+			concrete, ok := any(k.bankKeeper).(bankkeeper.BaseKeeper)
+			if !ok {
+				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrLogic, "bank keeper is not BaseKeeper; cannot remove metadata for %s", coin.Denom)
+			}
+			if err := concrete.BaseViewKeeper.DenomMetadata.Remove(ctx, coin.Denom); err != nil {
+				return nil, cosmossdkerrors.Wrapf(err, "failed to remove metadata for denom %s", coin.Denom)
 			}
 		}
 	}

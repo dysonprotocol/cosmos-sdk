@@ -101,19 +101,14 @@ func (k Keeper) SaveClass(ctx context.Context, msg *nameservicev1.MsgSaveClass) 
 	if !k.nftKeeper.HasClass(ctx, NamesClassID) {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrNotFound, "default class %s not found to seed params", NamesClassID)
 	}
+
+	// Set default per-class bidding params by copying from nameservice.dys, they can be updated later
 	defaultData, err := k.GetNFTClassData(ctx, NamesClassID)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to get default class params from nameservice.dys")
 	}
 
-	seed := nameservicev1.NFTClassData{
-		// Only seed per-class bidding params; leave other fields as zero-values
-		BidTimeout:                   defaultData.BidTimeout,
-		AllowedDenoms:                append([]string(nil), defaultData.AllowedDenoms...),
-		RejectBidValuationFeePercent: defaultData.RejectBidValuationFeePercent,
-		MinimumBidPercentIncrease:    defaultData.MinimumBidPercentIncrease,
-	}
-	if err := k.SetNFTClassData(ctx, msg.ClassId, seed); err != nil {
+	if err := k.SetNFTClassData(ctx, msg.ClassId, defaultData); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to set default class params")
 	}
 
@@ -256,4 +251,47 @@ func (k Keeper) BurnNFT(ctx context.Context, msg *nameservicev1.MsgBurnNFT) (*na
 		"name_destination", msg.NameDestination)
 
 	return &nameservicev1.MsgBurnNFTResponse{}, nil
+}
+
+// DeleteClass implements the MsgServer.DeleteClass method
+func (k Keeper) DeleteClass(ctx context.Context, msg *nameservicev1.MsgDeleteClass) (*nameservicev1.MsgDeleteClassResponse, error) {
+	// Verify destination-based authorization for root name of class ID
+	if err := k.VerifyClassRootDestination(ctx, msg.ClassId, msg.NameDestination); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "authorization failed for class %s", msg.ClassId)
+	}
+
+	// Ensure class exists
+	if !k.nftKeeper.HasClass(ctx, msg.ClassId) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrNotFound, "cannot delete: class not found: %s", msg.ClassId)
+	}
+
+	// Ensure the class has no NFTs
+	if total := k.nftKeeper.GetTotalSupply(ctx, msg.ClassId); total != 0 {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot delete non-empty class %s: %d NFTs exist", msg.ClassId, total)
+	}
+
+	// Remove class from NFT module
+	if err := k.nftKeeper.RemoveClass(ctx, msg.ClassId); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to delete NFT class: %s", msg.ClassId)
+	}
+
+	// Remove reverse index mapping for this class under its root name
+	root := extractRootName(msg.ClassId)
+	if err := k.RemoveClassByRootName(ctx, root, msg.ClassId); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to remove reverse index for class root name %s", root)
+	}
+
+	// Emit event
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	if evErr := sdkCtx.EventManager().EmitTypedEvent(
+		&nameservicev1.EventClassDeleted{ClassId: msg.ClassId},
+	); evErr != nil {
+		k.Logger.Error("failed to emit class deleted event", "error", evErr)
+	}
+
+	k.Logger.Info("Successfully deleted NFT class",
+		"class_id", msg.ClassId,
+		"name_destination", msg.NameDestination)
+
+	return &nameservicev1.MsgDeleteClassResponse{}, nil
 }

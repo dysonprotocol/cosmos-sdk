@@ -56,7 +56,14 @@ service Msg {
   rpc BurnCoins(MsgBurnCoins) returns (MsgBurnCoinsResponse);
   rpc SetDenomMetadata(MsgSetDenomMetadata)
       returns (MsgSetDenomMetadataResponse);
+  // Allow the denom root owner to set description only
+  rpc SetDenomDescription(MsgSetDenomDescription)
+      returns (MsgSetDenomDescriptionResponse);
+  // Allow the denom root owner to set URI and URI hash only
+  rpc SetDenomURI(MsgSetDenomURI) returns (MsgSetDenomURIResponse);
   rpc SaveClass(MsgSaveClass) returns (MsgSaveClassResponse);
+  // DeleteClass removes an NFT class. Only allowed if the class has no NFTs.
+  rpc DeleteClass(MsgDeleteClass) returns (MsgDeleteClassResponse);
   rpc MintNFT(MsgMintNFT) returns (MsgMintNFTResponse);
   rpc BurnNFT(MsgBurnNFT) returns (MsgBurnNFTResponse);
   rpc MoveCoins(MsgMoveCoins) returns (MsgMoveCoinsResponse);
@@ -364,6 +371,37 @@ message MsgSetDenomMetadata {
 // MsgSetDenomMetadata message.
 message MsgSetDenomMetadataResponse {}
 
+// MsgSetDenomDescription lets the name destination of the denom root set
+// description.
+message MsgSetDenomDescription {
+  option (cosmos.msg.v1.signer) = "name_destination";
+
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // base denom to modify
+  string denom = 2;
+  string description = 3;
+}
+
+message MsgSetDenomDescriptionResponse {}
+
+// MsgSetDenomURI lets the name destination of the denom root set URI and URI
+// hash.
+message MsgSetDenomURI {
+  option (cosmos.msg.v1.signer) = "name_destination";
+
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // base denom to modify
+  string denom = 2;
+  // optional
+  string uri = 3;
+  // optional
+  string uri_hash = 4;
+}
+
+message MsgSetDenomURIResponse {}
+
 // SaveClass
 message MsgSaveClass {
   option (cosmos.msg.v1.signer) = "name_destination";
@@ -379,6 +417,17 @@ message MsgSaveClass {
 }
 
 message MsgSaveClassResponse {}
+
+// DeleteClass
+message MsgDeleteClass {
+  option (cosmos.msg.v1.signer) = "name_destination";
+
+  string name_destination = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string class_id = 2; // must exist and contain zero NFTs
+}
+
+message MsgDeleteClassResponse {}
 
 // MintNFT
 message MsgMintNFT {

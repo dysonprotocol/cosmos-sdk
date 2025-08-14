@@ -7,6 +7,7 @@ import (
 	cosmossdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
 // GetDenomOwner extracts the owner address for a given denom
@@ -146,4 +147,49 @@ func extractRootName(identifier string) string {
 		return identifier[:idx]
 	}
 	return identifier
+}
+
+// ensureDenomMetadata creates minimal denom metadata on first mint if missing.
+// Case 1: base denom equals root name (e.g. my-name.dys)
+//
+//	description: ""
+//	denom_units: [{denom: base, exponent: 0}, {denom: display (root without .dys), exponent: 6}]
+//	base: base
+//	display: root without .dys
+//	symbol: root without .dys
+//	uri, uri_hash: ""
+//
+// Case 2: base denom is a subdenom (has '/'): display equals base, only base unit.
+func (k Keeper) ensureDenomMetadata(ctx context.Context, denom string) {
+	if k.bankKeeper.HasDenomMetaData(ctx, denom) {
+		return
+	}
+
+	root := extractRootName(denom)
+	metadata := banktypes.Metadata{Description: ""}
+
+	if denom == root {
+		display := strings.TrimSuffix(root, ".dys")
+		metadata.Base = denom
+		metadata.Display = display
+		metadata.Name = display
+		metadata.Symbol = display
+		metadata.DenomUnits = []*banktypes.DenomUnit{
+			{Denom: denom, Exponent: 0, Aliases: nil},
+			{Denom: display, Exponent: 6, Aliases: nil},
+		}
+		metadata.URI = ""
+		metadata.URIHash = ""
+	} else {
+		metadata.Base = denom
+		metadata.Display = denom
+		metadata.Symbol = ""
+		metadata.DenomUnits = []*banktypes.DenomUnit{
+			{Denom: denom, Exponent: 0, Aliases: nil},
+		}
+		metadata.URI = ""
+		metadata.URIHash = ""
+	}
+
+	k.bankKeeper.SetDenomMetaData(ctx, metadata)
 }

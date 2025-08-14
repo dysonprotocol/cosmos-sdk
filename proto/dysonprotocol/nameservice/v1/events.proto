@@ -112,13 +112,7 @@ message EventNFTListedUpdated {
 }
 
 // EventCoinsMinted is emitted when coins are minted
-message EventCoinsMinted {
-  repeated cosmos.base.v1beta1.Coin amount = 2
-      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-  // Fee charged to the community pool for minting coins
-  repeated cosmos.base.v1beta1.Coin fee_charged = 3
-      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-}
+message EventCoinsMinted {}
 
 // EventCoinsBurned is emitted when coins are burned
 message EventCoinsBurned {
@@ -143,6 +137,9 @@ message EventNFTBurned {
   string class_id = 1;
   string nft_id = 2;
 }
+
+// EventClassDeleted is emitted when an NFT class is deleted
+message EventClassDeleted { string class_id = 1; }
 
 // EventCoinsMoved is emitted when custom denom coins are moved between accounts
 message EventCoinsMoved {
