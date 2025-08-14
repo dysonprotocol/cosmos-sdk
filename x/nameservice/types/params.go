@@ -13,7 +13,7 @@ const MinBidTimeout = 0 // 0 seconds
 const MaxBidTimeout = time.Hour * 24 * 90 // 90 days
 
 // DefaultMintFeePerCoin is the default fee in udys charged per coin minted
-var DefaultMintFeePerCoin = "1.0" // 1 udys
+var DefaultMintFeePerCoin = "0.01" // 1 udys == 100 base denoms
 
 // NewParams creates a new Params instance with given values
 func NewParams(
