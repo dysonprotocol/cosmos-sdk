@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"context"
-	"regexp"
 	"testing"
 
 	"cosmossdk.io/math"
@@ -35,39 +34,39 @@ func TestMintCoinsIntegration(t *testing.T) {
 		errorMsg       string
 	}{
 		{
-			name:           "Single coin with default fee",
+			name:           "Single coin with default fee (per unit)",
 			mintFeePerCoin: "1.0",
 			coinsToMint:    sdk.NewCoins(sdk.NewCoin("test.dys", math.NewInt(100))),
-			expectedFee:    sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(1))),
+			expectedFee:    sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(100))),
 			expectError:    false,
 		},
 		{
-			name:           "Multiple coins with default fee",
+			name:           "Multiple coins with default fee (per unit)",
 			mintFeePerCoin: "1.0",
 			coinsToMint: sdk.NewCoins(
 				sdk.NewCoin("test.dys", math.NewInt(100)),
 				sdk.NewCoin("another.dys", math.NewInt(50)),
 				sdk.NewCoin("third.dys", math.NewInt(25)),
 			),
-			expectedFee: sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(3))), // 3 coins × 1.0 = 3udys
+			expectedFee: sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(175))), // (100+50+25) × 1.0 = 175 udys
 			expectError: false,
 		},
 		{
-			name:           "Single coin with fractional fee",
+			name:           "Single coin with fractional fee (per unit)",
 			mintFeePerCoin: "0.5",
 			coinsToMint:    sdk.NewCoins(sdk.NewCoin("test.dys", math.NewInt(100))),
-			expectedFee:    sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(0))), // 0.5 truncated = 0
+			expectedFee:    sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(50))), // 100 × 0.5 = 50
 			expectError:    false,
 		},
 		{
-			name:           "Multiple coins with fractional fee",
+			name:           "Multiple coins with fractional fee (per unit)",
 			mintFeePerCoin: "0.5",
 			coinsToMint: sdk.NewCoins(
 				sdk.NewCoin("test.dys", math.NewInt(100)),
 				sdk.NewCoin("another.dys", math.NewInt(50)),
 				sdk.NewCoin("third.dys", math.NewInt(25)),
 			),
-			expectedFee: sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(1))), // 3 coins × 0.5 = 1.5, truncated = 1udys
+			expectedFee: sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(87))), // 175 × 0.5 = 87.5, truncated = 87
 			expectError: false,
 		},
 		{
@@ -78,13 +77,13 @@ func TestMintCoinsIntegration(t *testing.T) {
 			expectError:    false,
 		},
 		{
-			name:           "High fee with multiple coins",
+			name:           "High fee with multiple units",
 			mintFeePerCoin: "10.0",
 			coinsToMint: sdk.NewCoins(
 				sdk.NewCoin("test.dys", math.NewInt(100)),
 				sdk.NewCoin("another.dys", math.NewInt(50)),
 			),
-			expectedFee: sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(20))), // 2 coins × 10.0 = 20udys
+			expectedFee: sdk.NewCoins(sdk.NewCoin("udys", math.NewInt(1500))), // (100+50) × 10.0 = 1500 udys
 			expectError: false,
 		},
 	}
@@ -104,9 +103,12 @@ func TestMintCoinsIntegration(t *testing.T) {
 			mintFeePerCoin, err := params.GetMintFeePerCoinAsDec()
 			require.NoError(t, err)
 
-			// Calculate expected fee
-			numCoins := len(tt.coinsToMint)
-			expectedFeeAmount := mintFeePerCoin.MulInt64(int64(numCoins)).TruncateInt()
+			// Calculate expected fee per total minted units
+			totalUnits := int64(0)
+			for _, c := range tt.coinsToMint {
+				totalUnits += c.Amount.Int64()
+			}
+			expectedFeeAmount := mintFeePerCoin.MulInt64(totalUnits).TruncateInt()
 
 			if expectedFeeAmount.IsZero() {
 				require.True(t, tt.expectedFee.IsZero() || len(tt.expectedFee) == 0)
@@ -167,7 +169,7 @@ func TestMintCoinsValidation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Test denom validation logic
 			if len(tt.msg.Amount) > 0 {
-				validDenomPattern := regexp.MustCompile(`^[A-Za-z0-9.\-_]+\.dys(?:/[0-9A-Za-z:\-_]+)*$`)
+				validDenomPattern := nameservicev1.ValidDenomRegex
 				for _, coin := range tt.msg.Amount {
 					isValid := validDenomPattern.MatchString(coin.Denom)
 					if tt.expectError && tt.errorContains == "invalid denom format" {

@@ -8,6 +8,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // GetDenomOwner extracts the owner address for a given denom
@@ -172,7 +174,7 @@ func (k Keeper) ensureDenomMetadata(ctx context.Context, denom string) {
 		display := strings.TrimSuffix(root, ".dys")
 		metadata.Base = denom
 		metadata.Display = display
-		metadata.Name = display
+		metadata.Name = strings.ReplaceAll(cases.Title(language.English).String(display), "-", " ")
 		metadata.Symbol = display
 		metadata.DenomUnits = []*banktypes.DenomUnit{
 			{Denom: denom, Exponent: 0, Aliases: nil},

@@ -8,15 +8,29 @@ import (
 )
 
 var (
-	// NameRegex defines the regex for valid name strings
+	// NameRegexString defines the regex string for valid name strings
 	// Must be lowercase alphanumeric, start with a letter, may contain dashes, and must end with ".dys"
-	NameRegex = regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?\.dys$`)
+	NameRegexString = `^[a-z]([-a-z0-9]*[a-z0-9])?\.dys$`
+
+	// NameRegex is the compiled regex for valid name strings
+	NameRegex = regexp.MustCompile(NameRegexString)
 
 	// ExternalNameRegex defines the regex for valid external domain names
 	// Must be lowercase alphanumeric with dashes, following domain/subdomain format
 	// No consecutive dashes allowed
-	ExternalNameRegex = regexp.MustCompile(`^[a-z0-9]([a-z0-9]|-[a-z0-9])*(\.[a-z0-9]([a-z0-9]|-[a-z0-9])*)*$`)
+	ExternalNameRegex = regexp.MustCompile(`^[a-z]([a-z0-9]|-[a-z0-9])*(\.[a-z0-9]([a-z0-9]|-[a-z0-9])*)*$`)
 )
+
+// ValidDenomRegexString composes a coin denom regex based on NameRegexString,
+// allowing optional subdenoms separated by '/'
+var ValidDenomRegexString = func() string {
+	// embed NameRegexString without start/end anchors
+	core := strings.TrimSuffix(strings.TrimPrefix(NameRegexString, "^"), "$")
+	return "^" + core + `(?:/[0-9A-Za-z:_-]+)*$`
+}()
+
+// ValidDenomRegex is the compiled regex for validating nameservice coin denoms
+var ValidDenomRegex = regexp.MustCompile(ValidDenomRegexString)
 
 // ValidateBasic performs basic validation of NFTData
 func (d *NFTData) ValidateBasic() error {

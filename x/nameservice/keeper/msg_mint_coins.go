@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"regexp"
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
@@ -25,8 +24,8 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no coins to mint")
 	}
 
-	// Regex for valid coin denom format - removed the + character
-	validDenomPattern := regexp.MustCompile(`^[A-Za-z0-9.\-_]+\.dys(?:/[0-9A-Za-z:\-_]+)*$`)
+	// Regex for valid coin denom format - centralized in types
+	validDenomPattern := nameservicev1.ValidDenomRegex
 
 	// 3. For each coin, verify that the owner owns the root name
 	for _, coin := range msg.Amount {
@@ -54,9 +53,12 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 
 	var feeCharged sdk.Coins
 	if !mintFeePerCoin.IsZero() {
-		// Calculate total fee: number_of_coins × mint_fee_per_coin
-		numCoins := math.NewInt(int64(len(msg.Amount)))
-		totalFeeAmount := mintFeePerCoin.MulInt(numCoins).TruncateInt()
+		// Calculate total fee: total_units_minted × mint_fee_per_coin
+		totalUnits := math.NewInt(0)
+		for _, coin := range msg.Amount {
+			totalUnits = totalUnits.Add(coin.Amount)
+		}
+		totalFeeAmount := mintFeePerCoin.MulInt(totalUnits).TruncateInt()
 
 		if !totalFeeAmount.IsZero() {
 			feeCharged = sdk.NewCoins(sdk.NewCoin("udys", totalFeeAmount))
@@ -68,7 +70,7 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 
 			k.Logger.Info("MintCoins: Collected minting fee",
 				"name_destination", msg.NameDestination,
-				"coins_minted", len(msg.Amount),
+				"units_minted", totalUnits.String(),
 				"fee_charged", feeCharged.String())
 		}
 	}
