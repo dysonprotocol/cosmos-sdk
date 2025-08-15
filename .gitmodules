@@ -20,5 +20,5 @@
 
 [submodule "client/docs/dysonprotocol2-dashboard"]
 	path = client/docs/dysonprotocol2-dashboard
-	url = git@github.com:dysonprotocol/dysonprotocol2-dashboard.git
+	url = https://github.com/dysonprotocol/dysonprotocol2-dashboard.git
 	branch = develop
