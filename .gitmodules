@@ -18,3 +18,7 @@
 	path = dysvm/python-build-standalone
 	url = https://github.com/astral-sh/python-build-standalone.git
 
+[submodule "client/dysonprotocol2-dashboard"]
+	path = client/dysonprotocol2-dashboard
+	url = git@github.com:dysonprotocol/dysonprotocol2-dashboard.git
+	branch = develop

@@ -16,7 +16,7 @@ import (
 
 const (
 	ServerName          = "dwapp"
-	DefaultDwAppPattern = `(?P<address>dys21[a-z0-9]+)|((?P<name>[a-z0-9-]+))`
+	DefaultDwAppPattern = `(?P<address>dys21[a-z0-9]+)|((?P<name>[a-z0-9-]+))\.`
 )
 
 // CfgOption defines a function to modify the configuration.

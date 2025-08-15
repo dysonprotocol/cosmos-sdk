@@ -146,6 +146,8 @@ func initAppConfig() (string, interface{}) {
 #   - This must be a valid TOML string literal.
 #   - If you customize the pattern, remember to escape backslashes for TOML where needed.
 script-address-or-name-pattern = '{{ .Custom.DwApp.ScriptAddressOrNamePattern }}'
+
+
 # Template for mapping a script id (address or bare name) back to a public host.
 # Use {id} placeholder. Examples:
 #   - "{id}.example.com" -> dys21abc.example.com or myapp.example.com
