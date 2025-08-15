@@ -5,9 +5,12 @@ package cmd
 import (
 	"os"
 
+	"fmt"
+
 	"cosmossdk.io/log"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"dysonprotocol.com"
 
@@ -101,7 +104,35 @@ func NewRootCmd() *cobra.Command {
 			customAppTemplate, customAppConfig := initAppConfig()
 			customCMTConfig := initCometBFTConfig()
 
-			return server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig, customCMTConfig)
+			if err := server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig, customCMTConfig); err != nil {
+				return err
+			}
+
+			// DWApp config visibility: show viper resolution for public-host-template
+			isSet := viper.IsSet("dwapp.public-host-template")
+			val := viper.GetString("dwapp.public-host-template")
+			// Print to stdout to ensure visibility regardless of logger setup
+			fmt.Printf("DWApp config: dwapp.public-host-template is_set=%v value=%q\n", isSet, val)
+
+			// Also print from the server context's viper (the one used by Cosmos server)
+			svrCtx := server.GetServerContextFromCmd(cmd)
+			if svrCtx != nil && svrCtx.Viper != nil {
+				serverV := svrCtx.Viper
+				fmt.Printf("DWApp (server viper): config_file=%q\n", serverV.ConfigFileUsed())
+				fmt.Printf(
+					"DWApp (server viper): dwapp.public-host-template is_set=%v value=%q\n",
+					serverV.IsSet("dwapp.public-host-template"),
+					serverV.GetString("dwapp.public-host-template"),
+				)
+				// In case older configs used custom.dwapp.* keys, surface those too
+				fmt.Printf(
+					"DWApp (server viper): custom.dwapp.public-host-template is_set=%v value=%q\n",
+					serverV.IsSet("custom.dwapp.public-host-template"),
+					serverV.GetString("custom.dwapp.public-host-template"),
+				)
+			}
+
+			return nil
 		},
 	}
 

@@ -23,8 +23,6 @@ import (
 	"dysonprotocol.com/x/script"
 	scriptErrors "dysonprotocol.com/x/script/errors"
 	scripttypes "dysonprotocol.com/x/script/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -582,14 +580,14 @@ func (k Keeper) RunWeb(ctx context.Context, scriptAddress string, scriptName str
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	cacheCtx, _ := sdkCtx.CacheContext()
-	
+
 	// Validate input: at least one field must be provided
 	if scriptAddress == "" && scriptName == "" {
 		return "", cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "either script_address or script_name must be provided")
 	}
-	
+
 	var resolvedAddress, name string
-	
+
 	if scriptAddress != "" && scriptName != "" {
 		// Both provided: validate that name resolves to the address
 		nameResolvedAddress, err := k.NameserviceKeeper.ResolveNameOrAddress(cacheCtx, scriptName)
@@ -614,12 +612,22 @@ func (k Keeper) RunWeb(ctx context.Context, scriptAddress string, scriptName str
 		resolvedAddress = scriptAddress
 	}
 
-	script, err := k.ScriptMap.Get(cacheCtx, resolvedAddress)
-	if cosmossdkerrors.IsOf(err, collections.ErrNotFound) {
-		return "", status.Errorf(codes.NotFound, "script with address %s doesn't exist", resolvedAddress)
-	}
+	var script scripttypes.Script
+	exists, err := k.ScriptMap.Has(cacheCtx, resolvedAddress)
 	if err != nil {
-		return "", cosmossdkerrors.Wrap(err, "failed to get script")
+		return "", cosmossdkerrors.Wrap(err, "failed to check script existence")
+	}
+	if !exists {
+		script = scripttypes.Script{
+			Address: resolvedAddress,
+			Version: 0,
+			Code:    "",
+		}
+	} else {
+		script, err = k.ScriptMap.Get(cacheCtx, resolvedAddress)
+		if err != nil {
+			return "", cosmossdkerrors.Wrap(err, "failed to get script")
+		}
 	}
 
 	scriptJSON, err := k.cdc.MarshalInterfaceJSON(&script)

@@ -115,7 +115,7 @@ func initAppConfig() (string, interface{}) {
 				PublicHostTemplate         string `mapstructure:"public-host-template"`
 			}{
 				ScriptAddressOrNamePattern: dwapp.DefaultDwAppPattern,
-				PublicHostTemplate:         "{id}.localhost",
+				PublicHostTemplate:         dwapp.DefaultPublicHostTemplate,
 			},
 		},
 	}
@@ -130,7 +130,7 @@ func initAppConfig() (string, interface{}) {
 # 
 # Use named capture groups so the server can tell what was matched:
 #   - (?P<address>...) matches a dys2 script address (e.g. dys21abcd...)
-#   - (?P<name>...)    matches a script name (WITHOUT the .dys suffix)
+#   - (?P<name>...)    matches a script name (WITHOUT the .dys suffix it will be added automatically)
 #
 # Behavior:
 #   - If 'address' matches, it is used as the script address.
@@ -144,14 +144,13 @@ func initAppConfig() (string, interface{}) {
 #
 # Notes:
 #   - This must be a valid TOML string literal.
-#   - If you customize the pattern, remember to escape backslashes for TOML where needed.
 script-address-or-name-pattern = '{{ .Custom.DwApp.ScriptAddressOrNamePattern }}'
 
 
 # Template for mapping a script id (address or bare name) back to a public host.
-# Use {id} placeholder. Examples:
-#   - "{id}.example.com" -> dys21abc.example.com or myapp.example.com
-#   - "apps.{id}.example.com" -> apps.dys21abc.example.com
+# Use {address_or_name} placeholder. Examples:
+#   - "{address_or_name}.dys.example.com" -> dys21abc1234567890.dys.example.com or myname.dys.example.com
+#   - "{address_or_name}.localhost" -> dys21abc1234567890.localhost or myname.localhost
 public-host-template = '{{ .Custom.DwApp.PublicHostTemplate }}'
 `
 

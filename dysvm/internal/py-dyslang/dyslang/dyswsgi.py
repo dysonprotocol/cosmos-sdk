@@ -118,7 +118,26 @@ def main(port, script_name, script_json, block_info_json, http_request):
                     wsgiout = output.getvalue()
                     print("WSGI OUT", wsgiout)
                 elif app is None:
-                    wsgiout = f"""HTTP/1.1 404\ncontent-type: text/plain\n\nOops! No WSGI Application defined on this DysonProtocol script.\nLogs:\n{buf.getvalue()}""".encode()
+                    wsgiout = (dedent(f"""
+                    HTTP/1.1 404
+                    content-type: text/plain
+                    
+                    No WSGI Application defined on this DysonProtocol script.
+                    
+                    Dys name: {script_name if script_name else "None"}
+                    Resolved address: {script["address"] if script["address"] else "None"}
+
+                    Try this minimal Hello World example (WSGI):
+                    ```python
+                    def wsgi(environ, start_response):
+                        start_response('200 OK', [('Content-Type', 'text/plain')])
+                        return [b'Hello, world!']
+                    ```
+
+                    Logs:
+                    """)
+                    + (buf.getvalue() or "<empty>")
+                    ).strip().encode()
                 else:
                     wsgiout = f"""HTTP/1.1 500\ncontent-type: text/plain\n\nLogs:\n{buf.getvalue()}""".encode()
             except SyntaxError as e:

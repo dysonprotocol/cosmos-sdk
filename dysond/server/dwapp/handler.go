@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"io/fs"
 	"net"
 	"net/http"
 	"net/url"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 
+	docs "dysonprotocol.com/client/docs"
 	scriptv1 "dysonprotocol.com/x/script/types"
 )
 
@@ -31,6 +33,7 @@ type DysonTxtRecords struct {
 
 func NewDefaultHandler(clientCtx client.Context, ScriptAddressOrNamePattern string, publicHostTemplate string) http.Handler {
 	fmt.Println("ScriptAddressOrNamePattern: ", ScriptAddressOrNamePattern)
+	fmt.Println("PublicHostTemplate (constructor): ", publicHostTemplate)
 	scriptAddressOrNameRe := regexp.MustCompile(ScriptAddressOrNamePattern)
 	return &DefaultHandler{
 		clientCtx:             clientCtx,
@@ -46,33 +49,41 @@ type DefaultHandler struct {
 }
 
 func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	// New endpoint: /dwapp/{id} -> redirect or return public host
+	// New endpoint: /redirect-to-dwapp/{address_or_name} -> redirect or return public host
 	if strings.HasPrefix(req.URL.Path, "/redirect-to-dwapp/") {
-		id := strings.TrimPrefix(req.URL.Path, "/redirect-to-dwapp/")
-		id = strings.TrimSpace(id)
-		if id == "" {
-			http.Error(w, "missing id", http.StatusBadRequest)
+		// Extract the address_or_name (first path segment) and preserve the rest of the path
+		pathAfter := strings.TrimPrefix(req.URL.Path, "/redirect-to-dwapp/")
+		pathAfter = strings.TrimLeft(pathAfter, "/")
+		if pathAfter == "" {
+			http.Error(w, "missing address_or_name", http.StatusBadRequest)
 			return
 		}
 
-		// If a .dys suffix is provided, strip it for public host mapping
-		if strings.HasSuffix(strings.ToLower(id), ".dys") {
-			id = strings.TrimSuffix(id, ".dys")
+		segments := strings.SplitN(pathAfter, "/", 2)
+		id := strings.TrimSpace(segments[0])
+		restPath := ""
+		if len(segments) == 2 {
+			restPath = "/" + segments[1]
 		}
+
+		// Require the address_or_name to be a name ending in .dys and strip it for public host mapping
+		idLower := strings.ToLower(id)
+		if !strings.HasSuffix(idLower, ".dys") {
+			http.Error(w, "address_or_name must end with .dys", http.StatusBadRequest)
+			return
+		}
+		id = strings.TrimSuffix(idLower, ".dys")
 
 		// Map back to public host using template
-		publicHost := strings.ReplaceAll(h.publicHostTemplate, "{id}", id)
-
-		// If client requests JSON explicitly
-		if req.Header.Get("Accept") == "application/json" || req.URL.Query().Get("format") == "json" {
-			w.Header().Set("Content-Type", "application/json")
-			fmt.Fprintf(w, "{\n  \"host\": \"%s\"\n}", publicHost)
-			return
+		fmt.Println("PublicHostTemplate (use): ", h.publicHostTemplate)
+		publicHost := strings.ReplaceAll(h.publicHostTemplate, "{address_or_name}", id)
+		fmt.Println("publicHost: ", publicHost, "restPath: ", restPath)
+		// 307 redirect to //{publicHost}{restPath}[?query] (relative protocol to all https or http)
+		target := "//" + publicHost + restPath
+		if req.URL.RawQuery != "" {
+			target += "?" + req.URL.RawQuery
 		}
-
-		// Otherwise, 302 redirect to http://{publicHost}
-		target := "http://" + publicHost
-		http.Redirect(w, req, target, http.StatusFound)
+		http.Redirect(w, req, target, http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -112,6 +123,7 @@ func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, errorMsg, http.StatusNotFound)
 			return
 		}
+		fmt.Printf("Match for host: `%s` using ScriptAddressOrNamePattern: `%s`\n", req.Host, h.scriptAddressOrNameRe.String())
 
 		names := h.scriptAddressOrNameRe.SubexpNames()
 		for i := 1; i < len(match) && i < len(names); i++ {
@@ -142,6 +154,56 @@ func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	err = h.clientCtx.Invoke(req.Context(), "/dysonprotocol.script.v1.Query/Web", queryReq, resp)
 	if err != nil {
 		fmt.Println("[ERROR] DWApp Handler: Error querying app:", err)
+		// If error is "failed to resolve script name: {name}", extract and handle special case for dys.dys
+		errMsg := err.Error()
+		re := regexp.MustCompile(`failed to resolve script name:\s*([^\s:]+)`)
+		fmt.Printf("Error message: %s\n", errMsg)
+		// If error is "script with address {addr} doesn't exist" return a friendly text hint
+		addrRe := regexp.MustCompile(`script with address\s*([a-z0-9]+)\s*doesn't exist`)
+		if m := addrRe.FindStringSubmatch(strings.ToLower(errMsg)); len(m) == 2 {
+			addr := m[1]
+			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+			w.WriteHeader(http.StatusNotFound)
+			fmt.Fprintf(w, "\"%s\" has not set up a Dys Dwapp yet.\n\n", addr)
+			fmt.Fprint(w, "Minimal Hello World example (WSGI):\n\n")
+			fmt.Fprint(w, "```python\n")
+			fmt.Fprint(w, "# wsgi.py\n")
+			fmt.Fprint(w, "def wsgi(environ, start_response):\n")
+			fmt.Fprint(w, "    start_response('200 OK', [('Content-Type', 'text/plain')])\n")
+			fmt.Fprint(w, "    return [b'Hello, world!']\n")
+			fmt.Fprint(w, "```\n")
+			return
+		}
+		if m := re.FindStringSubmatch(errMsg); len(m) == 2 {
+			name := strings.TrimSpace(m[1])
+			fmt.Printf("Failed to resolve script name: %s\n", name)
+			if name == "dys.dys" {
+				// Serve embedded dashboard with Vue SPA routing: non-/assets -> index.html, /assets -> static files
+				dashFS, ferr := fs.Sub(docs.DashBoard, "dysonprotocol2-dashboard/dist")
+				if ferr == nil {
+					path := req.URL.Path
+					if strings.HasPrefix(path, "/assets") {
+						http.FileServer(http.FS(dashFS)).ServeHTTP(w, req)
+						return
+					}
+					indexBytes, rerr := fs.ReadFile(dashFS, "index.html")
+					if rerr == nil {
+						w.Header().Set("Content-Type", "text/html; charset=utf-8")
+						w.WriteHeader(http.StatusOK)
+						_, _ = w.Write(indexBytes)
+						return
+					}
+				}
+				return
+			} else {
+				// Redirect to dys registry for other names
+				publicHost := strings.ReplaceAll(h.publicHostTemplate, "{address_or_name}", "dys")
+				// relative protocol to all https or http
+				target := "//" + publicHost + "/names/" + url.PathEscape(name)
+				http.Redirect(w, req, target, http.StatusFound)
+				return
+			}
+		}
 		http.Error(w, fmt.Sprintf("Error querying: %v", err), http.StatusInternalServerError)
 		return
 	}

@@ -361,7 +361,8 @@ func (app *DysApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APICon
 
 	// Get the dwapp script pattern from configuration (default to empty string for DI)
 	scriptPattern := ""
-	if err := dysondserver.RegisterDysonServer(apiSvr.ClientCtx, apiSvr.Router, apiConfig, scriptPattern); err != nil {
+	publicHostTemplate := ""
+	if err := dysondserver.RegisterDysonServer(apiSvr.ClientCtx, apiSvr.Router, apiConfig, scriptPattern, publicHostTemplate); err != nil {
 		panic(err)
 	}
 }

@@ -15,7 +15,7 @@ import (
 
 // RegisterDysonServer provides a common function which registers APIs with API Server
 // This includes both Swagger API (if enabled) and the dwapp handler for DysonScript web applications
-func RegisterDysonServer(clientCtx client.Context, rtr *mux.Router, config config.APIConfig, scriptPattern string) error {
+func RegisterDysonServer(clientCtx client.Context, rtr *mux.Router, config config.APIConfig, scriptPattern string, publicHostTemplate string) error {
 
 	// Register the DysonScript app handler
 	// Use provided pattern or default if empty
@@ -44,8 +44,10 @@ func RegisterDysonServer(clientCtx client.Context, rtr *mux.Router, config confi
 	}
 
 	if config.Enable {
-		// Determine public host template (use DWApp defaults here)
-		publicHostTemplate := dwapp.DefaultConfig().PublicHostTemplate
+		// Determine public host template: prefer provided value, fallback to default
+		if publicHostTemplate == "" {
+			publicHostTemplate = dwapp.DefaultConfig().PublicHostTemplate
+		}
 		// Middleware to check path condition explicitly
 		rtr.Use(func(next http.Handler) http.Handler {
 			dwappHandler := dwapp.NewDefaultHandler(clientCtx, patternString, publicHostTemplate)
