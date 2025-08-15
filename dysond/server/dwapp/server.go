@@ -151,12 +151,6 @@ func New(
 	srv.config = serverCfg
 	srv.listenAddressConfig = ExtractListenAddressConfig(viperConfig)
 
-	// Log values obtained via Unmarshal for visibility
-	srv.logger.Info(
-		"Viper dwapp (unmarshal)",
-		"public_host_template", srv.listenAddressConfig.DwApp.PublicHostTemplate,
-	)
-
 	// Override default config with values from viper if they exist
 
 	if viperConfig.IsSet("dwapp.enable") {
@@ -172,16 +166,6 @@ func New(
 		srv.logger.Info("Overriding default public host template with config value", "public_host_template", srv.config.PublicHostTemplate)
 	}
 
-	// Log how PublicHostTemplate was resolved
-	isSet := viperConfig.IsSet("dwapp.public-host-template")
-	raw := viperConfig.GetString("dwapp.public-host-template")
-	srv.logger.Info(
-		"DWApp PublicHostTemplate resolution",
-		"viper_is_set", isSet,
-		"viper_value", raw,
-		"effective", srv.config.PublicHostTemplate,
-	)
-
 	srv.httpServer = &http.Server{
 
 		Handler: srv.router,
@@ -190,7 +174,6 @@ func New(
 	logger.Info("DWApp config",
 		"enable", srv.config.Enable,
 		"pattern", srv.config.ScriptAddressOrNamePattern,
-		"public_host_template", srv.config.PublicHostTemplate,
 	)
 
 	srv.router.Handle("/", NewDefaultHandler(clientCtx, srv.config.ScriptAddressOrNamePattern, srv.config.PublicHostTemplate))

@@ -32,8 +32,6 @@ type DysonTxtRecords struct {
 }
 
 func NewDefaultHandler(clientCtx client.Context, ScriptAddressOrNamePattern string, publicHostTemplate string) http.Handler {
-	fmt.Println("ScriptAddressOrNamePattern: ", ScriptAddressOrNamePattern)
-	fmt.Println("PublicHostTemplate (constructor): ", publicHostTemplate)
 	scriptAddressOrNameRe := regexp.MustCompile(ScriptAddressOrNamePattern)
 	return &DefaultHandler{
 		clientCtx:             clientCtx,
@@ -75,9 +73,7 @@ func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		id = strings.TrimSuffix(idLower, ".dys")
 
 		// Map back to public host using template
-		fmt.Println("PublicHostTemplate (use): ", h.publicHostTemplate)
 		publicHost := strings.ReplaceAll(h.publicHostTemplate, "{address_or_name}", id)
-		fmt.Println("publicHost: ", publicHost, "restPath: ", restPath)
 		// 307 redirect to //{publicHost}{restPath}[?query] (relative protocol to all https or http)
 		target := "//" + publicHost + restPath
 		if req.URL.RawQuery != "" {
@@ -93,8 +89,6 @@ func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Error getting raw request", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Println("rawRequest: ", rawRequest)
 
 	// Create the request - determine if addressOrName is an address or name
 	queryReq := &scriptv1.WebRequest{
@@ -238,7 +232,6 @@ func WriteRawResponse(rawResponse []byte, w http.ResponseWriter) error {
 	if err != nil {
 		return fmt.Errorf("failed to read status line: %v, %s", err, rawResponse)
 	}
-	fmt.Println("statusLine: ", statusLine)
 	statusLine = strings.TrimSpace(statusLine) // Remove any trailing whitespace
 
 	// Parse the status line
@@ -246,7 +239,6 @@ func WriteRawResponse(rawResponse []byte, w http.ResponseWriter) error {
 	if len(parts) < 2 {
 		return fmt.Errorf("malformed status line: '%s'", statusLine)
 	}
-	fmt.Println("parts: ", parts)
 	statusCode, err := strconv.Atoi(parts[1])
 	if err != nil {
 		return fmt.Errorf("invalid status code: %v", err)
@@ -258,7 +250,6 @@ func WriteRawResponse(rawResponse []byte, w http.ResponseWriter) error {
 		if err != nil {
 			return fmt.Errorf("failed to read header line: %v", err)
 		}
-		fmt.Println("line: ", line)
 		line = strings.TrimSpace(line)
 		if line == "" {
 			break // Headers section has ended
@@ -268,10 +259,8 @@ func WriteRawResponse(rawResponse []byte, w http.ResponseWriter) error {
 		if len(parts) != 2 {
 			return fmt.Errorf("malformed header: '%s'", line)
 		}
-		fmt.Println("parts: ", parts)
 		w.Header().Add(parts[0], parts[1])
 	}
-	fmt.Println("statusCode: ", statusCode)
 
 	// Set the status code
 	w.WriteHeader(statusCode)
