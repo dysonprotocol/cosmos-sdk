@@ -17,8 +17,10 @@
                     "type": "string"
                 },
                 "uri": {
-                    "type": "string",
-                    "description": "optional, if not empty will update NFT URI"
+                    "type": "string"
+                },
+                "uri_hash": {
+                    "type": "string"
                 }
             },
             "additionalProperties": false,

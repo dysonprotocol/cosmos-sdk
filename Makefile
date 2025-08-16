@@ -167,7 +167,7 @@ start-localnet:
 
 dashboard:
 	@echo "--> Building dashboard (client/docs/dysonprotocol2-dashboard)"
-	cd client/docs/dysonprotocol2-dashboard && npx npm run build
+	npx npm --prefix=./client/docs/dysonprotocol2-dashboard run build
 
 ###############################################################################
 ###                                Protobuf                                 ###

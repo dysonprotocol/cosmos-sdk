@@ -28,6 +28,7 @@ const (
 	Msg_RejectBid_FullMethodName                               = "/dysonprotocol.nameservice.v1.Msg/RejectBid"
 	Msg_ClaimBid_FullMethodName                                = "/dysonprotocol.nameservice.v1.Msg/ClaimBid"
 	Msg_SetDestination_FullMethodName                          = "/dysonprotocol.nameservice.v1.Msg/SetDestination"
+	Msg_SetNameMetadata_FullMethodName                         = "/dysonprotocol.nameservice.v1.Msg/SetNameMetadata"
 	Msg_SetNFTMetadata_FullMethodName                          = "/dysonprotocol.nameservice.v1.Msg/SetNFTMetadata"
 	Msg_SetNFTClassExtraData_FullMethodName                    = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassExtraData"
 	Msg_SetNFTClassAlwaysListed_FullMethodName                 = "/dysonprotocol.nameservice.v1.Msg/SetNFTClassAlwaysListed"
@@ -71,6 +72,9 @@ type MsgClient interface {
 	RejectBid(ctx context.Context, in *MsgRejectBid, opts ...grpc.CallOption) (*MsgRejectBidResponse, error)
 	ClaimBid(ctx context.Context, in *MsgClaimBid, opts ...grpc.CallOption) (*MsgClaimBidResponse, error)
 	SetDestination(ctx context.Context, in *MsgSetDestination, opts ...grpc.CallOption) (*MsgSetDestinationResponse, error)
+	// SetNameMetadata allows the owner of a name (NFT in nameservice.dys) to set
+	// the metadata string for that name. Only the owner can call this.
+	SetNameMetadata(ctx context.Context, in *MsgSetNameMetadata, opts ...grpc.CallOption) (*MsgSetNameMetadataResponse, error)
 	SetNFTMetadata(ctx context.Context, in *MsgSetNFTMetadata, opts ...grpc.CallOption) (*MsgSetNFTMetadataResponse, error)
 	SetNFTClassExtraData(ctx context.Context, in *MsgSetNFTClassExtraData, opts ...grpc.CallOption) (*MsgSetNFTClassExtraDataResponse, error)
 	// SetNFTClassAlwaysListed sets the always_listed flag for an NFT class
@@ -195,6 +199,16 @@ func (c *msgClient) SetDestination(ctx context.Context, in *MsgSetDestination, o
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MsgSetDestinationResponse)
 	err := c.cc.Invoke(ctx, Msg_SetDestination_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetNameMetadata(ctx context.Context, in *MsgSetNameMetadata, opts ...grpc.CallOption) (*MsgSetNameMetadataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetNameMetadataResponse)
+	err := c.cc.Invoke(ctx, Msg_SetNameMetadata_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -449,6 +463,9 @@ type MsgServer interface {
 	RejectBid(context.Context, *MsgRejectBid) (*MsgRejectBidResponse, error)
 	ClaimBid(context.Context, *MsgClaimBid) (*MsgClaimBidResponse, error)
 	SetDestination(context.Context, *MsgSetDestination) (*MsgSetDestinationResponse, error)
+	// SetNameMetadata allows the owner of a name (NFT in nameservice.dys) to set
+	// the metadata string for that name. Only the owner can call this.
+	SetNameMetadata(context.Context, *MsgSetNameMetadata) (*MsgSetNameMetadataResponse, error)
 	SetNFTMetadata(context.Context, *MsgSetNFTMetadata) (*MsgSetNFTMetadataResponse, error)
 	SetNFTClassExtraData(context.Context, *MsgSetNFTClassExtraData) (*MsgSetNFTClassExtraDataResponse, error)
 	// SetNFTClassAlwaysListed sets the always_listed flag for an NFT class
@@ -515,6 +532,9 @@ func (UnimplementedMsgServer) ClaimBid(context.Context, *MsgClaimBid) (*MsgClaim
 }
 func (UnimplementedMsgServer) SetDestination(context.Context, *MsgSetDestination) (*MsgSetDestinationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetDestination not implemented")
+}
+func (UnimplementedMsgServer) SetNameMetadata(context.Context, *MsgSetNameMetadata) (*MsgSetNameMetadataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetNameMetadata not implemented")
 }
 func (UnimplementedMsgServer) SetNFTMetadata(context.Context, *MsgSetNFTMetadata) (*MsgSetNFTMetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetNFTMetadata not implemented")
@@ -764,6 +784,24 @@ func _Msg_SetDestination_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).SetDestination(ctx, req.(*MsgSetDestination))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetNameMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetNameMetadata)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetNameMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetNameMetadata_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetNameMetadata(ctx, req.(*MsgSetNameMetadata))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1224,6 +1262,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetDestination",
 			Handler:    _Msg_SetDestination_Handler,
+		},
+		{
+			MethodName: "SetNameMetadata",
+			Handler:    _Msg_SetNameMetadata_Handler,
 		},
 		{
 			MethodName: "SetNFTMetadata",

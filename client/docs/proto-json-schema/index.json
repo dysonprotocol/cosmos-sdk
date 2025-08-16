@@ -278,6 +278,7 @@
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNFTMetadata.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetNameMetadata.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgSetValuation.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.MsgUpdateParams.json"},
       {"type":"file","name":"dysonprotocol.nft.v1beta1.MsgSend.json"},
@@ -327,5 +328,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":321}
+  {"type":"report","directories":3,"files":322}
 ]

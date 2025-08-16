@@ -20,6 +20,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	legacy.RegisterAminoMsg(cdc, &MsgRejectBid{}, "nameservice/MsgRejectBid")
 	legacy.RegisterAminoMsg(cdc, &MsgClaimBid{}, "nameservice/MsgClaimNameAfterBidTimeout")
 	legacy.RegisterAminoMsg(cdc, &MsgSetDestination{}, "nameservice/MsgSetNameDestination")
+	legacy.RegisterAminoMsg(cdc, &MsgSetNameMetadata{}, "nameservice/MsgSetNameMetadata")
 	legacy.RegisterAminoMsg(cdc, &MsgUpdateParams{}, "nameservice/MsgUpdateParams")
 	legacy.RegisterAminoMsg(cdc, &MsgMintCoins{}, "nameservice/MsgMintCoins")
 	legacy.RegisterAminoMsg(cdc, &MsgBurnCoins{}, "nameservice/MsgBurnCoins")
@@ -43,6 +44,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgRejectBid{},
 		&MsgClaimBid{},
 		&MsgSetDestination{},
+		&MsgSetNameMetadata{},
 		&MsgUpdateParams{},
 		&MsgMintCoins{},
 		&MsgBurnCoins{},

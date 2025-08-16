@@ -35,57 +35,56 @@ func (k Keeper) SetNFTMetadata(ctx context.Context, msg *nameservicev1.MsgSetNFT
 	// Update the metadata field
 	nftData.Metadata = msg.Metadata
 
-	// Update the URI field if provided (not empty)
-	if msg.Uri != "" {
-		// Get the current NFT from the nft module to update its URI
-		nft, found := k.nftKeeper.GetNFT(ctx, msg.ClassId, msg.NftId)
-		if !found {
-			return nil, cosmossdkerrors.Wrapf(
-				sdkerrors.ErrNotFound,
-				"NFT not found in nft module: class %s, id %s",
-				msg.ClassId,
-				msg.NftId,
-			)
-		}
-
-		// Store the old URI for reverse mapping updates
-		oldUri := nft.Uri
-		k.Logger.Info("SetNFTMetadata: URI change", "class_id", msg.ClassId, "nft_id", msg.NftId, "old_uri", oldUri, "new_uri", msg.Uri)
-
-		// Update the URI and save it back
-		nft.Uri = msg.Uri
-
-		// Get the owner of the NFT and update it
-		owner := k.nftKeeper.GetOwner(ctx, msg.ClassId, msg.NftId)
-		if err := k.nftKeeper.Update(ctx, nft); err != nil {
-			return nil, cosmossdkerrors.Wrapf(err, "failed to update NFT URI for class %s, id %s", msg.ClassId, msg.NftId)
-		}
-
-		// Update reverse mappings for name NFTs only
-		if msg.ClassId == NamesClassID {
-			// Remove old mapping if it exists and is not empty
-			if oldUri != "" {
-				if err := k.RemoveNameDestinationMapping(ctx, oldUri, msg.NftId); err != nil {
-					k.Logger.Error("SetNFTMetadata: Failed to remove old reverse mapping", "old_uri", oldUri, "name", msg.NftId, "error", err)
-					// Don't fail the transaction for reverse mapping errors, just log
-				} else {
-					k.Logger.Info("SetNFTMetadata: Removed old reverse mapping", "old_uri", oldUri, "name", msg.NftId)
-				}
-			}
-
-			// Add new mapping if URI is not empty
-			if msg.Uri != "" {
-				if err := k.SetNameDestinationMapping(ctx, msg.Uri, msg.NftId); err != nil {
-					k.Logger.Error("SetNFTMetadata: Failed to add new reverse mapping", "new_uri", msg.Uri, "name", msg.NftId, "error", err)
-					// Don't fail the transaction for reverse mapping errors, just log
-				} else {
-					k.Logger.Info("SetNFTMetadata: Added new reverse mapping", "new_uri", msg.Uri, "name", msg.NftId)
-				}
-			}
-		}
-
-		k.Logger.Info("SetNFTMetadata: updated URI", "class_id", msg.ClassId, "nft_id", msg.NftId, "uri", msg.Uri, "owner", owner.String())
+	// Always update the URI and URI hash fields (even if empty)
+	// Get the current NFT from the nft module to update its URI/URI hash
+	nft, found := k.nftKeeper.GetNFT(ctx, msg.ClassId, msg.NftId)
+	if !found {
+		return nil, cosmossdkerrors.Wrapf(
+			sdkerrors.ErrNotFound,
+			"NFT not found in nft module: class %s, id %s",
+			msg.ClassId,
+			msg.NftId,
+		)
 	}
+
+	// Store the old URI for reverse mapping updates
+	oldUri := nft.Uri
+	k.Logger.Info("SetNFTMetadata: URI/URIHash change", "class_id", msg.ClassId, "nft_id", msg.NftId, "old_uri", oldUri, "new_uri", msg.Uri)
+
+	// Update the URI and URI hash and save it back
+	nft.Uri = msg.Uri
+	nft.UriHash = msg.UriHash
+
+	// Get the owner of the NFT and update it
+	owner := k.nftKeeper.GetOwner(ctx, msg.ClassId, msg.NftId)
+	if err := k.nftKeeper.Update(ctx, nft); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to update NFT URI/URI hash for class %s, id %s", msg.ClassId, msg.NftId)
+	}
+
+	// Update reverse mappings for name NFTs only
+	if msg.ClassId == NamesClassID {
+		// Remove old mapping if it exists and is not empty
+		if oldUri != "" {
+			if err := k.RemoveNameDestinationMapping(ctx, oldUri, msg.NftId); err != nil {
+				k.Logger.Error("SetNFTMetadata: Failed to remove old reverse mapping", "old_uri", oldUri, "name", msg.NftId, "error", err)
+				// Don't fail the transaction for reverse mapping errors, just log
+			} else {
+				k.Logger.Info("SetNFTMetadata: Removed old reverse mapping", "old_uri", oldUri, "name", msg.NftId)
+			}
+		}
+
+		// Add new mapping only if new URI is not empty
+		if msg.Uri != "" {
+			if err := k.SetNameDestinationMapping(ctx, msg.Uri, msg.NftId); err != nil {
+				k.Logger.Error("SetNFTMetadata: Failed to add new reverse mapping", "new_uri", msg.Uri, "name", msg.NftId, "error", err)
+				// Don't fail the transaction for reverse mapping errors, just log
+			} else {
+				k.Logger.Info("SetNFTMetadata: Added new reverse mapping", "new_uri", msg.Uri, "name", msg.NftId)
+			}
+		}
+	}
+
+	k.Logger.Info("SetNFTMetadata: updated URI and URI hash", "class_id", msg.ClassId, "nft_id", msg.NftId, "uri", msg.Uri, "uri_hash", msg.UriHash, "owner", owner.String())
 
 	k.Logger.Info("SetNFTMetadata: Validate Basic")
 	// Validate the updated NFT data

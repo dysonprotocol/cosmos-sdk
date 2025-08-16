@@ -27,6 +27,9 @@ service Msg {
   rpc RejectBid(MsgRejectBid) returns (MsgRejectBidResponse);
   rpc ClaimBid(MsgClaimBid) returns (MsgClaimBidResponse);
   rpc SetDestination(MsgSetDestination) returns (MsgSetDestinationResponse);
+  // SetNameMetadata allows the owner of a name (NFT in nameservice.dys) to set
+  // the metadata string for that name. Only the owner can call this.
+  rpc SetNameMetadata(MsgSetNameMetadata) returns (MsgSetNameMetadataResponse);
   rpc SetNFTMetadata(MsgSetNFTMetadata) returns (MsgSetNFTMetadataResponse);
   rpc SetNFTClassExtraData(MsgSetNFTClassExtraData)
       returns (MsgSetNFTClassExtraDataResponse);
@@ -173,6 +176,16 @@ message MsgSetDestination {
 }
 message MsgSetDestinationResponse {}
 
+// MsgSetNameMetadata allows the owner of a name (NFT in nameservice.dys) to set
+// the metadata string for that name. Only the owner can call this.
+message MsgSetNameMetadata {
+  option (cosmos.msg.v1.signer) = "owner";
+  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string name = 2;     // the name NFT id (in class nameservice.dys)
+  string metadata = 3; // new metadata string
+}
+message MsgSetNameMetadataResponse {}
+
 message MsgSetNFTMetadata {
   option (cosmos.msg.v1.signer) = "name_destination";
   string name_destination = 1
@@ -180,7 +193,8 @@ message MsgSetNFTMetadata {
   string class_id = 2;
   string nft_id = 3;
   string metadata = 4;
-  string uri = 5; // optional, if not empty will update NFT URI
+  string uri = 5;
+  string uri_hash = 6;
 }
 message MsgSetNFTMetadataResponse {}
 
