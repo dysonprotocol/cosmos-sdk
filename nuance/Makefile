@@ -2,7 +2,7 @@
 
 # Default to Alice's address if none is set in the environment
 NAME ?= "alice"
-ADDRESS ?= $(shell dysond keys show $NAME --output json | jq -r .address)
+ADDRESS ?= $(shell dysond keys show $$NAME --output json | jq -r .address)
 # Default API port
 API_PORT ?= 1317
 

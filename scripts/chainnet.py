@@ -84,7 +84,7 @@ import sys
 import atexit
 from pathlib import Path
 import time
-from typing import cast
+from typing import cast, Optional
 from textwrap import dedent
 import click
 import requests
@@ -462,7 +462,7 @@ def generate(base_dir, num_chains, chainnet_offset, nodes_per_chain, denom, dyso
         (hermes_dir / 'config.toml').write_text(toml)
         click.echo(f"Wrote Hermes TOML to {str(hermes_dir / 'config.toml')}")
 
-def setup_hermes_keys(cfg: dict, force: bool = False, ibc_account: dict = None):
+def setup_hermes_keys(cfg: dict, force: bool = False, ibc_account: Optional[dict] = None):
     """Setup Hermes keys for all chains in the configuration.
     
     Args:
@@ -596,7 +596,8 @@ def setup(config_file, force):
                 bin_path, 'comet', 'show-node-id', '--home', str(home)
             ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
             node_id = node_id_proc.stdout.strip()
-            peer_map[moniker] = f"{node_id}@127.0.0.1:{node_ports['p2p']}"
+            ext_host = node_config_data.get('external_host', '127.0.0.1')
+            peer_map[moniker] = f"{node_id}@{ext_host}:{node_ports['p2p']}"
             node_config_data['node_id'] = node_id # Store node_id for later use if needed
 
             # Configure config.toml for this node
@@ -610,6 +611,7 @@ def setup(config_file, force):
             # Persistent peers will be set later after all nodes in this chain are processed
             p2p_table['laddr'] = f"tcp://0.0.0.0:{node_ports['p2p']}"
             p2p_table['allow_duplicate_ip'] = True
+            p2p_table['external_address'] = f"tcp://{ext_host}:{node_ports['p2p']}"
             inst_table = cast(dict, toml_conf.setdefault('instrumentation', tomlkit.table()))
             inst_table['prometheus_listen_addr'] = f":{node_ports['telemetry']}"
             inst_table['prometheus'] = True
