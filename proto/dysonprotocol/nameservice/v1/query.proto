@@ -94,16 +94,14 @@ message QueryParamsResponse {
 }
 
 // QueryNamesByDestinationRequest is request type for the
-// Query/QueryNamesByDestination RPC method.
+// to list names by destination address or name
 message QueryNamesByDestinationRequest {
-  // destination is the address to find names for
+  // destination is the name or address to find names for
   string destination = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryNamesByDestinationResponse is response type for the
-// Query/QueryNamesByDestination RPC method.
 message QueryNamesByDestinationResponse {
   // names is the list of name strings pointing to the destination address
   repeated string names = 1;

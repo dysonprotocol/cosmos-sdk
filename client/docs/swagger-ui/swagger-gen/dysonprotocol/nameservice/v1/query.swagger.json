@@ -150,7 +150,7 @@
         "parameters": [
           {
             "name": "destination",
-            "description": "destination is the address to find names for",
+            "description": "destination is the name or address to find names for",
             "in": "path",
             "required": true,
             "type": "string"
@@ -482,8 +482,7 @@
           "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse",
           "description": "pagination defines the pagination in the response."
         }
-      },
-      "description": "QueryNamesByDestinationResponse is response type for the\nQuery/QueryNamesByDestination RPC method."
+      }
     },
     "dysonprotocol.nameservice.v1.QueryParamsResponse": {
       "type": "object",

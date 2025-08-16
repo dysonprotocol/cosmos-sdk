@@ -189,6 +189,7 @@ export function profileEditor() {
     profileAuthor: '', // The author whose profile is being edited (from URL)
     previewHtml: '',
     previewDebounceTimeout: null,
+    isAuthorized: false,
     
     init() {
       // Load initial content from textarea
@@ -203,6 +204,8 @@ export function profileEditor() {
       
       // Initialize preview
       this.updatePreview();
+      // Compute initial authorization
+      this.refreshAuthorization();
       
       // Watch for content changes to update preview with debounce
       this.$watch('content', () => {
@@ -219,14 +222,54 @@ export function profileEditor() {
     },
     
     get isOwner() {
-      return this.currentAuthor && this.currentAuthor === this.profileAuthor;
+      return !!this.isAuthorized;
     },
     
     get canSave() {
-      return !this.isLoading && 
-             this.$store.walletStore.isWalletConnected() && 
-             this.content.trim().length > 0 &&
-             this.isOwner;
+      return !this.isLoading && this.$store.walletStore.isWalletConnected() && this.content.trim().length > 0 && this.isAuthorized;
+    },
+    
+    async isAuthorizedEditor() {
+      // Authorized if currentAuthor equals profileAuthor OR
+      // if wallet address is the resolved destination for profileAuthor OR
+      // if wallet address is the NFT owner of nameservice.dys/{profileAuthor}
+      try {
+        const walletAddr = this.$store.walletStore.getSignerAddress();
+        if (!walletAddr) return false;
+
+        if (this.currentAuthor && this.currentAuthor === this.profileAuthor) {
+          return true;
+        }
+
+        // Check destination via ResolveName
+        const resp1 = await fetch(`${window.location.origin}/dysonprotocol/nameservice/v1/resolve_name/${encodeURIComponent(this.profileAuthor)}`);
+        if (resp1.ok) {
+          const j = await resp1.json();
+          if (j && j.address === walletAddr) return true;
+        }
+
+        // Check NFT owner of the name
+        const ownerResp = await fetch(`${window.location.origin}/dysonprotocol/nft/v1beta1/owner?class_id=nameservice.dys&id=${encodeURIComponent(this.profileAuthor)}`);
+        if (ownerResp.ok) {
+          const o = await ownerResp.json();
+          if (o && o.owner === walletAddr) return true;
+        }
+      } catch (e) {
+        console.warn('Auth check failed', e);
+      }
+      return false;
+    },
+    
+    async refreshAuthorization() {
+      this.isAuthorized = await this.isAuthorizedEditor();
+    },
+    
+    async canSaveAsync() {
+      if (this.isLoading) return false;
+      if (!this.$store.walletStore.isWalletConnected()) return false;
+      if (this.content.trim().length === 0) return false;
+      await this.refreshAuthorization();
+      return this.isAuthorized;
     },
     
     showMessage(text, type = 'success') {
@@ -283,7 +326,7 @@ export function profileEditor() {
     },
     
     async saveProfile() {
-      if (!this.canSave) return;
+      if (!(await this.canSaveAsync())) return;
       
       this.isLoading = true;
       

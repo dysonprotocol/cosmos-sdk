@@ -6,7 +6,7 @@
             "properties": {
                 "destination": {
                     "type": "string",
-                    "description": "destination is the address to find names for"
+                    "description": "destination is the name or address to find names for"
                 },
                 "pagination": {
                     "$ref": "#/definitions/cosmos.base.query.v1beta1.PageRequest",
@@ -17,7 +17,7 @@
             "additionalProperties": false,
             "type": "object",
             "title": "Query Names By Destination Request",
-            "description": "QueryNamesByDestinationRequest is request type for the Query/QueryNamesByDestination RPC method."
+            "description": "QueryNamesByDestinationRequest is request type for the to list names by destination address or name"
         },
         "cosmos.base.query.v1beta1.PageRequest": {
             "properties": {

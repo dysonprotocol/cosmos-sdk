@@ -148,17 +148,22 @@ document.addEventListener("alpine:init", () => {
        
        const address = this.getSignerAddress();
        
-       const names = await this.fetchNamesByDestination(address);
+       const [destNames, ownedNames] = await Promise.all([
+         this.fetchNamesByDestination(address),
+         this.fetchNamesOwnedByAddress(address),
+       ]);
        
-       // Always include the address, then add unique names
-       const identities = [address];
-       names.forEach(name => {
-         if (name !== address && !identities.includes(name)) {
-           identities.push(name);
+       const identities = [address, ...destNames, ...ownedNames];
+       const seen = new Set();
+       const unique = [];
+       for (const id of identities) {
+         if (!seen.has(id)) {
+           seen.add(id);
+           unique.push(id);
          }
-       });
+       }
        
-       return identities;
+       return unique;
      },
 
     /**
@@ -218,8 +223,25 @@ document.addEventListener("alpine:init", () => {
       
       try {
         const address = this.getSignerAddress();
-        const names = await this.fetchNamesByDestination(address);
-        return names.includes(name);
+        // Check destination resolution
+        {
+          const url = `${this.restUrl}/dysonprotocol/nameservice/v1/resolve_name/${encodeURIComponent(name)}`;
+          const resp = await fetch(url);
+          if (resp.ok) {
+            const json = await resp.json();
+            if (json?.address === address) return true;
+          }
+        }
+        // Check NFT owner of the name
+        {
+          const url = `${this.restUrl}/dysonprotocol/nft/v1beta1/owner?class_id=nameservice.dys&id=${encodeURIComponent(name)}`;
+          const resp = await fetch(url);
+          if (resp.ok) {
+            const json = await resp.json();
+            if (json?.owner === address) return true;
+          }
+        }
+        return false;
       } catch (error) {
         console.error("Error validating name:", error);
         return false;
@@ -257,6 +279,29 @@ document.addEventListener("alpine:init", () => {
       } catch (error) {
         console.error(`[WalletStore] Error fetching names for address ${address}:`, error);
         this.addressNames[address] = [];
+        return [];
+      }
+    },
+
+    // Fetch names owned by an address (owner of nameservice.dys NFTs)
+    async fetchNamesOwnedByAddress(address) {
+      try {
+        const params = new URLSearchParams({
+          class_id: 'nameservice.dys',
+          owner: address,
+          'pagination.limit': '1000',
+        });
+        const url = `${this.restUrl}/dysonprotocol/nft/v1beta1/nfts?${params.toString()}`;
+        const resp = await fetch(url);
+        if (!resp.ok) {
+          console.warn(`[WalletStore] Failed to fetch owned names for ${address}: ${resp.status} ${resp.statusText}`);
+          return [];
+        }
+        const json = await resp.json();
+        const nfts = json?.nfts || [];
+        return nfts.map(n => n.id).filter(Boolean);
+      } catch (error) {
+        console.error(`[WalletStore] Error fetching owned names for ${address}:`, error);
         return [];
       }
     },

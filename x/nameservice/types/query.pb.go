@@ -321,9 +321,9 @@ func (m *QueryParamsResponse) GetParams() Params {
 }
 
 // QueryNamesByDestinationRequest is request type for the
-// Query/QueryNamesByDestination RPC method.
+// to list names by destination address or name
 type QueryNamesByDestinationRequest struct {
-	// destination is the address to find names for
+	// destination is the name or address to find names for
 	Destination string `protobuf:"bytes,1,opt,name=destination,proto3" json:"destination,omitempty"`
 	// pagination defines an optional pagination for the request.
 	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -376,8 +376,6 @@ func (m *QueryNamesByDestinationRequest) GetPagination() *query.PageRequest {
 	return nil
 }
 
-// QueryNamesByDestinationResponse is response type for the
-// Query/QueryNamesByDestination RPC method.
 type QueryNamesByDestinationResponse struct {
 	// names is the list of name strings pointing to the destination address
 	Names []string `protobuf:"bytes,1,rep,name=names,proto3" json:"names,omitempty"`

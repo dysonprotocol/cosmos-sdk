@@ -225,7 +225,7 @@ def publish_post(content: TEXTAREA, author: str = ""):
 
     author = author.strip()
     if get_caller() and author:
-        # query the blockchain to retrieve the owner of the provided name
+        # Allow either destination address or NFT owner of the name
         name_resp = _query(
             {
                 "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
@@ -233,9 +233,20 @@ def publish_post(content: TEXTAREA, author: str = ""):
             }
         )
         destination_address = name_resp["address"]
+
+        owner_resp = _query(
+            {
+                "@type": "/dysonprotocol.nft.v1beta1.QueryOwnerRequest",
+                "class_id": "nameservice.dys",
+                "id": author,
+            }
+        )
+        owner_address = owner_resp["owner"]
+
+        caller = get_caller()
         assert (
-            get_caller() == destination_address
-        ), f'[{get_caller()}] is not authorized for "{author}" (destination: {destination_address})'
+            caller == destination_address or caller == owner_address
+        ), f'[{caller}] is not authorized for "{author}" (destination: {destination_address}, owner: {owner_address})'
 
     # set the author to either the name or the caller or test name for preview
     author = author or get_caller()
@@ -321,18 +332,28 @@ def edit_author_profile(content: TEXTAREA, author: str = ""):
 
     author = author.strip()
     if get_caller() and author:
-        # query the blockchain to retrieve the owner of the provided name
-        try:
-            name_resp = _query(
-                {
-                    "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
-                    "name_or_address": author,
-                }
-            )
-            destination_address = name_resp["address"]
-            assert get_caller() == destination_address
-        except Exception as e:
-            raise Exception(f'[{get_caller()}] is not authorized for "{author}": {e}')
+        # Allow either destination address or NFT owner of the name
+        name_resp = _query(
+            {
+                "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
+                "name_or_address": author,
+            }
+        )
+        destination_address = name_resp["address"]
+
+        owner_resp = _query(
+            {
+                "@type": "/dysonprotocol.nft.v1beta1.QueryOwnerRequest",
+                "class_id": "nameservice.dys",
+                "id": author,
+            }
+        )
+        owner_address = owner_resp["owner"]
+
+        caller = get_caller()
+        assert (
+            caller == destination_address or caller == owner_address
+        ), f'[{caller}] is not authorized for "{author}" (destination: {destination_address}, owner: {owner_address})'
 
     # set the author to either the name or the caller
     author = author or get_caller()

@@ -6599,13 +6599,13 @@ func (x *QueryParamsResponse) GetParams() *Params {
 }
 
 // QueryNamesByDestinationRequest is request type for the
-// Query/QueryNamesByDestination RPC method.
+// to list names by destination address or name
 type QueryNamesByDestinationRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// destination is the address to find names for
+	// destination is the name or address to find names for
 	Destination string `protobuf:"bytes,1,opt,name=destination,proto3" json:"destination,omitempty"`
 	// pagination defines an optional pagination for the request.
 	Pagination *v1beta1.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
@@ -6645,8 +6645,6 @@ func (x *QueryNamesByDestinationRequest) GetPagination() *v1beta1.PageRequest {
 	return nil
 }
 
-// QueryNamesByDestinationResponse is response type for the
-// Query/QueryNamesByDestination RPC method.
 type QueryNamesByDestinationResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

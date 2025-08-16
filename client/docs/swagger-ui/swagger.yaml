@@ -2205,9 +2205,6 @@ paths:
                       PageRequest.count_total
 
                       was set, its value is undefined otherwise
-            description: |-
-              QueryNamesByDestinationResponse is response type for the
-              Query/QueryNamesByDestination RPC method.
         default:
           description: An unexpected error response.
           schema:
@@ -2235,7 +2232,7 @@ paths:
                         specified type.
       parameters:
         - name: destination
-          description: destination is the address to find names for
+          description: destination is the name or address to find names for
           in: path
           required: true
           type: string
@@ -17685,9 +17682,6 @@ definitions:
               PageRequest.count_total
 
               was set, its value is undefined otherwise
-    description: |-
-      QueryNamesByDestinationResponse is response type for the
-      Query/QueryNamesByDestination RPC method.
   dysonprotocol.nameservice.v1.QueryParamsResponse:
     type: object
     properties:

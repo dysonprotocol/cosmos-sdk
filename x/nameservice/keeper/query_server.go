@@ -79,10 +79,11 @@ func (k Keeper) QueryNamesByDestination(c context.Context, req *types.QueryNames
 		return nil, status.Error(codes.InvalidArgument, "destination address cannot be empty")
 	}
 
-	// Validate the destination address
-	_, err := sdk.AccAddressFromBech32(req.Destination)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid destination address format")
+	// Validate destination: allow bech32 address or existing name
+	if _, err := sdk.AccAddressFromBech32(req.Destination); err != nil {
+		if _, found := k.nftKeeper.GetNFT(c, NamesClassID, req.Destination); !found {
+			return nil, status.Error(codes.InvalidArgument, "destination must be a valid bech32 address or existing name")
+		}
 	}
 
 	// Fetch the name strings for each matching entry
