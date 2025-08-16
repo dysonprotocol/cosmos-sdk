@@ -162,6 +162,14 @@ start-localnet:
 	./scripts/chainnet.py start --block-speed 500ms  --logs --no-blocks-timeout 10
 
 ###############################################################################
+###                               Dashboard                                 ###
+###############################################################################
+
+dashboard:
+	@echo "--> Building dashboard (client/docs/dysonprotocol2-dashboard)"
+	cd client/docs/dysonprotocol2-dashboard && npx npm run build
+
+###############################################################################
 ###                                Protobuf                                 ###
 ###############################################################################
 DOCKER := $(shell which docker)
@@ -227,4 +235,4 @@ dysvm-clean:
 	@$(DYSVM_SCRIPTS_DIR)/dysvm-clean.sh
 
 
-.PHONY:  build install test init localnet start watch proto-all proto-gen proto-format proto-lint proto-update proto-build-image proto-clean-image dysvm dysvm-patch dysvm-build dysvm-embed dysvm-clean
+.PHONY:  build install test init localnet start watch dashboard proto-all proto-gen proto-format proto-lint proto-update proto-build-image proto-clean-image dysvm dysvm-patch dysvm-build dysvm-embed dysvm-clean
