@@ -87,35 +87,36 @@
 {{head_extra}}
   <script>
     async function setupTorrentLinks(inputString) {
-      //var magnetRegex = /magnet:\?xt=urn:btih:([a-zA-Z0-9]+)/g;
-      var magnetRegex = /magnet:\?xt=urn:btih:([a-zA-Z0-9&=+%;._-]+)/g;
+      // Match the full magnet URI until whitespace or quotes/angle brackets
+      var magnetRegex = /magnet:\?[^\s"'<>]+/g;
 
-      // Replace each magnet link with the button
-      var replacedString = inputString.replace(magnetRegex, function (match) {
-        match = decodeHtml(match);
-        const u = URL.parse(match);
-        console.log(match, u);
-        return `
-        <div>
-            <a href="${match}">${u.searchParams.get("dn") || u.searchParams.get("xt")}</a>
-            <button data-magnet="${match}" onclick="handleDownload(this)">Load metadata</button>
-            <label>
-            <input type="checkbox" class="auto-save" name="autoDownloadMeta" onclick="if (this.checked) this.parentElement.previousElementSibling.click()" />
-                Auto
-            </label>
-            <div class="filelist"></div>
-        </div>
-
-            `;
+      // Replace each magnet link with a minimal, robust UI block
+      return inputString.replace(magnetRegex, function (match) {
+        const rawMagnet = decodeHtml(match);
+        const enc = encodeURIComponent(rawMagnet);
+        // Securely derive a display name preferring dn, falling back to xt
+        const dnEnc = (rawMagnet.match(/[?&]dn=([^&]+)/) || [])[1] || '';
+        const xtEnc = (rawMagnet.match(/[?&]xt=([^&]+)/) || [])[1] || '';
+        const labelEnc = dnEnc || xtEnc || 'magnet';
+        let label;
+        try { label = decodeURIComponent(labelEnc); } catch { label = labelEnc; }
+        const safeDn = String(label).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+        return `<div class="magnet" data-magnet-enc="${enc}">
+          <a class="magnet-name" href="${rawMagnet}" target="_blank" rel="noopener noreferrer">${safeDn}</a>
+          <button type="button" onclick="handleDownload(this)">Load metadata</button>
+          <label><input type="checkbox" class="auto-save" name="autoDownloadMeta" onclick="if(this.checked) this.closest('.magnet').querySelector('button').click()"> Auto</label>
+          <div class="filelist"></div>
+        </div>`;
       });
-
-      return replacedString;
     }
   </script>
 
   <script>
     const clientOpts = {
-      announce: ["wss://tracker.openwebtorrent.com"],
+      announce: [
+        "wss://tracker.btorrent.xyz",
+        "wss://tracker.openwebtorrent.com",
+      ],
       deselect: true,
       destroyStoreOnDestroy: false,
       alwaysChokeSeeders: false,
@@ -134,7 +135,15 @@
         ).default;
       }
       if (!window.client) {
-        window.client = new WebTorrent();
+        window.client = new WebTorrent({
+          tracker: {
+            rtcConfig: {
+              iceServers: [
+                { urls: "stun:stun.l.google.com:19302" },
+              ],
+            },
+          },
+        });
         await registerWorker(window.client);
       }
 
@@ -168,24 +177,27 @@
   </script>
   <script>
     async function handleDownload(el) {
-      const button = el.parentElement.parentElement.querySelector("button");
+      const magnet = el.closest('.magnet');
+      const button = el; // clicked button
+      if (!magnet) return;
       if (button.disabled) return;
       button.disabled = true;
 
       button.textContent = "Loading...";
-      const holder = el.parentElement.parentElement.querySelector(".filelist");
+      const holder = magnet.querySelector(".filelist");
 
-      const magnetLink = button.getAttribute("data-magnet");
+      const enc = magnet.dataset.magnetEnc;
+      const magnetLink = enc ? decodeURIComponent(enc) : button.getAttribute("data-magnet");
       console.log("handleDownload", magnetLink);
 
       const client = await getClient();
-      if (await client.get(magnetLink)) {
-        console.log("not adding dup:", magnetLink);
-        return;
+      const existing = await client.get(magnetLink);
+      if (existing) {
+        console.log("reusing existing torrent:", magnetLink);
       }
       clientOpts.deselect = localStorage.getItem("autoDownload") != "true";
 
-      const torrent = client.add(magnetLink, clientOpts, (torrent) => {
+      const torrent = existing || client.add(magnetLink, clientOpts, (torrent) => {
         console.log("Torrent added:", torrent.name);
       });
 
@@ -467,6 +479,56 @@
     }
 
     htmx.config.ignoreTitle = true;
+  </script>
+
+  <script>
+    // Append a readable label for any div that carries a text-fragment in data-fragment
+    function decodeFragmentForDisplay(rawValue) {
+      console.debug('[fragment] decodeFragmentForDisplay in:', rawValue);
+      const htmlDecoded = decodeHtml(rawValue || "");
+      const withoutHash = htmlDecoded.startsWith("#") ? htmlDecoded.slice(1) : htmlDecoded;
+      const withoutFlag = withoutHash.startsWith(":~:") ? withoutHash.slice(3) : withoutHash;
+
+      let result = withoutHash;
+      try {
+        const params = new URLSearchParams(withoutFlag);
+        const texts = params.getAll("text");
+        if (texts.length > 0) {
+          // URLSearchParams already decodes percent-encoding
+          result = texts.join(" | ");
+        }
+      } catch (e) {
+        console.warn('[fragment] decodeFragmentForDisplay parse warning, falling back:', e);
+      }
+      console.debug('[fragment] decodeFragmentForDisplay out:', result);
+      return result;
+    }
+
+    function processRenderFragmentElements(root = document) {
+      try {
+        console.log('[fragment] scanning for [data-render-fragment] nodes', { root });
+        const nodes = root.querySelectorAll('[data-render-fragment]:not([data-render-fragment-processed])');
+        console.log(`[fragment] found ${nodes.length} [data-render-fragment] nodes`);
+        nodes.forEach((el) => {
+          const rawAttr = el.getAttribute('data-render-fragment') || '';
+          const decoded = decodeFragmentForDisplay(rawAttr);
+          console.log('[fragment] data-render-fragment processed', { rawAttr, decoded, el });
+          el.textContent = decoded;
+          el.setAttribute('data-render-fragment-processed', '');
+        });
+      } catch (err) {
+        console.error('[fragment] processRenderFragmentElements error:', err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('[fragment] DOMContentLoaded: running processRenderFragmentElements');
+      processRenderFragmentElements(document);
+    });
+    document.addEventListener('htmx:afterSwap', (e) => {
+      console.log('[fragment] htmx:afterSwap: running processRenderFragmentElements for target', e.target);
+      processRenderFragmentElements(e.target || document);
+    });
   </script>
 
   <script>

@@ -225,7 +225,7 @@ def publish_post(content: TEXTAREA, author: str = ""):
 
     author = author.strip()
     if get_caller() and author:
-        # Allow either destination address or NFT owner of the name
+        # query the blockchain to retrieve the owner of the provided name
         name_resp = _query(
             {
                 "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
@@ -233,20 +233,9 @@ def publish_post(content: TEXTAREA, author: str = ""):
             }
         )
         destination_address = name_resp["address"]
-
-        owner_resp = _query(
-            {
-                "@type": "/dysonprotocol.nft.v1beta1.QueryOwnerRequest",
-                "class_id": "nameservice.dys",
-                "id": author,
-            }
-        )
-        owner_address = owner_resp["owner"]
-
-        caller = get_caller()
         assert (
-            caller == destination_address or caller == owner_address
-        ), f'[{caller}] is not authorized for "{author}" (destination: {destination_address}, owner: {owner_address})'
+            get_caller() == destination_address
+        ), f'[{get_caller()}] is not authorized for "{author}" (destination: {destination_address})'
 
     # set the author to either the name or the caller or test name for preview
     author = author or get_caller()
@@ -332,28 +321,18 @@ def edit_author_profile(content: TEXTAREA, author: str = ""):
 
     author = author.strip()
     if get_caller() and author:
-        # Allow either destination address or NFT owner of the name
-        name_resp = _query(
-            {
-                "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
-                "name_or_address": author,
-            }
-        )
-        destination_address = name_resp["address"]
-
-        owner_resp = _query(
-            {
-                "@type": "/dysonprotocol.nft.v1beta1.QueryOwnerRequest",
-                "class_id": "nameservice.dys",
-                "id": author,
-            }
-        )
-        owner_address = owner_resp["owner"]
-
-        caller = get_caller()
-        assert (
-            caller == destination_address or caller == owner_address
-        ), f'[{caller}] is not authorized for "{author}" (destination: {destination_address}, owner: {owner_address})'
+        # query the blockchain to retrieve the owner of the provided name
+        try:
+            name_resp = _query(
+                {
+                    "@type": "/dysonprotocol.nameservice.v1.QueryResolveNameRequest",
+                    "name_or_address": author,
+                }
+            )
+            destination_address = name_resp["address"]
+            assert get_caller() == destination_address
+        except Exception as e:
+            raise Exception(f'[{get_caller()}] is not authorized for "{author}": {e}')
 
     # set the author to either the name or the caller
     author = author or get_caller()
@@ -1593,8 +1572,9 @@ def handle_post_detail(environ, start_response, post_id):
                         hx-swap="innerHTML ignoreTitle:true"
                         hx-target="closest div.post"
                     >
-                    Load Post #\1\2
+                    Load Post #\1
                     </button>
+                    <mark data-render-fragment="\2"></mark>
                 </header>
                 </div>
             </div>
@@ -1812,7 +1792,7 @@ def handle_author_page(environ, start_response, author, path):
                             hx-swap="innerHTML ignoreTitle:true"
                             hx-target="closest div"
                         >
-                        /\1\2
+                        /\1
                         </a>
                 </div>
     """,
