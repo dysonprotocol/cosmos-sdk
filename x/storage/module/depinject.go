@@ -36,6 +36,7 @@ type StorageInputs struct {
 	StoreService  store.KVStoreService
 	AccountKeeper authkeeper.AccountKeeper
 	StakingKeeper *stakingkeeper.Keeper
+	NamesvcKeeper storage.NameserviceKeeper
 	Registry      cdctypes.InterfaceRegistry
 	Config        *modulev1.Module
 }
@@ -61,6 +62,7 @@ func ProvideModule(in StorageInputs) ModuleOutputs {
 		in.Cdc,
 		in.AccountKeeper,
 		in.StakingKeeper,
+		in.NamesvcKeeper,
 		storage.Config{},
 		authority,
 	)

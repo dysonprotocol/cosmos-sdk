@@ -35,3 +35,9 @@ type StakingKeeper interface {
 	// GetDelegatorBonded returns the total amount a delegator has bonded.
 	GetDelegatorBonded(ctx context.Context, delegator sdk.AccAddress) (math.Int, error)
 }
+
+// NameserviceKeeper defines the expected interface to resolve names to addresses.
+type NameserviceKeeper interface {
+	// ResolveNameOrAddress resolves a nameservice name or returns the address as-is if already valid.
+	ResolveNameOrAddress(ctx context.Context, nameOrAddress string) (string, error)
+}

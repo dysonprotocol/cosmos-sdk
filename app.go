@@ -697,6 +697,7 @@ func NewDysApp(
 		appCodec,
 		app.AccountKeeper,
 		app.StakingKeeper,
+		app.NameserviceKeeper,
 		storagev1.DefaultConfig(),
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)

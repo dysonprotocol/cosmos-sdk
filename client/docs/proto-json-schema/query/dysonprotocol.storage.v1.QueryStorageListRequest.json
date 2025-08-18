@@ -6,7 +6,7 @@
             "properties": {
                 "owner": {
                     "type": "string",
-                    "description": "The address of the owner of the storage entry."
+                    "description": "Owner identifier to list under. Accepts either: - a nameservice name (e.g. \"alice.dys\"), which will be resolved to an address, or - a bech32 address directly Resolution is performed server-side prior to building the range iterator."
                 },
                 "index_prefix": {
                     "type": "string",

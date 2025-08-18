@@ -44,8 +44,12 @@ service Query {
 }
 
 message QueryStorageGetRequest {
-  // The address of the owner of the storage entry.
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // Owner identifier to look up by. Accepts either:
+  // - a nameservice name (e.g. "alice.dys"), which will be resolved to an
+  // address, or
+  // - a bech32 address directly
+  // Resolution is performed server-side prior to querying the store.
+  string owner = 1;
   // The index of the storage entry.
   string index = 2;
   // The gjson path to extract from the storage entry.
@@ -55,8 +59,12 @@ message QueryStorageGetRequest {
 message QueryStorageGetResponse { Storage entry = 1; }
 
 message QueryStorageListRequest {
-  // The address of the owner of the storage entry.
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // Owner identifier to list under. Accepts either:
+  // - a nameservice name (e.g. "alice.dys"), which will be resolved to an
+  // address, or
+  // - a bech32 address directly
+  // Resolution is performed server-side prior to building the range iterator.
+  string owner = 1;
   // The index prefix of the storage entry to filter by.
   string index_prefix = 2;
   // The optional gjson filter to filter the storage entry.
@@ -91,14 +99,16 @@ message QueryParamsResponse {
 
 // QueryMetricsRequest is request type for the Query/Metrics RPC method.
 message QueryMetricsRequest {
-  // The address of the owner to query storage metrics for.
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // Owner identifier to query metrics for. Accepts either a nameservice name
+  // (resolved to an address) or a bech32 address directly. Resolution occurs
+  // server-side before computing metrics.
+  string owner = 1;
 }
 
 // QueryMetricsResponse is response type for the Query/Metrics RPC method.
 message QueryMetricsResponse {
-  // owner is the account address that owns storage entries.
-  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // owner is the resolved account address that owns storage entries.
+  string owner = 1;
 
   // total_bytes is the total number of bytes consumed by all storage entries
   // for this owner address.

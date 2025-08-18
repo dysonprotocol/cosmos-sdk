@@ -32,7 +32,7 @@
         "parameters": [
           {
             "name": "owner",
-            "description": "The address of the owner to query storage metrics for.",
+            "description": "Owner identifier to query metrics for. Accepts either a nameservice name\n(resolved to an address) or a bech32 address directly. Resolution occurs\nserver-side before computing metrics.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -87,7 +87,7 @@
         "parameters": [
           {
             "name": "owner",
-            "description": "The address of the owner of the storage entry.",
+            "description": "Owner identifier to look up by. Accepts either:\n- a nameservice name (e.g. \"alice.dys\"), which will be resolved to an\naddress, or\n- a bech32 address directly\nResolution is performed server-side prior to querying the store.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -133,7 +133,7 @@
         "parameters": [
           {
             "name": "owner",
-            "description": "The address of the owner of the storage entry.",
+            "description": "Owner identifier to list under. Accepts either:\n- a nameservice name (e.g. \"alice.dys\"), which will be resolved to an\naddress, or\n- a bech32 address directly\nResolution is performed server-side prior to building the range iterator.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -266,7 +266,7 @@
       "properties": {
         "owner": {
           "type": "string",
-          "description": "owner is the account address that owns storage entries."
+          "description": "owner is the resolved account address that owns storage entries."
         },
         "total_bytes": {
           "type": "string",

@@ -77,6 +77,60 @@
     });
     
   </script>
+  <script>
+    function isDysName(name) {
+      return /\.dys$/i.test((name || '').trim());
+    }
+    function getNearestAuthorName(node) {
+      try {
+        const container = (node && node.closest) ? (node.closest('article') || document) : document;
+        const el = container.querySelector('.author');
+        return el && el.textContent ? el.textContent.trim() : '';
+      } catch (err) {
+        console.error('[auto] getNearestAuthorName error:', err);
+        return '';
+      }
+    }
+    function autoKey(author, which) {
+      return `nu:auto:${which}:${author}`;
+    }
+    function getAuto(author, which) {
+      if (!isDysName(author)) return false;
+      try { return localStorage.getItem(autoKey(author, which)) === 'true'; }
+      catch (err) { console.error('[auto] getAuto error:', err); return false; }
+    }
+    function setAuto(author, which, value) {
+      if (!isDysName(author)) return;
+      try { localStorage.setItem(autoKey(author, which), value ? 'true' : 'false'); }
+      catch (err) { console.error('[auto] setAuto error:', err); }
+    }
+    function initMagnetAuto(root = document) {
+      try {
+        const nodes = root.querySelectorAll('.magnet');
+        nodes.forEach((magnet) => {
+          const metaToggle = magnet.querySelector('input[name="autoDownloadMeta"]');
+          const loadBtn = magnet.querySelector('button');
+          if (!metaToggle || !loadBtn) return;
+          const author = getNearestAuthorName(magnet);
+          const saved = getAuto(author, 'meta');
+          metaToggle.checked = !!saved;
+          metaToggle.addEventListener('change', (e) => {
+            setAuto(author, 'meta', e.target.checked);
+            if (e.target.checked && !loadBtn.disabled) {
+              loadBtn.click();
+            }
+          });
+          if (saved && !loadBtn.disabled) {
+            loadBtn.click();
+          }
+        });
+      } catch (err) {
+        console.error('[auto] initMagnetAuto error:', err);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => initMagnetAuto(document));
+    document.addEventListener('htmx:afterSwap', (e) => initMagnetAuto(e.target || document));
+  </script>
 <style>
 .powered-by {
   display: none;
@@ -102,8 +156,8 @@
         try { label = decodeURIComponent(labelEnc); } catch { label = labelEnc; }
         const safeDn = String(label).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
         return `<div class="magnet" data-magnet-enc="${enc}">
-          <a class="magnet-name" href="${rawMagnet}" target="_blank" rel="noopener noreferrer">${safeDn}</a>
-          <button type="button" onclick="handleDownload(this)">Load metadata</button>
+          <a class="magnet-name link" href="${rawMagnet}" target="_blank" rel="noopener noreferrer">${safeDn}</a>
+          <button class="btn" type="button" onclick="handleDownload(this)">Load metadata</button>
           <label><input type="checkbox" class="auto-save" name="autoDownloadMeta" onclick="if(this.checked) this.closest('.magnet').querySelector('button').click()"> Auto</label>
           <div class="filelist"></div>
         </div>`;
@@ -190,12 +244,13 @@
       const magnetLink = enc ? decodeURIComponent(enc) : button.getAttribute("data-magnet");
       console.log("handleDownload", magnetLink);
 
+      const author = getNearestAuthorName(magnet);
       const client = await getClient();
       const existing = await client.get(magnetLink);
       if (existing) {
         console.log("reusing existing torrent:", magnetLink);
       }
-      clientOpts.deselect = localStorage.getItem("autoDownload") != "true";
+      clientOpts.deselect = !getAuto(author, 'files');
 
       const torrent = existing || client.add(magnetLink, clientOpts, (torrent) => {
         console.log("Torrent added:", torrent.name);
@@ -204,7 +259,7 @@
       // Initialize progress display
       const progressElement = document.createElement("div");
       progressElement.innerHTML = `
-          <span class="download-status">Loading metadata...</span> | </strong> <span class="overall-progress">0%</span> | <span class="download-speed">0 bytes/sec</span> <button>Select All</button> 
+          <span class="download-status">Loading metadata...</span> | </strong> <span class="overall-progress">0%</span> | <span class="download-speed">0 bytes/sec</span> <button class="btn">Select All</button> 
           <label><input type="checkbox" class="auto-save" name="autoDownload" onclick="if (this.checked) this.parentElement.previousElementSibling.click()" />
             Auto
           </label>
@@ -224,6 +279,25 @@
             }
           });
       };
+
+      // Restore/persist per-author file auto toggle
+      (function initAutoFilesToggle() {
+        try {
+          const toggle = progressElement.querySelector('input[name="autoDownload"]');
+          if (!toggle) return;
+          const saved = getAuto(author, 'files');
+          toggle.checked = !!saved;
+          toggle.addEventListener('change', (e) => {
+            setAuto(author, 'files', e.target.checked);
+            if (e.target.checked) {
+              const selectAll = progressElement.querySelector('button');
+              if (selectAll) selectAll.click();
+            }
+          });
+        } catch (err) {
+          console.error('[auto] initAutoFilesToggle error:', err);
+        }
+      })();
 
       function updateFile(file) {
         const fileClass = encodeURIComponent(file.path);
@@ -274,7 +348,7 @@
             filesContainer.appendChild(fileElement);
           }
           const toggle = fileElement.querySelector("input");
-          if (localStorage.getItem("autoDownload") == "true") {
+          if (getAuto(author, 'files')) {
             toggle.checked = true;
             file.select();
           }
@@ -456,6 +530,7 @@
         console.error("Error in renderMarkdownAndHighlight:", error);
       }
       hljs.highlightAll();
+      try { initMagnetAuto(el); } catch (err) { console.error('[auto] post-render init error:', err); }
     }
 
     function debounce(delay, func, immediate = false) {

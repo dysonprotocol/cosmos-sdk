@@ -6,7 +6,7 @@
             "properties": {
                 "owner": {
                     "type": "string",
-                    "description": "The address of the owner of the storage entry."
+                    "description": "Owner identifier to look up by. Accepts either: - a nameservice name (e.g. \"alice.dys\"), which will be resolved to an address, or - a bech32 address directly Resolution is performed server-side prior to querying the store."
                 },
                 "index": {
                     "type": "string",

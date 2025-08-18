@@ -25,6 +25,7 @@ type Keeper struct {
 	cdc           codec.Codec
 	accKeeper     storage.AccountKeeper
 	stakingKeeper storage.StakingKeeper
+	namesvcKeeper storage.NameserviceKeeper
 	authority     string // the address that is authorized to update module parameters
 
 	Schema collections.Schema
@@ -41,6 +42,7 @@ func NewKeeper(
 	cdc codec.Codec,
 	accKeeper storage.AccountKeeper,
 	stakingKeeper storage.StakingKeeper,
+	namesvcKeeper storage.NameserviceKeeper,
 	config storage.Config,
 	authority string,
 
@@ -51,6 +53,7 @@ func NewKeeper(
 		cdc:           cdc,
 		accKeeper:     accKeeper,
 		stakingKeeper: stakingKeeper,
+		namesvcKeeper: namesvcKeeper,
 		authority:     authority,
 		StorageMap: collections.NewMap(
 			sb,

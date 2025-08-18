@@ -6,7 +6,7 @@
             "properties": {
                 "owner": {
                     "type": "string",
-                    "description": "The address of the owner to query storage metrics for."
+                    "description": "Owner identifier to query metrics for. Accepts either a nameservice name (resolved to an address) or a bech32 address directly. Resolution occurs server-side before computing metrics."
                 }
             },
             "additionalProperties": false,

@@ -20,9 +20,10 @@ import (
 var _ storagetypes.QueryServer = Keeper{}
 
 func (k Keeper) StorageGet(ctx context.Context, req *storagetypes.QueryStorageGetRequest) (*storagetypes.QueryStorageGetResponse, error) {
-	// Validate the owner address is properly formatted
-	if _, err := sdk.AccAddressFromBech32(req.Owner); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid owner address: %v", err)
+	// Resolve owner which can be a dys name or address
+	resolvedOwner, err := k.namesvcKeeper.ResolveNameOrAddress(ctx, req.Owner)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to resolve owner: %v", err)
 	}
 
 	if len(req.Extract) > 100 {
@@ -30,7 +31,7 @@ func (k Keeper) StorageGet(ctx context.Context, req *storagetypes.QueryStorageGe
 	}
 
 	// Create the combined key
-	combinedKey := req.Owner + "/" + req.Index
+	combinedKey := resolvedOwner + "/" + req.Index
 	record, err := k.StorageMap.Get(ctx, combinedKey)
 	if err == nil {
 		// Apply optional GJSON extract if provided
@@ -48,7 +49,7 @@ func (k Keeper) StorageGet(ctx context.Context, req *storagetypes.QueryStorageGe
 		}, nil
 	}
 	if errors.IsOf(err, collections.ErrNotFound) {
-		return nil, status.Errorf(codes.NotFound, "storage entry for (owner=%s,index=%s) doesn't exist", req.Owner, req.Index)
+		return nil, status.Errorf(codes.NotFound, "storage entry for (owner=%s,index=%s) doesn't exist", resolvedOwner, req.Index)
 	}
 	return nil, status.Error(codes.Internal, err.Error())
 }
@@ -78,11 +79,12 @@ func (k Keeper) StorageList(ctx context.Context, req *storagetypes.QueryStorageL
 		Pagination: &query.PageResponse{},
 	}
 
-	// Validate the owner address is properly formatted
+	// Resolve owner (accepts nameservice name or address)
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	k.Logger(sdkCtx).Info("StorageList", "req", req)
-	if _, err := sdk.AccAddressFromBech32(req.Owner); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid owner address: %v", err)
+	resolvedOwner, err := k.namesvcKeeper.ResolveNameOrAddress(ctx, req.Owner)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to resolve owner: %v", err)
 	}
 
 	if len(req.Filter) > 100 {
@@ -119,7 +121,7 @@ func (k Keeper) StorageList(ctx context.Context, req *storagetypes.QueryStorageL
 		return nil, status.Errorf(codes.InvalidArgument, "invalid request, either offset or key is expected, got both")
 	}
 
-	ownerPrefix := req.Owner + "/"
+	ownerPrefix := resolvedOwner + "/"
 	fullPrefix := ownerPrefix + req.IndexPrefix
 
 	// Build range for iteration - either with pagination key or full prefix
@@ -310,19 +312,20 @@ func (k Keeper) Metrics(ctx context.Context, req *storagetypes.QueryMetricsReque
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	// Validate the owner address is properly formatted
-	if _, err := sdk.AccAddressFromBech32(req.Owner); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid owner address: %v", err)
+	// Resolve owner (accepts nameservice name or address)
+	resolvedOwner, err := k.namesvcKeeper.ResolveNameOrAddress(ctx, req.Owner)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "failed to resolve owner: %v", err)
 	}
 
 	// Get storage metrics for the owner
-	metrics, err := k.GetStorageMetrics(ctx, req.Owner)
+	metrics, err := k.GetStorageMetrics(ctx, resolvedOwner)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get storage metrics: %v", err)
 	}
 
 	// Get current stake amount from staking module
-	currentStake, err := k.GetTotalDelegatedStake(ctx, req.Owner)
+	currentStake, err := k.GetTotalDelegatedStake(ctx, resolvedOwner)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get current stake amount: %v", err)
 	}

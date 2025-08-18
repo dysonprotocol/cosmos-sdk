@@ -550,7 +550,9 @@ paths:
             properties:
               owner:
                 type: string
-                description: owner is the account address that owns storage entries.
+                description: >-
+                  owner is the resolved account address that owns storage
+                  entries.
               total_bytes:
                 type: string
                 format: uint64
@@ -600,7 +602,14 @@ paths:
                       format: byte
       parameters:
         - name: owner
-          description: The address of the owner to query storage metrics for.
+          description: >-
+            Owner identifier to query metrics for. Accepts either a nameservice
+            name
+
+            (resolved to an address) or a bech32 address directly. Resolution
+            occurs
+
+            server-side before computing metrics.
           in: query
           required: false
           type: string
@@ -724,7 +733,17 @@ paths:
                       format: byte
       parameters:
         - name: owner
-          description: The address of the owner of the storage entry.
+          description: >-
+            Owner identifier to look up by. Accepts either:
+
+            - a nameservice name (e.g. "alice.dys"), which will be resolved to
+            an
+
+            address, or
+
+            - a bech32 address directly
+
+            Resolution is performed server-side prior to querying the store.
           in: query
           required: false
           type: string
@@ -842,7 +861,18 @@ paths:
                       format: byte
       parameters:
         - name: owner
-          description: The address of the owner of the storage entry.
+          description: >-
+            Owner identifier to list under. Accepts either:
+
+            - a nameservice name (e.g. "alice.dys"), which will be resolved to
+            an
+
+            address, or
+
+            - a bech32 address directly
+
+            Resolution is performed server-side prior to building the range
+            iterator.
           in: query
           required: false
           type: string
@@ -16957,7 +16987,7 @@ definitions:
     properties:
       owner:
         type: string
-        description: owner is the account address that owns storage entries.
+        description: owner is the resolved account address that owns storage entries.
       total_bytes:
         type: string
         format: uint64
