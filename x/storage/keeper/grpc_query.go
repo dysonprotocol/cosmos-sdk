@@ -265,31 +265,33 @@ func (k Keeper) StorageList(ctx context.Context, req *storagetypes.QueryStorageL
 		}
 
 		if collected >= uint64(limit) {
-			// Generate next key for pagination
-			// The next key should be just the item part (after fullPrefix)
-			// which will be base64 encoded in the JSON response
-			nextKey := strings.TrimPrefix(key, fullPrefix)
-			resp.Pagination.NextKey = []byte(nextKey)
-
-			k.Logger(sdkCtx).Info("Generated next pagination key",
-				"module", storage.ModuleName,
-				"lastIteratedKey", key,
-				"fullPrefix", fullPrefix,
-				"nextKey", nextKey,
-				"nextKeyBase64WillBe", base64.StdEncoding.EncodeToString([]byte(nextKey)),
-			)
-			break
+			// Compute next key once
+			if len(resp.Pagination.NextKey) == 0 {
+				// The next key should be just the item part (after fullPrefix)
+				nextKey := strings.TrimPrefix(key, fullPrefix)
+				resp.Pagination.NextKey = []byte(nextKey)
+				k.Logger(sdkCtx).Info("Generated next pagination key",
+					"module", storage.ModuleName,
+					"lastIteratedKey", key,
+					"fullPrefix", fullPrefix,
+					"nextKey", nextKey,
+					"nextKeyBase64WillBe", base64.StdEncoding.EncodeToString([]byte(nextKey)),
+				)
+			}
+			// If no total requested or page key is provided, stop here like SDK
+			if !countTotal || len(pagKey) > 0 {
+				break
+			}
+			// Otherwise continue iterating to count remaining matches
+			iter.Next()
+			continue
 		}
 
 		iter.Next()
-
-		if !countTotal || len(pagKey) > 0 {
-			break
-		}
 	}
 
-	// Set total count if requested
-	if req.Pagination != nil && req.Pagination.CountTotal {
+	// Set total count only if requested and no page key is used (SDK behavior)
+	if req.Pagination != nil && req.Pagination.CountTotal && len(pagKey) == 0 {
 		resp.Pagination.Total = total
 	}
 

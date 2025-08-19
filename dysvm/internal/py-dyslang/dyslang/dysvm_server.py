@@ -499,15 +499,7 @@ def build_sandbox(
         Returns the docstring of the given object.
         """
         if not a.__doc__:
-            print(
-                "safe_help",
-                a,
-                a.__name__,
-                a.__module__,
-                a.__qualname__,
-                type(a),
-                a.__doc__,
-            )
+            return ""
         return a.__doc__
 
     sandbox.scope.dicts[0]["help"] = safe_help
