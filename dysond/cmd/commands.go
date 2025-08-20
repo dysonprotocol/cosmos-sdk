@@ -37,8 +37,6 @@ import (
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
-
-	scripttypes "dysonprotocol.com/x/script/types"
 )
 
 // initCometBFTConfig helps to override default CometBFT Config values.
@@ -100,7 +98,7 @@ func initAppConfig() (string, interface{}) {
 	// Set a sensible default for min-retain-blocks based on script module requirements
 	// The script module needs access to historical blocks for execution context
 	// We set it to DefaultMaxRelativeHistoricalBlocks + 1 to ensure adequate retention
-	srvCfg.MinRetainBlocks = uint64(scripttypes.DefaultMaxRelativeHistoricalBlocks + 1)
+	srvCfg.MinRetainBlocks = uint64(0)
 
 	// Set API Swagger to be enabled by default
 	srvCfg.API.Swagger = true
