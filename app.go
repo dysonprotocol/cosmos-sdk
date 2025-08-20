@@ -255,6 +255,9 @@ func NewDysApp(
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *DysApp {
 
+	// Allow 1-127 character denoms (first char letter, then 0-126 of allowed charset)
+	sdk.SetCoinDenomRegex(func() string { return `[a-zA-Z][a-zA-Z0-9/:._-]{0,126}` })
+
 	interfaceRegistry, _ := types.NewInterfaceRegistryWithOptions(types.InterfaceRegistryOptions{
 		ProtoFiles: proto.HybridResolver,
 		SigningOptions: signing.Options{

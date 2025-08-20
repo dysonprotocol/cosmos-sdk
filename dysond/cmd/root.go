@@ -31,6 +31,8 @@ import (
 func NewRootCmd() *cobra.Command {
 
 	cfg := sdk.GetConfig()
+	// Allow 1-127 character denoms (first char letter, then 0-126 of allowed charset)
+	sdk.SetCoinDenomRegex(func() string { return `[a-zA-Z][a-zA-Z0-9/:._-]{0,126}` })
 	cfg.SetBech32PrefixForAccount("dys2", "dys2pub")                     // account addresses
 	cfg.SetBech32PrefixForValidator("dys2valoper", "dys2valoperpub")     // validator operator addresses
 	cfg.SetBech32PrefixForConsensusNode("dys2valcons", "dys2valconspub") // consensus addresses
