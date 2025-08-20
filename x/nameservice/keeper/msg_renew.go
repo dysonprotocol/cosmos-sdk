@@ -51,17 +51,22 @@ func (k Keeper) Renew(ctx context.Context, msg *nameservicev1.MsgRenew) (*namese
 	// Calculate the current time and determine the renewal period start time
 	currentTime := sdkCtx.BlockTime()
 
-	startTime := nftData.ValuationExpiry
+	// Use the later of current expiry and current time as the baseline to avoid negative intervals
+	baseTime := nftData.ValuationExpiry
+	if baseTime.Before(currentTime) {
+		baseTime = currentTime
+	}
 
 	period := classData.ValuationPeriod
 	if period <= 0 {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "valuation_period not set for class %s", msg.NftClassId)
 	}
-	// Set new expiry to now plus valuation_period
-	newExpiry := currentTime.Add(period)
+	// Set new expiry to baseline plus valuation_period (never shortens an already-future expiry)
+	newExpiry := baseTime.Add(period)
 
 	// Calculate the exact renewal period in seconds using math.Int for precision
-	renewalPeriodSeconds := math.NewInt(newExpiry.Unix() - startTime.Unix())
+	// Charge retroactively for any time elapsed since the previous expiry, plus the newly added period
+	renewalPeriodSeconds := math.NewInt(newExpiry.Unix() - nftData.ValuationExpiry.Unix())
 
 	// Calculate the proportion of one valuation_period we're renewing for
 	denomSeconds := math.NewInt(int64(period / time.Second))

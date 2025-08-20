@@ -737,7 +737,7 @@ def set_bid_timeout_via_gov(dysond_bin, proposer_name, bid_timeout_value: str):
     current_allowed_denoms = current_params.get("params", {}).get("allowed_denoms", ["udys"])
     current_reject_fee_percent = current_params.get("params", {}).get("reject_bid_valuation_fee_percent", "0.03")
     current_minimum_bid_percent_increase = current_params.get("params", {}).get("minimum_bid_percent_increase", "0.01")
-    current_mint_fee_per_coin = current_params.get("params", {}).get("mint_fee_per_coin", "1.0")
+    current_mint_fee_per_coin = current_params.get("params", {}).get("mint_fee_per_coin", "0.01")
     
     # Query gov module account address
     gov_module_response = dysond_bin("query", "auth", "module-account", "gov")

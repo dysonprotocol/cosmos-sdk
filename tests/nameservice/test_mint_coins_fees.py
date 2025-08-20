@@ -2,7 +2,7 @@
 End-to-end tests for mint coins fee functionality.
 
 This test verifies:
-1. Default mint_fee_per_coin parameter is "1.0"
+1. Default mint_fee_per_coin parameter is "0.01"
 2. Fee collection works correctly for single and multiple coins
 3. Insufficient balance scenarios work correctly
 4. Parameter updates via governance work
@@ -55,7 +55,7 @@ def mint_custom_coins_with_fee_verification(dysond_bin, owner_name, owner_addres
     final_udys_balance = get_balance_amount(dysond_bin, owner_address, "udys")
     final_community_pool = get_community_pool_balance(dysond_bin, "udys")
     
-    # Calculate expected fee (1 coin × 1.0 udys = 1 udys)
+    # Calculate expected fee (100 units × 0.01 udys = 1 udys)
     expected_fee = 1
     
     # Verify fee was deducted from account (includes gas costs, so check minimum)
@@ -70,7 +70,7 @@ def mint_custom_coins_with_fee_verification(dysond_bin, owner_name, owner_addres
 
 
 def test_default_mint_fee_parameter(chainnet):
-    """Test that the default mint_fee_per_coin parameter is set to '1.0'."""
+    """Test that the default mint_fee_per_coin parameter is set to '0.01'."""
     dysond_bin = chainnet[0]
     
     # Query nameservice parameters
@@ -79,7 +79,7 @@ def test_default_mint_fee_parameter(chainnet):
     # Verify mint_fee_per_coin exists and has correct default value
     assert "params" in params
     assert "mint_fee_per_coin" in params["params"]
-    assert params["params"]["mint_fee_per_coin"] == "1.0"
+    assert params["params"]["mint_fee_per_coin"] == "0.01"
     
     print(f"✓ Default mint_fee_per_coin parameter: {params['params']['mint_fee_per_coin']}")
 
@@ -144,8 +144,11 @@ def test_multiple_coins_minting_fee(chainnet, generate_account, faucet, register
     final_udys_balance = get_balance_amount(dysond_bin, owner_address, "udys")
     final_community_pool = get_community_pool_balance(dysond_bin, "udys")
     
-    # Calculate expected fee (3 coins × 1.0 udys = 3 udys)
-    expected_fee = 3
+    # Calculate expected fee from on-chain parameter: floor((100+50+25) × mint_fee_per_coin)
+    params = dysond_bin("query", "nameservice", "params")
+    fee_per_unit = float(params["params"]["mint_fee_per_coin"])  # e.g., 0.01
+    total_units = 100 + 50 + 25
+    expected_fee = int(total_units * fee_per_unit)
     
     # Verify fee was deducted (includes gas, so check minimum)
     assert final_udys_balance <= initial_udys_balance - expected_fee, \

@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 	"strings"
-	"time"
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
@@ -179,10 +178,19 @@ func (k Keeper) MintNFT(ctx context.Context, msg *nameservicev1.MsgMintNFT) (*na
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	// Now set the NFT data after the NFT exists
+	// Default ValuationExpiry to now + class valuation_period
+	classData, err := k.GetNFTClassData(ctx, msg.ClassId)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to get class data for valuation expiry")
+	}
+	period := classData.ValuationPeriod
+	if period <= 0 {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "valuation_period not set for class %s", msg.ClassId)
+	}
 	nftData := nameservicev1.NFTData{
 		Listed:          false,
 		Valuation:       sdk.Coin{},
-		ValuationExpiry: sdkCtx.BlockTime().Add(time.Hour * 24 * 365),
+		ValuationExpiry: sdkCtx.BlockTime().Add(period),
 		CurrentBidder:   "",
 		CurrentBid:      sdk.Coin{},
 		BidTimestamp:    nil,
