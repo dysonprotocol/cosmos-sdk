@@ -1,0 +1,57 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.script.v1.QueryGetBlockRequest",
+        "definitions": {
+            "dysonprotocol.script.v1.QueryGetBlockRequest": {
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Get Block Request",
+                "description": "QueryGetBlockRequest is the Query/GetBlock request type."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.script.v1.QueryGetBlockResponse",
+        "definitions": {
+            "dysonprotocol.script.v1.QueryGetBlockResponse": {
+                "properties": {
+                    "block_height": {
+                        "type": "string",
+                        "description": "block_height is the height of the block."
+                    },
+                    "block_time": {
+                        "type": "string",
+                        "description": "block_time is the time of the block.",
+                        "format": "date-time"
+                    },
+                    "chain_id": {
+                        "type": "string",
+                        "description": "chain_id is the chain ID."
+                    },
+                    "block_hash": {
+                        "type": "string",
+                        "description": "block_hash is the hash of the block.",
+                        "format": "binary",
+                        "binaryEncoding": "base64"
+                    },
+                    "app_hash": {
+                        "type": "string",
+                        "description": "app_hash is the application hash.",
+                        "format": "binary",
+                        "binaryEncoding": "base64"
+                    },
+                    "proposer_address": {
+                        "type": "string",
+                        "description": "proposer_address is the address of the block proposer."
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Get Block Response",
+                "description": "QueryGetBlockResponse is the Query/GetBlock response type."
+            }
+        }
+    }
+}

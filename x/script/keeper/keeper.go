@@ -200,6 +200,13 @@ func (k Keeper) execScript(sdkCtx sdk.Context, scriptCtx *ExecScriptContext) (*E
 		return nil, cosmossdkerrors.Wrapf(err, "error getting attached messages")
 	}
 
+	// assert that the executor address == script address if extra code is provided
+	if scriptCtx.Msg.ExtraCode != "" {
+		if scriptCtx.Msg.ExecutorAddress != scriptCtx.Script.Address {
+			return nil, cosmossdkerrors.Wrapf(scriptErrors.ErrInvalid, "executor address must be the same as the script address if extra code is provided")
+		}
+	}
+
 	if len(scriptCtx.AttachedMessageResults) > 0 {
 		// If the pre-populated AttachedMessageResults are provided, use them
 		if len(scriptCtx.AttachedMessageResults) != len(attachedMsgs) {

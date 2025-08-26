@@ -30,8 +30,10 @@ func (k Keeper) StorageGet(ctx context.Context, req *storagetypes.QueryStorageGe
 		return nil, status.Errorf(codes.InvalidArgument, "extract path too long: max 100 characters")
 	}
 
-	// Create the combined key
-	combinedKey := resolvedOwner + "/" + req.Index
+	// Create the combined key (normalize incoming index to avoid redundant owner)
+	ownerPrefix := resolvedOwner + "/"
+	normalizedIndex := strings.TrimPrefix(req.Index, ownerPrefix)
+	combinedKey := resolvedOwner + "/" + normalizedIndex
 	record, err := k.StorageMap.Get(ctx, combinedKey)
 	if err == nil {
 		// Apply optional GJSON extract if provided
@@ -43,6 +45,10 @@ func (k Keeper) StorageGet(ctx context.Context, req *storagetypes.QueryStorageGe
 				// If extraction path not found, return not found error for clarity
 				return nil, status.Errorf(codes.NotFound, "extract path '%s' not found in storage entry", req.Extract)
 			}
+		}
+		// Normalize index to exclude owner prefix if present
+		if strings.HasPrefix(record.Index, resolvedOwner+"/") {
+			record.Index = strings.TrimPrefix(record.Index, resolvedOwner+"/")
 		}
 		return &storagetypes.QueryStorageGetResponse{
 			Entry: &record, // single struct
@@ -209,6 +215,10 @@ func (k Keeper) StorageList(ctx context.Context, req *storagetypes.QueryStorageL
 				k.Logger(sdkCtx).Info("Extract", "req.Extract", req.Extract)
 				val.Data = ""
 			}
+		}
+		// Normalize index in response to exclude owner prefix if present
+		if strings.HasPrefix(val.Index, resolvedOwner+"/") {
+			val.Index = strings.TrimPrefix(val.Index, resolvedOwner+"/")
 		}
 		// create a copy to return its address safely
 		return &val, nil

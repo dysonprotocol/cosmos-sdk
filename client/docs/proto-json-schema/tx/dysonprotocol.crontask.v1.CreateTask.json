@@ -1,0 +1,92 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgCreateTask",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgCreateTask": {
+                "properties": {
+                    "creator": {
+                        "type": "string",
+                        "description": "Address of the creator of the task"
+                    },
+                    "scheduled_timestamp": {
+                        "type": "string",
+                        "description": "Unix timestamp when the task is scheduled to execute Can be either a Unix timestamp or a time offset prefixed with \"+\" (e.g. \"+1h30m\") Offset is relative to the current block time"
+                    },
+                    "expiry_timestamp": {
+                        "type": "string",
+                        "description": "Unix timestamp after which the task will expire if not executed Can be either a Unix timestamp or a time offset prefixed with \"+\" (e.g. \"+2h\") When using an offset, it's relative to the scheduled_timestamp"
+                    },
+                    "task_gas_limit": {
+                        "type": "string",
+                        "description": "Maximum gas limit for the task execution"
+                    },
+                    "task_gas_fee": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false,
+                        "description": "Gas fee for the task execution"
+                    },
+                    "msgs": {
+                        "items": {
+                            "properties": {
+                                "type_url": {
+                                    "type": "string",
+                                    "description": "The type url prefixed with a slash, like '/cosmos.bank.v1beta1.MsgSend'"
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "Must be a valid serialized protocol buffer of the above specified type.",
+                                    "format": "binary",
+                                    "binaryEncoding": "base64"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "type": "object",
+                            "title": "Any",
+                            "description": "Contains the serialized protocol buffer message using the response bytes from `/dysonprotocol.script.v1.QueryEncodeJsonRequest`"
+                        },
+                        "additionalProperties": false,
+                        "type": "array",
+                        "description": "Messages to execute as part of the task"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Create Task",
+                "description": "MsgCreateTask defines the message for creating a new task"
+            },
+            "cosmos.base.v1beta1.Coin": {
+                "properties": {
+                    "denom": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Coin",
+                "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgCreateTaskResponse",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgCreateTaskResponse": {
+                "properties": {
+                    "task_id": {
+                        "type": "string",
+                        "description": "The ID of the created task"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Create Task Response",
+                "description": "MsgCreateTaskResponse defines the response for creating a new task"
+            }
+        }
+    }
+}

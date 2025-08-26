@@ -75,6 +75,12 @@
         "url": "./client/docs/swagger-ui/swagger-gen/cosmos/base/node/v1beta1/query.swagger.json"
       },
       {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/base/reflection/v1beta1/reflection.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/base/reflection/v2alpha1/reflection.swagger.json"
+      },
+      {
         "url": "./client/docs/swagger-ui/swagger-gen/cosmos/distribution/v1beta1/query.swagger.json",
         "operationIds": {
           "rename": {
@@ -186,11 +192,87 @@
           }
         }
       },
+      
       {
         "url": "./client/docs/swagger-ui/swagger-gen/cosmos/tx/v1beta1/service.swagger.json",
         "dereference": {
           "circular": "ignore"
         }
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/crontask/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/nameservice/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/nft/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/script/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/dysonprotocol/storage/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/authz/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/bank/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/consensus/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/distribution/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/feegrant/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/gov/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/gov/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/mint/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/protocolpool/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/slashing/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/staking/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/cosmos/vesting/v1beta1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/ibc/applications/interchain_accounts/controller/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/ibc/applications/interchain_accounts/host/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/ibc/applications/transfer/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/ibc/core/channel/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/ibc/core/channel/v2/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/ibc/core/client/v1/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/ibc/core/client/v2/tx.swagger.json"
+      },
+      {
+        "url": "./client/docs/swagger-ui/swagger-gen/ibc/core/connection/v1/tx.swagger.json"
       }
     ]
   }

@@ -1,0 +1,61 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgUpdateParams",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgUpdateParams": {
+                "properties": {
+                    "authority": {
+                        "type": "string",
+                        "description": "authority is the address that controls the module (defaults to x/gov unless overwritten)."
+                    },
+                    "params": {
+                        "$ref": "#/definitions/dysonprotocol.crontask.v1.Params",
+                        "additionalProperties": false,
+                        "description": "params defines the x/crontask parameters to update. NOTE: All parameters must be supplied."
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Update Params",
+                "description": "--------------------------------------------------------------------------- MsgUpdateParams --------------------------------------------------------------------------- UpdateParams defines a governance operation for updating the x/crontask module parameters. The authority defaults to the x/gov module account."
+            },
+            "dysonprotocol.crontask.v1.Params": {
+                "properties": {
+                    "block_gas_limit": {
+                        "type": "string",
+                        "description": "Maximum gas allowed for executing tasks per block"
+                    },
+                    "expiry_limit": {
+                        "type": "string",
+                        "description": "Default expiry limit in seconds (24 hours)"
+                    },
+                    "max_scheduled_time": {
+                        "type": "string",
+                        "description": "Maximum allowed scheduled time in seconds from task creation (24 hours)"
+                    },
+                    "clean_up_time": {
+                        "type": "string",
+                        "description": "Retention period for completed/failed/expired tasks (seconds)"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Params",
+                "description": "Params defines the parameters for the crontask module"
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgUpdateParamsResponse",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgUpdateParamsResponse": {
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Update Params Response",
+                "description": "MsgUpdateParamsResponse defines the response structure for executing a MsgUpdateParams message."
+            }
+        }
+    }
+}

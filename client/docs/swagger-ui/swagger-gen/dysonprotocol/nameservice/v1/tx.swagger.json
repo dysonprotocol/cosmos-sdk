@@ -1,0 +1,1942 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "dysonprotocol/nameservice/v1/tx.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "dysonprotocol.nameservice.v1.MsgAcceptBid": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgAcceptBid",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgAcceptBidResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgAcceptBid"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgBurnCoins": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgBurnCoins",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgBurnCoinsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgBurnCoins"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgBurnNFT": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgBurnNFT",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgBurnNFTResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgBurnNFT"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgClaimBid": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgClaimBid",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgClaimBidResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgClaimBid"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgCommit": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgCommit",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgCommitResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgCommit"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgCreateExternalName": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgCreateExternalName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgCreateExternalNameResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgCreateExternalName"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgDeleteClass": {
+      "post": {
+        "summary": "DeleteClass removes an NFT class. Only allowed if the class has no NFTs.",
+        "operationId": "dysonprotocol.nameservice.v1.MsgDeleteClass",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgDeleteClassResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgDeleteClass"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgMintCoins": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgMintCoins",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgMintCoinsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgMintCoins"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgMintNFT": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgMintNFT",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgMintNFTResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgMintNFT"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgMoveCoins": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgMoveCoins",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgMoveCoinsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgMoveCoins"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgMoveNft": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgMoveNft",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgMoveNftResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgMoveNft"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgPlaceBid": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgPlaceBid",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgPlaceBidResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgPlaceBid"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgRejectBid": {
+      "post": {
+        "summary": "RejectBid is used to reject a bid and set a new valuation for the NFT, to\nprevent abuse a rejection fee as a percentage of the new valuation is paid\nto the community pool.",
+        "operationId": "dysonprotocol.nameservice.v1.MsgRejectBid",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgRejectBidResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgRejectBid"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgRenew": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgRenew",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgRenewResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgRenew"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgReveal": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgReveal",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgRevealResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgReveal"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSaveClass": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSaveClass",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSaveClassResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSaveClass"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDenomDescription": {
+      "post": {
+        "summary": "Allow the denom root owner to set description only",
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetDenomDescription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetDenomDescriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetDenomDescription"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDenomMetadata": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetDenomMetadata",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetDenomMetadataResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetDenomMetadata"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDenomURI": {
+      "post": {
+        "summary": "Allow the denom root owner to set URI and URI hash only",
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetDenomURI",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetDenomURIResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetDenomURI"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDestination": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetDestination",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetDestinationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetDestination"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetListed": {
+      "post": {
+        "summary": "SetListed sets the listed status for a specific NFT",
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetListed",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetListedResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetListed"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed": {
+      "post": {
+        "summary": "SetNFTClassAlwaysListed sets the always_listed flag for an NFT class",
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListedResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout": {
+      "post": {
+        "summary": "Per-class bidding params setters",
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassExtraData": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNFTClassExtraData",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassExtraDataResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassExtraData"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct": {
+      "post": {
+        "summary": "Set per-class valuation fee percent and period",
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTMetadata": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNFTMetadata",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTMetadataResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNFTMetadata"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNameMetadata": {
+      "post": {
+        "summary": "SetNameMetadata allows the owner of a name (NFT in nameservice.dys) to set\nthe metadata string for that name. Only the owner can call this.",
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetNameMetadata",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNameMetadataResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetNameMetadata"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetValuation": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgSetValuation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetValuationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgSetValuation"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgUpdateParams": {
+      "post": {
+        "operationId": "dysonprotocol.nameservice.v1.MsgUpdateParams",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgUpdateParamsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgUpdateParams"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "cosmos.bank.v1beta1.DenomUnit": {
+      "type": "object",
+      "properties": {
+        "denom": {
+          "type": "string",
+          "description": "denom represents the string name of the given denom unit (e.g uatom)."
+        },
+        "exponent": {
+          "type": "integer",
+          "format": "int64",
+          "description": "exponent represents power of 10 exponent that one must\nraise the base_denom to in order to equal the given DenomUnit's denom\n1 denom = 10^exponent base_denom\n(e.g. with a base_denom of uatom, one can create a DenomUnit of 'atom' with\nexponent = 6, thus: 1 atom = 10^6 uatom)."
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "aliases is a list of string aliases for the given denom"
+        }
+      },
+      "description": "DenomUnit represents a struct that describes a given\ndenomination unit of the basic token."
+    },
+    "cosmos.bank.v1beta1.Input": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "coins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          }
+        }
+      },
+      "description": "Input models transaction input."
+    },
+    "cosmos.bank.v1beta1.Metadata": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "denom_units": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.bank.v1beta1.DenomUnit"
+          },
+          "title": "denom_units represents the list of DenomUnit's for a given coin"
+        },
+        "base": {
+          "type": "string",
+          "description": "base represents the base denom (should be the DenomUnit with exponent = 0)."
+        },
+        "display": {
+          "type": "string",
+          "description": "display indicates the suggested denom that should be\ndisplayed in clients."
+        },
+        "name": {
+          "type": "string",
+          "title": "name defines the name of the token (eg: Cosmos Atom)"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "symbol is the token symbol usually shown on exchanges (eg: ATOM). This can\nbe the same as the display."
+        },
+        "uri": {
+          "type": "string",
+          "description": "URI to a document (on or off-chain) that contains additional information.\nOptional."
+        },
+        "uri_hash": {
+          "type": "string",
+          "description": "URIHash is a sha256 hash of a document pointed by URI. It's used to verify\nthat the document didn't change. Optional."
+        }
+      },
+      "description": "Metadata represents a struct that describes\na basic token."
+    },
+    "cosmos.bank.v1beta1.Output": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "coins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          }
+        }
+      },
+      "description": "Output models transaction outputs."
+    },
+    "cosmos.base.v1beta1.Coin": {
+      "type": "object",
+      "properties": {
+        "denom": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        }
+      },
+      "description": "Coin defines a token with a denomination and an amount.\n\nNOTE: The amount field is an Int which implements the custom method\nsignatures required by gogoproto."
+    },
+    "dysonprotocol.nameservice.v1.MsgAcceptBid": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "nft_class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgAcceptBidResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgBurnCoins": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string",
+          "title": "name_destination address"
+        },
+        "amount": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          },
+          "title": "Using the same annotation as MintCoins for consistency"
+        }
+      },
+      "description": "MsgBurnCoins burns coins from the owner's balance, if each coin's root name\nis owned by that owner."
+    },
+    "dysonprotocol.nameservice.v1.MsgBurnCoinsResponse": {
+      "type": "object",
+      "title": "Response for BurnCoins"
+    },
+    "dysonprotocol.nameservice.v1.MsgBurnNFT": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        }
+      },
+      "title": "BurnNFT"
+    },
+    "dysonprotocol.nameservice.v1.MsgBurnNFTResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgClaimBid": {
+      "type": "object",
+      "properties": {
+        "bidder": {
+          "type": "string"
+        },
+        "nft_class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgClaimBidResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgCommit": {
+      "type": "object",
+      "properties": {
+        "committer": {
+          "type": "string"
+        },
+        "hexhash": {
+          "type": "string"
+        },
+        "valuation": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgCommitResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgCreateExternalName": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "type": "string",
+          "title": "authority is the address that controls the module (defaults to x/gov unless\noverwritten)"
+        },
+        "name": {
+          "type": "string",
+          "title": "name is the external name to create (e.g. \"example.com\", \"sub.domain.org\")"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgCreateExternalNameResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgDeleteClass": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        }
+      },
+      "title": "DeleteClass"
+    },
+    "dysonprotocol.nameservice.v1.MsgDeleteClassResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgMintCoins": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string",
+          "title": "name_destination must be a valid address"
+        },
+        "amount": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          },
+          "description": "Using repeated cosmos.base.v1beta1.Coin with the annotation\n(gogoproto.castrepeated) = \"github.com/cosmos/cosmos-sdk/types.Coins\"\nso that the generated Go code will have `Amount sdk.Coins` automatically."
+        }
+      },
+      "description": "MsgMintCoins mints coins into the owner's balance, as long as each coin's\n\"root name\" is owned by that owner."
+    },
+    "dysonprotocol.nameservice.v1.MsgMintCoinsResponse": {
+      "type": "object",
+      "title": "Response for MintCoins"
+    },
+    "dysonprotocol.nameservice.v1.MsgMintNFT": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "uri_hash": {
+          "type": "string"
+        }
+      },
+      "title": "MintNFT"
+    },
+    "dysonprotocol.nameservice.v1.MsgMintNFTResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgMoveCoins": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string",
+          "description": "Signer must be the resolved destination of the root name of each coin denom\nin all inputs."
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.bank.v1beta1.Input"
+          },
+          "description": "One or multiple inputs: each account holding the coins."
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.bank.v1beta1.Output"
+          },
+          "description": "One or multiple outputs: the account receiving the coins."
+        }
+      },
+      "description": "MsgMoveCoins force moves custom denom coins between two accounts if signer\nowns the root name of each coin denom."
+    },
+    "dysonprotocol.nameservice.v1.MsgMoveCoinsResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgMoveNft": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string",
+          "title": "Signer must be the resolved destination of the class root name"
+        },
+        "class_id": {
+          "type": "string",
+          "title": "NFT class ID"
+        },
+        "nft_id": {
+          "type": "string",
+          "title": "NFT ID"
+        },
+        "to_address": {
+          "type": "string",
+          "title": "Destination holder (non-module)"
+        }
+      },
+      "description": "MsgMoveNft force moves an NFT between accounts when signer owns the NFT\nclass."
+    },
+    "dysonprotocol.nameservice.v1.MsgMoveNftResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgPlaceBid": {
+      "type": "object",
+      "properties": {
+        "bidder": {
+          "type": "string"
+        },
+        "nft_class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        },
+        "bid_amount": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgPlaceBidResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgRejectBid": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "nft_class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        },
+        "new_valuation": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgRejectBidResponse": {
+      "type": "object",
+      "properties": {
+        "rejection_fee": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          },
+          "title": "Fee collected by the community pool when a bid is rejected"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgRenew": {
+      "type": "object",
+      "properties": {
+        "payer": {
+          "type": "string"
+        },
+        "nft_class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgRenewResponse": {
+      "type": "object",
+      "properties": {
+        "expiry": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgReveal": {
+      "type": "object",
+      "properties": {
+        "committer": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "salt": {
+          "type": "string"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgRevealResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSaveClass": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "uri_hash": {
+          "type": "string"
+        }
+      },
+      "title": "SaveClass"
+    },
+    "dysonprotocol.nameservice.v1.MsgSaveClassResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDenomDescription": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "denom": {
+          "type": "string",
+          "title": "base denom to modify"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "description": "MsgSetDenomDescription lets the name destination of the denom root set\ndescription."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDenomDescriptionResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDenomMetadata": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "type": "string",
+          "description": "authority is the address that controls the module (defaults to x/gov unless\noverwritten)."
+        },
+        "metadata": {
+          "$ref": "#/definitions/cosmos.bank.v1beta1.Metadata",
+          "description": "The bank module metadata describing the denom, display, base, etc."
+        }
+      },
+      "description": "MsgSetDenomMetadata allows a governance-authorized account to set denom\nmetadata."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDenomMetadataResponse": {
+      "type": "object",
+      "description": "MsgSetDenomMetadataResponse defines the response structure for executing a\nMsgSetDenomMetadata message."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDenomURI": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "denom": {
+          "type": "string",
+          "title": "base denom to modify"
+        },
+        "uri": {
+          "type": "string",
+          "title": "optional"
+        },
+        "uri_hash": {
+          "type": "string",
+          "title": "optional"
+        }
+      },
+      "description": "MsgSetDenomURI lets the name destination of the denom root set URI and URI\nhash."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDenomURIResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDestination": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "destination": {
+          "type": "string"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetDestinationResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetListed": {
+      "type": "object",
+      "properties": {
+        "nft_owner": {
+          "type": "string",
+          "title": "nft_owner is the address of the NFT owner"
+        },
+        "nft_class_id": {
+          "type": "string",
+          "title": "nft_class_id is the identifier of the NFT class"
+        },
+        "nft_id": {
+          "type": "string",
+          "title": "nft_id is the identifier of the specific NFT"
+        },
+        "listed": {
+          "type": "boolean",
+          "description": "listed determines if the NFT should be listed for sale but is overridden by\nthe NFTClass.always_listed parameter."
+        }
+      },
+      "description": "MsgSetListed sets the listed status for a specific NFT.\nOnly the owner of the NFT can update this setting."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetListedResponse": {
+      "type": "object",
+      "title": "MsgSetListedResponse defines the response for MsgSetListed"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "allowed_denoms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "MsgSetNFTClassAllowedDenoms sets the per-class allowed denoms list."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenomsResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListed": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string",
+          "title": "name_destination is the resolved destination address of the NFT class root\nname"
+        },
+        "class_id": {
+          "type": "string",
+          "title": "class_id is the identifier of the NFT class to update"
+        },
+        "always_listed": {
+          "type": "boolean",
+          "title": "always_listed determines if NFTs in this class should always be listed for\nsale and override the listed status of the individual NFTs"
+        }
+      },
+      "description": "MsgSetNFTClassAlwaysListed sets the always_listed flag for an NFT class.\nOnly the owner of the NFT class root name can update this setting."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassAlwaysListedResponse": {
+      "type": "object",
+      "title": "MsgSetNFTClassAlwaysListedResponse defines the response for\nMsgSetNFTClassAlwaysListed"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeout": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "bid_timeout": {
+          "type": "string"
+        }
+      },
+      "description": "MsgSetNFTClassBidTimeout sets the per-class bid timeout duration."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassBidTimeoutResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassExtraData": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "extra_data": {
+          "type": "string"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassExtraDataResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "minimum_bid_percent_increase": {
+          "type": "string"
+        }
+      },
+      "description": "MsgSetNFTClassMinimumBidPercentIncrease sets the per-class minimum bid\nincrease percent."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncreaseResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercent": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "reject_bid_valuation_fee_percent": {
+          "type": "string"
+        }
+      },
+      "description": "MsgSetNFTClassRejectBidValuationFeePercent sets the per-class reject fee\npercent."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassRejectBidValuationFeePercentResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePct": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "valuation_fee_pct": {
+          "type": "string"
+        }
+      },
+      "title": "Set per-class valuation fee percent (cosmos.Dec string)"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationFeePctResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriod": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "valuation_period": {
+          "type": "string"
+        }
+      },
+      "title": "Set per-class valuation period (duration)"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTClassValuationPeriodResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTMetadata": {
+      "type": "object",
+      "properties": {
+        "name_destination": {
+          "type": "string"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "uri_hash": {
+          "type": "string"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNFTMetadataResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNameMetadata": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "string"
+        }
+      },
+      "description": "MsgSetNameMetadata allows the owner of a name (NFT in nameservice.dys) to set\nthe metadata string for that name. Only the owner can call this."
+    },
+    "dysonprotocol.nameservice.v1.MsgSetNameMetadataResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgSetValuation": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "nft_class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        },
+        "valuation": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "title": "valuation is the new valuation of the NFT"
+        },
+        "max_valuation_fee_pct": {
+          "type": "string",
+          "description": "max_valuation_fee_pct (optional) is the maximum valuation fee percent the\nuser is willing to pay for setting the new valuation (e.g. \"0.025\" for\n2.5% per valuation period). This guards against unexpected fee amounts if\nthe class updates valuation_fee_pct."
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.MsgSetValuationResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.nameservice.v1.MsgUpdateParams": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "type": "string",
+          "description": "authority is the address that controls the module (defaults to x/gov unless\noverwritten)."
+        },
+        "params": {
+          "$ref": "#/definitions/dysonprotocol.nameservice.v1.Params",
+          "description": "params defines the x/nameservice parameters to update.\n\nNOTE: All parameters must be supplied."
+        }
+      },
+      "description": "MsgUpdateParams is the Msg/UpdateParams request type."
+    },
+    "dysonprotocol.nameservice.v1.MsgUpdateParamsResponse": {
+      "type": "object",
+      "description": "MsgUpdateParamsResponse defines the response structure for executing a\nMsgUpdateParams message."
+    },
+    "dysonprotocol.nameservice.v1.Params": {
+      "type": "object",
+      "properties": {
+        "mint_fee_per_coin": {
+          "type": "string",
+          "title": "mint_fee_per_coin defines the fee in udys charged per coin minted"
+        },
+        "min_bid_timeout_class": {
+          "type": "string",
+          "title": "Bounds for per-class bidding parameters\nClass bid_timeout must be within [min_bid_timeout_class,\nmax_bid_timeout_class]"
+        },
+        "max_bid_timeout_class": {
+          "type": "string"
+        },
+        "min_reject_bid_valuation_fee_percent": {
+          "type": "string",
+          "title": "Class reject fee percent must be within\n[min_reject_bid_valuation_fee_percent,\nmax_reject_bid_valuation_fee_percent]"
+        },
+        "max_reject_bid_valuation_fee_percent": {
+          "type": "string"
+        },
+        "min_minimum_bid_percent_increase": {
+          "type": "string",
+          "title": "Class minimum bid percent increase must be within\n[min_minimum_bid_percent_increase, max_minimum_bid_percent_increase]"
+        },
+        "max_minimum_bid_percent_increase": {
+          "type": "string"
+        },
+        "min_valuation_fee_pct": {
+          "type": "string",
+          "title": "Class valuation fee percent must be within\n[min_valuation_fee_pct, max_valuation_fee_pct]"
+        },
+        "max_valuation_fee_pct": {
+          "type": "string"
+        },
+        "min_valuation_period": {
+          "type": "string",
+          "title": "Class valuation period bounds must be within\n[min_valuation_period, max_valuation_period]"
+        },
+        "max_valuation_period": {
+          "type": "string"
+        }
+      },
+      "description": "Params defines the parameters for the nameservice module."
+    },
+    "google.protobuf.Any": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "grpc.gateway.runtime.Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/google.protobuf.Any"
+          }
+        }
+      }
+    }
+  }
+}

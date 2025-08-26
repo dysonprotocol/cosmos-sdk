@@ -31,13 +31,13 @@ for d in $(find . -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq);
   echo "Generating swagger files for $d"
 
   # only generate swagger files for tx.proto, query.proto, and service.proto
-  proto_files=$(find "${d}" -maxdepth 1 \( -name 'query.proto' -o -name 'service.proto' \))
+  proto_files=$(find "${d}" -maxdepth 1 \( -name 'tx.proto' -o -name 'query.proto' -o -name 'service.proto' -o -name 'reflection.proto' \))
   for file in $proto_files; do
     buf generate --template buf.gen.swagger.yaml $file
   done
 
 
-  # only generate jsonschema files for tx.proto, query.proto, and service.proto
+  # only generate jsonschema files for tx.proto and query.proto
   proto_files=$(find "${d}" -maxdepth 1 \( -name 'tx.proto' -o -name 'query.proto' \))
   for file in $proto_files; do
     dir=$(dirname $file)
@@ -87,7 +87,7 @@ def update_operation_ids(data):
     proto_dir = os.path.dirname(title)
     package = proto_dir.replace('/', '.').rstrip('.')
     paths = data.get('paths', {})
-    for path_key, path_val in paths.items():
+    for path_key, path_val in list(paths.items()):
         for method_key, op in path_val.items():
             old_id = op.get('operationId')
             if not old_id or '_' not in old_id:
@@ -95,13 +95,16 @@ def update_operation_ids(data):
             service, method_name = old_id.split('_', 1)
             if service == 'Query':
                 request_name = service + method_name + 'Request'
+                new_id = package + '.' + request_name
+                op['operationId'] = new_id
+                print(f"Updating {old_id} -> {new_id}")
             elif service == 'Msg':
                 request_name = service + method_name
-            else:
-                continue
-            new_id = package + '.' + request_name
-            print(f"Updating {old_id} -> {new_id}")
-            op['operationId'] = new_id
+                new_id = package + '.' + request_name
+                op['operationId'] = new_id
+                paths[new_id] = path_val
+                del paths[path_key]
+                print(f"Updating {old_id} -> {new_id}")
 
 def process_file(json_file):
     with open(json_file, 'r') as file:

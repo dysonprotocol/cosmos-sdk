@@ -1,0 +1,48 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.storage.v1.MsgStorageDelete",
+        "definitions": {
+            "dysonprotocol.storage.v1.MsgStorageDelete": {
+                "properties": {
+                    "owner": {
+                        "type": "string",
+                        "description": "The owner of the storage entries to delete."
+                    },
+                    "indexes": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "description": "List of specific indexes to delete."
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Storage Delete",
+                "description": "MsgStorageDelete is the message for deleting storage entries."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.storage.v1.MsgStorageDeleteResponse",
+        "definitions": {
+            "dysonprotocol.storage.v1.MsgStorageDeleteResponse": {
+                "properties": {
+                    "deleted_indexes": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "description": "List of indexes that were successfully deleted"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Storage Delete Response",
+                "description": "MsgStorageDeleteResponse is the response for deleting storage entries."
+            }
+        }
+    }
+}

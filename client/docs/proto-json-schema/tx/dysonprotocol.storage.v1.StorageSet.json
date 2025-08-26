@@ -1,0 +1,40 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.storage.v1.MsgStorageSet",
+        "definitions": {
+            "dysonprotocol.storage.v1.MsgStorageSet": {
+                "properties": {
+                    "owner": {
+                        "type": "string",
+                        "description": "The owner of the storage entry to set."
+                    },
+                    "index": {
+                        "type": "string",
+                        "description": "The index of the storage entry to set."
+                    },
+                    "data": {
+                        "type": "string",
+                        "description": "The data to set for the storage entry."
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Storage Set",
+                "description": "MsgStorageSet is the message for setting a storage entry."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.storage.v1.MsgStorageSetResponse",
+        "definitions": {
+            "dysonprotocol.storage.v1.MsgStorageSetResponse": {
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Storage Set Response",
+                "description": "MsgStorageSetResponse is the response for setting a storage entry."
+            }
+        }
+    }
+}

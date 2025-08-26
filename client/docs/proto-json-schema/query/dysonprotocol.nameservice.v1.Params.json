@@ -1,0 +1,88 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.nameservice.v1.QueryParamsRequest",
+        "definitions": {
+            "dysonprotocol.nameservice.v1.QueryParamsRequest": {
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Params Request",
+                "description": "QueryParamsRequest is request type for the Query/Params RPC method."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.nameservice.v1.QueryParamsResponse",
+        "definitions": {
+            "dysonprotocol.nameservice.v1.QueryParamsResponse": {
+                "properties": {
+                    "params": {
+                        "$ref": "#/definitions/dysonprotocol.nameservice.v1.Params",
+                        "additionalProperties": false,
+                        "description": "params holds all the parameters of this module."
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Params Response",
+                "description": "QueryParamsResponse is response type for the Query/Params RPC method."
+            },
+            "dysonprotocol.nameservice.v1.Params": {
+                "properties": {
+                    "mint_fee_per_coin": {
+                        "type": "string",
+                        "description": "mint_fee_per_coin defines the fee in udys charged per coin minted"
+                    },
+                    "min_bid_timeout_class": {
+                        "pattern": "^([0-9]+\\.?[0-9]*|\\.[0-9]+)s$",
+                        "type": "string",
+                        "description": "Bounds for per-class bidding parameters Class bid_timeout must be within [min_bid_timeout_class, max_bid_timeout_class]",
+                        "format": "regex"
+                    },
+                    "max_bid_timeout_class": {
+                        "pattern": "^([0-9]+\\.?[0-9]*|\\.[0-9]+)s$",
+                        "type": "string",
+                        "format": "regex"
+                    },
+                    "min_reject_bid_valuation_fee_percent": {
+                        "type": "string",
+                        "description": "Class reject fee percent must be within [min_reject_bid_valuation_fee_percent, max_reject_bid_valuation_fee_percent]"
+                    },
+                    "max_reject_bid_valuation_fee_percent": {
+                        "type": "string"
+                    },
+                    "min_minimum_bid_percent_increase": {
+                        "type": "string",
+                        "description": "Class minimum bid percent increase must be within [min_minimum_bid_percent_increase, max_minimum_bid_percent_increase]"
+                    },
+                    "max_minimum_bid_percent_increase": {
+                        "type": "string"
+                    },
+                    "min_valuation_fee_pct": {
+                        "type": "string",
+                        "description": "Class valuation fee percent must be within [min_valuation_fee_pct, max_valuation_fee_pct]"
+                    },
+                    "max_valuation_fee_pct": {
+                        "type": "string"
+                    },
+                    "min_valuation_period": {
+                        "pattern": "^([0-9]+\\.?[0-9]*|\\.[0-9]+)s$",
+                        "type": "string",
+                        "description": "Class valuation period bounds must be within [min_valuation_period, max_valuation_period]",
+                        "format": "regex"
+                    },
+                    "max_valuation_period": {
+                        "pattern": "^([0-9]+\\.?[0-9]*|\\.[0-9]+)s$",
+                        "type": "string",
+                        "format": "regex"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Params",
+                "description": "Params defines the parameters for the nameservice module."
+            }
+        }
+    }
+}

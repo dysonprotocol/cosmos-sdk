@@ -1,0 +1,36 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgDeleteTask",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgDeleteTask": {
+                "properties": {
+                    "creator": {
+                        "type": "string",
+                        "description": "Address of the creator of the task"
+                    },
+                    "task_id": {
+                        "type": "string",
+                        "description": "ID of the task to delete"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Delete Task",
+                "description": "MsgDeleteTask defines the message for deleting a task"
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgDeleteTaskResponse",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgDeleteTaskResponse": {
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Delete Task Response",
+                "description": "MsgDeleteTaskResponse defines the response for deleting a task"
+            }
+        }
+    }
+}

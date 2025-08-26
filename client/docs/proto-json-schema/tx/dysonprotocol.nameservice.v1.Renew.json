@@ -1,0 +1,41 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgRenew",
+        "definitions": {
+            "dysonprotocol.nameservice.v1.MsgRenew": {
+                "properties": {
+                    "payer": {
+                        "type": "string"
+                    },
+                    "nft_class_id": {
+                        "type": "string"
+                    },
+                    "nft_id": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Renew"
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.nameservice.v1.MsgRenewResponse",
+        "definitions": {
+            "dysonprotocol.nameservice.v1.MsgRenewResponse": {
+                "properties": {
+                    "expiry": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Renew Response"
+            }
+        }
+    }
+}

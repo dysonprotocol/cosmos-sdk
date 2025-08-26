@@ -1,0 +1,32 @@
+services:
+  build:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /workspace
+    environment:
+      - CGO_ENABLED=1
+      - GOFLAGS=-buildvcs=false
+      - PYBUILD_NO_DOCKER=1
+      - PATH=/opt/goenv/bin:/opt/goenv/shims:/opt/pyenv/bin:/opt/pyenv/shims:/opt/nodeenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    volumes:
+      - .:/workspace
+    entrypoint: ["/bin/bash", "-c"]
+    command: make dysvm dashboard build
+
+  shell:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /workspace
+    environment:
+      - CGO_ENABLED=1
+      - GOFLAGS=-buildvcs=false
+      - PYBUILD_NO_DOCKER=1
+      - PATH=/opt/goenv/bin:/opt/goenv/shims:/opt/pyenv/bin:/opt/pyenv/shims:/opt/nodeenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    volumes:
+      - .:/workspace
+    entrypoint: ["/bin/bash", "-c"]
+    command: bash
+
+

@@ -1,0 +1,234 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "dysonprotocol/storage/v1/tx.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "dysonprotocol.storage.v1.MsgStorageDelete": {
+      "post": {
+        "summary": "Deletes storage entries. Only the owner can delete.",
+        "operationId": "dysonprotocol.storage.v1.MsgStorageDelete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.MsgStorageDeleteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.MsgStorageDelete"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.storage.v1.MsgStorageSet": {
+      "post": {
+        "summary": "Sets a storage entry. Only the owner can set.",
+        "operationId": "dysonprotocol.storage.v1.MsgStorageSet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.MsgStorageSetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.MsgStorageSet"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.storage.v1.MsgUpdateParams": {
+      "post": {
+        "summary": "UpdateParams defines a governance operation for updating the x/storage\nmodule parameters. The authority defaults to the x/gov module account.",
+        "operationId": "dysonprotocol.storage.v1.MsgUpdateParams",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.MsgUpdateParamsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.storage.v1.MsgUpdateParams"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "dysonprotocol.storage.v1.MsgStorageDelete": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The owner of the storage entries to delete."
+        },
+        "indexes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of specific indexes to delete."
+        }
+      },
+      "description": "MsgStorageDelete is the message for deleting storage entries."
+    },
+    "dysonprotocol.storage.v1.MsgStorageDeleteResponse": {
+      "type": "object",
+      "properties": {
+        "deleted_indexes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "List of indexes that were successfully deleted"
+        }
+      },
+      "description": "MsgStorageDeleteResponse is the response for deleting storage entries."
+    },
+    "dysonprotocol.storage.v1.MsgStorageSet": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "The owner of the storage entry to set."
+        },
+        "index": {
+          "type": "string",
+          "description": "The index of the storage entry to set."
+        },
+        "data": {
+          "type": "string",
+          "description": "The data to set for the storage entry."
+        }
+      },
+      "description": "MsgStorageSet is the message for setting a storage entry."
+    },
+    "dysonprotocol.storage.v1.MsgStorageSetResponse": {
+      "type": "object",
+      "description": "MsgStorageSetResponse is the response for setting a storage entry."
+    },
+    "dysonprotocol.storage.v1.MsgUpdateParams": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "type": "string",
+          "description": "authority is the address that controls the module (defaults to x/gov unless\noverwritten)."
+        },
+        "params": {
+          "$ref": "#/definitions/dysonprotocol.storage.v1.Params",
+          "description": "params defines the x/storage parameters to update.\nNOTE: All parameters must be supplied."
+        }
+      },
+      "description": "MsgUpdateParams is the Msg/UpdateParams request type."
+    },
+    "dysonprotocol.storage.v1.MsgUpdateParamsResponse": {
+      "type": "object",
+      "description": "MsgUpdateParamsResponse defines the response structure for executing a\nMsgUpdateParams message."
+    },
+    "dysonprotocol.storage.v1.Params": {
+      "type": "object",
+      "properties": {
+        "max_storage_size": {
+          "type": "string",
+          "format": "uint64",
+          "title": "max_storage_size defines the maximum storage size in bytes that can be\nstored per owner"
+        },
+        "storage_stake_multiple": {
+          "type": "string",
+          "description": "storage_stake_multiple defines the stake requirement multiplier per byte\nstored. Value \"0\" disables stake requirements entirely."
+        }
+      },
+      "description": "Params defines the parameters for the storage module."
+    },
+    "google.protobuf.Any": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "grpc.gateway.runtime.Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/google.protobuf.Any"
+          }
+        }
+      }
+    }
+  }
+}

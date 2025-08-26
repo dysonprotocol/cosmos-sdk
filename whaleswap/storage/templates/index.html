@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>WhaleSwap Pools</title>
+    <script defer src="/static/js/main.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; margin: 16px }
+      ul { list-style: none; padding: 0 }
+      li { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin: 8px 0 }
+      .muted { font-size: 12px; color: #6b7280 }
+      button { margin-top: 10px; padding: 6px 10px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; cursor: pointer }
+    </style>
+  </head>
+  <body x-data="app()" x-init="load()" data-script-address="{{ script_address }}">
+    <h2>WhaleSwap2 Pools</h2>
+
+    <template x-if="loading"><div>Loading…</div></template>
+    <template x-if="error"><div style="color:#b91c1c" x-text="error"></div></template>
+
+    <ul x-show="!loading && !error">
+      <template x-for="p in pools" :key="p.pool_id">
+        <li>
+          <div><strong>Pool <span x-text="p.pool_id"></span></strong></div>
+          <div>Base: <span x-text="p.base?.denom"></span> — <span x-text="p.base?.balance"></span></div>
+          <div>Quote: <span x-text="p.quote?.denom"></span> — <span x-text="p.quote?.balance"></span></div>
+          <div>Shares: <span x-text="p.total_shares"></span> (<span x-text="p.shares_denom"></span>)</div>
+          <template x-if="p.num_trades"><div>Trades: <span x-text="p.num_trades"></span></div></template>
+          <div class="muted"><span x-text="p.created"></span> / <span x-text="p.updated"></span></div>
+        </li>
+      </template>
+      <template x-if="pools.length === 0"><li>No pools.</li></template>
+    </ul>
+
+    <button @click="load()">Reload</button>
+
+    
+  </body>
+</html>
+
+

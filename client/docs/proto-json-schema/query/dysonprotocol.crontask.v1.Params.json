@@ -1,0 +1,56 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.QueryParamsRequest",
+        "definitions": {
+            "dysonprotocol.crontask.v1.QueryParamsRequest": {
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Params Request",
+                "description": "QueryParamsRequest is the request type for the Query/Params RPC method"
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.QueryParamsResponse",
+        "definitions": {
+            "dysonprotocol.crontask.v1.QueryParamsResponse": {
+                "properties": {
+                    "params": {
+                        "$ref": "#/definitions/dysonprotocol.crontask.v1.Params",
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Params Response",
+                "description": "QueryParamsResponse is the response type for the Query/Params RPC method"
+            },
+            "dysonprotocol.crontask.v1.Params": {
+                "properties": {
+                    "block_gas_limit": {
+                        "type": "string",
+                        "description": "Maximum gas allowed for executing tasks per block"
+                    },
+                    "expiry_limit": {
+                        "type": "string",
+                        "description": "Default expiry limit in seconds (24 hours)"
+                    },
+                    "max_scheduled_time": {
+                        "type": "string",
+                        "description": "Maximum allowed scheduled time in seconds from task creation (24 hours)"
+                    },
+                    "clean_up_time": {
+                        "type": "string",
+                        "description": "Retention period for completed/failed/expired tasks (seconds)"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Params",
+                "description": "Params defines the parameters for the crontask module"
+            }
+        }
+    }
+}

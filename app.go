@@ -48,6 +48,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/grpc/cmtservice"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
+	basereflection "github.com/cosmos/cosmos-sdk/client/grpc/reflection"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/address"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -56,6 +57,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
+	reflectionv2alpha1gw "github.com/cosmos/cosmos-sdk/server/grpc/reflection/v2alpha1"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/std"
 	testdata_pulsar "github.com/cosmos/cosmos-sdk/testutil/testdata/testpb"
@@ -1100,6 +1102,14 @@ func (app *DysApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APICon
 
 	// Register grpc-gateway routes for all modules.
 	app.BasicModuleManager.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+
+	// Register reflection HTTP routes (v1beta1 interfaces and v2alpha1 app descriptor)
+	if err := basereflection.RegisterReflectionServiceHandlerClient(context.Background(), apiSvr.GRPCGatewayRouter, basereflection.NewReflectionServiceClient(clientCtx)); err != nil {
+		panic(err)
+	}
+	if err := reflectionv2alpha1gw.RegisterReflectionServiceHandlerClient(context.Background(), apiSvr.GRPCGatewayRouter, reflectionv2alpha1gw.NewReflectionServiceClient(clientCtx)); err != nil {
+		panic(err)
+	}
 
 	// Register IBC routes
 	ibcclienttypes.RegisterQueryHandlerClient(context.Background(), apiSvr.GRPCGatewayRouter, ibcclienttypes.NewQueryClient(clientCtx))

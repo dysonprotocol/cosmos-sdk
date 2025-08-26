@@ -138,21 +138,34 @@ def group_by_rpc_methods():
         # Load only the request schema (we no longer need the response)
         with open(request_file, 'r') as f:
             request_data = json.load(f)
-        
-        # Get the request schema directly
-        request_schema = request_data.copy()
-        
+
         # Apply description replacements to the entire schema
-        request_schema = process_definitions_recursively(request_schema)
+        request_schema = process_definitions_recursively(request_data.copy())
         
-        # Create output file with new directory structure: proto_type/package.request_type.json
+        
+        response_file = f"./client/docs/proto-json-schema/{package_path}/{response_type}.json"
+        
+        if not os.path.exists(response_file):
+            print(f"Skipping {method_name}: missing response file ({os.path.exists(response_file)})")
+            print(f"  Looking for: {response_file}")
+            continue
+        
+        with open(response_file, 'r') as f:
+            response_data = json.load(f)
+        
+        response_schema = process_definitions_recursively(response_data.copy())
+        
+        # Create output file with new directory structure: proto_type/package.method_name.json
         output_dir = f"./client/docs/proto-json-schema/{proto_type}"
-        output_file = f"{output_dir}/{package}.{request_type}.json"
+        output_file = f"{output_dir}/{package}.{method_name}.json"
         
         os.makedirs(output_dir, exist_ok=True)
         
         with open(output_file, 'w') as f:
-            json.dump(request_schema, f, indent=4)
+            json.dump({
+                "request": request_schema,
+                "response": response_schema
+            }, f, indent=4)
         
         print(f"Created request schema: {output_file}")
         created_count += 1

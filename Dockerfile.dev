@@ -1,0 +1,62 @@
+# syntax=docker/dockerfile:1.6
+
+FROM debian:bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYENV_ROOT=/opt/pyenv \
+    GOENV_ROOT=/opt/goenv \
+    NODEENV_HOME=/opt/nodeenv \
+    CGO_ENABLED=1 \
+    GOFLAGS=-buildvcs=false \
+    PYBUILD_NO_DOCKER=1
+
+# Base packages and build deps for Python via pyenv
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    build-essential \
+    git \
+    curl \
+    jq \
+    zstd \
+    make \
+    patch \
+    # pyenv build deps
+    libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
+    libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev \
+    liblzma-dev \
+    # system python/pip to bootstrap nodeenv
+    python3 python3-pip \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install pyenv, goenv, and nodeenv
+RUN git clone --depth 1 https://github.com/pyenv/pyenv.git "$PYENV_ROOT" \
+  && git clone --depth 1 https://github.com/syndbg/goenv.git "$GOENV_ROOT" \
+  && pip3 install --no-cache-dir --break-system-packages nodeenv
+
+# Set PATH for shims and binaries
+ENV PATH="$GOENV_ROOT/bin:$GOENV_ROOT/shims:$PYENV_ROOT/bin:$PYENV_ROOT/shims:$NODEENV_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# Install Python 3.12.11 via pyenv (avoid login shell PATH resets)
+RUN /opt/pyenv/bin/pyenv install 3.12.11 \
+  && /opt/pyenv/bin/pyenv global 3.12.11 \
+  && "$PYENV_ROOT"/shims/python --version \
+  && "$PYENV_ROOT"/shims/pip --version
+
+# Install Go 1.24.6 via goenv
+RUN /opt/goenv/bin/goenv install 1.24.6 \
+  && /opt/goenv/bin/goenv global 1.24.6 \
+  && /opt/goenv/bin/goenv rehash \
+  && "$GOENV_ROOT"/shims/go version
+
+# Create a global Node environment (LTS 22) via nodeenv
+RUN nodeenv "$NODEENV_HOME" -n 22.12.0 \
+  && "$NODEENV_HOME"/bin/node --version \
+  && "$NODEENV_HOME"/bin/npm --version
+
+WORKDIR /workspace
+
+# Default to a shell; compose will override command to run make
+ENTRYPOINT ["/bin/bash"]
+CMD ["-lc", "bash"]
+
+
