@@ -194,6 +194,7 @@ func (k Keeper) MintNFT(ctx context.Context, msg *nameservicev1.MsgMintNFT) (*na
 		CurrentBidder:   "",
 		CurrentBid:      sdk.Coin{},
 		BidTimestamp:    nil,
+		BidHeight:       0,
 		Metadata:        "",
 	}
 	if err := k.SetNFTData(ctx, token.ClassId, token.Id, nftData); err != nil {

@@ -236,6 +236,8 @@ func (k Keeper) PlaceBid(ctx context.Context, msg *nameservicev1.MsgPlaceBid) (*
 	bidTimestamp := sdkCtx.BlockTime()
 
 	nftData.BidTimestamp = &bidTimestamp
+	// Record the block height when the bid was placed
+	nftData.BidHeight = uint64(sdkCtx.BlockHeight())
 
 	// Update the NFT data in the store
 	if err := k.SetNFTData(ctx, msg.NftClassId, msg.NftId, nftData); err != nil {

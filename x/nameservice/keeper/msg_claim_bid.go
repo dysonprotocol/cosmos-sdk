@@ -112,6 +112,8 @@ func (k Keeper) ClaimBid(ctx context.Context, msg *nameservicev1.MsgClaimBid) (*
 	nftData.CurrentBidder = ""
 	nftData.CurrentBid = sdk.Coin{}
 	nftData.BidTimestamp = nil
+	// Clear bid height after claim
+	nftData.BidHeight = 0
 
 	// Reset NFT data for the new owner
 	if err := k.SetNFTData(ctx, msg.NftClassId, msg.NftId, nftData); err != nil {

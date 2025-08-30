@@ -73,6 +73,8 @@ func (k Keeper) AcceptBid(ctx context.Context, msg *nameservicev1.MsgAcceptBid) 
 	nftData.CurrentBidder = ""
 	nftData.CurrentBid = sdk.Coin{}
 	nftData.BidTimestamp = nil
+	// Clear bid height after acceptance
+	nftData.BidHeight = 0
 
 	// Update the NFT data
 	if err := k.SetNFTData(ctx, msg.NftClassId, msg.NftId, nftData); err != nil {

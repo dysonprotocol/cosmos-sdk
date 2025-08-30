@@ -1681,6 +1681,7 @@ var (
 	fd_NFTData_current_bidder   protoreflect.FieldDescriptor
 	fd_NFTData_current_bid      protoreflect.FieldDescriptor
 	fd_NFTData_bid_timestamp    protoreflect.FieldDescriptor
+	fd_NFTData_bid_height       protoreflect.FieldDescriptor
 	fd_NFTData_metadata         protoreflect.FieldDescriptor
 )
 
@@ -1693,6 +1694,7 @@ func init() {
 	fd_NFTData_current_bidder = md_NFTData.Fields().ByName("current_bidder")
 	fd_NFTData_current_bid = md_NFTData.Fields().ByName("current_bid")
 	fd_NFTData_bid_timestamp = md_NFTData.Fields().ByName("bid_timestamp")
+	fd_NFTData_bid_height = md_NFTData.Fields().ByName("bid_height")
 	fd_NFTData_metadata = md_NFTData.Fields().ByName("metadata")
 }
 
@@ -1797,6 +1799,12 @@ func (x *fastReflection_NFTData) Range(f func(protoreflect.FieldDescriptor, prot
 			return
 		}
 	}
+	if x.BidHeight != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.BidHeight)
+		if !f(fd_NFTData_bid_height, value) {
+			return
+		}
+	}
 	if x.Metadata != "" {
 		value := protoreflect.ValueOfString(x.Metadata)
 		if !f(fd_NFTData_metadata, value) {
@@ -1830,6 +1838,8 @@ func (x *fastReflection_NFTData) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.CurrentBid != nil
 	case "dysonprotocol.nameservice.v1.NFTData.bid_timestamp":
 		return x.BidTimestamp != nil
+	case "dysonprotocol.nameservice.v1.NFTData.bid_height":
+		return x.BidHeight != uint64(0)
 	case "dysonprotocol.nameservice.v1.NFTData.metadata":
 		return x.Metadata != ""
 	default:
@@ -1860,6 +1870,8 @@ func (x *fastReflection_NFTData) Clear(fd protoreflect.FieldDescriptor) {
 		x.CurrentBid = nil
 	case "dysonprotocol.nameservice.v1.NFTData.bid_timestamp":
 		x.BidTimestamp = nil
+	case "dysonprotocol.nameservice.v1.NFTData.bid_height":
+		x.BidHeight = uint64(0)
 	case "dysonprotocol.nameservice.v1.NFTData.metadata":
 		x.Metadata = ""
 	default:
@@ -1896,6 +1908,9 @@ func (x *fastReflection_NFTData) Get(descriptor protoreflect.FieldDescriptor) pr
 	case "dysonprotocol.nameservice.v1.NFTData.bid_timestamp":
 		value := x.BidTimestamp
 		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.NFTData.bid_height":
+		value := x.BidHeight
+		return protoreflect.ValueOfUint64(value)
 	case "dysonprotocol.nameservice.v1.NFTData.metadata":
 		value := x.Metadata
 		return protoreflect.ValueOfString(value)
@@ -1931,6 +1946,8 @@ func (x *fastReflection_NFTData) Set(fd protoreflect.FieldDescriptor, value prot
 		x.CurrentBid = value.Message().Interface().(*v1beta1.Coin)
 	case "dysonprotocol.nameservice.v1.NFTData.bid_timestamp":
 		x.BidTimestamp = value.Message().Interface().(*timestamppb.Timestamp)
+	case "dysonprotocol.nameservice.v1.NFTData.bid_height":
+		x.BidHeight = value.Uint()
 	case "dysonprotocol.nameservice.v1.NFTData.metadata":
 		x.Metadata = value.Interface().(string)
 	default:
@@ -1977,6 +1994,8 @@ func (x *fastReflection_NFTData) Mutable(fd protoreflect.FieldDescriptor) protor
 		panic(fmt.Errorf("field listed of message dysonprotocol.nameservice.v1.NFTData is not mutable"))
 	case "dysonprotocol.nameservice.v1.NFTData.current_bidder":
 		panic(fmt.Errorf("field current_bidder of message dysonprotocol.nameservice.v1.NFTData is not mutable"))
+	case "dysonprotocol.nameservice.v1.NFTData.bid_height":
+		panic(fmt.Errorf("field bid_height of message dysonprotocol.nameservice.v1.NFTData is not mutable"))
 	case "dysonprotocol.nameservice.v1.NFTData.metadata":
 		panic(fmt.Errorf("field metadata of message dysonprotocol.nameservice.v1.NFTData is not mutable"))
 	default:
@@ -2008,6 +2027,8 @@ func (x *fastReflection_NFTData) NewField(fd protoreflect.FieldDescriptor) proto
 	case "dysonprotocol.nameservice.v1.NFTData.bid_timestamp":
 		m := new(timestamppb.Timestamp)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.NFTData.bid_height":
+		return protoreflect.ValueOfUint64(uint64(0))
 	case "dysonprotocol.nameservice.v1.NFTData.metadata":
 		return protoreflect.ValueOfString("")
 	default:
@@ -2102,6 +2123,9 @@ func (x *fastReflection_NFTData) ProtoMethods() *protoiface.Methods {
 			l = options.Size(x.BidTimestamp)
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		if x.BidHeight != 0 {
+			n += 1 + runtime.Sov(uint64(x.BidHeight))
+		}
 		l = len(x.Metadata)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
@@ -2141,6 +2165,11 @@ func (x *fastReflection_NFTData) ProtoMethods() *protoiface.Methods {
 			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Metadata)))
 			i--
 			dAtA[i] = 0x42
+		}
+		if x.BidHeight != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.BidHeight))
+			i--
+			dAtA[i] = 0x38
 		}
 		if x.BidTimestamp != nil {
 			encoded, err := options.Marshal(x.BidTimestamp)
@@ -2460,6 +2489,25 @@ func (x *fastReflection_NFTData) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
+			case 7:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field BidHeight", wireType)
+				}
+				x.BidHeight = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.BidHeight |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
 			case 8:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
@@ -2758,6 +2806,8 @@ type NFTData struct {
 	CurrentBidder string                 `protobuf:"bytes,4,opt,name=current_bidder,json=currentBidder,proto3" json:"current_bidder,omitempty"` // Address of the current highest bidder
 	CurrentBid    *v1beta1.Coin          `protobuf:"bytes,5,opt,name=current_bid,json=currentBid,proto3" json:"current_bid,omitempty"`
 	BidTimestamp  *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=bid_timestamp,json=bidTimestamp,proto3" json:"bid_timestamp,omitempty"` // Timestamp of when the bid was placed
+	// Block height when the current bid was placed
+	BidHeight uint64 `protobuf:"varint,7,opt,name=bid_height,json=bidHeight,proto3" json:"bid_height,omitempty"`
 	// Additional metadata
 	Metadata string `protobuf:"bytes,8,opt,name=metadata,proto3" json:"metadata,omitempty"`
 }
@@ -2822,6 +2872,13 @@ func (x *NFTData) GetBidTimestamp() *timestamppb.Timestamp {
 		return x.BidTimestamp
 	}
 	return nil
+}
+
+func (x *NFTData) GetBidHeight() uint64 {
+	if x != nil {
+		return x.BidHeight
+	}
+	return 0
 }
 
 func (x *NFTData) GetMetadata() string {
@@ -2892,7 +2949,7 @@ var file_dysonprotocol_nameservice_v1_nameservice_proto_rawDesc = []byte{
 	0x65, 0x6e, 0x74, 0x5f, 0x69, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x18, 0x07, 0x20, 0x01,
 	0x28, 0x09, 0x42, 0x0e, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44,
 	0x65, 0x63, 0x52, 0x19, 0x6d, 0x69, 0x6e, 0x69, 0x6d, 0x75, 0x6d, 0x42, 0x69, 0x64, 0x50, 0x65,
-	0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x22, 0xfd, 0x02,
+	0x72, 0x63, 0x65, 0x6e, 0x74, 0x49, 0x6e, 0x63, 0x72, 0x65, 0x61, 0x73, 0x65, 0x22, 0x9c, 0x03,
 	0x0a, 0x07, 0x4e, 0x46, 0x54, 0x44, 0x61, 0x74, 0x61, 0x12, 0x16, 0x0a, 0x06, 0x6c, 0x69, 0x73,
 	0x74, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x6c, 0x69, 0x73, 0x74, 0x65,
 	0x64, 0x12, 0x3d, 0x0a, 0x09, 0x76, 0x61, 0x6c, 0x75, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02,
@@ -2915,11 +2972,13 @@ var file_dysonprotocol_nameservice_v1_nameservice_proto_rawDesc = []byte{
 	0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x42, 0x04, 0x90,
 	0xdf, 0x1f, 0x01, 0x52, 0x0c, 0x62, 0x69, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d,
-	0x70, 0x12, 0x1a, 0x0a, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x08, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x42, 0x27, 0x5a,
-	0x25, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63,
-	0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x70, 0x12, 0x1d, 0x0a, 0x0a, 0x62, 0x69, 0x64, 0x5f, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18,
+	0x07, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x62, 0x69, 0x64, 0x48, 0x65, 0x69, 0x67, 0x68, 0x74,
+	0x12, 0x1a, 0x0a, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x08, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x42, 0x27, 0x5a, 0x25,
+	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f,
+	0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f,
+	0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (

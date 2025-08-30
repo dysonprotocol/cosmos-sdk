@@ -62,6 +62,16 @@ func (a ScriptExecAuthorization) Accept(ctx context.Context, msg sdk.Msg) (authz
 		return authz.AcceptResponse{}, sdkerrors.ErrUnauthorized.Wrapf("script address mismatch: expected %s, got %s", a.ScriptAddress, execMsg.ScriptAddress)
 	}
 
+	// Extra code execution is not allowed via authz
+	if execMsg.ExtraCode != "" {
+		return authz.AcceptResponse{}, sdkerrors.ErrUnauthorized.Wrap("extra_code is not allowed for authorized executions")
+	}
+
+	// Attached messages are not allowed via authz
+	if len(execMsg.AttachedMessages) != 0 {
+		return authz.AcceptResponse{}, sdkerrors.ErrUnauthorized.Wrap("attached_messages are not allowed for authorized executions")
+	}
+
 	// Direct execution (empty function name) is always allowed
 	if execMsg.FunctionName == "" {
 		return authz.AcceptResponse{Accept: true}, nil

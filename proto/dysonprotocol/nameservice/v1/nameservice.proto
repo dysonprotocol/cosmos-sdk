@@ -102,6 +102,9 @@ message NFTData {
   google.protobuf.Timestamp bid_timestamp = 6
       [ (gogoproto.stdtime) = true ]; // Timestamp of when the bid was placed
 
+  // Block height when the current bid was placed
+  uint64 bid_height = 7;
+
   // Additional metadata
   string metadata = 8;
 }
