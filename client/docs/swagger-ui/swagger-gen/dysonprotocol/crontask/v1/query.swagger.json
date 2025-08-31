@@ -507,6 +507,16 @@
           "type": "string",
           "format": "int64",
           "title": "Block timestamp when the task was executed (only for DONE / FAILED)"
+        },
+        "creation_block_height": {
+          "type": "string",
+          "format": "int64",
+          "title": "Block height when the task was created"
+        },
+        "execution_block_height": {
+          "type": "string",
+          "format": "int64",
+          "title": "Block height when the task was executed (only for DONE / FAILED)"
         }
       },
       "title": "Task represents a scheduled task in the crontask system"

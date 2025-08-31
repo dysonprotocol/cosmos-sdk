@@ -161,16 +161,17 @@ func (k Keeper) CreateTask(ctx context.Context, msg *crontasktypes.MsgCreateTask
 
 	// Create the task with initial status SCHEDULED
 	task := crontasktypes.Task{
-		TaskId:             taskId,
-		Creator:            msg.Creator,
-		ScheduledTimestamp: scheduledTime.Unix(),
-		ExpiryTimestamp:    expiryTime.Unix(),
-		TaskGasLimit:       msg.TaskGasLimit,
-		TaskGasPrice:       gasPrice,
-		TaskGasFee:         msg.TaskGasFee,
-		Msgs:               msg.Msgs,
-		Status:             crontasktypes.TaskStatus_SCHEDULED,
-		CreationTime:       sdkCtx.BlockTime().Unix(),
+		TaskId:              taskId,
+		Creator:             msg.Creator,
+		ScheduledTimestamp:  scheduledTime.Unix(),
+		ExpiryTimestamp:     expiryTime.Unix(),
+		TaskGasLimit:        msg.TaskGasLimit,
+		TaskGasPrice:        gasPrice,
+		TaskGasFee:          msg.TaskGasFee,
+		Msgs:                msg.Msgs,
+		Status:              crontasktypes.TaskStatus_SCHEDULED,
+		CreationTime:        sdkCtx.BlockTime().Unix(),
+		CreationBlockHeight: sdkCtx.BlockHeight(),
 	}
 
 	// Save the task

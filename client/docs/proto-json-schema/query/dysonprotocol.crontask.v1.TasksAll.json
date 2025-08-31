@@ -200,6 +200,14 @@
                     "execution_timestamp": {
                         "type": "string",
                         "description": "Block timestamp when the task was executed (only for DONE / FAILED)"
+                    },
+                    "creation_block_height": {
+                        "type": "string",
+                        "description": "Block height when the task was created"
+                    },
+                    "execution_block_height": {
+                        "type": "string",
+                        "description": "Block height when the task was executed (only for DONE / FAILED)"
                     }
                 },
                 "additionalProperties": false,

@@ -185,7 +185,8 @@ func (k Keeper) ensureDenomMetadata(ctx context.Context, denom string) {
 	} else {
 		metadata.Base = denom
 		metadata.Display = denom
-		metadata.Symbol = ""
+		metadata.Name = denom
+		metadata.Symbol = denom
 		metadata.DenomUnits = []*banktypes.DenomUnit{
 			{Denom: denom, Exponent: 0, Aliases: nil},
 		}

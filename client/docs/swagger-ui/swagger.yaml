@@ -1123,6 +1123,16 @@ paths:
                       title: >-
                         Block timestamp when the task was executed (only for
                         DONE / FAILED)
+                    creation_block_height:
+                      type: string
+                      format: int64
+                      title: Block height when the task was created
+                    execution_block_height:
+                      type: string
+                      format: int64
+                      title: >-
+                        Block height when the task was executed (only for DONE /
+                        FAILED)
                   title: Task represents a scheduled task in the crontask system
                 description: >-
                   Explicit json tag without omitempty to ensure empty arrays are
@@ -1336,6 +1346,16 @@ paths:
                       title: >-
                         Block timestamp when the task was executed (only for
                         DONE / FAILED)
+                    creation_block_height:
+                      type: string
+                      format: int64
+                      title: Block height when the task was created
+                    execution_block_height:
+                      type: string
+                      format: int64
+                      title: >-
+                        Block height when the task was executed (only for DONE /
+                        FAILED)
                   title: Task represents a scheduled task in the crontask system
                 description: >-
                   Explicit json tag without omitempty to ensure empty arrays are
@@ -1555,6 +1575,16 @@ paths:
                       title: >-
                         Block timestamp when the task was executed (only for
                         DONE / FAILED)
+                    creation_block_height:
+                      type: string
+                      format: int64
+                      title: Block height when the task was created
+                    execution_block_height:
+                      type: string
+                      format: int64
+                      title: >-
+                        Block height when the task was executed (only for DONE /
+                        FAILED)
                   title: Task represents a scheduled task in the crontask system
                 description: >-
                   Explicit json tag without omitempty to ensure empty arrays are
@@ -1776,6 +1806,16 @@ paths:
                       title: >-
                         Block timestamp when the task was executed (only for
                         DONE / FAILED)
+                    creation_block_height:
+                      type: string
+                      format: int64
+                      title: Block height when the task was created
+                    execution_block_height:
+                      type: string
+                      format: int64
+                      title: >-
+                        Block height when the task was executed (only for DONE /
+                        FAILED)
                   title: Task represents a scheduled task in the crontask system
                 description: >-
                   Explicit json tag without omitempty to ensure empty arrays are
@@ -1991,6 +2031,16 @@ paths:
                     title: >-
                       Block timestamp when the task was executed (only for DONE
                       / FAILED)
+                  creation_block_height:
+                    type: string
+                    format: int64
+                    title: Block height when the task was created
+                  execution_block_height:
+                    type: string
+                    format: int64
+                    title: >-
+                      Block height when the task was executed (only for DONE /
+                      FAILED)
                 title: Task represents a scheduled task in the crontask system
             title: >-
               QueryTaskByIDResponse is the response type for the Query/TaskByID
@@ -28905,6 +28955,14 @@ definitions:
             title: >-
               Block timestamp when the task was executed (only for DONE /
               FAILED)
+          creation_block_height:
+            type: string
+            format: int64
+            title: Block height when the task was created
+          execution_block_height:
+            type: string
+            format: int64
+            title: Block height when the task was executed (only for DONE / FAILED)
         title: Task represents a scheduled task in the crontask system
     title: >-
       QueryTaskByIDResponse is the response type for the Query/TaskByID RPC
@@ -29022,6 +29080,14 @@ definitions:
               title: >-
                 Block timestamp when the task was executed (only for DONE /
                 FAILED)
+            creation_block_height:
+              type: string
+              format: int64
+              title: Block height when the task was created
+            execution_block_height:
+              type: string
+              format: int64
+              title: Block height when the task was executed (only for DONE / FAILED)
           title: Task represents a scheduled task in the crontask system
         description: >-
           Explicit json tag without omitempty to ensure empty arrays are
@@ -29153,6 +29219,14 @@ definitions:
         type: string
         format: int64
         title: Block timestamp when the task was executed (only for DONE / FAILED)
+      creation_block_height:
+        type: string
+        format: int64
+        title: Block height when the task was created
+      execution_block_height:
+        type: string
+        format: int64
+        title: Block height when the task was executed (only for DONE / FAILED)
     title: Task represents a scheduled task in the crontask system
   dysonprotocol.nameservice.v1.ComputeHashResponse:
     type: object

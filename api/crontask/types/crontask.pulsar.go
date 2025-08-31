@@ -122,21 +122,23 @@ func (x *_Task_9_list) IsValid() bool {
 }
 
 var (
-	md_Task                     protoreflect.MessageDescriptor
-	fd_Task_task_id             protoreflect.FieldDescriptor
-	fd_Task_creator             protoreflect.FieldDescriptor
-	fd_Task_scheduled_timestamp protoreflect.FieldDescriptor
-	fd_Task_expiry_timestamp    protoreflect.FieldDescriptor
-	fd_Task_task_gas_limit      protoreflect.FieldDescriptor
-	fd_Task_task_gas_price      protoreflect.FieldDescriptor
-	fd_Task_task_gas_fee        protoreflect.FieldDescriptor
-	fd_Task_msgs                protoreflect.FieldDescriptor
-	fd_Task_msg_results         protoreflect.FieldDescriptor
-	fd_Task_status              protoreflect.FieldDescriptor
-	fd_Task_creation_time       protoreflect.FieldDescriptor
-	fd_Task_error_log           protoreflect.FieldDescriptor
-	fd_Task_task_gas_consumed   protoreflect.FieldDescriptor
-	fd_Task_execution_timestamp protoreflect.FieldDescriptor
+	md_Task                        protoreflect.MessageDescriptor
+	fd_Task_task_id                protoreflect.FieldDescriptor
+	fd_Task_creator                protoreflect.FieldDescriptor
+	fd_Task_scheduled_timestamp    protoreflect.FieldDescriptor
+	fd_Task_expiry_timestamp       protoreflect.FieldDescriptor
+	fd_Task_task_gas_limit         protoreflect.FieldDescriptor
+	fd_Task_task_gas_price         protoreflect.FieldDescriptor
+	fd_Task_task_gas_fee           protoreflect.FieldDescriptor
+	fd_Task_msgs                   protoreflect.FieldDescriptor
+	fd_Task_msg_results            protoreflect.FieldDescriptor
+	fd_Task_status                 protoreflect.FieldDescriptor
+	fd_Task_creation_time          protoreflect.FieldDescriptor
+	fd_Task_error_log              protoreflect.FieldDescriptor
+	fd_Task_task_gas_consumed      protoreflect.FieldDescriptor
+	fd_Task_execution_timestamp    protoreflect.FieldDescriptor
+	fd_Task_creation_block_height  protoreflect.FieldDescriptor
+	fd_Task_execution_block_height protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -156,6 +158,8 @@ func init() {
 	fd_Task_error_log = md_Task.Fields().ByName("error_log")
 	fd_Task_task_gas_consumed = md_Task.Fields().ByName("task_gas_consumed")
 	fd_Task_execution_timestamp = md_Task.Fields().ByName("execution_timestamp")
+	fd_Task_creation_block_height = md_Task.Fields().ByName("creation_block_height")
+	fd_Task_execution_block_height = md_Task.Fields().ByName("execution_block_height")
 }
 
 var _ protoreflect.Message = (*fastReflection_Task)(nil)
@@ -307,6 +311,18 @@ func (x *fastReflection_Task) Range(f func(protoreflect.FieldDescriptor, protore
 			return
 		}
 	}
+	if x.CreationBlockHeight != int64(0) {
+		value := protoreflect.ValueOfInt64(x.CreationBlockHeight)
+		if !f(fd_Task_creation_block_height, value) {
+			return
+		}
+	}
+	if x.ExecutionBlockHeight != int64(0) {
+		value := protoreflect.ValueOfInt64(x.ExecutionBlockHeight)
+		if !f(fd_Task_execution_block_height, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -350,6 +366,10 @@ func (x *fastReflection_Task) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.TaskGasConsumed != uint64(0)
 	case "dysonprotocol.crontask.v1.Task.execution_timestamp":
 		return x.ExecutionTimestamp != int64(0)
+	case "dysonprotocol.crontask.v1.Task.creation_block_height":
+		return x.CreationBlockHeight != int64(0)
+	case "dysonprotocol.crontask.v1.Task.execution_block_height":
+		return x.ExecutionBlockHeight != int64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Task"))
@@ -394,6 +414,10 @@ func (x *fastReflection_Task) Clear(fd protoreflect.FieldDescriptor) {
 		x.TaskGasConsumed = uint64(0)
 	case "dysonprotocol.crontask.v1.Task.execution_timestamp":
 		x.ExecutionTimestamp = int64(0)
+	case "dysonprotocol.crontask.v1.Task.creation_block_height":
+		x.CreationBlockHeight = int64(0)
+	case "dysonprotocol.crontask.v1.Task.execution_block_height":
+		x.ExecutionBlockHeight = int64(0)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Task"))
@@ -458,6 +482,12 @@ func (x *fastReflection_Task) Get(descriptor protoreflect.FieldDescriptor) proto
 	case "dysonprotocol.crontask.v1.Task.execution_timestamp":
 		value := x.ExecutionTimestamp
 		return protoreflect.ValueOfInt64(value)
+	case "dysonprotocol.crontask.v1.Task.creation_block_height":
+		value := x.CreationBlockHeight
+		return protoreflect.ValueOfInt64(value)
+	case "dysonprotocol.crontask.v1.Task.execution_block_height":
+		value := x.ExecutionBlockHeight
+		return protoreflect.ValueOfInt64(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Task"))
@@ -510,6 +540,10 @@ func (x *fastReflection_Task) Set(fd protoreflect.FieldDescriptor, value protore
 		x.TaskGasConsumed = value.Uint()
 	case "dysonprotocol.crontask.v1.Task.execution_timestamp":
 		x.ExecutionTimestamp = value.Int()
+	case "dysonprotocol.crontask.v1.Task.creation_block_height":
+		x.CreationBlockHeight = value.Int()
+	case "dysonprotocol.crontask.v1.Task.execution_block_height":
+		x.ExecutionBlockHeight = value.Int()
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Task"))
@@ -572,6 +606,10 @@ func (x *fastReflection_Task) Mutable(fd protoreflect.FieldDescriptor) protorefl
 		panic(fmt.Errorf("field task_gas_consumed of message dysonprotocol.crontask.v1.Task is not mutable"))
 	case "dysonprotocol.crontask.v1.Task.execution_timestamp":
 		panic(fmt.Errorf("field execution_timestamp of message dysonprotocol.crontask.v1.Task is not mutable"))
+	case "dysonprotocol.crontask.v1.Task.creation_block_height":
+		panic(fmt.Errorf("field creation_block_height of message dysonprotocol.crontask.v1.Task is not mutable"))
+	case "dysonprotocol.crontask.v1.Task.execution_block_height":
+		panic(fmt.Errorf("field execution_block_height of message dysonprotocol.crontask.v1.Task is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Task"))
@@ -616,6 +654,10 @@ func (x *fastReflection_Task) NewField(fd protoreflect.FieldDescriptor) protoref
 	case "dysonprotocol.crontask.v1.Task.task_gas_consumed":
 		return protoreflect.ValueOfUint64(uint64(0))
 	case "dysonprotocol.crontask.v1.Task.execution_timestamp":
+		return protoreflect.ValueOfInt64(int64(0))
+	case "dysonprotocol.crontask.v1.Task.creation_block_height":
+		return protoreflect.ValueOfInt64(int64(0))
+	case "dysonprotocol.crontask.v1.Task.execution_block_height":
 		return protoreflect.ValueOfInt64(int64(0))
 	default:
 		if fd.IsExtension() {
@@ -739,6 +781,12 @@ func (x *fastReflection_Task) ProtoMethods() *protoiface.Methods {
 		if x.ExecutionTimestamp != 0 {
 			n += 1 + runtime.Sov(uint64(x.ExecutionTimestamp))
 		}
+		if x.CreationBlockHeight != 0 {
+			n += 1 + runtime.Sov(uint64(x.CreationBlockHeight))
+		}
+		if x.ExecutionBlockHeight != 0 {
+			n += 2 + runtime.Sov(uint64(x.ExecutionBlockHeight))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -767,6 +815,18 @@ func (x *fastReflection_Task) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.ExecutionBlockHeight != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ExecutionBlockHeight))
+			i--
+			dAtA[i] = 0x1
+			i--
+			dAtA[i] = 0x80
+		}
+		if x.CreationBlockHeight != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.CreationBlockHeight))
+			i--
+			dAtA[i] = 0x78
 		}
 		if x.ExecutionTimestamp != 0 {
 			i = runtime.EncodeVarint(dAtA, i, uint64(x.ExecutionTimestamp))
@@ -1298,6 +1358,44 @@ func (x *fastReflection_Task) ProtoMethods() *protoiface.Methods {
 					b := dAtA[iNdEx]
 					iNdEx++
 					x.ExecutionTimestamp |= int64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 15:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field CreationBlockHeight", wireType)
+				}
+				x.CreationBlockHeight = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.CreationBlockHeight |= int64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 16:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ExecutionBlockHeight", wireType)
+				}
+				x.ExecutionBlockHeight = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ExecutionBlockHeight |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1933,6 +2031,10 @@ type Task struct {
 	TaskGasConsumed uint64 `protobuf:"varint,13,opt,name=task_gas_consumed,json=taskGasConsumed,proto3" json:"task_gas_consumed,omitempty"`
 	// Block timestamp when the task was executed (only for DONE / FAILED)
 	ExecutionTimestamp int64 `protobuf:"varint,14,opt,name=execution_timestamp,json=executionTimestamp,proto3" json:"execution_timestamp,omitempty"`
+	// Block height when the task was created
+	CreationBlockHeight int64 `protobuf:"varint,15,opt,name=creation_block_height,json=creationBlockHeight,proto3" json:"creation_block_height,omitempty"`
+	// Block height when the task was executed (only for DONE / FAILED)
+	ExecutionBlockHeight int64 `protobuf:"varint,16,opt,name=execution_block_height,json=executionBlockHeight,proto3" json:"execution_block_height,omitempty"`
 }
 
 func (x *Task) Reset() {
@@ -2053,6 +2155,20 @@ func (x *Task) GetExecutionTimestamp() int64 {
 	return 0
 }
 
+func (x *Task) GetCreationBlockHeight() int64 {
+	if x != nil {
+		return x.CreationBlockHeight
+	}
+	return 0
+}
+
+func (x *Task) GetExecutionBlockHeight() int64 {
+	if x != nil {
+		return x.ExecutionBlockHeight
+	}
+	return 0
+}
+
 // Params defines the parameters for the crontask module
 type Params struct {
 	state         protoimpl.MessageState
@@ -2135,7 +2251,7 @@ var file_dysonprotocol_crontask_v1_crontask_proto_rawDesc = []byte{
 	0x69, 0x6e, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x17, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
 	0x73, 0x2f, 0x6d, 0x73, 0x67, 0x2f, 0x76, 0x31, 0x2f, 0x6d, 0x73, 0x67, 0x2e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x1a, 0x19, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x62, 0x75, 0x66, 0x2f, 0x61, 0x6e, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x81, 0x05,
+	0x62, 0x75, 0x66, 0x2f, 0x61, 0x6e, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xeb, 0x05,
 	0x0a, 0x04, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69,
 	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12,
 	0x32, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
@@ -2176,20 +2292,27 @@ var file_dysonprotocol_crontask_v1_crontask_proto_rawDesc = []byte{
 	0x12, 0x2f, 0x0a, 0x13, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x74, 0x69,
 	0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x03, 0x52, 0x12, 0x65,
 	0x78, 0x65, 0x63, 0x75, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d,
-	0x70, 0x22, 0xa5, 0x01, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x26, 0x0a, 0x0f,
-	0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x5f, 0x67, 0x61, 0x73, 0x5f, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0d, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x47, 0x61, 0x73, 0x4c,
-	0x69, 0x6d, 0x69, 0x74, 0x12, 0x21, 0x0a, 0x0c, 0x65, 0x78, 0x70, 0x69, 0x72, 0x79, 0x5f, 0x6c,
-	0x69, 0x6d, 0x69, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0b, 0x65, 0x78, 0x70, 0x69,
-	0x72, 0x79, 0x4c, 0x69, 0x6d, 0x69, 0x74, 0x12, 0x2c, 0x0a, 0x12, 0x6d, 0x61, 0x78, 0x5f, 0x73,
-	0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x03, 0x20,
-	0x01, 0x28, 0x03, 0x52, 0x10, 0x6d, 0x61, 0x78, 0x53, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65,
-	0x64, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x22, 0x0a, 0x0d, 0x63, 0x6c, 0x65, 0x61, 0x6e, 0x5f, 0x75,
-	0x70, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0b, 0x63, 0x6c,
-	0x65, 0x61, 0x6e, 0x55, 0x70, 0x54, 0x69, 0x6d, 0x65, 0x42, 0x24, 0x5a, 0x22, 0x64, 0x79, 0x73,
-	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78,
-	0x2f, 0x63, 0x72, 0x6f, 0x6e, 0x74, 0x61, 0x73, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x70, 0x12, 0x32, 0x0a, 0x15, 0x63, 0x72, 0x65, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x62, 0x6c,
+	0x6f, 0x63, 0x6b, 0x5f, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18, 0x0f, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x13, 0x63, 0x72, 0x65, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x48,
+	0x65, 0x69, 0x67, 0x68, 0x74, 0x12, 0x34, 0x0a, 0x16, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x69,
+	0x6f, 0x6e, 0x5f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x5f, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18,
+	0x10, 0x20, 0x01, 0x28, 0x03, 0x52, 0x14, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x69, 0x6f, 0x6e,
+	0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x48, 0x65, 0x69, 0x67, 0x68, 0x74, 0x22, 0xa5, 0x01, 0x0a, 0x06,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x26, 0x0a, 0x0f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x5f,
+	0x67, 0x61, 0x73, 0x5f, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52,
+	0x0d, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x47, 0x61, 0x73, 0x4c, 0x69, 0x6d, 0x69, 0x74, 0x12, 0x21,
+	0x0a, 0x0c, 0x65, 0x78, 0x70, 0x69, 0x72, 0x79, 0x5f, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x03, 0x52, 0x0b, 0x65, 0x78, 0x70, 0x69, 0x72, 0x79, 0x4c, 0x69, 0x6d, 0x69,
+	0x74, 0x12, 0x2c, 0x0a, 0x12, 0x6d, 0x61, 0x78, 0x5f, 0x73, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c,
+	0x65, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x10, 0x6d,
+	0x61, 0x78, 0x53, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x12,
+	0x22, 0x0a, 0x0d, 0x63, 0x6c, 0x65, 0x61, 0x6e, 0x5f, 0x75, 0x70, 0x5f, 0x74, 0x69, 0x6d, 0x65,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0b, 0x63, 0x6c, 0x65, 0x61, 0x6e, 0x55, 0x70, 0x54,
+	0x69, 0x6d, 0x65, 0x42, 0x24, 0x5a, 0x22, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x63, 0x72, 0x6f, 0x6e, 0x74,
+	0x61, 0x73, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (

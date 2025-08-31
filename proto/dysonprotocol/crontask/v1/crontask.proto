@@ -57,6 +57,12 @@ message Task {
 
   // Block timestamp when the task was executed (only for DONE / FAILED)
   int64 execution_timestamp = 14;
+
+  // Block height when the task was created
+  int64 creation_block_height = 15;
+
+  // Block height when the task was executed (only for DONE / FAILED)
+  int64 execution_block_height = 16;
 }
 
 // Params defines the parameters for the crontask module

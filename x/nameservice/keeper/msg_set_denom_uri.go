@@ -27,6 +27,14 @@ func (k Keeper) SetDenomURI(ctx context.Context, msg *nameservicev1.MsgSetDenomU
 	md.URI = msg.Uri
 	md.URIHash = msg.UriHash
 
+	if md.Symbol == "" {
+		md.Symbol = msg.Denom
+	}
+
+	if md.Name == "" {
+		md.Name = msg.Denom
+	}
+
 	if err := md.Validate(); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "invalid metadata after URI update")
 	}

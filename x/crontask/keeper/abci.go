@@ -194,7 +194,9 @@ func (k Keeper) executeTask(ctx context.Context, task *crontasktypes.Task) error
 	if err != nil {
 		// Update task status to failed
 		task.Status = crontasktypes.TaskStatus_FAILED
-		task.ExecutionTimestamp = sdk.UnwrapSDKContext(ctx).BlockTime().Unix()
+		sdkCtx := sdk.UnwrapSDKContext(ctx)
+		task.ExecutionTimestamp = sdkCtx.BlockTime().Unix()
+		task.ExecutionBlockHeight = sdkCtx.BlockHeight()
 
 		// Log the failure details
 		k.Logger.Info("Task execution failed",
@@ -205,7 +207,9 @@ func (k Keeper) executeTask(ctx context.Context, task *crontasktypes.Task) error
 	} else {
 		// Update task status to done and write changes
 		task.Status = crontasktypes.TaskStatus_DONE
-		task.ExecutionTimestamp = sdk.UnwrapSDKContext(ctx).BlockTime().Unix()
+		sdkCtx := sdk.UnwrapSDKContext(ctx)
+		task.ExecutionTimestamp = sdkCtx.BlockTime().Unix()
+		task.ExecutionBlockHeight = sdkCtx.BlockHeight()
 		write() // Write changes to parent context
 
 		// Get result count for logging
