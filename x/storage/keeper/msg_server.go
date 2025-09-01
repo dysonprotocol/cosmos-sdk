@@ -23,7 +23,7 @@ var _ storagetypes.MsgServer = Keeper{}
 
 func isPrintableASCII(s string) bool {
 	for _, r := range s {
-		if r < 32 || r > 126 {
+		if r < ' ' || r > '~' {
 			return false
 		}
 	}
@@ -34,6 +34,10 @@ func (k Keeper) StorageSet(ctx context.Context, msg *storagetypes.MsgStorageSet)
 	// Validate the owner address is properly formatted
 	if _, err := sdk.AccAddressFromBech32(msg.Owner); err != nil {
 		return nil, err
+	}
+
+	if msg.Index == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "index cannot be empty")
 	}
 
 	if !isPrintableASCII(msg.Index) {
