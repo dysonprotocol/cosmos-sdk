@@ -90,11 +90,6 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 
 		totalGasConsumed += task.TaskGasConsumed
 		k.Logger.Info("Task executed", "task_id", taskId, "gas_used", task.TaskGasConsumed)
-
-		// Set the task data
-		if err := k.SetTask(ctx, task); err != nil {
-			k.Logger.Error("failed to set task", "task_id", taskId, "error", err)
-		}
 	}
 
 	// 4. clean up old tasks beyond retention window
@@ -117,11 +112,6 @@ func (k Keeper) checkExpiredTasks(ctx context.Context, currentTime int64) {
 		if len(key) < len(statusPrefix)+8+8 {
 			continue
 		}
-		expTimestamp := int64(binary.BigEndian.Uint64(key[len(statusPrefix) : len(statusPrefix)+8]))
-		if expTimestamp > currentTime {
-			// further tasks are scheduled in future
-			break
-		}
 		id := binary.BigEndian.Uint64(key[len(key)-8:])
 
 		task, err := k.GetTask(ctx, id)
@@ -135,6 +125,16 @@ func (k Keeper) checkExpiredTasks(ctx context.Context, currentTime int64) {
 			task.ErrorLog = "Task expired before execution"
 			if err := k.SetTask(ctx, task); err != nil {
 				k.Logger.Error("failed to set task expired", "task_id", task.TaskId, "error", err)
+			}
+			// Emit EventTaskExpired for observability
+			sdkCtx := sdk.UnwrapSDKContext(ctx)
+			if emitErr := sdkCtx.EventManager().EmitTypedEvent(
+				&crontasktypes.EventTaskExpired{
+					TaskId:  task.TaskId,
+					Creator: task.Creator,
+				},
+			); emitErr != nil {
+				k.Logger.Error("failed to emit task expired event", "task_id", task.TaskId, "error", emitErr)
 			}
 		}
 	}
@@ -164,8 +164,13 @@ func (k Keeper) moveDueTasks(ctx context.Context, currentTime int64) {
 			continue
 		}
 
-		task.Status = crontasktypes.TaskStatus_PENDING
-		_ = k.SetTask(ctx, task)
+		// Only move to pending when the actual scheduled time has arrived
+		if task.ScheduledTimestamp <= currentTime {
+			task.Status = crontasktypes.TaskStatus_PENDING
+			if err := k.SetTask(ctx, task); err != nil {
+				k.Logger.Error("failed to set task pending in moveDueTasks", "task_id", task.TaskId, "error", err)
+			}
+		}
 	}
 }
 
@@ -174,9 +179,9 @@ func (k Keeper) executeTask(ctx context.Context, task *crontasktypes.Task) error
 	// Reset results fields
 	task.MsgResults = nil
 	task.ErrorLog = ""
-
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	// Create a cache context with gas meter
-	cacheCtx, write := sdk.UnwrapSDKContext(ctx).CacheContext()
+	cacheCtx, write := sdkCtx.CacheContext()
 	cacheCtx = cacheCtx.WithGasMeter(storetypes.NewGasMeter(task.TaskGasLimit))
 
 	k.Logger.Info("Executing task",
@@ -194,9 +199,20 @@ func (k Keeper) executeTask(ctx context.Context, task *crontasktypes.Task) error
 	if err != nil {
 		// Update task status to failed
 		task.Status = crontasktypes.TaskStatus_FAILED
-		sdkCtx := sdk.UnwrapSDKContext(ctx)
 		task.ExecutionTimestamp = sdkCtx.BlockTime().Unix()
 		task.ExecutionBlockHeight = sdkCtx.BlockHeight()
+
+		// Emit failure event (do not forward cached events on failure)
+		emitErr := sdkCtx.EventManager().EmitTypedEvent(
+			&crontasktypes.EventTaskFailed{
+				TaskId:  task.TaskId,
+				Creator: task.Creator,
+				Error:   task.ErrorLog,
+			},
+		)
+		if emitErr != nil {
+			k.Logger.Error("failed to emit task failed event", "error", emitErr)
+		}
 
 		// Log the failure details
 		k.Logger.Info("Task execution failed",
@@ -207,10 +223,9 @@ func (k Keeper) executeTask(ctx context.Context, task *crontasktypes.Task) error
 	} else {
 		// Update task status to done and write changes
 		task.Status = crontasktypes.TaskStatus_DONE
-		sdkCtx := sdk.UnwrapSDKContext(ctx)
 		task.ExecutionTimestamp = sdkCtx.BlockTime().Unix()
 		task.ExecutionBlockHeight = sdkCtx.BlockHeight()
-		write() // Write changes to parent context
+		// NOTE: defer actual write and event forwarding until after we confirm state persisted
 
 		// Get result count for logging
 		resultCount := len(task.MsgResults)
@@ -222,12 +237,29 @@ func (k Keeper) executeTask(ctx context.Context, task *crontasktypes.Task) error
 			"results_count", resultCount)
 	}
 
-	// Save the updated task
-	if saveErr := k.SetTask(ctx, *task); saveErr != nil {
+	// Save the updated task BEFORE committing cacheCtx. Only commit/forward events if both err and save succeed.
+	saveErr := k.SetTask(ctx, *task)
+	if err == nil && saveErr == nil {
+		// Commit cached state; CacheContext will forward events automatically
+		write()
+
+		_ = sdkCtx.EventManager().EmitTypedEvent(
+			&crontasktypes.EventTaskExecuted{
+				TaskId:  task.TaskId,
+				Creator: task.Creator,
+				Status:  task.Status,
+				Success: true,
+			},
+		)
+		return nil
+	}
+
+	// If SetTask failed, prefer surfacing that error explicitly
+	if saveErr != nil {
 		return fmt.Errorf("failed to save task after execution: %w", saveErr)
 	}
 
-	// Return the original execution error, if any
+	// Otherwise return the original execution error
 	return err
 }
 
@@ -326,6 +358,20 @@ func (k Keeper) safeInvokeMsg(ctx context.Context, msg sdk.Msg) (result sdk.Msg,
 	if err != nil {
 		return nil, err
 	}
+
+	// Forward events produced by the message execution into the current context
+	// so they are visible to the outer cache context and ultimately to ABCI once committed.
+	if msgResult != nil && len(msgResult.Events) > 0 {
+		for _, event := range msgResult.Events {
+			k.Logger.Info("cron EmitTypedEvent msgResult.Events", "event", event)
+			sdkCtx.EventManager().EmitEvent(sdk.Event{
+				Type:       event.Type,
+				Attributes: event.Attributes,
+			})
+		}
+	}
+
+	k.Logger.Info("cron forwarding events", "count", len(sdkCtx.EventManager().Events()))
 
 	if msgResult != nil && msgResult.MsgResponses != nil && len(msgResult.MsgResponses) > 0 {
 		resp, ok := msgResult.MsgResponses[0].GetCachedValue().(sdk.Msg)

@@ -2002,6 +2002,538 @@ func (x *fastReflection_EventTaskExpired) ProtoMethods() *protoiface.Methods {
 	}
 }
 
+var (
+	md_EventTaskFailed         protoreflect.MessageDescriptor
+	fd_EventTaskFailed_task_id protoreflect.FieldDescriptor
+	fd_EventTaskFailed_creator protoreflect.FieldDescriptor
+	fd_EventTaskFailed_error   protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_crontask_v1_events_proto_init()
+	md_EventTaskFailed = File_dysonprotocol_crontask_v1_events_proto.Messages().ByName("EventTaskFailed")
+	fd_EventTaskFailed_task_id = md_EventTaskFailed.Fields().ByName("task_id")
+	fd_EventTaskFailed_creator = md_EventTaskFailed.Fields().ByName("creator")
+	fd_EventTaskFailed_error = md_EventTaskFailed.Fields().ByName("error")
+}
+
+var _ protoreflect.Message = (*fastReflection_EventTaskFailed)(nil)
+
+type fastReflection_EventTaskFailed EventTaskFailed
+
+func (x *EventTaskFailed) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_EventTaskFailed)(x)
+}
+
+func (x *EventTaskFailed) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_crontask_v1_events_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_EventTaskFailed_messageType fastReflection_EventTaskFailed_messageType
+var _ protoreflect.MessageType = fastReflection_EventTaskFailed_messageType{}
+
+type fastReflection_EventTaskFailed_messageType struct{}
+
+func (x fastReflection_EventTaskFailed_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_EventTaskFailed)(nil)
+}
+func (x fastReflection_EventTaskFailed_messageType) New() protoreflect.Message {
+	return new(fastReflection_EventTaskFailed)
+}
+func (x fastReflection_EventTaskFailed_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventTaskFailed
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_EventTaskFailed) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventTaskFailed
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_EventTaskFailed) Type() protoreflect.MessageType {
+	return _fastReflection_EventTaskFailed_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_EventTaskFailed) New() protoreflect.Message {
+	return new(fastReflection_EventTaskFailed)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_EventTaskFailed) Interface() protoreflect.ProtoMessage {
+	return (*EventTaskFailed)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_EventTaskFailed) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.TaskId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.TaskId)
+		if !f(fd_EventTaskFailed_task_id, value) {
+			return
+		}
+	}
+	if x.Creator != "" {
+		value := protoreflect.ValueOfString(x.Creator)
+		if !f(fd_EventTaskFailed_creator, value) {
+			return
+		}
+	}
+	if x.Error != "" {
+		value := protoreflect.ValueOfString(x.Error)
+		if !f(fd_EventTaskFailed_error, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_EventTaskFailed) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventTaskFailed.task_id":
+		return x.TaskId != uint64(0)
+	case "dysonprotocol.crontask.v1.EventTaskFailed.creator":
+		return x.Creator != ""
+	case "dysonprotocol.crontask.v1.EventTaskFailed.error":
+		return x.Error != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventTaskFailed"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventTaskFailed does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventTaskFailed) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventTaskFailed.task_id":
+		x.TaskId = uint64(0)
+	case "dysonprotocol.crontask.v1.EventTaskFailed.creator":
+		x.Creator = ""
+	case "dysonprotocol.crontask.v1.EventTaskFailed.error":
+		x.Error = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventTaskFailed"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventTaskFailed does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_EventTaskFailed) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.crontask.v1.EventTaskFailed.task_id":
+		value := x.TaskId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.crontask.v1.EventTaskFailed.creator":
+		value := x.Creator
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.crontask.v1.EventTaskFailed.error":
+		value := x.Error
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventTaskFailed"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventTaskFailed does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventTaskFailed) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventTaskFailed.task_id":
+		x.TaskId = value.Uint()
+	case "dysonprotocol.crontask.v1.EventTaskFailed.creator":
+		x.Creator = value.Interface().(string)
+	case "dysonprotocol.crontask.v1.EventTaskFailed.error":
+		x.Error = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventTaskFailed"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventTaskFailed does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventTaskFailed) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventTaskFailed.task_id":
+		panic(fmt.Errorf("field task_id of message dysonprotocol.crontask.v1.EventTaskFailed is not mutable"))
+	case "dysonprotocol.crontask.v1.EventTaskFailed.creator":
+		panic(fmt.Errorf("field creator of message dysonprotocol.crontask.v1.EventTaskFailed is not mutable"))
+	case "dysonprotocol.crontask.v1.EventTaskFailed.error":
+		panic(fmt.Errorf("field error of message dysonprotocol.crontask.v1.EventTaskFailed is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventTaskFailed"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventTaskFailed does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_EventTaskFailed) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventTaskFailed.task_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.crontask.v1.EventTaskFailed.creator":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.crontask.v1.EventTaskFailed.error":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventTaskFailed"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventTaskFailed does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_EventTaskFailed) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.crontask.v1.EventTaskFailed", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_EventTaskFailed) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventTaskFailed) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_EventTaskFailed) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_EventTaskFailed) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*EventTaskFailed)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.TaskId != 0 {
+			n += 1 + runtime.Sov(uint64(x.TaskId))
+		}
+		l = len(x.Creator)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.Error)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*EventTaskFailed)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.Error) > 0 {
+			i -= len(x.Error)
+			copy(dAtA[i:], x.Error)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Error)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.Creator) > 0 {
+			i -= len(x.Creator)
+			copy(dAtA[i:], x.Creator)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Creator)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if x.TaskId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.TaskId))
+			i--
+			dAtA[i] = 0x8
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*EventTaskFailed)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventTaskFailed: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventTaskFailed: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field TaskId", wireType)
+				}
+				x.TaskId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.TaskId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Creator = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Error", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Error = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -2207,6 +2739,58 @@ func (x *EventTaskExpired) GetCreator() string {
 	return ""
 }
 
+// EventTaskFailed is emitted when a task finishes with failure
+type EventTaskFailed struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	TaskId  uint64 `protobuf:"varint,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	Creator string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+	Error   string `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
+}
+
+func (x *EventTaskFailed) Reset() {
+	*x = EventTaskFailed{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_crontask_v1_events_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EventTaskFailed) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EventTaskFailed) ProtoMessage() {}
+
+// Deprecated: Use EventTaskFailed.ProtoReflect.Descriptor instead.
+func (*EventTaskFailed) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_crontask_v1_events_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *EventTaskFailed) GetTaskId() uint64 {
+	if x != nil {
+		return x.TaskId
+	}
+	return 0
+}
+
+func (x *EventTaskFailed) GetCreator() string {
+	if x != nil {
+		return x.Creator
+	}
+	return ""
+}
+
+func (x *EventTaskFailed) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
 var File_dysonprotocol_crontask_v1_events_proto protoreflect.FileDescriptor
 
 var file_dysonprotocol_crontask_v1_events_proto_rawDesc = []byte{
@@ -2235,9 +2819,15 @@ var file_dysonprotocol_crontask_v1_events_proto_rawDesc = []byte{
 	0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04,
 	0x52, 0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61,
 	0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74,
-	0x6f, 0x72, 0x42, 0x24, 0x5a, 0x22, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x63, 0x72, 0x6f, 0x6e, 0x74, 0x61,
-	0x73, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x72, 0x22, 0x5a, 0x0a, 0x0f, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x46,
+	0x61, 0x69, 0x6c, 0x65, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x18,
+	0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f,
+	0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x42, 0x24,
+	0x5a, 0x22, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
+	0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x63, 0x72, 0x6f, 0x6e, 0x74, 0x61, 0x73, 0x6b, 0x2f, 0x74,
+	0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2252,12 +2842,13 @@ func file_dysonprotocol_crontask_v1_events_proto_rawDescGZIP() []byte {
 	return file_dysonprotocol_crontask_v1_events_proto_rawDescData
 }
 
-var file_dysonprotocol_crontask_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_dysonprotocol_crontask_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_dysonprotocol_crontask_v1_events_proto_goTypes = []interface{}{
 	(*EventTaskCreated)(nil),  // 0: dysonprotocol.crontask.v1.EventTaskCreated
 	(*EventTaskDeleted)(nil),  // 1: dysonprotocol.crontask.v1.EventTaskDeleted
 	(*EventTaskExecuted)(nil), // 2: dysonprotocol.crontask.v1.EventTaskExecuted
 	(*EventTaskExpired)(nil),  // 3: dysonprotocol.crontask.v1.EventTaskExpired
+	(*EventTaskFailed)(nil),   // 4: dysonprotocol.crontask.v1.EventTaskFailed
 }
 var file_dysonprotocol_crontask_v1_events_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -2321,6 +2912,18 @@ func file_dysonprotocol_crontask_v1_events_proto_init() {
 				return nil
 			}
 		}
+		file_dysonprotocol_crontask_v1_events_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EventTaskFailed); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -2328,7 +2931,7 @@ func file_dysonprotocol_crontask_v1_events_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dysonprotocol_crontask_v1_events_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -61,7 +61,8 @@ func (k Keeper) UpdateScript(ctx context.Context, msg *scripttypes.MsgUpdateScri
 	// Get event manager from context
 	err = sdkCtx.EventManager().EmitTypedEvent(
 		&scriptv1.EventUpdateScript{
-			Version: script.Version,
+			Version:       script.Version,
+			ScriptAddress: msg.Address,
 		})
 
 	if err != nil {

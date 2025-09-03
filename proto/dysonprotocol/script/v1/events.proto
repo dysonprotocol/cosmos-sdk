@@ -16,6 +16,8 @@ message EventUpdateScript {
 
   // The new version of the script.
   uint64 version = 1;
+  // The address of the script.
+  string script_address = 2;
 }
 
 // Event ExecScript is an event emitted when a script is executed.

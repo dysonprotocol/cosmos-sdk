@@ -148,6 +148,15 @@ func (k Keeper) CreateTask(ctx context.Context, msg *crontasktypes.MsgCreateTask
 		msg.TaskGasFee.Amount.Quo(sdkmath.NewInt(int64(msg.TaskGasLimit))),
 	)
 
+	// Ensure gas price fits in uint64 to avoid index panic
+	if !gasPrice.Amount.IsUint64() {
+		return nil, errorsmod.Wrapf(
+			sdkerrors.ErrInvalidRequest,
+			"computed gas price %s overflows uint64",
+			gasPrice.Amount.String(),
+		)
+	}
+
 	// Validate at least one message is provided
 	if len(msg.Msgs) == 0 {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "at least one message must be provided")

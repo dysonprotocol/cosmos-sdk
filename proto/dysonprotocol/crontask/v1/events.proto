@@ -28,3 +28,10 @@ message EventTaskExpired {
   uint64 task_id = 1;
   string creator = 2;
 }
+
+// EventTaskFailed is emitted when a task finishes with failure
+message EventTaskFailed {
+  uint64 task_id = 1;
+  string creator = 2;
+  string error = 3;
+}

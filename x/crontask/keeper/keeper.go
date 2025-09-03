@@ -241,14 +241,27 @@ func (k Keeper) addIndexes(ctx context.Context, t crontasktypes.Task) {
 	_ = store.Set(keyAddr, []byte{})
 
 	// status+timestamp index
+	// For SCHEDULED and PENDING, use creation time; for terminal statuses use execution/expiry
+	var tsForIndex uint64
+	switch t.Status {
+	case crontasktypes.TaskStatus_SCHEDULED, crontasktypes.TaskStatus_PENDING:
+		tsForIndex = uint64(t.CreationTime)
+	case crontasktypes.TaskStatus_DONE, crontasktypes.TaskStatus_FAILED:
+		tsForIndex = uint64(t.ExecutionTimestamp)
+	case crontasktypes.TaskStatus_EXPIRED:
+		tsForIndex = uint64(t.ExpiryTimestamp)
+	default:
+		// fallback to creation time
+		tsForIndex = uint64(t.CreationTime)
+	}
 	tsKey := append(indexStatusTsPrefix, []byte(t.Status)...)
-	tsKey = append(tsKey, bigEndian(uint64(t.ScheduledTimestamp))...)
+	tsKey = append(tsKey, bigEndian(tsForIndex)...)
 	tsKey = append(tsKey, bigEndian(t.TaskId)...)
 	_ = store.Set(tsKey, []byte{})
 
 	// status+gasPrice index
 	gpKey := append(indexStatusGasPrefix, []byte(t.Status)...)
-	gpKey = append(gpKey, bigEndian(uint64(t.TaskGasPrice.Amount.Int64()))...)
+	gpKey = append(gpKey, bigEndian(t.TaskGasPrice.Amount.Uint64())...)
 	gpKey = append(gpKey, bigEndian(t.TaskId)...)
 	_ = store.Set(gpKey, []byte{})
 }
@@ -260,13 +273,25 @@ func (k Keeper) removeIndexes(ctx context.Context, t crontasktypes.Task) {
 	keyAddr := append(append(indexAddrPrefix, []byte(t.Creator)...), bigEndian(t.TaskId)...)
 	_ = store.Delete(keyAddr)
 
+	// status+timestamp index uses same timestamp selection logic as addIndexes
+	var tsForIndex uint64
+	switch t.Status {
+	case crontasktypes.TaskStatus_SCHEDULED, crontasktypes.TaskStatus_PENDING:
+		tsForIndex = uint64(t.CreationTime)
+	case crontasktypes.TaskStatus_DONE, crontasktypes.TaskStatus_FAILED:
+		tsForIndex = uint64(t.ExecutionTimestamp)
+	case crontasktypes.TaskStatus_EXPIRED:
+		tsForIndex = uint64(t.ExpiryTimestamp)
+	default:
+		tsForIndex = uint64(t.CreationTime)
+	}
 	tsKey := append(indexStatusTsPrefix, []byte(t.Status)...)
-	tsKey = append(tsKey, bigEndian(uint64(t.ScheduledTimestamp))...)
+	tsKey = append(tsKey, bigEndian(tsForIndex)...)
 	tsKey = append(tsKey, bigEndian(t.TaskId)...)
 	_ = store.Delete(tsKey)
 
 	gpKey := append(indexStatusGasPrefix, []byte(t.Status)...)
-	gpKey = append(gpKey, bigEndian(uint64(t.TaskGasPrice.Amount.Int64()))...)
+	gpKey = append(gpKey, bigEndian(t.TaskGasPrice.Amount.Uint64())...)
 	gpKey = append(gpKey, bigEndian(t.TaskId)...)
 	_ = store.Delete(gpKey)
 }

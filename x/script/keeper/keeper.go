@@ -463,6 +463,7 @@ func (k Keeper) HandleJSONAnyMsg(ctx context.Context, scriptAddress sdk.AccAddre
 
 	// Only write if successful
 	if err == nil {
+
 		write()
 	}
 
@@ -489,14 +490,6 @@ func (k Keeper) DispatchMessage(sdkCtx sdk.Context, executor sdk.AccAddress, msg
 		return nil, cosmossdkerrors.Wrapf(err, "failed to dispatch message")
 	}
 
-	// emit all events in the response
-	for _, event := range resp.Events {
-		sdkCtx.EventManager().EmitEvent(sdk.Event{
-			Type:       event.Type,
-			Attributes: event.Attributes,
-		})
-	}
-
 	// Get signers using the codec
 	signers, _, err := k.cdc.GetMsgV1Signers(msg)
 	if err != nil {
@@ -519,6 +512,18 @@ func (k Keeper) DispatchMessage(sdkCtx sdk.Context, executor sdk.AccAddress, msg
 		err = k.cdc.UnpackAny(resp.MsgResponses[0], &respMsg)
 		if err != nil {
 			return nil, cosmossdkerrors.Wrapf(err, "failed to unpack response message")
+		}
+	}
+
+	// Forward events produced by the message execution into the current context
+	// so they are visible to the outer cache context and ultimately to ABCI once committed.
+	if resp != nil && len(resp.Events) > 0 {
+		for _, event := range resp.Events {
+			// Print the event in debug mode and format it verbose for debugging
+			sdkCtx.EventManager().EmitEvent(sdk.Event{
+				Type:       event.Type,
+				Attributes: event.Attributes,
+			})
 		}
 	}
 
