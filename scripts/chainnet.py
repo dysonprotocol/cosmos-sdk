@@ -96,8 +96,8 @@ from datetime import datetime, timezone
 DEFAULT_DENOM = "udys"
 DEFAULT_BASE_DIR = Path(os.path.expanduser("~/.dysonchains"))
 DEFAULT_CONFIG_PATH = DEFAULT_BASE_DIR / "chains.json"
-DEFAULT_GENTX_AMOUNT = f"1000000000000{DEFAULT_DENOM}"
-DEFAULT_INITIAL_BALANCE = f"1000000000000{DEFAULT_DENOM}"
+DEFAULT_GENTX_AMOUNT = f"1000000{DEFAULT_DENOM}"
+DEFAULT_INITIAL_BALANCE = f"10000000000{DEFAULT_DENOM}"
 USER_KEYS = {
     "alice": {"address": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej", "mnemonic": "public feature teach face federal matrix throw legend bridge brass diary beach typical doll evoke weapon among crane regret trust enact swarm brother outside"},
     "bob":   {"address": "dys21fhhxp9xveswc4yhxekr32eqe80rkwpur3vu0el", "mnemonic": "aerobic creek copper rice disagree become brass elegant century elegant apology position infant saddle metal brain gain loud alpha add boy balance truth cherry"},
@@ -168,10 +168,11 @@ def get_genesis_defaults():
     """Get default genesis parameters."""
     return {
         "governance_params": {
-            "voting_period": "3s",
-            "expedited_voting_period": "1s",
+            "voting_period": "600s",
+            "expedited_voting_period": "60s",
             "expedited_threshold": "0.0001",
-            "min_deposit": 1,
+            "expedited_min_deposit":[{"denom": "udys", "amount": "2"}],
+            "min_deposit": [{"denom": "udys", "amount": "1"}],
             "quorum": "0.00001",
             "threshold": "0.00001"
         },
@@ -191,10 +192,7 @@ def apply_genesis_overrides(genesis_data: dict, app_state: dict, global_override
         app_state_gov = app_state.setdefault('gov', {})
         app_state_gov_params = app_state_gov.setdefault('params', {})
         for key, value in gov_params.items():
-            if key == 'min_deposit' and isinstance(value, (int, float)):
-                app_state_gov_params[key] = [{'denom': denom, 'amount': str(int(value))}]
-            else:
-                app_state_gov_params[key] = str(value)
+            app_state_gov_params[key] = value
     
     # Distribution params
     if 'distribution_params' in merged_genesis:

@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"io/fs"
 	"net"
 	"net/http"
 	"net/url"
@@ -16,7 +15,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 
-	docs "dysonprotocol.com/client/docs"
 	scriptv1 "dysonprotocol.com/x/script/types"
 )
 
@@ -171,32 +169,13 @@ func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		if m := re.FindStringSubmatch(errMsg); len(m) == 2 {
 			name := strings.TrimSpace(m[1])
 			fmt.Printf("Failed to resolve script name: %s\n", name)
-			if name == "dys.dys" {
-				// Serve embedded dashboard with Vue SPA routing: non-/assets -> index.html, /assets -> static files
-				dashFS, ferr := fs.Sub(docs.DashBoard, "dysonprotocol2-dashboard/dist")
-				if ferr == nil {
-					path := req.URL.Path
-					if strings.HasPrefix(path, "/assets") {
-						http.FileServer(http.FS(dashFS)).ServeHTTP(w, req)
-						return
-					}
-					indexBytes, rerr := fs.ReadFile(dashFS, "index.html")
-					if rerr == nil {
-						w.Header().Set("Content-Type", "text/html; charset=utf-8")
-						w.WriteHeader(http.StatusOK)
-						_, _ = w.Write(indexBytes)
-						return
-					}
-				}
-				return
-			} else {
-				// Redirect to dys registry for other names
-				publicHost := strings.ReplaceAll(h.publicHostTemplate, "{address_or_name}", "dys")
-				// relative protocol to all https or http
-				target := "//" + publicHost + "/names/" + url.PathEscape(name)
-				http.Redirect(w, req, target, http.StatusFound)
-				return
-			}
+
+			// Redirect to dys registry for other names
+			publicHost := strings.ReplaceAll(h.publicHostTemplate, "{address_or_name}", "dys")
+			// relative protocol to all https or http
+			target := "//" + publicHost + "/names/" + url.PathEscape(name)
+			http.Redirect(w, req, target, http.StatusFound)
+			return
 		}
 		http.Error(w, fmt.Sprintf("Error querying: %v", err), http.StatusInternalServerError)
 		return

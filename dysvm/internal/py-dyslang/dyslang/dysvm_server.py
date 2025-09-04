@@ -475,7 +475,7 @@ def build_sandbox(
                 ):
                     sandbox.consume_gas()
 
-    scope = {}
+    scope = {'__name__': 'dyslang'}
     sandbox = ScopedDysonEval(
         scope=scope,
     )
@@ -931,7 +931,15 @@ dyslang.WHITELIST_FUNCTIONS.update(
         # re2.Match.re
         "re2._Regexp.match",
         "re2._Match.groupdict",
+        "re2._Match.groups",
+        "Match.group",
         "Match.groupdict",
+        "Match.start",
+        "Match.end",
+        "Match.span",
+        "Match.pos",
+        "Match.endpos",
+        "Match.re",
         "contains",
         "count",
         "findall",
