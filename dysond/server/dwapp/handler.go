@@ -8,6 +8,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -31,20 +32,64 @@ type DysonTxtRecords struct {
 
 func NewDefaultHandler(clientCtx client.Context, ScriptAddressOrNamePattern string, publicHostTemplate string) http.Handler {
 	scriptAddressOrNameRe := regexp.MustCompile(ScriptAddressOrNamePattern)
-	return &DefaultHandler{
+	h := &DefaultHandler{
 		clientCtx:             clientCtx,
 		scriptAddressOrNameRe: scriptAddressOrNameRe,
 		publicHostTemplate:    publicHostTemplate,
 	}
+
+	// Initialize RPC reverse proxy from client context NodeURI
+	upstream := strings.TrimSpace(clientCtx.NodeURI)
+	if upstream != "" {
+		if strings.HasPrefix(upstream, "tcp://") {
+			upstream = "http://" + strings.TrimPrefix(upstream, "tcp://")
+		} else if !strings.Contains(upstream, "://") {
+			upstream = "http://" + upstream
+		}
+		if u, err := url.Parse(upstream); err == nil {
+			proxy := httputil.NewSingleHostReverseProxy(u)
+			origDirector := proxy.Director
+			proxy.Director = func(r *http.Request) {
+				origDirector(r)
+				// preserve upstream host for proper routing and websockets
+				r.Host = u.Host
+				// trim the /rpc prefix so /rpc/abci_info -> /abci_info
+				if strings.HasPrefix(r.URL.Path, "/rpc") {
+					r.URL.Path = strings.TrimPrefix(r.URL.Path, "/rpc")
+					if r.URL.Path == "" {
+						r.URL.Path = "/"
+					}
+				}
+			}
+			proxy.ErrorHandler = func(rw http.ResponseWriter, r *http.Request, err error) {
+				http.Error(rw, fmt.Sprintf("rpc proxy error: %v", err), http.StatusBadGateway)
+			}
+			h.rpcProxy = proxy
+		}
+	}
+
+	return h
 }
 
 type DefaultHandler struct {
 	clientCtx             client.Context
 	scriptAddressOrNameRe *regexp.Regexp
 	publicHostTemplate    string
+	// RPC reverse proxy
+	rpcProxy *httputil.ReverseProxy
 }
 
 func (h *DefaultHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	// Reverse-proxy CometBFT RPC under /rpc/* to the configured NodeURI
+	if strings.HasPrefix(req.URL.Path, "/rpc") {
+		if h.rpcProxy == nil {
+			http.Error(w, "rpc proxy not configured", http.StatusBadGateway)
+			return
+		}
+		h.rpcProxy.ServeHTTP(w, req)
+		return
+	}
+
 	// New endpoint: /redirect-to-dwapp/{address_or_name} -> redirect or return public host
 	if strings.HasPrefix(req.URL.Path, "/redirect-to-dwapp/") {
 		// Extract the address_or_name (first path segment) and preserve the rest of the path
