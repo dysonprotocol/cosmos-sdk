@@ -9,6 +9,12 @@ message EventTaskCreated {
   string creator = 2;
 }
 
+// EventTaskPending is emitted when a task transitions to PENDING
+message EventTaskPending {
+  uint64 task_id = 1;
+  string creator = 2;
+}
+
 // EventTaskDeleted is emitted when a task is deleted
 message EventTaskDeleted {
   uint64 task_id = 1;
@@ -34,4 +40,12 @@ message EventTaskFailed {
   uint64 task_id = 1;
   string creator = 2;
   string error = 3;
+}
+
+// EventTaskPurged is emitted when a terminal task is removed by retention
+// cleanup
+message EventTaskPurged {
+  uint64 task_id = 1;
+  string status = 2;
+  string creator = 3;
 }

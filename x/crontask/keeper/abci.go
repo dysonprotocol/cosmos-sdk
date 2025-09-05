@@ -42,9 +42,6 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		key := iter.Key()
 		id := binary.BigEndian.Uint64(key[len(key)-8:])
 		pendingIDs = append(pendingIDs, id)
-		gasPrefix := append(indexStatusGasPrefix, []byte(crontasktypes.TaskStatus_PENDING)...)
-		gasPrice := binary.BigEndian.Uint64(key[len(gasPrefix) : len(gasPrefix)+8])
-		k.Logger.Info("pending task", "task_id", id, "gas_price", gasPrice)
 	}
 
 	// Execute each pending task respecting block gas limit
@@ -71,8 +68,21 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		if err != nil {
 			task.Status = crontasktypes.TaskStatus_FAILED
 			task.ErrorLog = fmt.Sprintf("invalid creator address: %s", err)
+			// mark execution time for consistency with FAILED semantics
+			task.ExecutionTimestamp = ctx.BlockTime().Unix()
+			task.ExecutionBlockHeight = ctx.BlockHeight()
 			if err := k.SetTask(ctx, task); err != nil {
 				k.Logger.Error("failed to set task failed due to invalid creator address", "task_id", task.TaskId, "error", err)
+			}
+			// emit failure event
+			if emitErr := ctx.EventManager().EmitTypedEvent(
+				&crontasktypes.EventTaskFailed{
+					TaskId:  task.TaskId,
+					Creator: task.Creator,
+					Error:   task.ErrorLog,
+				},
+			); emitErr != nil {
+				k.Logger.Error("failed to emit task failed event (invalid creator)", "task_id", task.TaskId, "error", emitErr)
 			}
 			continue
 		}
@@ -80,8 +90,21 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creatorAddr, "fee_collector", gasFee); err != nil {
 			task.Status = crontasktypes.TaskStatus_FAILED
 			task.ErrorLog = fmt.Sprintf("fee deduction failed: %s", err)
+			// mark execution time for consistency with FAILED semantics
+			task.ExecutionTimestamp = ctx.BlockTime().Unix()
+			task.ExecutionBlockHeight = ctx.BlockHeight()
 			if err := k.SetTask(ctx, task); err != nil {
 				k.Logger.Error("failed to set task failed due to fee deduction failure", "task_id", task.TaskId, "error", err)
+			}
+			// emit failure event
+			if emitErr := ctx.EventManager().EmitTypedEvent(
+				&crontasktypes.EventTaskFailed{
+					TaskId:  task.TaskId,
+					Creator: task.Creator,
+					Error:   task.ErrorLog,
+				},
+			); emitErr != nil {
+				k.Logger.Error("failed to emit task failed event (fee deduction)", "task_id", task.TaskId, "error", emitErr)
 			}
 			continue
 		}
@@ -172,6 +195,16 @@ func (k Keeper) moveDueTasks(ctx context.Context, currentTime int64) {
 			task.Status = crontasktypes.TaskStatus_PENDING
 			if err := k.SetTask(ctx, task); err != nil {
 				k.Logger.Error("failed to set task pending in moveDueTasks", "task_id", task.TaskId, "error", err)
+			}
+			// Emit EventTaskPending when transitioning to PENDING
+			sdkCtx := sdk.UnwrapSDKContext(ctx)
+			if emitErr := sdkCtx.EventManager().EmitTypedEvent(
+				&crontasktypes.EventTaskPending{
+					TaskId:  task.TaskId,
+					Creator: task.Creator,
+				},
+			); emitErr != nil {
+				k.Logger.Error("failed to emit task pending event", "task_id", task.TaskId, "error", emitErr)
 			}
 		}
 	}
@@ -429,10 +462,33 @@ func (k Keeper) removeOldTasks(ctx context.Context, currentTime int64) error {
 		iter.Close()
 
 		for _, id := range deleteIDs {
+			// load task to get creator for event
+			task, getErr := k.GetTask(ctx, id)
+			if getErr != nil {
+				k.Logger.Error("failed to load task before purge", "task_id", id, "error", getErr)
+				// proceed with best-effort deletion
+				if err := k.RemoveTask(ctx, id); err != nil {
+					k.Logger.Error("failed to remove old task", "task_id", id, "error", err)
+				}
+				continue
+			}
+
 			if err := k.RemoveTask(ctx, id); err != nil {
 				k.Logger.Error("failed to remove old task", "task_id", id, "error", err)
-			} else {
-				k.Logger.Info("old task deleted", "task_id", id, "status", status)
+				continue
+			}
+
+			k.Logger.Info("old task deleted", "task_id", id, "status", status)
+			// Emit purge event
+			sdkCtx := sdk.UnwrapSDKContext(ctx)
+			if emitErr := sdkCtx.EventManager().EmitTypedEvent(
+				&crontasktypes.EventTaskPurged{
+					TaskId:  id,
+					Status:  status,
+					Creator: task.Creator,
+				},
+			); emitErr != nil {
+				k.Logger.Error("failed to emit task purged event", "task_id", id, "error", emitErr)
 			}
 		}
 	}
