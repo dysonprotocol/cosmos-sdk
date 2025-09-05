@@ -30,7 +30,7 @@ message Task {
 
   // Gas price for the task execution which is calculated automatically
   // from task_gas_fee / task_gas_limit
-  cosmos.base.v1beta1.Coin task_gas_price = 6
+  cosmos.base.v1beta1.DecCoin task_gas_price = 6
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 
   // Gas fee for the task execution

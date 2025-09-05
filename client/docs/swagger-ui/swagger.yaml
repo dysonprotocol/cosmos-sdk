@@ -1050,10 +1050,11 @@ paths:
                         amount:
                           type: string
                       description: >-
-                        Coin defines a token with a denomination and an amount.
+                        DecCoin defines a token with a denomination and a
+                        decimal amount.
 
 
-                        NOTE: The amount field is an Int which implements the
+                        NOTE: The amount field is an Dec which implements the
                         custom method
 
                         signatures required by gogoproto.
@@ -1273,10 +1274,11 @@ paths:
                         amount:
                           type: string
                       description: >-
-                        Coin defines a token with a denomination and an amount.
+                        DecCoin defines a token with a denomination and a
+                        decimal amount.
 
 
-                        NOTE: The amount field is an Int which implements the
+                        NOTE: The amount field is an Dec which implements the
                         custom method
 
                         signatures required by gogoproto.
@@ -1502,10 +1504,11 @@ paths:
                         amount:
                           type: string
                       description: >-
-                        Coin defines a token with a denomination and an amount.
+                        DecCoin defines a token with a denomination and a
+                        decimal amount.
 
 
-                        NOTE: The amount field is an Int which implements the
+                        NOTE: The amount field is an Dec which implements the
                         custom method
 
                         signatures required by gogoproto.
@@ -1733,10 +1736,11 @@ paths:
                         amount:
                           type: string
                       description: >-
-                        Coin defines a token with a denomination and an amount.
+                        DecCoin defines a token with a denomination and a
+                        decimal amount.
 
 
-                        NOTE: The amount field is an Int which implements the
+                        NOTE: The amount field is an Dec which implements the
                         custom method
 
                         signatures required by gogoproto.
@@ -1958,10 +1962,11 @@ paths:
                       amount:
                         type: string
                     description: >-
-                      Coin defines a token with a denomination and an amount.
+                      DecCoin defines a token with a denomination and a decimal
+                      amount.
 
 
-                      NOTE: The amount field is an Int which implements the
+                      NOTE: The amount field is an Dec which implements the
                       custom method
 
                       signatures required by gogoproto.
@@ -28798,6 +28803,18 @@ definitions:
 
       NOTE: The amount field is an Int which implements the custom method
       signatures required by gogoproto.
+  cosmos.base.v1beta1.DecCoin:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+    description: |-
+      DecCoin defines a token with a denomination and a decimal amount.
+
+      NOTE: The amount field is an Dec which implements the custom method
+      signatures required by gogoproto.
   dysonprotocol.crontask.v1.Params:
     type: object
     properties:
@@ -28882,10 +28899,10 @@ definitions:
               amount:
                 type: string
             description: >-
-              Coin defines a token with a denomination and an amount.
+              DecCoin defines a token with a denomination and a decimal amount.
 
 
-              NOTE: The amount field is an Int which implements the custom
+              NOTE: The amount field is an Dec which implements the custom
               method
 
               signatures required by gogoproto.
@@ -29007,10 +29024,11 @@ definitions:
                 amount:
                   type: string
               description: >-
-                Coin defines a token with a denomination and an amount.
+                DecCoin defines a token with a denomination and a decimal
+                amount.
 
 
-                NOTE: The amount field is an Int which implements the custom
+                NOTE: The amount field is an Dec which implements the custom
                 method
 
                 signatures required by gogoproto.
@@ -29156,9 +29174,9 @@ definitions:
           amount:
             type: string
         description: |-
-          Coin defines a token with a denomination and an amount.
+          DecCoin defines a token with a denomination and a decimal amount.
 
-          NOTE: The amount field is an Int which implements the custom method
+          NOTE: The amount field is an Dec which implements the custom method
           signatures required by gogoproto.
       task_gas_fee:
         title: Gas fee for the task execution
@@ -37528,18 +37546,6 @@ definitions:
             transaction
         title: msgs lists the accepted application messages (sdk.Msg)
     title: TxDescriptor describes the accepted transaction type
-  cosmos.base.v1beta1.DecCoin:
-    type: object
-    properties:
-      denom:
-        type: string
-      amount:
-        type: string
-    description: |-
-      DecCoin defines a token with a denomination and a decimal amount.
-
-      NOTE: The amount field is an Dec which implements the custom method
-      signatures required by gogoproto.
   cosmos.distribution.v1beta1.DelegationDelegatorReward:
     type: object
     properties:

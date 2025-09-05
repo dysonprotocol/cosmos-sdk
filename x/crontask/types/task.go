@@ -26,10 +26,10 @@ func NewGenesisState() *GenesisState {
 // DefaultParams returns default parameters for the crontask module.
 func DefaultParams() Params {
 	return Params{
-		BlockGasLimit:    10000000, // 10M gas limit per block for tasks
-		ExpiryLimit:      86400,    // 24 hours in seconds
-		MaxScheduledTime: 86400,    // 24 hours in seconds
-		CleanUpTime:      86400,    // 24 hours in seconds
+		BlockGasLimit:    3000000, // 3M gas limit per block for tasks
+		ExpiryLimit:      86400,   // 24 hours in seconds
+		MaxScheduledTime: 86400,   // 24 hours in seconds
+		CleanUpTime:      86400,   // 24 hours in seconds
 	}
 }
 

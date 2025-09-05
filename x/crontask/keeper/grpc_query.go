@@ -79,6 +79,9 @@ func (q queryServer) TasksByStatusTimestamp(ctx context.Context, req *crontaskty
 		req.Pagination = &query.PageRequest{}
 	}
 
+	// invert the pagination
+	req.Pagination.Reverse = !req.Pagination.Reverse
+
 	prefixBz := append(indexStatusTsPrefix, []byte(req.Status)...)
 	store := prefix.NewStore(q.k.kvStore(ctx), prefixBz)
 
@@ -105,6 +108,8 @@ func (q queryServer) TasksByStatusGasPrice(ctx context.Context, req *crontasktyp
 	if req.Pagination == nil {
 		req.Pagination = &query.PageRequest{}
 	}
+	// invert the pagination
+	req.Pagination.Reverse = !req.Pagination.Reverse
 
 	prefixBz := append(indexStatusGasPrefix, []byte(req.Status)...)
 	store := prefix.NewStore(q.k.kvStore(ctx), prefixBz)

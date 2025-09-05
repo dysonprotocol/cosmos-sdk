@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"time"
 
 	crontasktypes "dysonprotocol.com/x/crontask/types"
 )
@@ -72,17 +71,4 @@ func (k Keeper) ExportGenesis(ctx context.Context) (*crontasktypes.GenesisState,
 		NextTaskId: nextTaskID,
 		Params:     &params,
 	}, nil
-}
-
-// DefaultGenesis returns default genesis state as raw bytes for the crontask module.
-func DefaultGenesis() *crontasktypes.GenesisState {
-	return &crontasktypes.GenesisState{
-		Params: &crontasktypes.Params{
-			BlockGasLimit:    1000000000000000000,
-			ExpiryLimit:      int64(time.Hour * 24 * 7), // 7 days
-			MaxScheduledTime: int64(time.Hour * 24 * 7), // 7 days
-		},
-		Tasks:      []*crontasktypes.Task{},
-		NextTaskId: 1,
-	}
 }

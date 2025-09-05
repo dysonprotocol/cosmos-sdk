@@ -241,10 +241,12 @@ func (k Keeper) addIndexes(ctx context.Context, t crontasktypes.Task) {
 	_ = store.Set(keyAddr, []byte{})
 
 	// status+timestamp index
-	// For SCHEDULED and PENDING, use creation time; for terminal statuses use execution/expiry
+	// For SCHEDULED use scheduled time; for PENDING use creation time; for terminal statuses use execution/expiry
 	var tsForIndex uint64
 	switch t.Status {
-	case crontasktypes.TaskStatus_SCHEDULED, crontasktypes.TaskStatus_PENDING:
+	case crontasktypes.TaskStatus_SCHEDULED:
+		tsForIndex = uint64(t.ScheduledTimestamp)
+	case crontasktypes.TaskStatus_PENDING:
 		tsForIndex = uint64(t.CreationTime)
 	case crontasktypes.TaskStatus_DONE, crontasktypes.TaskStatus_FAILED:
 		tsForIndex = uint64(t.ExecutionTimestamp)
@@ -259,9 +261,17 @@ func (k Keeper) addIndexes(ctx context.Context, t crontasktypes.Task) {
 	tsKey = append(tsKey, bigEndian(t.TaskId)...)
 	_ = store.Set(tsKey, []byte{})
 
-	// status+gasPrice index
+	// status+gasPrice index: use scaled decimal gas price to preserve ordering
+	scaled := t.TaskGasPrice.Amount.MulInt64(1_000_000_000_000).TruncateInt()
+	var scaledU64 uint64
+	if scaled.IsUint64() {
+		scaledU64 = scaled.Uint64()
+	} else {
+		// Cap to max uint64 if it overflows; preserves monotonic ordering
+		scaledU64 = ^uint64(0)
+	}
 	gpKey := append(indexStatusGasPrefix, []byte(t.Status)...)
-	gpKey = append(gpKey, bigEndian(t.TaskGasPrice.Amount.Uint64())...)
+	gpKey = append(gpKey, bigEndian(scaledU64)...)
 	gpKey = append(gpKey, bigEndian(t.TaskId)...)
 	_ = store.Set(gpKey, []byte{})
 }
@@ -276,7 +286,9 @@ func (k Keeper) removeIndexes(ctx context.Context, t crontasktypes.Task) {
 	// status+timestamp index uses same timestamp selection logic as addIndexes
 	var tsForIndex uint64
 	switch t.Status {
-	case crontasktypes.TaskStatus_SCHEDULED, crontasktypes.TaskStatus_PENDING:
+	case crontasktypes.TaskStatus_SCHEDULED:
+		tsForIndex = uint64(t.ScheduledTimestamp)
+	case crontasktypes.TaskStatus_PENDING:
 		tsForIndex = uint64(t.CreationTime)
 	case crontasktypes.TaskStatus_DONE, crontasktypes.TaskStatus_FAILED:
 		tsForIndex = uint64(t.ExecutionTimestamp)
@@ -290,8 +302,16 @@ func (k Keeper) removeIndexes(ctx context.Context, t crontasktypes.Task) {
 	tsKey = append(tsKey, bigEndian(t.TaskId)...)
 	_ = store.Delete(tsKey)
 
+	// Recompute scaled gas price key used for insertion to delete it
+	scaled := t.TaskGasPrice.Amount.MulInt64(1_000_000_000_000).TruncateInt()
+	var scaledU64 uint64
+	if scaled.IsUint64() {
+		scaledU64 = scaled.Uint64()
+	} else {
+		scaledU64 = ^uint64(0)
+	}
 	gpKey := append(indexStatusGasPrefix, []byte(t.Status)...)
-	gpKey = append(gpKey, bigEndian(t.TaskGasPrice.Amount.Uint64())...)
+	gpKey = append(gpKey, bigEndian(scaledU64)...)
 	gpKey = append(gpKey, bigEndian(t.TaskId)...)
 	_ = store.Delete(gpKey)
 }

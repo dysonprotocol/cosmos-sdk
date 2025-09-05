@@ -147,6 +147,9 @@ func (k Keeper) ExecScript(ctx context.Context, msg *scripttypes.MsgExec) (*scri
 	// Replace BranchService with direct CacheContext usage
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
+	// Base gas cost for script execution
+	sdkCtx.GasMeter().ConsumeGas(1_000_000, "script exec base cost")
+
 	// Create a cached context that creates an isolated context for the execution
 	cacheCtx, write := sdkCtx.CacheContext()
 

@@ -376,6 +376,18 @@
       },
       "description": "Coin defines a token with a denomination and an amount.\n\nNOTE: The amount field is an Int which implements the custom method\nsignatures required by gogoproto."
     },
+    "cosmos.base.v1beta1.DecCoin": {
+      "type": "object",
+      "properties": {
+        "denom": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        }
+      },
+      "description": "DecCoin defines a token with a denomination and a decimal amount.\n\nNOTE: The amount field is an Dec which implements the custom method\nsignatures required by gogoproto."
+    },
     "dysonprotocol.crontask.v1.Params": {
       "type": "object",
       "properties": {
@@ -464,7 +476,7 @@
           "title": "Maximum gas limit for the task execution"
         },
         "task_gas_price": {
-          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "$ref": "#/definitions/cosmos.base.v1beta1.DecCoin",
           "title": "Gas price for the task execution which is calculated automatically\nfrom task_gas_fee / task_gas_limit"
         },
         "task_gas_fee": {

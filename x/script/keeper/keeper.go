@@ -590,6 +590,8 @@ func (k Keeper) NewRPCServer(ctx sdk.Context, address string, app *baseapp.BaseA
 func (k Keeper) RunWeb(ctx context.Context, scriptAddress string, scriptName string, httpreq string) (string, error) {
 	now := time.Now()
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	// Base gas cost for runweb execution
+	sdkCtx.GasMeter().ConsumeGas(1_000_000, "script runweb base cost")
 
 	cacheCtx, _ := sdkCtx.CacheContext()
 

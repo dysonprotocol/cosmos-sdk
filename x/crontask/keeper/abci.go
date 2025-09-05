@@ -42,6 +42,9 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		key := iter.Key()
 		id := binary.BigEndian.Uint64(key[len(key)-8:])
 		pendingIDs = append(pendingIDs, id)
+		gasPrefix := append(indexStatusGasPrefix, []byte(crontasktypes.TaskStatus_PENDING)...)
+		gasPrice := binary.BigEndian.Uint64(key[len(gasPrefix) : len(gasPrefix)+8])
+		k.Logger.Info("pending task", "task_id", id, "gas_price", gasPrice)
 	}
 
 	// Execute each pending task respecting block gas limit
