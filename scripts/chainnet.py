@@ -301,7 +301,7 @@ def apply_genesis_overrides(genesis_data: dict, app_state: dict, global_override
     evidence_params['max_bytes'] = "204800"  # 200KB
     block_params = consensus_params.setdefault('block', {})
     block_params['max_bytes'] = "3145728"  # 3MB
-    block_params['max_gas'] = "10000000000"  # 10T gas
+    block_params['max_gas'] = "3000000"  # 10T gas
 
 def generate_ports(port_offset: int, chainnet_offset: int) -> dict:
     """Generate port mappings for a node with given offsets.
