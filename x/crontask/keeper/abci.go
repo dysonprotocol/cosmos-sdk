@@ -24,8 +24,8 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		return fmt.Errorf("failed to get module params: %w", err)
 	}
 
-	// Track total gas consumed in this block
-	var totalGasConsumed uint64 = 0
+	// Track total gas reserved in this block (deterministic budgeting)
+	var totalGasReserved uint64 = 0
 
 	// 1. expire overdue SCHEDULED tasks
 	k.checkExpiredTasks(ctx, currentTime)
@@ -53,15 +53,18 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 			continue
 		}
 
-		// Check gas limit
-		if totalGasConsumed+task.TaskGasLimit > params.BlockGasLimit {
+		// Check gas limit using declared TaskGasLimit
+		if totalGasReserved+task.TaskGasLimit > params.BlockGasLimit {
 			k.Logger.Info("Stopping task execution - would exceed block gas limit",
-				"total_gas_consumed", totalGasConsumed,
+				"total_gas_consumed", totalGasReserved,
 				"task_gas_limit", task.TaskGasLimit,
 				"block_gas_limit", params.BlockGasLimit,
 				"task_id", taskId)
 			break
 		}
+
+		// Reserve gas budget deterministically before execution
+		totalGasReserved += task.TaskGasLimit
 
 		// Collect fee
 		gasFee := sdk.NewCoins(task.TaskGasFee)
@@ -115,7 +118,6 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 			k.Logger.Error("execution error", "task_id", taskId, "error", err)
 		}
 
-		totalGasConsumed += task.TaskGasConsumed
 		k.Logger.Info("Task executed", "task_id", taskId, "gas_used", task.TaskGasConsumed)
 	}
 
