@@ -34,8 +34,8 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 	k.moveDueTasks(ctx, currentTime)
 
 	// 3. process PENDING tasks ordered by gas price (desc)
+	// Collect IDs first, then close iterator before mutating store for determinism
 	iter := k.iterateStatusGas(ctx, crontasktypes.TaskStatus_PENDING, true)
-	defer iter.Close()
 
 	var pendingIDs []uint64
 	for ; iter.Valid(); iter.Next() {
@@ -43,6 +43,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		id := binary.BigEndian.Uint64(key[len(key)-8:])
 		pendingIDs = append(pendingIDs, id)
 	}
+	iter.Close()
 
 	// Execute each pending task respecting block gas limit
 	for _, taskId := range pendingIDs {
@@ -129,10 +130,11 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 // checkExpiredTasks finds and marks expired tasks that haven't been executed yet
 func (k Keeper) checkExpiredTasks(ctx context.Context, currentTime int64) {
 	iter := k.iterateStatusTimestamp(ctx, crontasktypes.TaskStatus_SCHEDULED, false)
-	defer iter.Close()
 
 	statusPrefix := append(indexStatusTsPrefix, []byte(crontasktypes.TaskStatus_SCHEDULED)...)
 
+	// collect first, then close iterator before mutating
+	var toExpire []uint64
 	for ; iter.Valid(); iter.Next() {
 		key := iter.Key()
 		if len(key) < len(statusPrefix)+8+8 {
@@ -147,21 +149,32 @@ func (k Keeper) checkExpiredTasks(ctx context.Context, currentTime int64) {
 		}
 
 		if task.ExpiryTimestamp <= currentTime {
-			task.Status = crontasktypes.TaskStatus_EXPIRED
-			task.ErrorLog = "Task expired before execution"
-			if err := k.SetTask(ctx, task); err != nil {
-				k.Logger.Error("failed to set task expired", "task_id", task.TaskId, "error", err)
-			}
-			// Emit EventTaskExpired for observability
-			sdkCtx := sdk.UnwrapSDKContext(ctx)
-			if emitErr := sdkCtx.EventManager().EmitTypedEvent(
-				&crontasktypes.EventTaskExpired{
-					TaskId:  task.TaskId,
-					Creator: task.Creator,
-				},
-			); emitErr != nil {
-				k.Logger.Error("failed to emit task expired event", "task_id", task.TaskId, "error", emitErr)
-			}
+			toExpire = append(toExpire, id)
+		}
+	}
+	iter.Close()
+
+	for _, id := range toExpire {
+		task, err := k.GetTask(ctx, id)
+		if err != nil {
+			k.Logger.Error("failed to load task before expire", "id", id, "err", err)
+			continue
+		}
+		task.Status = crontasktypes.TaskStatus_EXPIRED
+		task.ErrorLog = "Task expired before execution"
+		if err := k.SetTask(ctx, task); err != nil {
+			k.Logger.Error("failed to set task expired", "task_id", task.TaskId, "error", err)
+			continue
+		}
+		// Emit EventTaskExpired for observability
+		sdkCtx := sdk.UnwrapSDKContext(ctx)
+		if emitErr := sdkCtx.EventManager().EmitTypedEvent(
+			&crontasktypes.EventTaskExpired{
+				TaskId:  task.TaskId,
+				Creator: task.Creator,
+			},
+		); emitErr != nil {
+			k.Logger.Error("failed to emit task expired event", "task_id", task.TaskId, "error", emitErr)
 		}
 	}
 }
@@ -169,10 +182,11 @@ func (k Keeper) checkExpiredTasks(ctx context.Context, currentTime int64) {
 // moveDueTasks moves tasks from SCHEDULED to PENDING when their scheduled time has arrived
 func (k Keeper) moveDueTasks(ctx context.Context, currentTime int64) {
 	iter := k.iterateStatusTimestamp(ctx, crontasktypes.TaskStatus_SCHEDULED, false)
-	defer iter.Close()
 
 	statusPrefix := append(indexStatusTsPrefix, []byte(crontasktypes.TaskStatus_SCHEDULED)...)
 
+	// collect first, then close iterator before mutating
+	var toPending []uint64
 	for ; iter.Valid(); iter.Next() {
 		key := iter.Key()
 		if len(key) < len(statusPrefix)+8+8 {
@@ -190,22 +204,32 @@ func (k Keeper) moveDueTasks(ctx context.Context, currentTime int64) {
 			continue
 		}
 
-		// Only move to pending when the actual scheduled time has arrived
 		if task.ScheduledTimestamp <= currentTime {
-			task.Status = crontasktypes.TaskStatus_PENDING
-			if err := k.SetTask(ctx, task); err != nil {
-				k.Logger.Error("failed to set task pending in moveDueTasks", "task_id", task.TaskId, "error", err)
-			}
-			// Emit EventTaskPending when transitioning to PENDING
-			sdkCtx := sdk.UnwrapSDKContext(ctx)
-			if emitErr := sdkCtx.EventManager().EmitTypedEvent(
-				&crontasktypes.EventTaskPending{
-					TaskId:  task.TaskId,
-					Creator: task.Creator,
-				},
-			); emitErr != nil {
-				k.Logger.Error("failed to emit task pending event", "task_id", task.TaskId, "error", emitErr)
-			}
+			toPending = append(toPending, id)
+		}
+	}
+	iter.Close()
+
+	for _, id := range toPending {
+		task, err := k.GetTask(ctx, id)
+		if err != nil {
+			k.Logger.Error("failed to load task before pending", "id", id, "err", err)
+			continue
+		}
+		task.Status = crontasktypes.TaskStatus_PENDING
+		if err := k.SetTask(ctx, task); err != nil {
+			k.Logger.Error("failed to set task pending in moveDueTasks", "task_id", task.TaskId, "error", err)
+			continue
+		}
+		// Emit EventTaskPending when transitioning to PENDING
+		sdkCtx := sdk.UnwrapSDKContext(ctx)
+		if emitErr := sdkCtx.EventManager().EmitTypedEvent(
+			&crontasktypes.EventTaskPending{
+				TaskId:  task.TaskId,
+				Creator: task.Creator,
+			},
+		); emitErr != nil {
+			k.Logger.Error("failed to emit task pending event", "task_id", task.TaskId, "error", emitErr)
 		}
 	}
 }
