@@ -26,6 +26,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 
 	// Track total gas reserved in this block (deterministic budgeting)
 	var totalGasReserved uint64 = 0
+	var selectedCount int = 0
 
 	// 1. expire overdue SCHEDULED tasks
 	k.checkExpiredTasks(ctx, currentTime)
@@ -45,6 +46,8 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 	}
 	iter.Close()
 
+	k.Logger.Info("crontask pending snapshot", "count", len(pendingIDs), "ids", pendingIDs, "block_gas_limit", params.BlockGasLimit)
+
 	// Execute each pending task respecting block gas limit
 	for _, taskId := range pendingIDs {
 		task, err := k.GetTask(ctx, taskId)
@@ -63,8 +66,15 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 			break
 		}
 
-		// Reserve gas budget deterministically before execution
+		// Log selection decision and reserve gas deterministically before execution
+		k.Logger.Info("crontask selecting task",
+			"task_id", taskId,
+			"task_gas_limit", task.TaskGasLimit,
+			"total_gas_reserved_before", totalGasReserved,
+			"total_gas_reserved_after", totalGasReserved+task.TaskGasLimit,
+		)
 		totalGasReserved += task.TaskGasLimit
+		selectedCount++
 
 		// Collect fee
 		gasFee := sdk.NewCoins(task.TaskGasFee)
@@ -121,6 +131,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		k.Logger.Info("Task executed", "task_id", taskId, "gas_used", task.TaskGasConsumed)
 	}
 
+	k.Logger.Info("crontask selection summary", "selected_count", selectedCount, "total_gas_reserved", totalGasReserved)
 	// 4. clean up old tasks beyond retention window
 	if err := k.removeOldTasks(ctx, currentTime); err != nil {
 		k.Logger.Error("failed to clean up old tasks", "error", err)
