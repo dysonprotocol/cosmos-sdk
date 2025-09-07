@@ -54,6 +54,25 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 			continue
 		}
 
+		// Expiry guard: skip and expire overdue PENDING tasks before any budgeting or fees
+		if task.ExpiryTimestamp <= currentTime {
+			task.Status = crontasktypes.TaskStatus_EXPIRED
+			task.ErrorLog = "Task expired before execution"
+			if err := k.SetTask(ctx, task); err != nil {
+				k.Logger.Error("failed to set task expired in pending guard", "task_id", task.TaskId, "error", err)
+			} else {
+				if emitErr := ctx.EventManager().EmitTypedEvent(
+					&crontasktypes.EventTaskExpired{
+						TaskId:  task.TaskId,
+						Creator: task.Creator,
+					},
+				); emitErr != nil {
+					k.Logger.Error("failed to emit task expired event in pending guard", "task_id", task.TaskId, "error", emitErr)
+				}
+			}
+			continue
+		}
+
 		// Check gas limit using declared TaskGasLimit
 		if totalGasReserved+task.TaskGasLimit > params.BlockGasLimit {
 			k.Logger.Info("Stopping task execution - would exceed block gas limit",
@@ -140,52 +159,59 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 
 // checkExpiredTasks finds and marks expired tasks that haven't been executed yet
 func (k Keeper) checkExpiredTasks(ctx context.Context, currentTime int64) {
-	iter := k.iterateStatusTimestamp(ctx, crontasktypes.TaskStatus_SCHEDULED, false)
-
-	statusPrefix := append(indexStatusTsPrefix, []byte(crontasktypes.TaskStatus_SCHEDULED)...)
-
-	// collect first, then close iterator before mutating
-	var toExpire []uint64
-	for ; iter.Valid(); iter.Next() {
-		key := iter.Key()
-		if len(key) < len(statusPrefix)+8+8 {
-			continue
-		}
-		id := binary.BigEndian.Uint64(key[len(key)-8:])
-
-		task, err := k.GetTask(ctx, id)
-		if err != nil {
-			k.Logger.Error("failed to load task", "id", id, "err", err)
-			continue
-		}
-
-		if task.ExpiryTimestamp <= currentTime {
-			toExpire = append(toExpire, id)
-		}
+	// Scan both SCHEDULED and PENDING to purge overdue tasks before selection
+	statuses := []string{
+		crontasktypes.TaskStatus_SCHEDULED,
+		crontasktypes.TaskStatus_PENDING,
 	}
-	iter.Close()
 
-	for _, id := range toExpire {
-		task, err := k.GetTask(ctx, id)
-		if err != nil {
-			k.Logger.Error("failed to load task before expire", "id", id, "err", err)
-			continue
+	for _, status := range statuses {
+		iter := k.iterateStatusTimestamp(ctx, status, false)
+		statusPrefix := append(indexStatusTsPrefix, []byte(status)...)
+
+		// collect first, then close iterator before mutating
+		var toExpire []uint64
+		for ; iter.Valid(); iter.Next() {
+			key := iter.Key()
+			if len(key) < len(statusPrefix)+8+8 {
+				continue
+			}
+			id := binary.BigEndian.Uint64(key[len(key)-8:])
+
+			task, err := k.GetTask(ctx, id)
+			if err != nil {
+				k.Logger.Error("failed to load task", "id", id, "err", err)
+				continue
+			}
+
+			if task.ExpiryTimestamp <= currentTime {
+				toExpire = append(toExpire, id)
+			}
 		}
-		task.Status = crontasktypes.TaskStatus_EXPIRED
-		task.ErrorLog = "Task expired before execution"
-		if err := k.SetTask(ctx, task); err != nil {
-			k.Logger.Error("failed to set task expired", "task_id", task.TaskId, "error", err)
-			continue
-		}
-		// Emit EventTaskExpired for observability
-		sdkCtx := sdk.UnwrapSDKContext(ctx)
-		if emitErr := sdkCtx.EventManager().EmitTypedEvent(
-			&crontasktypes.EventTaskExpired{
-				TaskId:  task.TaskId,
-				Creator: task.Creator,
-			},
-		); emitErr != nil {
-			k.Logger.Error("failed to emit task expired event", "task_id", task.TaskId, "error", emitErr)
+		iter.Close()
+
+		for _, id := range toExpire {
+			task, err := k.GetTask(ctx, id)
+			if err != nil {
+				k.Logger.Error("failed to load task before expire", "id", id, "err", err)
+				continue
+			}
+			task.Status = crontasktypes.TaskStatus_EXPIRED
+			task.ErrorLog = "Task expired before execution"
+			if err := k.SetTask(ctx, task); err != nil {
+				k.Logger.Error("failed to set task expired", "task_id", task.TaskId, "error", err)
+				continue
+			}
+			// Emit EventTaskExpired for observability
+			sdkCtx := sdk.UnwrapSDKContext(ctx)
+			if emitErr := sdkCtx.EventManager().EmitTypedEvent(
+				&crontasktypes.EventTaskExpired{
+					TaskId:  task.TaskId,
+					Creator: task.Creator,
+				},
+			); emitErr != nil {
+				k.Logger.Error("failed to emit task expired event", "task_id", task.TaskId, "error", emitErr)
+			}
 		}
 	}
 }
