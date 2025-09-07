@@ -58,6 +58,9 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		if task.ExpiryTimestamp <= currentTime {
 			task.Status = crontasktypes.TaskStatus_EXPIRED
 			task.ErrorLog = "Task expired before execution"
+			// set execution markers to current block for observability
+			task.ExecutionTimestamp = ctx.BlockTime().Unix()
+			task.ExecutionBlockHeight = ctx.BlockHeight()
 			if err := k.SetTask(ctx, task); err != nil {
 				k.Logger.Error("failed to set task expired in pending guard", "task_id", task.TaskId, "error", err)
 			} else {
@@ -198,12 +201,15 @@ func (k Keeper) checkExpiredTasks(ctx context.Context, currentTime int64) {
 			}
 			task.Status = crontasktypes.TaskStatus_EXPIRED
 			task.ErrorLog = "Task expired before execution"
+			// set execution markers to current block for observability
+			sdkCtx := sdk.UnwrapSDKContext(ctx)
+			task.ExecutionTimestamp = sdkCtx.BlockTime().Unix()
+			task.ExecutionBlockHeight = sdkCtx.BlockHeight()
 			if err := k.SetTask(ctx, task); err != nil {
 				k.Logger.Error("failed to set task expired", "task_id", task.TaskId, "error", err)
 				continue
 			}
 			// Emit EventTaskExpired for observability
-			sdkCtx := sdk.UnwrapSDKContext(ctx)
 			if emitErr := sdkCtx.EventManager().EmitTypedEvent(
 				&crontasktypes.EventTaskExpired{
 					TaskId:  task.TaskId,
