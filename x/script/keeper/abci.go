@@ -12,13 +12,13 @@ import (
 // It queries the module parameters to determine the maximum historical blocks
 // that should be available and panics if the required blocks are not accessible
 func (k Keeper) BeginBlocker(ctx context.Context) error {
-	//sdkCtx := sdk.UnwrapSDKContext(ctx)
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	// Get module parameters to determine the maximum historical blocks
-	//params := k.GetParams(ctx)
+	params := k.GetParams(ctx)
 
-	//return k.validateHistoricalBlocks(sdkCtx, params)
-	return nil
+	return k.validateHistoricalBlocks(sdkCtx, params)
+
 }
 
 // validateHistoricalBlocks checks if the required historical blocks are accessible

@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"runtime/debug"
-	"strings"
 
 	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -46,8 +45,6 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		pendingIDs = append(pendingIDs, id)
 	}
 	iter.Close()
-
-	k.Logger.Info("crontask pending snapshot", "count", len(pendingIDs), "ids", pendingIDs, "block_gas_limit", params.BlockGasLimit)
 
 	// Execute each pending task respecting block gas limit
 	for _, taskId := range pendingIDs {
@@ -271,10 +268,6 @@ func (k Keeper) executeTask(ctx context.Context, task *crontasktypes.Task) error
 	task.TaskGasConsumed = gasUsed
 
 	if err != nil {
-		// If the node was interrupted (e.g., SIGTERM) while executing, stop hard.
-		if strings.Contains(err.Error(), "signal: terminated") {
-			panic("script execution interrupted: SIGTERM during crontask execution")
-		}
 		// Update task status to failed
 		task.Status = crontasktypes.TaskStatus_FAILED
 		task.ExecutionTimestamp = sdkCtx.BlockTime().Unix()
