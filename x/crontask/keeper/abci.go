@@ -24,9 +24,12 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 		return fmt.Errorf("failed to get module params: %w", err)
 	}
 
-	// Track total gas reserved in this block (deterministic budgeting)
-	var totalGasReserved uint64 = 0
+	// Track how many tasks we selected this block (diagnostics)
 	var selectedCount int = 0
+	// Track cron gas used this block to enforce module-level cap
+	var cronGasUsed uint64 = 0
+	// Track last-block totals for metrics
+	var blockTotalFees sdk.Coins
 
 	// 1. expire overdue SCHEDULED tasks
 	k.checkExpiredTasks(ctx, currentTime)
@@ -35,14 +38,32 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 	k.moveDueTasks(ctx, currentTime)
 
 	// 3. process PENDING tasks ordered by gas price (desc)
+	// Also compute pending-queue metrics at BeginBlock
 	// Collect IDs first, then close iterator before mutating store for determinism
 	iter := k.iterateStatusGas(ctx, crontasktypes.TaskStatus_PENDING, true)
 
 	var pendingIDs []uint64
+	var pendingCount uint64 = 0
+	var pendingGasRequested uint64 = 0
+	var pendingOldestScheduledTs int64 = 0
+	// removed pendingHighestGasPrice metric
 	for ; iter.Valid(); iter.Next() {
 		key := iter.Key()
 		id := binary.BigEndian.Uint64(key[len(key)-8:])
 		pendingIDs = append(pendingIDs, id)
+
+		// gather pending metrics
+		t, getErr := k.GetTask(ctx, id)
+		if getErr != nil {
+			k.Logger.Error("failed to load task for pending metrics", "task_id", id, "error", getErr)
+			continue
+		}
+		pendingCount++
+		pendingGasRequested += t.TaskGasLimit
+		if pendingOldestScheduledTs == 0 || t.ScheduledTimestamp < pendingOldestScheduledTs {
+			pendingOldestScheduledTs = t.ScheduledTimestamp
+		}
+		// no highest gas price metric
 	}
 	iter.Close()
 
@@ -76,24 +97,32 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 			continue
 		}
 
-		// Check gas limit using declared TaskGasLimit
-		if totalGasReserved+task.TaskGasLimit > params.BlockGasLimit {
-			k.Logger.Info("Stopping task execution - would exceed block gas limit",
-				"total_gas_consumed", totalGasReserved,
+		// Admit based on both the global block gas meter and module-level cap
+		remainingBlock := ctx.BlockGasMeter().GasRemaining()
+		var remainingModule uint64
+		if params.BlockGasLimit > cronGasUsed {
+			remainingModule = params.BlockGasLimit - cronGasUsed
+		} else {
+			remainingModule = 0
+		}
+		if task.TaskGasLimit > remainingBlock || task.TaskGasLimit > remainingModule {
+			k.Logger.Debug("Skipping task - insufficient remaining gas",
+				"task_id", taskId,
 				"task_gas_limit", task.TaskGasLimit,
-				"block_gas_limit", params.BlockGasLimit,
-				"task_id", taskId)
-			break
+				"remaining_block_gas", remainingBlock,
+				"remaining_module_gas", remainingModule,
+				"module_block_gas_limit", params.BlockGasLimit,
+			)
+			continue
 		}
 
-		// Log selection decision and reserve gas deterministically before execution
-		k.Logger.Info("crontask selecting task",
+		// Log selection decision before execution
+		k.Logger.Debug("crontask selecting task",
 			"task_id", taskId,
 			"task_gas_limit", task.TaskGasLimit,
-			"total_gas_reserved_before", totalGasReserved,
-			"total_gas_reserved_after", totalGasReserved+task.TaskGasLimit,
+			"block_gas_remaining_before", remainingBlock,
+			"module_gas_remaining_before", remainingModule,
 		)
-		totalGasReserved += task.TaskGasLimit
 		selectedCount++
 
 		// Collect fee
@@ -143,15 +172,35 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 			continue
 		}
 
+		// Track total fees for metrics (sum per denom)
+		blockTotalFees = blockTotalFees.Add(gasFee...)
+
 		// Execute
 		if err := k.executeTask(ctx, &task); err != nil {
 			k.Logger.Error("execution error", "task_id", taskId, "error", err)
 		}
 
-		k.Logger.Info("Task executed", "task_id", taskId, "gas_used", task.TaskGasConsumed)
+		// no per-task message counting for metrics; remain cumulative-free per the new spec
+		// Track actual cron gas used against module cap
+		cronGasUsed += task.TaskGasConsumed
+		k.Logger.Debug("Task executed", "task_id", taskId, "gas_used", task.TaskGasConsumed)
 	}
 
-	k.Logger.Info("crontask selection summary", "selected_count", selectedCount, "total_gas_reserved", totalGasReserved)
+	k.Logger.Info("crontask selection summary", "selected_count", selectedCount, "block_gas_used", ctx.BlockGasMeter().GasConsumed(), "cron_module_gas_used", cronGasUsed, "cron_module_gas_limit", params.BlockGasLimit)
+
+	// Persist last-block metrics as singleton for reference by new crontasks
+	metrics := crontasktypes.Metrics{
+		ExecutedTotalGas:         cronGasUsed,
+		ExecutedTotalFees:        blockTotalFees,
+		ExecutedTaskCount:        uint64(selectedCount),
+		PendingTaskCount:         pendingCount,
+		PendingGasRequested:      pendingGasRequested,
+		PendingOldestScheduledTs: pendingOldestScheduledTs,
+		// removed highest gas price field
+	}
+	if err := k.SetMetrics(ctx, metrics); err != nil {
+		k.Logger.Error("failed to persist last-block metrics", "error", err)
+	}
 	// 4. clean up old tasks beyond retention window
 	if err := k.removeOldTasks(ctx, currentTime); err != nil {
 		k.Logger.Error("failed to clean up old tasks", "error", err)
@@ -298,6 +347,10 @@ func (k Keeper) executeTask(ctx context.Context, task *crontasktypes.Task) error
 	// Calculate gas used and store it in the task
 	gasUsed := cacheCtx.GasMeter().GasConsumed()
 	task.TaskGasConsumed = gasUsed
+
+	// Account actual gas used into the global block gas meter
+	// This ensures cron execution contributes to the block-wide gas accounting.
+	sdkCtx.BlockGasMeter().ConsumeGas(gasUsed, "crontask task used")
 
 	if err != nil {
 		// Update task status to failed

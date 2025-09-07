@@ -104,6 +104,7 @@
       {"type":"file","name":"cosmos.upgrade.v1beta1.CurrentPlan.json"},
       {"type":"file","name":"cosmos.upgrade.v1beta1.ModuleVersions.json"},
       {"type":"file","name":"cosmos.upgrade.v1beta1.UpgradedConsensusState.json"},
+      {"type":"file","name":"dysonprotocol.crontask.v1.Metrics.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.Params.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.TaskByID.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.TasksAll.json"},
@@ -328,5 +329,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":322}
+  {"type":"report","directories":3,"files":323}
 ]

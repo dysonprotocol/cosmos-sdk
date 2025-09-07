@@ -13,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/runtime"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"dysonprotocol.com/x/crontask"
 	crontasktypes "dysonprotocol.com/x/crontask/types"
@@ -32,6 +33,9 @@ var (
 	TasksByAddressPrefix         = collections.NewPrefix(3)
 	TasksByStatusTimestampPrefix = collections.NewPrefix(4)
 	TasksByStatusGasPricePrefix  = collections.NewPrefix(5)
+
+	// MetricsKey is the key for the metrics singleton
+	MetricsKey = collections.NewPrefix(6)
 
 	// Manual raw KV index prefixes (single-byte for simplicity)
 	indexAddrPrefix      = []byte{0xA1}
@@ -60,6 +64,9 @@ type Keeper struct {
 
 	// Params stores module parameters
 	Params collections.Item[crontasktypes.Params]
+
+	// Metrics stores the aggregate metrics singleton
+	Metrics collections.Item[crontasktypes.Metrics]
 }
 
 // NewKeeper creates a new crontask Keeper instance
@@ -100,6 +107,14 @@ func NewKeeper(
 		codec.CollValue[crontasktypes.Params](cdc),
 	)
 
+	// Create metrics singleton item
+	metrics := collections.NewItem(
+		sb,
+		MetricsKey,
+		"metrics",
+		codec.CollValue[crontasktypes.Metrics](cdc),
+	)
+
 	schema, err := sb.Build()
 	if err != nil {
 		panic(err)
@@ -114,6 +129,7 @@ func NewKeeper(
 		Tasks:            tasks,
 		NextTaskID:       nextTaskID,
 		Params:           params,
+		Metrics:          metrics,
 		Schema:           schema,
 		Logger:           logger,
 		MsgRouterService: msgRouter,
@@ -223,6 +239,42 @@ func (k Keeper) GetModuleParams(ctx context.Context) crontasktypes.Params {
 		ExpiryLimit:      k.config.ExpiryLimit,
 		MaxScheduledTime: k.config.MaxScheduledTime,
 	}
+}
+
+// GetMetrics returns the current metrics singleton. If not set, returns zero-value metrics.
+func (k Keeper) GetMetrics(ctx context.Context) (crontasktypes.Metrics, error) {
+	metrics, err := k.Metrics.Get(ctx)
+	if err != nil {
+		if errors.Is(err, collections.ErrNotFound) {
+			return crontasktypes.Metrics{}, nil
+		}
+		return crontasktypes.Metrics{}, err
+	}
+	return metrics, nil
+}
+
+// SetMetrics persists the metrics singleton.
+func (k Keeper) SetMetrics(ctx context.Context, m crontasktypes.Metrics) error {
+	return k.Metrics.Set(ctx, m)
+}
+
+// AddMetricsForTask updates the metrics singleton with one executed task's data.
+func (k Keeper) AddMetricsForTask(ctx context.Context, t crontasktypes.Task) error {
+	metrics, err := k.GetMetrics(ctx)
+	if err != nil {
+		return err
+	}
+
+	// total gas
+	metrics.ExecutedTotalGas += t.TaskGasConsumed
+
+	// accumulate fees using sdk.Coins helpers
+	metrics.ExecutedTotalFees = sdk.Coins(metrics.ExecutedTotalFees).Add(t.TaskGasFee)
+
+	// counts
+	metrics.ExecutedTaskCount += 1
+
+	return k.SetMetrics(ctx, metrics)
 }
 
 // bigEndian encodes uint64 big-endian

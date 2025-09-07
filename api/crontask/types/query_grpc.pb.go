@@ -25,6 +25,7 @@ const (
 	Query_TasksByStatusGasPrice_FullMethodName  = "/dysonprotocol.crontask.v1.Query/TasksByStatusGasPrice"
 	Query_TasksAll_FullMethodName               = "/dysonprotocol.crontask.v1.Query/TasksAll"
 	Query_Params_FullMethodName                 = "/dysonprotocol.crontask.v1.Query/Params"
+	Query_Metrics_FullMethodName                = "/dysonprotocol.crontask.v1.Query/Metrics"
 )
 
 // QueryClient is the client API for Query service.
@@ -47,6 +48,8 @@ type QueryClient interface {
 	TasksAll(ctx context.Context, in *QueryAllTasksRequest, opts ...grpc.CallOption) (*QueryTasksResponse, error)
 	// Params returns the module parameters
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
+	// Metrics returns last-block crontask metrics
+	Metrics(ctx context.Context, in *QueryMetricsRequest, opts ...grpc.CallOption) (*QueryMetricsResponse, error)
 }
 
 type queryClient struct {
@@ -117,6 +120,16 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 	return out, nil
 }
 
+func (c *queryClient) Metrics(ctx context.Context, in *QueryMetricsRequest, opts ...grpc.CallOption) (*QueryMetricsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryMetricsResponse)
+	err := c.cc.Invoke(ctx, Query_Metrics_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -137,6 +150,8 @@ type QueryServer interface {
 	TasksAll(context.Context, *QueryAllTasksRequest) (*QueryTasksResponse, error)
 	// Params returns the module parameters
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
+	// Metrics returns last-block crontask metrics
+	Metrics(context.Context, *QueryMetricsRequest) (*QueryMetricsResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -164,6 +179,9 @@ func (UnimplementedQueryServer) TasksAll(context.Context, *QueryAllTasksRequest)
 }
 func (UnimplementedQueryServer) Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
+}
+func (UnimplementedQueryServer) Metrics(context.Context, *QueryMetricsRequest) (*QueryMetricsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Metrics not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -294,6 +312,24 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Metrics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryMetricsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Metrics(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Metrics_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Metrics(ctx, req.(*QueryMetricsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +360,10 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Params",
 			Handler:    _Query_Params_Handler,
+		},
+		{
+			MethodName: "Metrics",
+			Handler:    _Query_Metrics_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

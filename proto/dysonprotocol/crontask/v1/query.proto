@@ -58,6 +58,13 @@ service Query {
       get : "/dysonprotocol/crontask/v1/params"
     };
   }
+
+  // Metrics returns last-block crontask metrics
+  rpc Metrics(QueryMetricsRequest) returns (QueryMetricsResponse) {
+    option (google.api.http) = {
+      get : "/dysonprotocol/crontask/v1/metrics"
+    };
+  }
 }
 
 // QueryTaskByIDRequest is the request type for the Query/TaskByID RPC method
@@ -101,6 +108,12 @@ message QueryParamsRequest {}
 
 // QueryParamsResponse is the response type for the Query/Params RPC method
 message QueryParamsResponse { Params params = 1; }
+
+// QueryMetricsRequest is the request type for Metrics
+message QueryMetricsRequest {}
+
+// QueryMetricsResponse carries last-block metrics
+message QueryMetricsResponse { Metrics metrics = 1; }
 
 // Request messages for new query endpoints
 

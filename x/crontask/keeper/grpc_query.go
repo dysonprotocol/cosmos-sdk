@@ -160,6 +160,15 @@ func (q queryServer) TasksAll(ctx context.Context, req *crontasktypes.QueryAllTa
 	return &crontasktypes.QueryTasksResponse{Tasks: tasks, Pagination: pageRes}, nil
 }
 
+// Metrics returns the last-block crontask metrics singleton
+func (q queryServer) Metrics(ctx context.Context, req *crontasktypes.QueryMetricsRequest) (*crontasktypes.QueryMetricsResponse, error) {
+	metrics, err := q.k.GetMetrics(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	return &crontasktypes.QueryMetricsResponse{Metrics: &metrics}, nil
+}
+
 // Params returns the module parameters
 func (q queryServer) Params(ctx context.Context, req *crontasktypes.QueryParamsRequest) (*crontasktypes.QueryParamsResponse, error) {
 	if req == nil {

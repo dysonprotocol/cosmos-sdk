@@ -1983,6 +1983,740 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 	}
 }
 
+var _ protoreflect.List = (*_Metrics_2_list)(nil)
+
+type _Metrics_2_list struct {
+	list *[]*v1beta1.Coin
+}
+
+func (x *_Metrics_2_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_Metrics_2_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_Metrics_2_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*v1beta1.Coin)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_Metrics_2_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*v1beta1.Coin)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_Metrics_2_list) AppendMutable() protoreflect.Value {
+	v := new(v1beta1.Coin)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_Metrics_2_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_Metrics_2_list) NewElement() protoreflect.Value {
+	v := new(v1beta1.Coin)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_Metrics_2_list) IsValid() bool {
+	return x.list != nil
+}
+
+var (
+	md_Metrics                             protoreflect.MessageDescriptor
+	fd_Metrics_executed_total_gas          protoreflect.FieldDescriptor
+	fd_Metrics_executed_total_fees         protoreflect.FieldDescriptor
+	fd_Metrics_executed_task_count         protoreflect.FieldDescriptor
+	fd_Metrics_pending_task_count          protoreflect.FieldDescriptor
+	fd_Metrics_pending_gas_requested       protoreflect.FieldDescriptor
+	fd_Metrics_pending_oldest_scheduled_ts protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_crontask_v1_crontask_proto_init()
+	md_Metrics = File_dysonprotocol_crontask_v1_crontask_proto.Messages().ByName("Metrics")
+	fd_Metrics_executed_total_gas = md_Metrics.Fields().ByName("executed_total_gas")
+	fd_Metrics_executed_total_fees = md_Metrics.Fields().ByName("executed_total_fees")
+	fd_Metrics_executed_task_count = md_Metrics.Fields().ByName("executed_task_count")
+	fd_Metrics_pending_task_count = md_Metrics.Fields().ByName("pending_task_count")
+	fd_Metrics_pending_gas_requested = md_Metrics.Fields().ByName("pending_gas_requested")
+	fd_Metrics_pending_oldest_scheduled_ts = md_Metrics.Fields().ByName("pending_oldest_scheduled_ts")
+}
+
+var _ protoreflect.Message = (*fastReflection_Metrics)(nil)
+
+type fastReflection_Metrics Metrics
+
+func (x *Metrics) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_Metrics)(x)
+}
+
+func (x *Metrics) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_crontask_v1_crontask_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_Metrics_messageType fastReflection_Metrics_messageType
+var _ protoreflect.MessageType = fastReflection_Metrics_messageType{}
+
+type fastReflection_Metrics_messageType struct{}
+
+func (x fastReflection_Metrics_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_Metrics)(nil)
+}
+func (x fastReflection_Metrics_messageType) New() protoreflect.Message {
+	return new(fastReflection_Metrics)
+}
+func (x fastReflection_Metrics_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_Metrics
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_Metrics) Descriptor() protoreflect.MessageDescriptor {
+	return md_Metrics
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_Metrics) Type() protoreflect.MessageType {
+	return _fastReflection_Metrics_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_Metrics) New() protoreflect.Message {
+	return new(fastReflection_Metrics)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_Metrics) Interface() protoreflect.ProtoMessage {
+	return (*Metrics)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_Metrics) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.ExecutedTotalGas != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ExecutedTotalGas)
+		if !f(fd_Metrics_executed_total_gas, value) {
+			return
+		}
+	}
+	if len(x.ExecutedTotalFees) != 0 {
+		value := protoreflect.ValueOfList(&_Metrics_2_list{list: &x.ExecutedTotalFees})
+		if !f(fd_Metrics_executed_total_fees, value) {
+			return
+		}
+	}
+	if x.ExecutedTaskCount != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ExecutedTaskCount)
+		if !f(fd_Metrics_executed_task_count, value) {
+			return
+		}
+	}
+	if x.PendingTaskCount != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.PendingTaskCount)
+		if !f(fd_Metrics_pending_task_count, value) {
+			return
+		}
+	}
+	if x.PendingGasRequested != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.PendingGasRequested)
+		if !f(fd_Metrics_pending_gas_requested, value) {
+			return
+		}
+	}
+	if x.PendingOldestScheduledTs != int64(0) {
+		value := protoreflect.ValueOfInt64(x.PendingOldestScheduledTs)
+		if !f(fd_Metrics_pending_oldest_scheduled_ts, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_Metrics) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_gas":
+		return x.ExecutedTotalGas != uint64(0)
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_fees":
+		return len(x.ExecutedTotalFees) != 0
+	case "dysonprotocol.crontask.v1.Metrics.executed_task_count":
+		return x.ExecutedTaskCount != uint64(0)
+	case "dysonprotocol.crontask.v1.Metrics.pending_task_count":
+		return x.PendingTaskCount != uint64(0)
+	case "dysonprotocol.crontask.v1.Metrics.pending_gas_requested":
+		return x.PendingGasRequested != uint64(0)
+	case "dysonprotocol.crontask.v1.Metrics.pending_oldest_scheduled_ts":
+		return x.PendingOldestScheduledTs != int64(0)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Metrics"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.Metrics does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_Metrics) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_gas":
+		x.ExecutedTotalGas = uint64(0)
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_fees":
+		x.ExecutedTotalFees = nil
+	case "dysonprotocol.crontask.v1.Metrics.executed_task_count":
+		x.ExecutedTaskCount = uint64(0)
+	case "dysonprotocol.crontask.v1.Metrics.pending_task_count":
+		x.PendingTaskCount = uint64(0)
+	case "dysonprotocol.crontask.v1.Metrics.pending_gas_requested":
+		x.PendingGasRequested = uint64(0)
+	case "dysonprotocol.crontask.v1.Metrics.pending_oldest_scheduled_ts":
+		x.PendingOldestScheduledTs = int64(0)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Metrics"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.Metrics does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_Metrics) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_gas":
+		value := x.ExecutedTotalGas
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_fees":
+		if len(x.ExecutedTotalFees) == 0 {
+			return protoreflect.ValueOfList(&_Metrics_2_list{})
+		}
+		listValue := &_Metrics_2_list{list: &x.ExecutedTotalFees}
+		return protoreflect.ValueOfList(listValue)
+	case "dysonprotocol.crontask.v1.Metrics.executed_task_count":
+		value := x.ExecutedTaskCount
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.crontask.v1.Metrics.pending_task_count":
+		value := x.PendingTaskCount
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.crontask.v1.Metrics.pending_gas_requested":
+		value := x.PendingGasRequested
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.crontask.v1.Metrics.pending_oldest_scheduled_ts":
+		value := x.PendingOldestScheduledTs
+		return protoreflect.ValueOfInt64(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Metrics"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.Metrics does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_Metrics) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_gas":
+		x.ExecutedTotalGas = value.Uint()
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_fees":
+		lv := value.List()
+		clv := lv.(*_Metrics_2_list)
+		x.ExecutedTotalFees = *clv.list
+	case "dysonprotocol.crontask.v1.Metrics.executed_task_count":
+		x.ExecutedTaskCount = value.Uint()
+	case "dysonprotocol.crontask.v1.Metrics.pending_task_count":
+		x.PendingTaskCount = value.Uint()
+	case "dysonprotocol.crontask.v1.Metrics.pending_gas_requested":
+		x.PendingGasRequested = value.Uint()
+	case "dysonprotocol.crontask.v1.Metrics.pending_oldest_scheduled_ts":
+		x.PendingOldestScheduledTs = value.Int()
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Metrics"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.Metrics does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_Metrics) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_fees":
+		if x.ExecutedTotalFees == nil {
+			x.ExecutedTotalFees = []*v1beta1.Coin{}
+		}
+		value := &_Metrics_2_list{list: &x.ExecutedTotalFees}
+		return protoreflect.ValueOfList(value)
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_gas":
+		panic(fmt.Errorf("field executed_total_gas of message dysonprotocol.crontask.v1.Metrics is not mutable"))
+	case "dysonprotocol.crontask.v1.Metrics.executed_task_count":
+		panic(fmt.Errorf("field executed_task_count of message dysonprotocol.crontask.v1.Metrics is not mutable"))
+	case "dysonprotocol.crontask.v1.Metrics.pending_task_count":
+		panic(fmt.Errorf("field pending_task_count of message dysonprotocol.crontask.v1.Metrics is not mutable"))
+	case "dysonprotocol.crontask.v1.Metrics.pending_gas_requested":
+		panic(fmt.Errorf("field pending_gas_requested of message dysonprotocol.crontask.v1.Metrics is not mutable"))
+	case "dysonprotocol.crontask.v1.Metrics.pending_oldest_scheduled_ts":
+		panic(fmt.Errorf("field pending_oldest_scheduled_ts of message dysonprotocol.crontask.v1.Metrics is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Metrics"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.Metrics does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_Metrics) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_gas":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.crontask.v1.Metrics.executed_total_fees":
+		list := []*v1beta1.Coin{}
+		return protoreflect.ValueOfList(&_Metrics_2_list{list: &list})
+	case "dysonprotocol.crontask.v1.Metrics.executed_task_count":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.crontask.v1.Metrics.pending_task_count":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.crontask.v1.Metrics.pending_gas_requested":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.crontask.v1.Metrics.pending_oldest_scheduled_ts":
+		return protoreflect.ValueOfInt64(int64(0))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.Metrics"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.Metrics does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_Metrics) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.crontask.v1.Metrics", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_Metrics) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_Metrics) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_Metrics) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_Metrics) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*Metrics)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.ExecutedTotalGas != 0 {
+			n += 1 + runtime.Sov(uint64(x.ExecutedTotalGas))
+		}
+		if len(x.ExecutedTotalFees) > 0 {
+			for _, e := range x.ExecutedTotalFees {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if x.ExecutedTaskCount != 0 {
+			n += 1 + runtime.Sov(uint64(x.ExecutedTaskCount))
+		}
+		if x.PendingTaskCount != 0 {
+			n += 1 + runtime.Sov(uint64(x.PendingTaskCount))
+		}
+		if x.PendingGasRequested != 0 {
+			n += 1 + runtime.Sov(uint64(x.PendingGasRequested))
+		}
+		if x.PendingOldestScheduledTs != 0 {
+			n += 1 + runtime.Sov(uint64(x.PendingOldestScheduledTs))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*Metrics)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.PendingOldestScheduledTs != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.PendingOldestScheduledTs))
+			i--
+			dAtA[i] = 0x60
+		}
+		if x.PendingGasRequested != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.PendingGasRequested))
+			i--
+			dAtA[i] = 0x58
+		}
+		if x.PendingTaskCount != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.PendingTaskCount))
+			i--
+			dAtA[i] = 0x50
+		}
+		if x.ExecutedTaskCount != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ExecutedTaskCount))
+			i--
+			dAtA[i] = 0x18
+		}
+		if len(x.ExecutedTotalFees) > 0 {
+			for iNdEx := len(x.ExecutedTotalFees) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.ExecutedTotalFees[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x12
+			}
+		}
+		if x.ExecutedTotalGas != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ExecutedTotalGas))
+			i--
+			dAtA[i] = 0x8
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*Metrics)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: Metrics: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: Metrics: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ExecutedTotalGas", wireType)
+				}
+				x.ExecutedTotalGas = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ExecutedTotalGas |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ExecutedTotalFees", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ExecutedTotalFees = append(x.ExecutedTotalFees, &v1beta1.Coin{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ExecutedTotalFees[len(x.ExecutedTotalFees)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 3:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ExecutedTaskCount", wireType)
+				}
+				x.ExecutedTaskCount = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ExecutedTaskCount |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 10:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field PendingTaskCount", wireType)
+				}
+				x.PendingTaskCount = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.PendingTaskCount |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 11:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field PendingGasRequested", wireType)
+				}
+				x.PendingGasRequested = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.PendingGasRequested |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 12:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field PendingOldestScheduledTs", wireType)
+				}
+				x.PendingOldestScheduledTs = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.PendingOldestScheduledTs |= int64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -2233,6 +2967,89 @@ func (x *Params) GetCleanUpTime() int64 {
 	return 0
 }
 
+// Metrics tracks aggregate statistics for crontask executions
+type Metrics struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Sum of actual gas consumed by executed tasks
+	ExecutedTotalGas uint64 `protobuf:"varint,1,opt,name=executed_total_gas,json=executedTotalGas,proto3" json:"executed_total_gas,omitempty"`
+	// Sum of fees charged for executed tasks (per denom)
+	ExecutedTotalFees []*v1beta1.Coin `protobuf:"bytes,2,rep,name=executed_total_fees,json=executedTotalFees,proto3" json:"executed_total_fees,omitempty"`
+	// Number of executed tasks (DONE or FAILED via execution path)
+	ExecutedTaskCount uint64 `protobuf:"varint,3,opt,name=executed_task_count,json=executedTaskCount,proto3" json:"executed_task_count,omitempty"`
+	// Pending-queue metrics captured at block start
+	// Number of tasks in PENDING at BeginBlock
+	PendingTaskCount uint64 `protobuf:"varint,10,opt,name=pending_task_count,json=pendingTaskCount,proto3" json:"pending_task_count,omitempty"`
+	// Sum of task_gas_limit across PENDING at BeginBlock
+	PendingGasRequested uint64 `protobuf:"varint,11,opt,name=pending_gas_requested,json=pendingGasRequested,proto3" json:"pending_gas_requested,omitempty"`
+	// Minimum scheduled_timestamp among PENDING at BeginBlock (0 if none)
+	PendingOldestScheduledTs int64 `protobuf:"varint,12,opt,name=pending_oldest_scheduled_ts,json=pendingOldestScheduledTs,proto3" json:"pending_oldest_scheduled_ts,omitempty"` // (removed) pending_highest_gas_price
+}
+
+func (x *Metrics) Reset() {
+	*x = Metrics{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_crontask_v1_crontask_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Metrics) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Metrics) ProtoMessage() {}
+
+// Deprecated: Use Metrics.ProtoReflect.Descriptor instead.
+func (*Metrics) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_crontask_v1_crontask_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Metrics) GetExecutedTotalGas() uint64 {
+	if x != nil {
+		return x.ExecutedTotalGas
+	}
+	return 0
+}
+
+func (x *Metrics) GetExecutedTotalFees() []*v1beta1.Coin {
+	if x != nil {
+		return x.ExecutedTotalFees
+	}
+	return nil
+}
+
+func (x *Metrics) GetExecutedTaskCount() uint64 {
+	if x != nil {
+		return x.ExecutedTaskCount
+	}
+	return 0
+}
+
+func (x *Metrics) GetPendingTaskCount() uint64 {
+	if x != nil {
+		return x.PendingTaskCount
+	}
+	return 0
+}
+
+func (x *Metrics) GetPendingGasRequested() uint64 {
+	if x != nil {
+		return x.PendingGasRequested
+	}
+	return 0
+}
+
+func (x *Metrics) GetPendingOldestScheduledTs() int64 {
+	if x != nil {
+		return x.PendingOldestScheduledTs
+	}
+	return 0
+}
+
 var File_dysonprotocol_crontask_v1_crontask_proto protoreflect.FileDescriptor
 
 var file_dysonprotocol_crontask_v1_crontask_proto_rawDesc = []byte{
@@ -2309,10 +3126,36 @@ var file_dysonprotocol_crontask_v1_crontask_proto_rawDesc = []byte{
 	0x52, 0x10, 0x6d, 0x61, 0x78, 0x53, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x64, 0x54, 0x69,
 	0x6d, 0x65, 0x12, 0x22, 0x0a, 0x0d, 0x63, 0x6c, 0x65, 0x61, 0x6e, 0x5f, 0x75, 0x70, 0x5f, 0x74,
 	0x69, 0x6d, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0b, 0x63, 0x6c, 0x65, 0x61, 0x6e,
-	0x55, 0x70, 0x54, 0x69, 0x6d, 0x65, 0x42, 0x24, 0x5a, 0x22, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x63, 0x72,
-	0x6f, 0x6e, 0x74, 0x61, 0x73, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x55, 0x70, 0x54, 0x69, 0x6d, 0x65, 0x22, 0x9c, 0x03, 0x0a, 0x07, 0x4d, 0x65, 0x74, 0x72, 0x69,
+	0x63, 0x73, 0x12, 0x2c, 0x0a, 0x12, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x5f, 0x74,
+	0x6f, 0x74, 0x61, 0x6c, 0x5f, 0x67, 0x61, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x10,
+	0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x47, 0x61, 0x73,
+	0x12, 0x91, 0x01, 0x0a, 0x13, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x5f, 0x74, 0x6f,
+	0x74, 0x61, 0x6c, 0x5f, 0x66, 0x65, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19,
+	0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62,
+	0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x46, 0xc8, 0xde, 0x1f, 0x00, 0xaa,
+	0xdf, 0x1f, 0x28, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6f,
+	0x73, 0x6d, 0x6f, 0x73, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2d, 0x73, 0x64, 0x6b, 0x2f,
+	0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x9a, 0xe7, 0xb0, 0x2a, 0x0c,
+	0x6c, 0x65, 0x67, 0x61, 0x63, 0x79, 0x5f, 0x63, 0x6f, 0x69, 0x6e, 0x73, 0xa8, 0xe7, 0xb0, 0x2a,
+	0x01, 0x52, 0x11, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x54, 0x6f, 0x74, 0x61, 0x6c,
+	0x46, 0x65, 0x65, 0x73, 0x12, 0x2e, 0x0a, 0x13, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64,
+	0x5f, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x04, 0x52, 0x11, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x54, 0x61, 0x73, 0x6b, 0x43,
+	0x6f, 0x75, 0x6e, 0x74, 0x12, 0x2c, 0x0a, 0x12, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f,
+	0x74, 0x61, 0x73, 0x6b, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x04,
+	0x52, 0x10, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x54, 0x61, 0x73, 0x6b, 0x43, 0x6f, 0x75,
+	0x6e, 0x74, 0x12, 0x32, 0x0a, 0x15, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x67, 0x61,
+	0x73, 0x5f, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x64, 0x18, 0x0b, 0x20, 0x01, 0x28,
+	0x04, 0x52, 0x13, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x47, 0x61, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x65, 0x64, 0x12, 0x3d, 0x0a, 0x1b, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e,
+	0x67, 0x5f, 0x6f, 0x6c, 0x64, 0x65, 0x73, 0x74, 0x5f, 0x73, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c,
+	0x65, 0x64, 0x5f, 0x74, 0x73, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x03, 0x52, 0x18, 0x70, 0x65, 0x6e,
+	0x64, 0x69, 0x6e, 0x67, 0x4f, 0x6c, 0x64, 0x65, 0x73, 0x74, 0x53, 0x63, 0x68, 0x65, 0x64, 0x75,
+	0x6c, 0x65, 0x64, 0x54, 0x73, 0x42, 0x24, 0x5a, 0x22, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x63, 0x72, 0x6f,
+	0x6e, 0x74, 0x61, 0x73, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2327,24 +3170,26 @@ func file_dysonprotocol_crontask_v1_crontask_proto_rawDescGZIP() []byte {
 	return file_dysonprotocol_crontask_v1_crontask_proto_rawDescData
 }
 
-var file_dysonprotocol_crontask_v1_crontask_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_dysonprotocol_crontask_v1_crontask_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_dysonprotocol_crontask_v1_crontask_proto_goTypes = []interface{}{
 	(*Task)(nil),            // 0: dysonprotocol.crontask.v1.Task
 	(*Params)(nil),          // 1: dysonprotocol.crontask.v1.Params
-	(*v1beta1.DecCoin)(nil), // 2: cosmos.base.v1beta1.DecCoin
-	(*v1beta1.Coin)(nil),    // 3: cosmos.base.v1beta1.Coin
-	(*anypb.Any)(nil),       // 4: google.protobuf.Any
+	(*Metrics)(nil),         // 2: dysonprotocol.crontask.v1.Metrics
+	(*v1beta1.DecCoin)(nil), // 3: cosmos.base.v1beta1.DecCoin
+	(*v1beta1.Coin)(nil),    // 4: cosmos.base.v1beta1.Coin
+	(*anypb.Any)(nil),       // 5: google.protobuf.Any
 }
 var file_dysonprotocol_crontask_v1_crontask_proto_depIdxs = []int32{
-	2, // 0: dysonprotocol.crontask.v1.Task.task_gas_price:type_name -> cosmos.base.v1beta1.DecCoin
-	3, // 1: dysonprotocol.crontask.v1.Task.task_gas_fee:type_name -> cosmos.base.v1beta1.Coin
-	4, // 2: dysonprotocol.crontask.v1.Task.msgs:type_name -> google.protobuf.Any
-	4, // 3: dysonprotocol.crontask.v1.Task.msg_results:type_name -> google.protobuf.Any
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	3, // 0: dysonprotocol.crontask.v1.Task.task_gas_price:type_name -> cosmos.base.v1beta1.DecCoin
+	4, // 1: dysonprotocol.crontask.v1.Task.task_gas_fee:type_name -> cosmos.base.v1beta1.Coin
+	5, // 2: dysonprotocol.crontask.v1.Task.msgs:type_name -> google.protobuf.Any
+	5, // 3: dysonprotocol.crontask.v1.Task.msg_results:type_name -> google.protobuf.Any
+	4, // 4: dysonprotocol.crontask.v1.Metrics.executed_total_fees:type_name -> cosmos.base.v1beta1.Coin
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_dysonprotocol_crontask_v1_crontask_proto_init() }
@@ -2377,6 +3222,18 @@ func file_dysonprotocol_crontask_v1_crontask_proto_init() {
 				return nil
 			}
 		}
+		file_dysonprotocol_crontask_v1_crontask_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Metrics); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -2384,7 +3241,7 @@ func file_dysonprotocol_crontask_v1_crontask_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dysonprotocol_crontask_v1_crontask_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
