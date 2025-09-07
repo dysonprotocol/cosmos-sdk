@@ -3,6 +3,9 @@ package dysonprotocol.crontask.v1;
 
 option go_package = "dysonprotocol.com/x/crontask/types";
 
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+
 // EventTaskCreated is emitted when a new task is created
 message EventTaskCreated {
   uint64 task_id = 1;
@@ -48,4 +51,22 @@ message EventTaskPurged {
   uint64 task_id = 1;
   string status = 2;
   string creator = 3;
+}
+
+// EventCrontaskMetrics is emitted once per block with last-block metrics
+// snapshot
+message EventCrontaskMetrics {
+  // executed totals
+  uint64 executed_total_gas = 1;
+  repeated cosmos.base.v1beta1.Coin executed_total_fees = 2
+      [ (gogoproto.nullable) = false ];
+  uint64 executed_task_count = 3;
+
+  // pending snapshot at BeginBlock
+  uint64 pending_task_count = 10;
+  uint64 pending_gas_requested = 11;
+  int64 pending_oldest_scheduled_ts = 12;
+  // sum of task_gas_fee across all PENDING tasks at BeginBlock
+  repeated cosmos.base.v1beta1.Coin pending_total_gas_fees = 13
+      [ (gogoproto.nullable) = false ];
 }

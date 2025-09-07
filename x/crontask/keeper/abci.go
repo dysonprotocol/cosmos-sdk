@@ -38,34 +38,22 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 	k.moveDueTasks(ctx, currentTime)
 
 	// 3. process PENDING tasks ordered by gas price (desc)
-	// Also compute pending-queue metrics at BeginBlock
 	// Collect IDs first, then close iterator before mutating store for determinism
 	iter := k.iterateStatusGas(ctx, crontasktypes.TaskStatus_PENDING, true)
 
 	var pendingIDs []uint64
-	var pendingCount uint64 = 0
-	var pendingGasRequested uint64 = 0
-	var pendingOldestScheduledTs int64 = 0
-	// removed pendingHighestGasPrice metric
 	for ; iter.Valid(); iter.Next() {
 		key := iter.Key()
 		id := binary.BigEndian.Uint64(key[len(key)-8:])
 		pendingIDs = append(pendingIDs, id)
-
-		// gather pending metrics
-		t, getErr := k.GetTask(ctx, id)
-		if getErr != nil {
-			k.Logger.Error("failed to load task for pending metrics", "task_id", id, "error", getErr)
-			continue
-		}
-		pendingCount++
-		pendingGasRequested += t.TaskGasLimit
-		if pendingOldestScheduledTs == 0 || t.ScheduledTimestamp < pendingOldestScheduledTs {
-			pendingOldestScheduledTs = t.ScheduledTimestamp
-		}
-		// no highest gas price metric
 	}
 	iter.Close()
+
+	// pending metrics accumulators for tasks that remain pending into next block
+	var pendingCount uint64 = 0
+	var pendingGasRequested uint64 = 0
+	var pendingOldestScheduledTs int64 = 0
+	var pendingTotalFees sdk.Coins
 
 	// Execute each pending task respecting block gas limit
 	for _, taskId := range pendingIDs {
@@ -113,6 +101,13 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 				"remaining_module_gas", remainingModule,
 				"module_block_gas_limit", params.BlockGasLimit,
 			)
+			// count towards next block's pending snapshot
+			pendingCount++
+			pendingGasRequested += task.TaskGasLimit
+			if pendingOldestScheduledTs == 0 || task.ScheduledTimestamp < pendingOldestScheduledTs {
+				pendingOldestScheduledTs = task.ScheduledTimestamp
+			}
+			pendingTotalFees = pendingTotalFees.Add(task.TaskGasFee)
 			continue
 		}
 
@@ -200,6 +195,21 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) error {
 	}
 	if err := k.SetMetrics(ctx, metrics); err != nil {
 		k.Logger.Error("failed to persist last-block metrics", "error", err)
+	}
+
+	// Emit metrics event for observability each block
+	if emitErr := ctx.EventManager().EmitTypedEvent(
+		&crontasktypes.EventCrontaskMetrics{
+			ExecutedTotalGas:         cronGasUsed,
+			ExecutedTotalFees:        []sdk.Coin(blockTotalFees),
+			ExecutedTaskCount:        uint64(selectedCount),
+			PendingTaskCount:         pendingCount,
+			PendingGasRequested:      pendingGasRequested,
+			PendingOldestScheduledTs: pendingOldestScheduledTs,
+			PendingTotalGasFees:      []sdk.Coin(pendingTotalFees),
+		},
+	); emitErr != nil {
+		k.Logger.Error("failed to emit crontask metrics event", "error", emitErr)
 	}
 	// 4. clean up old tasks beyond retention window
 	if err := k.removeOldTasks(ctx, currentTime); err != nil {
