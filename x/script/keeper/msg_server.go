@@ -20,8 +20,11 @@ import (
 var _ scripttypes.MsgServer = Keeper{}
 
 func (k Keeper) UpdateScript(ctx context.Context, msg *scripttypes.MsgUpdateScript) (*scripttypes.MsgUpdateScriptResponse, error) {
+
 	var script scripttypes.Script
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	sdkCtx.GasMeter().ConsumeGas(1_000_000, "script update script base cost")
+
 	exists, err := k.ScriptMap.Has(ctx, msg.Address)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to check if script exists")
@@ -203,6 +206,9 @@ func (k Keeper) ExecScript(ctx context.Context, msg *scripttypes.MsgExec) (*scri
 }
 
 func (k Keeper) CreateNewScript(ctx context.Context, msg *scripttypes.MsgCreateNewScript) (*scripttypes.MsgCreateNewScriptResponse, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	sdkCtx.GasMeter().ConsumeGas(1_000_000, "script create new script base cost")
+
 	// Create a deterministic address from the creator's address and the script content
 	creatorBytes, err := k.addressCodec.StringToBytes(msg.CreatorAddress)
 	if err != nil {
@@ -243,9 +249,6 @@ func (k Keeper) CreateNewScript(ctx context.Context, msg *scripttypes.MsgCreateN
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to set script")
 	}
-
-	// Create an authz grant to allow the creator to update this script
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
 	// Create a generic authorization for MsgUpdateScript
 	// This allows the creator to update the script in the future
