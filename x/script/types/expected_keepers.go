@@ -42,8 +42,8 @@ type NameserviceKeeper interface {
 
 // BranchKeeper defines the expected interface for branched execution with gas limit
 type BranchKeeper interface {
-	// ExecuteWithGasLimit runs fn with a specific gas limit returning the gas used and any error
-	ExecuteWithGasLimit(ctx context.Context, gasLimit uint64, fn func(ctx context.Context) error) (uint64, error)
+	// ExecuteWithGasLimit runs fn with a specific gas limit returning gas used, a write function, and any error
+	ExecuteWithGasLimit(ctx context.Context, gasLimit uint64, fn func(ctx context.Context) error) (uint64, func(), error)
 }
 
 // AuthzKeeper defines the expected interface for the authz module

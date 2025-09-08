@@ -50,8 +50,8 @@ type BranchService struct {
 
 var rpcRe = regexp.MustCompile(`^(\/.+\.Query)([^/]+)Request$`)
 
-// ExecuteWithGasLimit runs a function with a specific gas limit and returns gas used and any error
-func (bs *BranchService) ExecuteWithGasLimit(ctx context.Context, gasLimit uint64, fn func(ctx context.Context) error) (uint64, error) {
+// ExecuteWithGasLimit runs a function with a specific gas limit and returns gas used and a write func
+func (bs *BranchService) ExecuteWithGasLimit(ctx context.Context, gasLimit uint64, fn func(ctx context.Context) error) (uint64, func(), error) {
 	// Create a cached context with a gas meter with the specified limit
 	sdkCtx := bs.sdkCtx.WithGasMeter(storetypes.NewGasMeter(gasLimit))
 
@@ -70,12 +70,7 @@ func (bs *BranchService) ExecuteWithGasLimit(ctx context.Context, gasLimit uint6
 	// Calculate the amount of gas consumed during execution
 	gasUsed := cacheCtx.GasMeter().GasConsumed() - gasConsumedBefore
 
-	// If execution was successful, write state changes back to the parent context
-	if err == nil {
-		write()
-	}
-
-	return gasUsed, err
+	return gasUsed, write, err
 }
 
 type Keeper struct {
@@ -120,6 +115,7 @@ type MsgRequest struct {
 type QueryRequest struct {
 	JsonQuery   string `protobuf:"bytes,2,opt,name=Jsonquery,proto3" json:"json_query,omitempty"`
 	QueryHeight int64  `protobuf:"bytes,3,opt,name=QueryHeight,proto3" json:"query_height,omitempty"`
+	GasLimit    uint64 `json:"gas_limit"`
 }
 
 // NewKeeper creates a new script keeper.
@@ -317,6 +313,9 @@ func ConvertRPCPath(in string) string {
 	if m := rpcRe.FindStringSubmatch(in); m != nil {
 		return m[1] + "/" + m[2]
 	}
+	if in == "/dysonprotocol.script.v1.RunScript" {
+		return "/dysonprotocol.script.v1.Query/Run"
+	}
 	return in
 }
 
@@ -366,7 +365,8 @@ func (k Keeper) HandleJSONAnyQuery(ctx context.Context, req *QueryRequest) (stri
 	}
 
 	// Unwrap the SDK context
-	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	parentCtx := sdk.UnwrapSDKContext(ctx)
+	sdkCtx := parentCtx
 
 	// Handle historical queries if QueryHeight is specified
 	if req.QueryHeight != 0 {
@@ -384,9 +384,10 @@ func (k Keeper) HandleJSONAnyQuery(ctx context.Context, req *QueryRequest) (stri
 			return "", cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Max relative historical query height is %d blocks in the past", maxRelativeHistoricalBlocks)
 		}
 
-		sdkCtx, err = k.App.CreateQueryContextWithCheckHeader(req.QueryHeight, false, false)
-		if err != nil {
-			return "", err
+		var err2 error
+		sdkCtx, err2 = k.App.CreateQueryContextWithCheckHeader(req.QueryHeight, false, false)
+		if err2 != nil {
+			return "", err2
 		}
 	}
 
@@ -401,20 +402,25 @@ func (k Keeper) HandleJSONAnyQuery(ctx context.Context, req *QueryRequest) (stri
 		Data: binaryData,
 	}
 
-	// For historical queries, use the historical context directly
-	// For current queries, use a cached context to avoid state changes
-	var queryCtx sdk.Context
-	if req.QueryHeight != 0 {
-		// Historical query - use the historical context directly
-		queryCtx = sdkCtx
-	} else {
-		// Current query - use cached context to avoid state changes
-		queryCtx, _ = sdkCtx.CacheContext()
+	remaining := parentCtx.GasMeter().Limit() - parentCtx.GasMeter().GasConsumed()
+	childLimit := req.GasLimit
+	if childLimit == 0 || childLimit > remaining {
+		childLimit = remaining
 	}
 
-	respQuery, err := handler(queryCtx, &abciReqQuery)
-	if err != nil {
-		return "", cosmossdkerrors.Wrapf(err, "failed to execute query; message %v", req.JsonQuery)
+	branch := &BranchService{sdkCtx: sdkCtx}
+	var respQuery *abci.ResponseQuery
+	gasUsed, _, execErr := branch.ExecuteWithGasLimit(ctx, childLimit, func(childCtx context.Context) error {
+		qctx := sdk.UnwrapSDKContext(childCtx)
+		var derr error
+		respQuery, derr = handler(qctx, &abciReqQuery)
+		return derr
+	})
+
+	// Always charge parent
+	parentCtx.GasMeter().ConsumeGas(gasUsed, "nested _query gas")
+	if execErr != nil {
+		return "", cosmossdkerrors.Wrapf(execErr, "failed to execute query; message %v", req.JsonQuery)
 	}
 
 	// unmarshal the respQuery.Value into the respMsg
@@ -429,7 +435,6 @@ func (k Keeper) HandleJSONAnyQuery(ctx context.Context, req *QueryRequest) (stri
 		return "", cosmossdkerrors.Wrapf(err, "failed to marshal response")
 	}
 
-	// The cached context is automatically discarded as we don't call write()
 	return string(respJSON), nil
 }
 
@@ -443,31 +448,32 @@ func (k Keeper) HandleJSONAnyMsg(ctx context.Context, scriptAddress sdk.AccAddre
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
-	// IMPORTANT: Check for nil or zero gas limit
-	gasLimit := req.GasLimit
-	if gasLimit == 0 {
-		gasLimit = sdkCtx.GasMeter().Limit() - sdkCtx.GasMeter().GasConsumed()
+	// Determine child gas limit (default to parent's remaining)
+	remaining := sdkCtx.GasMeter().Limit() - sdkCtx.GasMeter().GasConsumed()
+	childLimit := req.GasLimit
+	if childLimit == 0 || childLimit > remaining {
+		childLimit = remaining
 	}
 
-	// Create a gas meter safely
-	gasMeter := storetypes.NewGasMeter(gasLimit)
+	branch := &BranchService{sdkCtx: sdkCtx}
 
-	// Create a cached context with the gas meter
-	cacheCtx := sdkCtx.WithGasMeter(gasMeter)
-	cacheCtx, write := cacheCtx.CacheContext()
+	gasUsed, write, execErr := branch.ExecuteWithGasLimit(ctx, childLimit, func(childCtx context.Context) error {
+		childSdk := sdk.UnwrapSDKContext(childCtx)
+		var derr error
+		respJSONStr, derr = k.dispatchJSONMsg(childSdk, scriptAddress, req.JsonMsg)
+		return derr
+	})
 
-	respJSONStr, err = k.dispatchJSONMsg(cacheCtx, scriptAddress, req.JsonMsg)
+	// Always charge parent meter for child usage
+	sdkCtx.GasMeter().ConsumeGas(gasUsed, "nested _msg gas")
+	gasused = gasUsed
 
-	// Get gas consumed from the new meter
-	gasused = cacheCtx.GasMeter().GasConsumed()
-
-	// Only write if successful
-	if err == nil {
-
+	// Commit state only if successful
+	if execErr == nil {
 		write()
 	}
 
-	return respJSONStr, gasused, err
+	return respJSONStr, gasused, execErr
 }
 
 // DispatchMessage dispatches a message for execution and returns the result

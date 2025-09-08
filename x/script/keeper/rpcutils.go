@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"math/bits"
 	"net/http"
 
 	scriptv1 "dysonprotocol.com/api/script/types"
@@ -89,8 +90,6 @@ func (rpcservice *RpcService) ConsumeGas(_ *http.Request, msg *ConsumeGasRequest
 	gasMeter := sdkCtx.GasMeter()
 
 	gasLimit := gasMeter.Limit()
-	gasConsumed := gasMeter.GasConsumed()
-	gasRemaining := gasMeter.GasRemaining()
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -103,7 +102,6 @@ func (rpcservice *RpcService) ConsumeGas(_ *http.Request, msg *ConsumeGasRequest
 				)
 				rpcservice.k.Logger(rpcservice.ctx).Error("Consumegas script out of gas", "gasLimit", gasLimit, "error", r)
 
-				response = nil
 			} else {
 				// Try to convert to error, but don't assume it implements error interface
 				if rerr, ok := r.(error); ok {
@@ -113,13 +111,14 @@ func (rpcservice *RpcService) ConsumeGas(_ *http.Request, msg *ConsumeGasRequest
 				}
 			}
 		} else {
-			if gasConsumed > gasLimit {
+			currentGasConsumed := gasMeter.GasConsumed()
+			if currentGasConsumed > gasLimit {
 				err = cosmossdkerrors.Wrapf(sdkerrors.ErrOutOfGas,
 					"gasConsumed [%d] > gasLimit [%d] script out of gas, gasLimit: %d: %s",
-					gasConsumed, gasLimit, gasLimit,
+					currentGasConsumed, gasLimit, gasLimit,
 					r,
 				)
-				rpcservice.k.Logger(rpcservice.ctx).Error("gasConsumed > gasLimit script out of gas", "gasConsumed", gasConsumed, "gasLimit", gasLimit, "error", r)
+				rpcservice.k.Logger(rpcservice.ctx).Error("gasConsumed > gasLimit script out of gas", "gasConsumed", currentGasConsumed, "gasLimit", gasLimit, "error", r)
 				response = nil
 			}
 		}
@@ -134,12 +133,22 @@ func (rpcservice *RpcService) ConsumeGas(_ *http.Request, msg *ConsumeGasRequest
 		depth = 1
 	}
 
-	// Recursive chain calls are exponentially more expensive
-	//gasUsed := uint64(float64(msg.Amount) * math.Pow(2, float64(depth-1)))
-	gasUsed := uint64(msg.Amount) * uint64(depth)
+	// Validate and compute gasUsed with overflow checks
+	if msg.Amount < 0 {
+		return cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "amount must be non-negative")
+	}
+	amountU := uint64(msg.Amount)
+	depthU := uint64(depth)
+	if hi, _ := bits.Mul64(amountU, depthU); hi != 0 {
+		return cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "gasUsed overflow")
+	}
+	gasUsed := amountU * depthU
 	fmt.Printf("gasUsed: %v, currentDepth: %v\n", gasUsed, depth)
 	gasMeter.ConsumeGas(gasUsed, "gasUsed")
 	//fmt.Printf("gasUsed: %v\n", gasUsed)
+
+	gasConsumed := gasMeter.GasConsumed()
+	gasRemaining := gasMeter.GasRemaining()
 
 	*response = ConsumeGasResponse{
 		GasConsumed:  gasConsumed,
