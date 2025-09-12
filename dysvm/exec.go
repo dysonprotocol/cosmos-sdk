@@ -133,3 +133,28 @@ func DysFormat(code string) (string, error) {
 
 	return string(out), nil
 }
+
+func ExtractFunctionSchema(scriptJSON, blockInfoJSON, port, executorAddress, scriptName string) (string, error) {
+	var lib *embed_util.EmbeddedFiles
+	ep, err := python.NewEmbeddedPython("dyslang")
+	if err != nil {
+		return "", err
+	}
+
+	lib, err = embed_util.NewEmbeddedFiles(data.Data, "dyslang-libs")
+	if err != nil {
+		return "", err
+	}
+
+	// TODO Make this an environment variable or config
+	ep.AddPythonPath("./dysvm/internal/py-dyslang")
+	ep.AddPythonPath(lib.GetExtractedPath())
+
+	cmd, err := ep.PythonCmd("-m", "dyslang", "extract_function_schema", scriptJSON, blockInfoJSON, port, executorAddress, scriptName)
+	if err != nil {
+		return "", err
+	}
+
+	out, runErr := cmd.CombinedOutput()
+	return string(out), runErr
+}

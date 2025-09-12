@@ -164,6 +164,76 @@ paths:
           type: string
       tags:
         - Query
+  /dysonprotocol/script/v1/function_schema:
+    post:
+      summary: >-
+        FunctionSchema returns JSON schemas for all public functions in a
+        script.
+      operationId: dysonprotocol.script.v1.QueryFunctionSchemaRequest
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              schema_json:
+                type: string
+                title: |-
+                  schema_json is a JSON object: [{"name": "func_name", "schema":
+                  {schema...}}, ...]
+            description: >-
+              QueryFunctionSchemaResponse contains a JSON object mapping
+              function names to
+
+              schemas.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              executor_address:
+                type: string
+                title: executor is the account address used to evaluate the script
+              script_address:
+                type: string
+                description: address is the script bech32 address to inspect.
+              script_name:
+                type: string
+                title: >-
+                  script_name is the optional nameservice name of the script to
+                  inspect
+
+                  (e.g., "example.dys")
+            description: QueryFunctionSchemaRequest requests function schemas for a script.
+      tags:
+        - Query
   /dysonprotocol/script/v1/params:
     get:
       summary: Params queries the parameters of the script module.
@@ -28379,6 +28449,34 @@ definitions:
         format: byte
         description: bytes is the encoded bytes.
     description: QueryEncodeJsonResponse is the Query/EncodeJson response type.
+  dysonprotocol.script.v1.QueryFunctionSchemaRequest:
+    type: object
+    properties:
+      executor_address:
+        type: string
+        title: executor is the account address used to evaluate the script
+      script_address:
+        type: string
+        description: address is the script bech32 address to inspect.
+      script_name:
+        type: string
+        title: |-
+          script_name is the optional nameservice name of the script to inspect
+          (e.g., "example.dys")
+    description: QueryFunctionSchemaRequest requests function schemas for a script.
+  dysonprotocol.script.v1.QueryFunctionSchemaResponse:
+    type: object
+    properties:
+      schema_json:
+        type: string
+        title: |-
+          schema_json is a JSON object: [{"name": "func_name", "schema":
+          {schema...}}, ...]
+    description: >-
+      QueryFunctionSchemaResponse contains a JSON object mapping function names
+      to
+
+      schemas.
   dysonprotocol.script.v1.QueryGetBlockResponse:
     type: object
     properties:

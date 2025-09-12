@@ -126,6 +126,7 @@
       {"type":"file","name":"dysonprotocol.nft.v1beta1.Supply.json"},
       {"type":"file","name":"dysonprotocol.script.v1.DecodeBytes.json"},
       {"type":"file","name":"dysonprotocol.script.v1.EncodeJson.json"},
+      {"type":"file","name":"dysonprotocol.script.v1.FunctionSchema.json"},
       {"type":"file","name":"dysonprotocol.script.v1.GetBlock.json"},
       {"type":"file","name":"dysonprotocol.script.v1.Params.json"},
       {"type":"file","name":"dysonprotocol.script.v1.Run.json"},
@@ -329,5 +330,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":323}
+  {"type":"report","directories":3,"files":324}
 ]

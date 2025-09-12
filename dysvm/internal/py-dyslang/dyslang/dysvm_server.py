@@ -9,15 +9,17 @@ import sys
 from collections import defaultdict
 from contextlib import redirect_stdout
 from functools import wraps
+from textwrap import dedent
 import time
 import typing
-
+import enum
 import forge
 import re as re_module
 import requests
 import json
 from freezegun import freeze_time
 from freezegun.api import FakeDatetime, FakeDate
+
 
 
 # Fixes to make freezegun look pretty in dyslang
@@ -77,6 +79,7 @@ def get_module_dict():
     import urllib
     import time
     import bencoder
+    import function_schema
 
     @forge.copy(random.seed)
     def safe_random_seed(a=None, version=2):
@@ -142,6 +145,16 @@ def get_module_dict():
             "field": dataclasses.field,
             "asdict": dataclasses.asdict,
             "astuple": dataclasses.astuple,
+        },
+        "enum": {
+            "Enum": enum.Enum,
+            "EnumType": enum.EnumType,
+            "IntEnum": enum.IntEnum,
+            "StrEnum": enum.StrEnum,
+        },
+        "function_schema": {
+            "get_function_schema": function_schema.get_function_schema,
+            "Doc": function_schema.Doc,
         },
         "time": {
             "time": time.time,
@@ -500,7 +513,7 @@ def build_sandbox(
         """
         if not a.__doc__:
             return ""
-        return a.__doc__
+        return dedent(a.__doc__).strip()
 
     sandbox.scope.dicts[0]["help"] = safe_help
 
@@ -713,6 +726,8 @@ def build_sandbox(
         )
 
     module_dict = get_module_dict()
+
+
 
     module_dict["dys"] = {
         "get_gas_consumed": get_gas_consumed,

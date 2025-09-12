@@ -1,0 +1,46 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.script.v1.QueryFunctionSchemaRequest",
+        "definitions": {
+            "dysonprotocol.script.v1.QueryFunctionSchemaRequest": {
+                "properties": {
+                    "executor_address": {
+                        "type": "string",
+                        "description": "executor is the account address used to evaluate the script"
+                    },
+                    "script_address": {
+                        "type": "string",
+                        "description": "address is the script bech32 address to inspect."
+                    },
+                    "script_name": {
+                        "type": "string",
+                        "description": "script_name is the optional nameservice name of the script to inspect (e.g., \"example.dys\")"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Function Schema Request",
+                "description": "QueryFunctionSchemaRequest requests function schemas for a script."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.script.v1.QueryFunctionSchemaResponse",
+        "definitions": {
+            "dysonprotocol.script.v1.QueryFunctionSchemaResponse": {
+                "properties": {
+                    "schema_json": {
+                        "type": "string",
+                        "description": "schema_json is a JSON object: [{\"name\": \"func_name\", \"schema\": {schema...}}, ...]"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Function Schema Response",
+                "description": "QueryFunctionSchemaResponse contains a JSON object mapping function names to schemas."
+            }
+        }
+    }
+}

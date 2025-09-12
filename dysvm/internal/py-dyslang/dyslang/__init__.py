@@ -113,6 +113,10 @@ def assert_func_allowed(func):
         if func in DISALLOW_FUNCTIONS:
             raise DangerousValue(f"This function is forbidden: {fullname}")
 
+        if modname == "dyslang":
+            # for Enum types
+            return
+
         if fullname not in WHITELIST_FUNCTIONS:
             raise NotImplementedError(
                 "Creativity needs constraint. When the constraints get tighter, you will find more opportunities to be creative. This function is not allowed: '{}'".format(

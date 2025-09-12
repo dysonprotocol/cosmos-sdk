@@ -2,12 +2,15 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
+	"dysonprotocol.com/dysvm"
 	scripttypes "dysonprotocol.com/x/script/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"cosmossdk.io/collections"
+	"cosmossdk.io/core/header"
 	cosmossdkerrors "cosmossdk.io/errors"
 	txsigning "cosmossdk.io/x/tx/signing"
 
@@ -307,4 +310,90 @@ func (k Keeper) GetBlock(ctx context.Context, req *scripttypes.QueryGetBlockRequ
 		AppHash:         header.AppHash,
 		ProposerAddress: sdk.ConsAddress(header.ProposerAddress).String(),
 	}, nil
+}
+
+// FunctionSchema returns JSON schemas for all public functions in a script.
+func (k Keeper) FunctionSchema(ctx context.Context, req *scripttypes.QueryFunctionSchemaRequest) (*scripttypes.QueryFunctionSchemaResponse, error) {
+	if req.ExecutorAddress == "" {
+		return nil, status.Error(codes.InvalidArgument, "executor address is required")
+	}
+	if req.ScriptAddress == "" && req.ScriptName == "" {
+		return nil, status.Error(codes.InvalidArgument, "either script_address or script_name is required")
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	// Resolve script address optionally via nameservice
+	var resolvedAddress string
+	var err error
+	if req.ScriptAddress != "" && req.ScriptName != "" {
+		nameAddr, nameErr := k.NameserviceKeeper.ResolveNameOrAddress(ctx, req.ScriptName)
+		if nameErr != nil {
+			return nil, cosmossdkerrors.Wrap(nameErr, "failed to resolve script_name")
+		}
+		if nameAddr != req.ScriptAddress {
+			return nil, status.Error(codes.InvalidArgument, "script_address does not match resolved script_name")
+		}
+		resolvedAddress = req.ScriptAddress
+	} else if req.ScriptName != "" {
+		resolvedAddress, err = k.NameserviceKeeper.ResolveNameOrAddress(ctx, req.ScriptName)
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to resolve script_name")
+		}
+	} else {
+		resolvedAddress = req.ScriptAddress
+	}
+
+	// Load script (or empty)
+	var script scripttypes.Script
+	exists, err := k.ScriptMap.Has(ctx, resolvedAddress)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to check script existence")
+	}
+	if !exists {
+		script = scripttypes.Script{Address: resolvedAddress, Version: 0, Code: ""}
+	} else {
+		script, err = k.ScriptMap.Get(ctx, resolvedAddress)
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to get script")
+		}
+	}
+
+	// Start ephemeral RPC server
+	port, srv, err := k.NewRPCServer(sdkCtx, resolvedAddress, k.App)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if derr := srv.Shutdown(context.Background()); derr != nil {
+			k.Logger(sdkCtx).Error("shutdown error", "error", derr)
+		}
+	}()
+
+	// Marshal script and header info
+	scriptJSON, err := k.cdc.MarshalInterfaceJSON(&script)
+	if err != nil {
+		return nil, err
+	}
+
+	bh := sdkCtx.BlockHeader()
+	headerInfo := header.Info{
+		Height:  bh.Height,
+		Time:    bh.Time,
+		ChainID: bh.ChainID,
+		AppHash: bh.AppHash,
+		Hash:    bh.LastBlockId.Hash,
+	}
+	headerJSON, err := json.Marshal(headerInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	// Call VM to extract schema
+	schemaJSON, runErr := dysvm.ExtractFunctionSchema(string(scriptJSON), string(headerJSON), port, req.ExecutorAddress, req.ScriptName)
+	if runErr != nil {
+		return nil, cosmossdkerrors.Wrapf(runErr, "failed to extract function schema: %s, %s", runErr.Error(), schemaJSON)
+	}
+
+	return &scripttypes.QueryFunctionSchemaResponse{SchemaJson: schemaJSON}, nil
 }

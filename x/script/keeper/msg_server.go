@@ -215,8 +215,15 @@ func (k Keeper) CreateNewScript(ctx context.Context, msg *scripttypes.MsgCreateN
 		return nil, cosmossdkerrors.Wrapf(err, "invalid creator address: %s", msg.CreatorAddress)
 	}
 
+	// Format the code with black before setting it and deriving address
+	formattedCode, err := dysvm.DysFormat(msg.Code)
+	if err != nil {
+		k.Logger(sdkCtx).Error("failed to format code with dys_format", "error", err)
+		return nil, cosmossdkerrors.Wrap(err, "failed to format code")
+	}
+
 	// Create a hash of the creator + code to generate a deterministic script address
-	contentToHash := append(creatorBytes, []byte(msg.Code)...)
+	contentToHash := append(creatorBytes, []byte(formattedCode)...)
 	hasher := sha256.New()
 	hasher.Write(contentToHash)
 	scriptAddrBytes := hasher.Sum(nil)
@@ -241,7 +248,7 @@ func (k Keeper) CreateNewScript(ctx context.Context, msg *scripttypes.MsgCreateN
 	script := scripttypes.Script{
 		Address: scriptAddr,
 		Version: 1, // Start at version 1
-		Code:    msg.Code,
+		Code:    formattedCode,
 	}
 
 	// Save the script

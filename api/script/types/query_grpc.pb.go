@@ -21,14 +21,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Query_ScriptInfo_FullMethodName  = "/dysonprotocol.script.v1.Query/ScriptInfo"
-	Query_EncodeJson_FullMethodName  = "/dysonprotocol.script.v1.Query/EncodeJson"
-	Query_DecodeBytes_FullMethodName = "/dysonprotocol.script.v1.Query/DecodeBytes"
-	Query_VerifyTx_FullMethodName    = "/dysonprotocol.script.v1.Query/VerifyTx"
-	Query_Params_FullMethodName      = "/dysonprotocol.script.v1.Query/Params"
-	Query_Web_FullMethodName         = "/dysonprotocol.script.v1.Query/Web"
-	Query_Run_FullMethodName         = "/dysonprotocol.script.v1.Query/Run"
-	Query_GetBlock_FullMethodName    = "/dysonprotocol.script.v1.Query/GetBlock"
+	Query_ScriptInfo_FullMethodName     = "/dysonprotocol.script.v1.Query/ScriptInfo"
+	Query_EncodeJson_FullMethodName     = "/dysonprotocol.script.v1.Query/EncodeJson"
+	Query_DecodeBytes_FullMethodName    = "/dysonprotocol.script.v1.Query/DecodeBytes"
+	Query_VerifyTx_FullMethodName       = "/dysonprotocol.script.v1.Query/VerifyTx"
+	Query_Params_FullMethodName         = "/dysonprotocol.script.v1.Query/Params"
+	Query_Web_FullMethodName            = "/dysonprotocol.script.v1.Query/Web"
+	Query_Run_FullMethodName            = "/dysonprotocol.script.v1.Query/Run"
+	Query_GetBlock_FullMethodName       = "/dysonprotocol.script.v1.Query/GetBlock"
+	Query_FunctionSchema_FullMethodName = "/dysonprotocol.script.v1.Query/FunctionSchema"
 )
 
 // QueryClient is the client API for Query service.
@@ -54,6 +55,8 @@ type QueryClient interface {
 	Run(ctx context.Context, in *RunScript, opts ...grpc.CallOption) (*ResponseRunScript, error)
 	// GetBlock returns the current block information.
 	GetBlock(ctx context.Context, in *QueryGetBlockRequest, opts ...grpc.CallOption) (*QueryGetBlockResponse, error)
+	// FunctionSchema returns JSON schemas for all public functions in a script.
+	FunctionSchema(ctx context.Context, in *QueryFunctionSchemaRequest, opts ...grpc.CallOption) (*QueryFunctionSchemaResponse, error)
 }
 
 type queryClient struct {
@@ -144,6 +147,16 @@ func (c *queryClient) GetBlock(ctx context.Context, in *QueryGetBlockRequest, op
 	return out, nil
 }
 
+func (c *queryClient) FunctionSchema(ctx context.Context, in *QueryFunctionSchemaRequest, opts ...grpc.CallOption) (*QueryFunctionSchemaResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryFunctionSchemaResponse)
+	err := c.cc.Invoke(ctx, Query_FunctionSchema_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -167,6 +180,8 @@ type QueryServer interface {
 	Run(context.Context, *RunScript) (*ResponseRunScript, error)
 	// GetBlock returns the current block information.
 	GetBlock(context.Context, *QueryGetBlockRequest) (*QueryGetBlockResponse, error)
+	// FunctionSchema returns JSON schemas for all public functions in a script.
+	FunctionSchema(context.Context, *QueryFunctionSchemaRequest) (*QueryFunctionSchemaResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -200,6 +215,9 @@ func (UnimplementedQueryServer) Run(context.Context, *RunScript) (*ResponseRunSc
 }
 func (UnimplementedQueryServer) GetBlock(context.Context, *QueryGetBlockRequest) (*QueryGetBlockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlock not implemented")
+}
+func (UnimplementedQueryServer) FunctionSchema(context.Context, *QueryFunctionSchemaRequest) (*QueryFunctionSchemaResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FunctionSchema not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -366,6 +384,24 @@ func _Query_GetBlock_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_FunctionSchema_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryFunctionSchemaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).FunctionSchema(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_FunctionSchema_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).FunctionSchema(ctx, req.(*QueryFunctionSchemaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -404,6 +440,10 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBlock",
 			Handler:    _Query_GetBlock_Handler,
+		},
+		{
+			MethodName: "FunctionSchema",
+			Handler:    _Query_FunctionSchema_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -7821,6 +7821,974 @@ func (x *fastReflection_QueryGetBlockResponse) ProtoMethods() *protoiface.Method
 	}
 }
 
+var (
+	md_QueryFunctionSchemaRequest                  protoreflect.MessageDescriptor
+	fd_QueryFunctionSchemaRequest_executor_address protoreflect.FieldDescriptor
+	fd_QueryFunctionSchemaRequest_script_address   protoreflect.FieldDescriptor
+	fd_QueryFunctionSchemaRequest_script_name      protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_script_v1_query_proto_init()
+	md_QueryFunctionSchemaRequest = File_dysonprotocol_script_v1_query_proto.Messages().ByName("QueryFunctionSchemaRequest")
+	fd_QueryFunctionSchemaRequest_executor_address = md_QueryFunctionSchemaRequest.Fields().ByName("executor_address")
+	fd_QueryFunctionSchemaRequest_script_address = md_QueryFunctionSchemaRequest.Fields().ByName("script_address")
+	fd_QueryFunctionSchemaRequest_script_name = md_QueryFunctionSchemaRequest.Fields().ByName("script_name")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryFunctionSchemaRequest)(nil)
+
+type fastReflection_QueryFunctionSchemaRequest QueryFunctionSchemaRequest
+
+func (x *QueryFunctionSchemaRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryFunctionSchemaRequest)(x)
+}
+
+func (x *QueryFunctionSchemaRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_script_v1_query_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryFunctionSchemaRequest_messageType fastReflection_QueryFunctionSchemaRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryFunctionSchemaRequest_messageType{}
+
+type fastReflection_QueryFunctionSchemaRequest_messageType struct{}
+
+func (x fastReflection_QueryFunctionSchemaRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryFunctionSchemaRequest)(nil)
+}
+func (x fastReflection_QueryFunctionSchemaRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryFunctionSchemaRequest)
+}
+func (x fastReflection_QueryFunctionSchemaRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryFunctionSchemaRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryFunctionSchemaRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryFunctionSchemaRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryFunctionSchemaRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryFunctionSchemaRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryFunctionSchemaRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryFunctionSchemaRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryFunctionSchemaRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryFunctionSchemaRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryFunctionSchemaRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.ExecutorAddress != "" {
+		value := protoreflect.ValueOfString(x.ExecutorAddress)
+		if !f(fd_QueryFunctionSchemaRequest_executor_address, value) {
+			return
+		}
+	}
+	if x.ScriptAddress != "" {
+		value := protoreflect.ValueOfString(x.ScriptAddress)
+		if !f(fd_QueryFunctionSchemaRequest_script_address, value) {
+			return
+		}
+	}
+	if x.ScriptName != "" {
+		value := protoreflect.ValueOfString(x.ScriptName)
+		if !f(fd_QueryFunctionSchemaRequest_script_name, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryFunctionSchemaRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.executor_address":
+		return x.ExecutorAddress != ""
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_address":
+		return x.ScriptAddress != ""
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_name":
+		return x.ScriptName != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryFunctionSchemaRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.executor_address":
+		x.ExecutorAddress = ""
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_address":
+		x.ScriptAddress = ""
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_name":
+		x.ScriptName = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryFunctionSchemaRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.executor_address":
+		value := x.ExecutorAddress
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_address":
+		value := x.ScriptAddress
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_name":
+		value := x.ScriptName
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryFunctionSchemaRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.executor_address":
+		x.ExecutorAddress = value.Interface().(string)
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_address":
+		x.ScriptAddress = value.Interface().(string)
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_name":
+		x.ScriptName = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryFunctionSchemaRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.executor_address":
+		panic(fmt.Errorf("field executor_address of message dysonprotocol.script.v1.QueryFunctionSchemaRequest is not mutable"))
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_address":
+		panic(fmt.Errorf("field script_address of message dysonprotocol.script.v1.QueryFunctionSchemaRequest is not mutable"))
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_name":
+		panic(fmt.Errorf("field script_name of message dysonprotocol.script.v1.QueryFunctionSchemaRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryFunctionSchemaRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.executor_address":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_address":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.script.v1.QueryFunctionSchemaRequest.script_name":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryFunctionSchemaRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.script.v1.QueryFunctionSchemaRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryFunctionSchemaRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryFunctionSchemaRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryFunctionSchemaRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryFunctionSchemaRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryFunctionSchemaRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.ExecutorAddress)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ScriptAddress)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.ScriptName)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryFunctionSchemaRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.ScriptName) > 0 {
+			i -= len(x.ScriptName)
+			copy(dAtA[i:], x.ScriptName)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ScriptName)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.ScriptAddress) > 0 {
+			i -= len(x.ScriptAddress)
+			copy(dAtA[i:], x.ScriptAddress)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ScriptAddress)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.ExecutorAddress) > 0 {
+			i -= len(x.ExecutorAddress)
+			copy(dAtA[i:], x.ExecutorAddress)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ExecutorAddress)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryFunctionSchemaRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryFunctionSchemaRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryFunctionSchemaRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ExecutorAddress", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ExecutorAddress = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ScriptAddress", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ScriptAddress = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ScriptName", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ScriptName = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_QueryFunctionSchemaResponse             protoreflect.MessageDescriptor
+	fd_QueryFunctionSchemaResponse_schema_json protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_script_v1_query_proto_init()
+	md_QueryFunctionSchemaResponse = File_dysonprotocol_script_v1_query_proto.Messages().ByName("QueryFunctionSchemaResponse")
+	fd_QueryFunctionSchemaResponse_schema_json = md_QueryFunctionSchemaResponse.Fields().ByName("schema_json")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryFunctionSchemaResponse)(nil)
+
+type fastReflection_QueryFunctionSchemaResponse QueryFunctionSchemaResponse
+
+func (x *QueryFunctionSchemaResponse) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryFunctionSchemaResponse)(x)
+}
+
+func (x *QueryFunctionSchemaResponse) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_script_v1_query_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryFunctionSchemaResponse_messageType fastReflection_QueryFunctionSchemaResponse_messageType
+var _ protoreflect.MessageType = fastReflection_QueryFunctionSchemaResponse_messageType{}
+
+type fastReflection_QueryFunctionSchemaResponse_messageType struct{}
+
+func (x fastReflection_QueryFunctionSchemaResponse_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryFunctionSchemaResponse)(nil)
+}
+func (x fastReflection_QueryFunctionSchemaResponse_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryFunctionSchemaResponse)
+}
+func (x fastReflection_QueryFunctionSchemaResponse_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryFunctionSchemaResponse
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryFunctionSchemaResponse) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryFunctionSchemaResponse
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryFunctionSchemaResponse) Type() protoreflect.MessageType {
+	return _fastReflection_QueryFunctionSchemaResponse_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryFunctionSchemaResponse) New() protoreflect.Message {
+	return new(fastReflection_QueryFunctionSchemaResponse)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryFunctionSchemaResponse) Interface() protoreflect.ProtoMessage {
+	return (*QueryFunctionSchemaResponse)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryFunctionSchemaResponse) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.SchemaJson != "" {
+		value := protoreflect.ValueOfString(x.SchemaJson)
+		if !f(fd_QueryFunctionSchemaResponse_schema_json, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryFunctionSchemaResponse) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaResponse.schema_json":
+		return x.SchemaJson != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryFunctionSchemaResponse) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaResponse.schema_json":
+		x.SchemaJson = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryFunctionSchemaResponse) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaResponse.schema_json":
+		value := x.SchemaJson
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaResponse does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryFunctionSchemaResponse) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaResponse.schema_json":
+		x.SchemaJson = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryFunctionSchemaResponse) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaResponse.schema_json":
+		panic(fmt.Errorf("field schema_json of message dysonprotocol.script.v1.QueryFunctionSchemaResponse is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryFunctionSchemaResponse) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.script.v1.QueryFunctionSchemaResponse.schema_json":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.script.v1.QueryFunctionSchemaResponse"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.script.v1.QueryFunctionSchemaResponse does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryFunctionSchemaResponse) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.script.v1.QueryFunctionSchemaResponse", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryFunctionSchemaResponse) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryFunctionSchemaResponse) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryFunctionSchemaResponse) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryFunctionSchemaResponse) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryFunctionSchemaResponse)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.SchemaJson)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryFunctionSchemaResponse)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.SchemaJson) > 0 {
+			i -= len(x.SchemaJson)
+			copy(dAtA[i:], x.SchemaJson)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.SchemaJson)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryFunctionSchemaResponse)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryFunctionSchemaResponse: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryFunctionSchemaResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field SchemaJson", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.SchemaJson = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Since: cosmos-sdk 0.46
 
 // Code generated by protoc-gen-go. DO NOT EDIT.
@@ -8556,6 +9524,101 @@ func (x *QueryGetBlockResponse) GetProposerAddress() string {
 	return ""
 }
 
+// QueryFunctionSchemaRequest requests function schemas for a script.
+type QueryFunctionSchemaRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// executor is the account address used to evaluate the script
+	ExecutorAddress string `protobuf:"bytes,1,opt,name=executor_address,json=executorAddress,proto3" json:"executor_address,omitempty"`
+	// address is the script bech32 address to inspect.
+	ScriptAddress string `protobuf:"bytes,2,opt,name=script_address,json=scriptAddress,proto3" json:"script_address,omitempty"`
+	// script_name is the optional nameservice name of the script to inspect
+	// (e.g., "example.dys")
+	ScriptName string `protobuf:"bytes,3,opt,name=script_name,json=scriptName,proto3" json:"script_name,omitempty"`
+}
+
+func (x *QueryFunctionSchemaRequest) Reset() {
+	*x = QueryFunctionSchemaRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_script_v1_query_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryFunctionSchemaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryFunctionSchemaRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryFunctionSchemaRequest.ProtoReflect.Descriptor instead.
+func (*QueryFunctionSchemaRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_script_v1_query_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *QueryFunctionSchemaRequest) GetExecutorAddress() string {
+	if x != nil {
+		return x.ExecutorAddress
+	}
+	return ""
+}
+
+func (x *QueryFunctionSchemaRequest) GetScriptAddress() string {
+	if x != nil {
+		return x.ScriptAddress
+	}
+	return ""
+}
+
+func (x *QueryFunctionSchemaRequest) GetScriptName() string {
+	if x != nil {
+		return x.ScriptName
+	}
+	return ""
+}
+
+// QueryFunctionSchemaResponse contains a JSON object mapping function names to
+// schemas.
+type QueryFunctionSchemaResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// schema_json is a JSON object: [{"name": "func_name", "schema":
+	// {schema...}}, ...]
+	SchemaJson string `protobuf:"bytes,1,opt,name=schema_json,json=schemaJson,proto3" json:"schema_json,omitempty"`
+}
+
+func (x *QueryFunctionSchemaResponse) Reset() {
+	*x = QueryFunctionSchemaResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_script_v1_query_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryFunctionSchemaResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryFunctionSchemaResponse) ProtoMessage() {}
+
+// Deprecated: Use QueryFunctionSchemaResponse.ProtoReflect.Descriptor instead.
+func (*QueryFunctionSchemaResponse) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_script_v1_query_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *QueryFunctionSchemaResponse) GetSchemaJson() string {
+	if x != nil {
+		return x.SchemaJson
+	}
+	return ""
+}
+
 var File_dysonprotocol_script_v1_query_proto protoreflect.FileDescriptor
 
 var file_dysonprotocol_script_v1_query_proto_rawDesc = []byte{
@@ -8678,85 +9741,111 @@ var file_dysonprotocol_script_v1_query_proto_rawDesc = []byte{
 	0x70, 0x70, 0x48, 0x61, 0x73, 0x68, 0x12, 0x29, 0x0a, 0x10, 0x70, 0x72, 0x6f, 0x70, 0x6f, 0x73,
 	0x65, 0x72, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x0f, 0x70, 0x72, 0x6f, 0x70, 0x6f, 0x73, 0x65, 0x72, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73,
-	0x73, 0x32, 0xb4, 0x09, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0xa7, 0x01, 0x0a, 0x0a,
-	0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x2f, 0x2e, 0x64, 0x79, 0x73,
-	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70,
-	0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74,
-	0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30, 0x2e, 0x64, 0x79,
-	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69,
-	0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x53, 0x63, 0x72, 0x69, 0x70,
-	0x74, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x36, 0x82,
-	0xd3, 0xe4, 0x93, 0x02, 0x30, 0x12, 0x2e, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f,
-	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x5f, 0x69, 0x6e, 0x66, 0x6f, 0x2f, 0x7b, 0x61, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x7d, 0x12, 0x9d, 0x01, 0x0a, 0x0a, 0x45, 0x6e, 0x63, 0x6f, 0x64, 0x65,
-	0x4a, 0x73, 0x6f, 0x6e, 0x12, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51,
-	0x75, 0x65, 0x72, 0x79, 0x45, 0x6e, 0x63, 0x6f, 0x64, 0x65, 0x4a, 0x73, 0x6f, 0x6e, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x45, 0x6e, 0x63, 0x6f, 0x64, 0x65, 0x4a, 0x73, 0x6f, 0x6e, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2c, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x26, 0x12,
-	0x24, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f,
-	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x65, 0x6e, 0x63, 0x6f, 0x64, 0x65,
-	0x5f, 0x6a, 0x73, 0x6f, 0x6e, 0x12, 0xa1, 0x01, 0x0a, 0x0b, 0x44, 0x65, 0x63, 0x6f, 0x64, 0x65,
-	0x42, 0x79, 0x74, 0x65, 0x73, 0x12, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x44, 0x65, 0x63, 0x6f, 0x64, 0x65, 0x42, 0x79, 0x74, 0x65, 0x73,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76,
-	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x44, 0x65, 0x63, 0x6f, 0x64, 0x65, 0x42, 0x79, 0x74,
-	0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2d, 0x82, 0xd3, 0xe4, 0x93,
-	0x02, 0x27, 0x12, 0x25, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x64, 0x65, 0x63,
-	0x6f, 0x64, 0x65, 0x5f, 0x62, 0x79, 0x74, 0x65, 0x73, 0x12, 0x95, 0x01, 0x0a, 0x08, 0x56, 0x65,
-	0x72, 0x69, 0x66, 0x79, 0x54, 0x78, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x73, 0x22, 0xa9, 0x01, 0x0a, 0x1a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x46, 0x75, 0x6e, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x43, 0x0a, 0x10, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x6f, 0x72, 0x5f, 0x61, 0x64, 0x64,
+	0x72, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74,
+	0x72, 0x69, 0x6e, 0x67, 0x52, 0x0f, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x6f, 0x72, 0x41, 0x64,
+	0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x25, 0x0a, 0x0e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x5f,
+	0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x73,
+	0x63, 0x72, 0x69, 0x70, 0x74, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x1f, 0x0a, 0x0b,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0a, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x3e, 0x0a,
+	0x1b, 0x51, 0x75, 0x65, 0x72, 0x79, 0x46, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x63,
+	0x68, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x0b,
+	0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x5f, 0x6a, 0x73, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0a, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x4a, 0x73, 0x6f, 0x6e, 0x32, 0xe7, 0x0a,
+	0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0xa7, 0x01, 0x0a, 0x0a, 0x53, 0x63, 0x72, 0x69,
+	0x70, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31,
-	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x54, 0x78, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x54, 0x78, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2a, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x24, 0x12, 0x22, 0x2f,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63,
-	0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x76, 0x65, 0x72, 0x69, 0x66, 0x79, 0x5f, 0x74,
-	0x78, 0x12, 0x8c, 0x01, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x2b, 0x2e, 0x64,
-	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72,
-	0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61,
-	0x6d, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
-	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x27, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x21, 0x12,
-	0x1f, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f,
-	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73,
-	0x12, 0x81, 0x01, 0x0a, 0x03, 0x57, 0x65, 0x62, 0x12, 0x23, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e,
-	0x76, 0x31, 0x2e, 0x57, 0x65, 0x62, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x24, 0x2e,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63,
-	0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x57, 0x65, 0x62, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x2f, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x29, 0x3a, 0x01, 0x2a, 0x22, 0x24,
-	0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73,
-	0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x77, 0x65, 0x62, 0x5f, 0x72, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x12, 0x7e, 0x0a, 0x03, 0x52, 0x75, 0x6e, 0x12, 0x22, 0x2e, 0x64, 0x79,
-	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69,
-	0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x75, 0x6e, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x1a,
-	0x2a, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
-	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x52, 0x75, 0x6e, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x22, 0x27, 0x82, 0xd3, 0xe4,
-	0x93, 0x02, 0x21, 0x3a, 0x01, 0x2a, 0x22, 0x1c, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31,
-	0x2f, 0x72, 0x75, 0x6e, 0x12, 0x91, 0x01, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x42, 0x6c, 0x6f, 0x63,
-	0x6b, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
-	0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72,
-	0x79, 0x47, 0x65, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x49, 0x6e, 0x66, 0x6f,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76,
+	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x49, 0x6e, 0x66,
+	0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x36, 0x82, 0xd3, 0xe4, 0x93, 0x02,
+	0x30, 0x12, 0x2e, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x73, 0x63, 0x72, 0x69,
+	0x70, 0x74, 0x5f, 0x69, 0x6e, 0x66, 0x6f, 0x2f, 0x7b, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
+	0x7d, 0x12, 0x9d, 0x01, 0x0a, 0x0a, 0x45, 0x6e, 0x63, 0x6f, 0x64, 0x65, 0x4a, 0x73, 0x6f, 0x6e,
+	0x12, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
 	0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79,
-	0x47, 0x65, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x22, 0x26, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x20, 0x12, 0x1e, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f,
-	0x76, 0x31, 0x2f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x42, 0x22, 0x5a, 0x20, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f,
-	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x45, 0x6e, 0x63, 0x6f, 0x64, 0x65, 0x4a, 0x73, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72,
+	0x79, 0x45, 0x6e, 0x63, 0x6f, 0x64, 0x65, 0x4a, 0x73, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x2c, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x26, 0x12, 0x24, 0x2f, 0x64, 0x79,
+	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69,
+	0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x65, 0x6e, 0x63, 0x6f, 0x64, 0x65, 0x5f, 0x6a, 0x73, 0x6f,
+	0x6e, 0x12, 0xa1, 0x01, 0x0a, 0x0b, 0x44, 0x65, 0x63, 0x6f, 0x64, 0x65, 0x42, 0x79, 0x74, 0x65,
+	0x73, 0x12, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72,
+	0x79, 0x44, 0x65, 0x63, 0x6f, 0x64, 0x65, 0x42, 0x79, 0x74, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x44, 0x65, 0x63, 0x6f, 0x64, 0x65, 0x42, 0x79, 0x74, 0x65, 0x73, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2d, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x27, 0x12, 0x25,
+	0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73,
+	0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x64, 0x65, 0x63, 0x6f, 0x64, 0x65, 0x5f,
+	0x62, 0x79, 0x74, 0x65, 0x73, 0x12, 0x95, 0x01, 0x0a, 0x08, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79,
+	0x54, 0x78, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
+	0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65,
+	0x72, 0x79, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x54, 0x78, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72,
+	0x79, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x54, 0x78, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x2a, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x24, 0x12, 0x22, 0x2f, 0x64, 0x79, 0x73, 0x6f,
+	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
+	0x2f, 0x76, 0x31, 0x2f, 0x76, 0x65, 0x72, 0x69, 0x66, 0x79, 0x5f, 0x74, 0x78, 0x12, 0x8c, 0x01,
+	0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x2b, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e,
+	0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e,
+	0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x27, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x21, 0x12, 0x1f, 0x2f, 0x64, 0x79,
+	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69,
+	0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x81, 0x01, 0x0a,
+	0x03, 0x57, 0x65, 0x62, 0x12, 0x23, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x57,
+	0x65, 0x62, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x24, 0x2e, 0x64, 0x79, 0x73, 0x6f,
+	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
+	0x2e, 0x76, 0x31, 0x2e, 0x57, 0x65, 0x62, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x2f, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x29, 0x3a, 0x01, 0x2a, 0x22, 0x24, 0x2f, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70,
+	0x74, 0x2f, 0x76, 0x31, 0x2f, 0x77, 0x65, 0x62, 0x5f, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x7e, 0x0a, 0x03, 0x52, 0x75, 0x6e, 0x12, 0x22, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76,
+	0x31, 0x2e, 0x52, 0x75, 0x6e, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x1a, 0x2a, 0x2e, 0x64, 0x79,
+	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69,
+	0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x75,
+	0x6e, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x22, 0x27, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x21, 0x3a,
+	0x01, 0x2a, 0x22, 0x1c, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
+	0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x72, 0x75, 0x6e,
+	0x12, 0x91, 0x01, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x2d, 0x2e,
+	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63,
+	0x72, 0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x47, 0x65, 0x74,
+	0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x64,
+	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72,
+	0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x47, 0x65, 0x74, 0x42,
+	0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x26, 0x82, 0xd3,
+	0xe4, 0x93, 0x02, 0x20, 0x12, 0x1e, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x62,
+	0x6c, 0x6f, 0x63, 0x6b, 0x12, 0xb0, 0x01, 0x0a, 0x0e, 0x46, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f,
+	0x6e, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x12, 0x33, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2e, 0x76,
+	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x46, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x53,
+	0x63, 0x68, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x34, 0x2e, 0x64,
+	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x73, 0x63, 0x72,
+	0x69, 0x70, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x46, 0x75, 0x6e, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x53, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x33, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2d, 0x3a, 0x01, 0x2a, 0x22, 0x28, 0x2f,
+	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63,
+	0x72, 0x69, 0x70, 0x74, 0x2f, 0x76, 0x31, 0x2f, 0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x5f, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x42, 0x22, 0x5a, 0x20, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x73,
+	0x63, 0x72, 0x69, 0x70, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -8771,35 +9860,37 @@ func file_dysonprotocol_script_v1_query_proto_rawDescGZIP() []byte {
 	return file_dysonprotocol_script_v1_query_proto_rawDescData
 }
 
-var file_dysonprotocol_script_v1_query_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_dysonprotocol_script_v1_query_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_dysonprotocol_script_v1_query_proto_goTypes = []interface{}{
-	(*WebRequest)(nil),               // 0: dysonprotocol.script.v1.WebRequest
-	(*WebResponse)(nil),              // 1: dysonprotocol.script.v1.WebResponse
-	(*QueryScriptInfoRequest)(nil),   // 2: dysonprotocol.script.v1.QueryScriptInfoRequest
-	(*QueryScriptInfoResponse)(nil),  // 3: dysonprotocol.script.v1.QueryScriptInfoResponse
-	(*QueryEncodeJsonRequest)(nil),   // 4: dysonprotocol.script.v1.QueryEncodeJsonRequest
-	(*QueryEncodeJsonResponse)(nil),  // 5: dysonprotocol.script.v1.QueryEncodeJsonResponse
-	(*QueryDecodeBytesRequest)(nil),  // 6: dysonprotocol.script.v1.QueryDecodeBytesRequest
-	(*QueryDecodeBytesResponse)(nil), // 7: dysonprotocol.script.v1.QueryDecodeBytesResponse
-	(*QueryVerifyTxRequest)(nil),     // 8: dysonprotocol.script.v1.QueryVerifyTxRequest
-	(*QueryVerifyTxResponse)(nil),    // 9: dysonprotocol.script.v1.QueryVerifyTxResponse
-	(*QueryParamsRequest)(nil),       // 10: dysonprotocol.script.v1.QueryParamsRequest
-	(*QueryParamsResponse)(nil),      // 11: dysonprotocol.script.v1.QueryParamsResponse
-	(*RunScript)(nil),                // 12: dysonprotocol.script.v1.RunScript
-	(*ResponseRunScript)(nil),        // 13: dysonprotocol.script.v1.ResponseRunScript
-	(*QueryGetBlockRequest)(nil),     // 14: dysonprotocol.script.v1.QueryGetBlockRequest
-	(*QueryGetBlockResponse)(nil),    // 15: dysonprotocol.script.v1.QueryGetBlockResponse
-	(*Script)(nil),                   // 16: dysonprotocol.script.v1.Script
-	(*Params)(nil),                   // 17: dysonprotocol.script.v1.Params
-	(*anypb.Any)(nil),                // 18: google.protobuf.Any
-	(*timestamppb.Timestamp)(nil),    // 19: google.protobuf.Timestamp
+	(*WebRequest)(nil),                  // 0: dysonprotocol.script.v1.WebRequest
+	(*WebResponse)(nil),                 // 1: dysonprotocol.script.v1.WebResponse
+	(*QueryScriptInfoRequest)(nil),      // 2: dysonprotocol.script.v1.QueryScriptInfoRequest
+	(*QueryScriptInfoResponse)(nil),     // 3: dysonprotocol.script.v1.QueryScriptInfoResponse
+	(*QueryEncodeJsonRequest)(nil),      // 4: dysonprotocol.script.v1.QueryEncodeJsonRequest
+	(*QueryEncodeJsonResponse)(nil),     // 5: dysonprotocol.script.v1.QueryEncodeJsonResponse
+	(*QueryDecodeBytesRequest)(nil),     // 6: dysonprotocol.script.v1.QueryDecodeBytesRequest
+	(*QueryDecodeBytesResponse)(nil),    // 7: dysonprotocol.script.v1.QueryDecodeBytesResponse
+	(*QueryVerifyTxRequest)(nil),        // 8: dysonprotocol.script.v1.QueryVerifyTxRequest
+	(*QueryVerifyTxResponse)(nil),       // 9: dysonprotocol.script.v1.QueryVerifyTxResponse
+	(*QueryParamsRequest)(nil),          // 10: dysonprotocol.script.v1.QueryParamsRequest
+	(*QueryParamsResponse)(nil),         // 11: dysonprotocol.script.v1.QueryParamsResponse
+	(*RunScript)(nil),                   // 12: dysonprotocol.script.v1.RunScript
+	(*ResponseRunScript)(nil),           // 13: dysonprotocol.script.v1.ResponseRunScript
+	(*QueryGetBlockRequest)(nil),        // 14: dysonprotocol.script.v1.QueryGetBlockRequest
+	(*QueryGetBlockResponse)(nil),       // 15: dysonprotocol.script.v1.QueryGetBlockResponse
+	(*QueryFunctionSchemaRequest)(nil),  // 16: dysonprotocol.script.v1.QueryFunctionSchemaRequest
+	(*QueryFunctionSchemaResponse)(nil), // 17: dysonprotocol.script.v1.QueryFunctionSchemaResponse
+	(*Script)(nil),                      // 18: dysonprotocol.script.v1.Script
+	(*Params)(nil),                      // 19: dysonprotocol.script.v1.Params
+	(*anypb.Any)(nil),                   // 20: google.protobuf.Any
+	(*timestamppb.Timestamp)(nil),       // 21: google.protobuf.Timestamp
 }
 var file_dysonprotocol_script_v1_query_proto_depIdxs = []int32{
-	16, // 0: dysonprotocol.script.v1.QueryScriptInfoResponse.script:type_name -> dysonprotocol.script.v1.Script
-	17, // 1: dysonprotocol.script.v1.QueryParamsResponse.params:type_name -> dysonprotocol.script.v1.Params
-	18, // 2: dysonprotocol.script.v1.RunScript.attached_messages:type_name -> google.protobuf.Any
-	18, // 3: dysonprotocol.script.v1.ResponseRunScript.attached_message_results:type_name -> google.protobuf.Any
-	19, // 4: dysonprotocol.script.v1.QueryGetBlockResponse.block_time:type_name -> google.protobuf.Timestamp
+	18, // 0: dysonprotocol.script.v1.QueryScriptInfoResponse.script:type_name -> dysonprotocol.script.v1.Script
+	19, // 1: dysonprotocol.script.v1.QueryParamsResponse.params:type_name -> dysonprotocol.script.v1.Params
+	20, // 2: dysonprotocol.script.v1.RunScript.attached_messages:type_name -> google.protobuf.Any
+	20, // 3: dysonprotocol.script.v1.ResponseRunScript.attached_message_results:type_name -> google.protobuf.Any
+	21, // 4: dysonprotocol.script.v1.QueryGetBlockResponse.block_time:type_name -> google.protobuf.Timestamp
 	2,  // 5: dysonprotocol.script.v1.Query.ScriptInfo:input_type -> dysonprotocol.script.v1.QueryScriptInfoRequest
 	4,  // 6: dysonprotocol.script.v1.Query.EncodeJson:input_type -> dysonprotocol.script.v1.QueryEncodeJsonRequest
 	6,  // 7: dysonprotocol.script.v1.Query.DecodeBytes:input_type -> dysonprotocol.script.v1.QueryDecodeBytesRequest
@@ -8808,16 +9899,18 @@ var file_dysonprotocol_script_v1_query_proto_depIdxs = []int32{
 	0,  // 10: dysonprotocol.script.v1.Query.Web:input_type -> dysonprotocol.script.v1.WebRequest
 	12, // 11: dysonprotocol.script.v1.Query.Run:input_type -> dysonprotocol.script.v1.RunScript
 	14, // 12: dysonprotocol.script.v1.Query.GetBlock:input_type -> dysonprotocol.script.v1.QueryGetBlockRequest
-	3,  // 13: dysonprotocol.script.v1.Query.ScriptInfo:output_type -> dysonprotocol.script.v1.QueryScriptInfoResponse
-	5,  // 14: dysonprotocol.script.v1.Query.EncodeJson:output_type -> dysonprotocol.script.v1.QueryEncodeJsonResponse
-	7,  // 15: dysonprotocol.script.v1.Query.DecodeBytes:output_type -> dysonprotocol.script.v1.QueryDecodeBytesResponse
-	9,  // 16: dysonprotocol.script.v1.Query.VerifyTx:output_type -> dysonprotocol.script.v1.QueryVerifyTxResponse
-	11, // 17: dysonprotocol.script.v1.Query.Params:output_type -> dysonprotocol.script.v1.QueryParamsResponse
-	1,  // 18: dysonprotocol.script.v1.Query.Web:output_type -> dysonprotocol.script.v1.WebResponse
-	13, // 19: dysonprotocol.script.v1.Query.Run:output_type -> dysonprotocol.script.v1.ResponseRunScript
-	15, // 20: dysonprotocol.script.v1.Query.GetBlock:output_type -> dysonprotocol.script.v1.QueryGetBlockResponse
-	13, // [13:21] is the sub-list for method output_type
-	5,  // [5:13] is the sub-list for method input_type
+	16, // 13: dysonprotocol.script.v1.Query.FunctionSchema:input_type -> dysonprotocol.script.v1.QueryFunctionSchemaRequest
+	3,  // 14: dysonprotocol.script.v1.Query.ScriptInfo:output_type -> dysonprotocol.script.v1.QueryScriptInfoResponse
+	5,  // 15: dysonprotocol.script.v1.Query.EncodeJson:output_type -> dysonprotocol.script.v1.QueryEncodeJsonResponse
+	7,  // 16: dysonprotocol.script.v1.Query.DecodeBytes:output_type -> dysonprotocol.script.v1.QueryDecodeBytesResponse
+	9,  // 17: dysonprotocol.script.v1.Query.VerifyTx:output_type -> dysonprotocol.script.v1.QueryVerifyTxResponse
+	11, // 18: dysonprotocol.script.v1.Query.Params:output_type -> dysonprotocol.script.v1.QueryParamsResponse
+	1,  // 19: dysonprotocol.script.v1.Query.Web:output_type -> dysonprotocol.script.v1.WebResponse
+	13, // 20: dysonprotocol.script.v1.Query.Run:output_type -> dysonprotocol.script.v1.ResponseRunScript
+	15, // 21: dysonprotocol.script.v1.Query.GetBlock:output_type -> dysonprotocol.script.v1.QueryGetBlockResponse
+	17, // 22: dysonprotocol.script.v1.Query.FunctionSchema:output_type -> dysonprotocol.script.v1.QueryFunctionSchemaResponse
+	14, // [14:23] is the sub-list for method output_type
+	5,  // [5:14] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
 	5,  // [5:5] is the sub-list for extension extendee
 	0,  // [0:5] is the sub-list for field type_name
@@ -9024,6 +10117,30 @@ func file_dysonprotocol_script_v1_query_proto_init() {
 				return nil
 			}
 		}
+		file_dysonprotocol_script_v1_query_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryFunctionSchemaRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_script_v1_query_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryFunctionSchemaResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -9031,7 +10148,7 @@ func file_dysonprotocol_script_v1_query_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dysonprotocol_script_v1_query_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

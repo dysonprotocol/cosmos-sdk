@@ -68,6 +68,15 @@ service Query {
   rpc GetBlock(QueryGetBlockRequest) returns (QueryGetBlockResponse) {
     option (google.api.http).get = "/dysonprotocol/script/v1/block";
   }
+
+  // FunctionSchema returns JSON schemas for all public functions in a script.
+  rpc FunctionSchema(QueryFunctionSchemaRequest)
+      returns (QueryFunctionSchemaResponse) {
+    option (google.api.http) = {
+      post : "/dysonprotocol/script/v1/function_schema"
+      body : "*"
+    };
+  }
 }
 
 // WebRequest is the Service/Web request type.
@@ -209,4 +218,26 @@ message QueryGetBlockResponse {
 
   // proposer_address is the address of the block proposer.
   string proposer_address = 6;
+}
+
+// QueryFunctionSchemaRequest requests function schemas for a script.
+message QueryFunctionSchemaRequest {
+  // executor is the account address used to evaluate the script
+  string executor_address = 1
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // address is the script bech32 address to inspect.
+  string script_address = 2;
+
+  // script_name is the optional nameservice name of the script to inspect
+  // (e.g., "example.dys")
+  string script_name = 3;
+}
+
+// QueryFunctionSchemaResponse contains a JSON object mapping function names to
+// schemas.
+message QueryFunctionSchemaResponse {
+  // schema_json is a JSON object: [{"name": "func_name", "schema":
+  // {schema...}}, ...]
+  string schema_json = 1;
 }
