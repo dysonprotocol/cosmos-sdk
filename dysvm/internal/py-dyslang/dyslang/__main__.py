@@ -6,20 +6,23 @@ if __name__ == "__main__":
 
     if sys.argv[1] == "exec_script":
         from . import dysvm_server
+
         dysvm_server.main(*sys.argv[2:])
 
     elif sys.argv[1] == "run_wsgi":
         from . import dyswsgi
+
         dyswsgi.main(*sys.argv[2:])
-    
+
     elif sys.argv[1] == "run_benchmark":
         import json
         from . import fp_benchmark
+
         iterations = int(sys.argv[2]) if len(sys.argv) > 2 else 100
         details = sys.argv[3].lower() == "true" if len(sys.argv) > 3 else True
         result = fp_benchmark.detect_fp_differences(iterations, details)
         print(json.dumps(result))
-    
+
     elif sys.argv[1] == "dys_format":
         import black
         from . import DysEval
@@ -28,7 +31,11 @@ if __name__ == "__main__":
 
         def _pos(exc):
             n = getattr(exc, "lineno", None)
-            c = getattr(exc, "offset", None) or getattr(exc, "col_offset", None) or getattr(exc, "colno", None)
+            c = (
+                getattr(exc, "offset", None)
+                or getattr(exc, "col_offset", None)
+                or getattr(exc, "colno", None)
+            )
             if n is None:
                 node = getattr(exc, "node", None)
                 if node is not None:
@@ -91,7 +98,9 @@ if __name__ == "__main__":
             sandbox.eval(script.get("code", ""))
             sandbox.consume_gas()
         except Exception as e:
-            print(f"Error evaluating script: {e} line={getattr(e, 'lineno', None)} col={getattr(e, 'col_offset', None)}")
+            print(
+                f"Error evaluating script: {e} line={getattr(e, 'lineno', None)} col={getattr(e, 'col_offset', None)}"
+            )
             sys.exit(1)
 
         scope = sandbox.scope
@@ -109,14 +118,19 @@ if __name__ == "__main__":
         result = []
         for name in public_scope_all:
             obj = scope.get(name)
-            if isinstance(obj, types.FunctionType)  and getattr(obj, "__module__", None) == "script":
+            if (
+                isinstance(obj, types.FunctionType)
+                and getattr(obj, "__module__", None) == "script"
+            ):
                 try:
-                    result.append({"name": name, "schema": get_function_schema(obj, "openai")})
+                    result.append(
+                        {
+                            "function_name": name,
+                            "schema": get_function_schema(obj, "openai"),
+                        }
+                    )
                 except Exception as e:
                     # If schema extraction fails for a function, include error string
-                    result.append({"name": name, "error": str(e)})
-        
-
+                    result.append({"function_name": name, "error": str(e)})
 
         print(json.dumps(result, separators=(",", ":")), end="")
-

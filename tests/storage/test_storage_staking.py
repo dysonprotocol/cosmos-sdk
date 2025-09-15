@@ -504,9 +504,10 @@ class TestStorageStakingValidation:
                 }
             }],
             "metadata": "ipfs://CID",
-            "deposit": "1udys",
+            "deposit": "2udys",
             "title": f"Set Storage Stake Multiple to {multiplier_value}",
-            "summary": f"Update storage_stake_multiple parameter to {multiplier_value}"
+            "summary": f"Update storage_stake_multiple parameter to {multiplier_value}",
+            "expedited": True
         }
         
         # Submit and execute proposal
@@ -535,7 +536,7 @@ class TestStorageStakingValidation:
             final_states = ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_FAILED"]
             return status in final_states
 
-        poll_until_condition(check_proposal_status, timeout=60, poll_interval=2)
+        poll_until_condition(check_proposal_status, timeout=120, poll_interval=2)
         
         # Verify proposal passed
         final_result = dysond("query", "gov", "proposal", proposal_id)

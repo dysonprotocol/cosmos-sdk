@@ -21,7 +21,6 @@ from freezegun import freeze_time
 from freezegun.api import FakeDatetime, FakeDate
 
 
-
 # Fixes to make freezegun look pretty in dyslang
 FakeDatetime.__doc__ = datetime.datetime.__doc__
 FakeDate.__doc__ = datetime.date.__doc__
@@ -37,8 +36,10 @@ import dyslang
 MAX_CUM_SIZE = dyslang.MAX_SCOPE_SIZE * dyslang.MAX_NODE_CALLS
 GAS_MULTIPLE = 1
 
+
 class DysMsgException(Exception):
     """Used for dysvm _msg exceptions."""
+
 
 class DysQueryException(Exception):
     """Used for dysvm _query exceptions."""
@@ -185,7 +186,17 @@ def get_module_dict():
             "urlsafe_b64encode": base64.urlsafe_b64encode,
             "urlsafe_b64decode": base64.urlsafe_b64decode,
         },
-        "decimal": {"Decimal": decimal.Decimal},
+        "decimal": {
+            "Decimal": decimal.Decimal,
+            "ROUND_CEILING": decimal.ROUND_CEILING,
+            "ROUND_DOWN": decimal.ROUND_DOWN,
+            "ROUND_FLOOR": decimal.ROUND_FLOOR,
+            "ROUND_HALF_DOWN": decimal.ROUND_HALF_DOWN,
+            "ROUND_HALF_EVEN": decimal.ROUND_HALF_EVEN,
+            "ROUND_HALF_UP": decimal.ROUND_HALF_UP,
+            "ROUND_UP": decimal.ROUND_UP,
+            "ROUND_05UP": decimal.ROUND_05UP,
+        },
         "json": {
             "dumps": safe_json_dumps,
             "loads": json.loads,
@@ -488,7 +499,7 @@ def build_sandbox(
                 ):
                     sandbox.consume_gas()
 
-    scope = {'__name__': 'dyslang'}
+    scope = {"__name__": "dyslang"}
     sandbox = ScopedDysonEval(
         scope=scope,
     )
@@ -727,8 +738,6 @@ def build_sandbox(
 
     module_dict = get_module_dict()
 
-
-
     module_dict["dys"] = {
         "get_gas_consumed": get_gas_consumed,
         "get_gas_limit": get_gas_limit,
@@ -857,7 +866,9 @@ def eval_script(
                 "source_segment": "",
             }
             if hasattr(exception, "node") and exception.node is not None:
-                exception_dict["source_segment"] = ast.get_source_segment(source_code, exception.node)
+                exception_dict["source_segment"] = ast.get_source_segment(
+                    source_code, exception.node
+                )
 
             # Safely get context class name
             if hasattr(exception, "__context__") and exception.__context__ is not None:
@@ -969,7 +980,6 @@ dyslang.WHITELIST_FUNCTIONS.update(
         "bytes.decode",
         "bytes.join",
         "bytes.hex",
-
         # str
         "str.capitalize",
         "str.casefold",
