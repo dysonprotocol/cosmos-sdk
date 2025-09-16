@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     elif sys.argv[1] == "extract_function_schema":
         import json
-        from .dysvm_server import build_sandbox
+        from .dysvm_server import build_sandbox, DecimalEncoder
         from .dysvm_server import get_module_dict  # for completeness
         from function_schema.core import get_function_schema
 
@@ -133,4 +133,7 @@ if __name__ == "__main__":
                     # If schema extraction fails for a function, include error string
                     result.append({"function_name": name, "error": str(e)})
 
-        print(json.dumps(result, separators=(",", ":")), end="")
+        print(
+            json.dumps(result, separators=(",", ":"), cls=DecimalEncoder),
+            end="",
+        )

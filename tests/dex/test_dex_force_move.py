@@ -30,7 +30,7 @@ def _script_exec(
         "--kwargs",
         kwargs,
         "--gas",
-        "2000000",
+        "auto",
         "--from",
         from_name,
     )
@@ -56,7 +56,7 @@ def test_dex_force_move_flow(
         "--code-path",
         script_path,
         "--gas",
-        "2000000",
+        "auto",
         "--from",
         maker_name,
     )
@@ -112,8 +112,8 @@ def test_dex_force_move_flow(
     # 6) acct1 makes an offer: give 30 A, want 45 B
     make_kwargs = json.dumps(
         {
-            "have": {"denom": denom_a, "amount": 30},
-            "want": {"denom": denom_b, "amount": 45},
+            "have_coin": {"denom": denom_a, "amount": 30},
+            "want_coin": {"denom": denom_b, "amount": 45},
         }
     )
     tx_make = _script_exec(
@@ -126,19 +126,22 @@ def test_dex_force_move_flow(
     result_make = _extract_script_result(tx_make)
     offer_id = int(result_make["offer_id"])  # type: ignore[index]
 
-    # 7) maker executes take on behalf of acct2 (nameservice requires destination signer)
-    take_kwargs = json.dumps(
-        {
-            "offer_ids": [offer_id],
-            "taker_address": acct2_addr,
-            "method": "cancel_on_error",
-        }
-    )
+    # 7) acct2 executes take as the taker (current script API: take(offer_id[, take_units]))
+    take_kwargs = json.dumps({"offer_id": offer_id})
     tx_take = _script_exec(dysond, maker_addr, acct2_name, "take", kwargs=take_kwargs)
     result_take = _extract_script_result(tx_take)
+    # Expect shape: {"sent": {denom: denom_b, amount: 45}, "received": {denom: denom_a, amount: 30}}
     assert (
-        str(offer_id) in result_take
-    ), f"Expected result to include offer_id {offer_id}. Full: {json.dumps(result_take, indent=2)}"
+        "sent" in result_take and "received" in result_take
+    ), f"Unexpected take result shape: {json.dumps(result_take, indent=2)}"
+    assert (
+        result_take["sent"]["denom"] == denom_b
+        and int(result_take["sent"]["amount"]) == 45
+    ), f"Taker should send 45 {denom_b}. Full: {json.dumps(result_take, indent=2)}"
+    assert (
+        result_take["received"]["denom"] == denom_a
+        and int(result_take["received"]["amount"]) == 30
+    ), f"Taker should receive 30 {denom_a}. Full: {json.dumps(result_take, indent=2)}"
 
     # 8) Final balances
     a1_a = _get_balance(dysond, acct1_addr, denom_a)

@@ -2,6 +2,7 @@ import ast
 import base64
 import dataclasses
 import datetime
+import decimal
 import importlib
 import io
 import random
@@ -28,6 +29,13 @@ FakeDatetime.__name__ = "Datetime"
 FakeDatetime.__qualname__ = "Datetime"
 FakeDate.__name__ = "Date"
 FakeDate.__qualname__ = "Date"
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, decimal.Decimal):
+            return str(obj)
+        return super(DecimalEncoder, self).default(obj)
 
 
 import dyslang
@@ -234,6 +242,7 @@ def get_module_dict():
             "triangular": random.triangular,
             "seed": safe_random_seed,
             "uniform": random.uniform,
+            "randint": random.randint,
         },
         "re2": {
             "compile": copy_docstr(re_module.compile, re_module.compile),
@@ -705,7 +714,17 @@ def build_sandbox(
         :param params: A dictionary of parameters to be JSON encoded and passed to _chain
         :returns: The response from the chain
         """
-        resp = _chain("Msg", json_msg=json.dumps(params))
+        resp = _chain(
+            "Msg",
+            json_msg=json.dumps(
+                params,
+                separators=(",", ":"),
+                check_circular=True,
+                indent=None,
+                sort_keys=True,
+                cls=DecimalEncoder,
+            ),
+        )
         if resp.get("exception"):
             raise DysMsgException(resp["exception"])
         return resp["result"]
@@ -718,7 +737,18 @@ def build_sandbox(
         :param params: A dictionary of parameters to be JSON encoded and passed to _chain
         :returns: The response from the chain
         """
-        resp = _chain("Query", json_query=json.dumps(params), query_height=query_height)
+        resp = _chain(
+            "Query",
+            json_query=json.dumps(
+                params,
+                separators=(",", ":"),
+                check_circular=True,
+                indent=None,
+                sort_keys=True,
+                cls=DecimalEncoder,
+            ),
+            query_height=query_height,
+        )
         if resp.get("exception", None):
             raise DysQueryException(resp["exception"])
 
@@ -1062,6 +1092,7 @@ dyslang.WHITELIST_FUNCTIONS.update(
         "random.Random.choice",
         "random.Random.shuffle",
         "random.Random.sample",
+        "random.Random.randint",
         # wsgi
         "wsgiref.handlers.BaseHandler.start_response",
         "wsgiref.handlers.BaseHandler.write",
@@ -1144,6 +1175,7 @@ def main(msg_json, script_json, attached_msg_results_json, block_info_json, port
                 "port": port,
             },
             indent=2,
+            cls=DecimalEncoder,
         )
     )
 
@@ -1163,9 +1195,10 @@ def main(msg_json, script_json, attached_msg_results_json, block_info_json, port
             json.dumps(
                 response,
                 sort_keys=True,
-                default=repr,
+                # default=repr,
                 ensure_ascii=False,
                 separators=(",", ":"),
+                cls=DecimalEncoder,
             ),
             end="",
         )  # "end" is important for parsing in go
@@ -1176,9 +1209,10 @@ def main(msg_json, script_json, attached_msg_results_json, block_info_json, port
             json.dumps(
                 response,
                 sort_keys=True,
-                default=repr,
+                # default=repr,
                 ensure_ascii=True,
                 separators=(",", ":"),
+                cls=DecimalEncoder,
             ),
             end="",
         )

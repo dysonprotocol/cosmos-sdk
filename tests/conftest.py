@@ -772,7 +772,7 @@ def generate_name() -> str:
 # -----------------------------------------------------------------------------
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def register_name():
     """Fixture providing a helper to register a new name via commit/reveal.
 
@@ -834,6 +834,25 @@ def register_name():
         return name
 
     return _register
+
+
+# -----------------------------------------------------------------------------
+# DEX helper: create a session-scoped DYS root name for a given owner
+# -----------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="session")
+def dex_dys_name(register_name):
+    """Create a session-wide DEX root name for a given owner on demand.
+
+    Usage:
+        name = dex_dys_name(dysond_bin, owner_key_name, owner_address)
+    """
+
+    def _mk(dysond_bin, owner_key_name: str, owner_addr: str) -> str:
+        return register_name(dysond_bin, owner_key_name, owner_addr)
+
+    return _mk
 
 
 # -----------------------------------------------------------------------------
