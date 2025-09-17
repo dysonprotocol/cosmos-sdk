@@ -1,5 +1,6 @@
 import json
 import tempfile
+import base64
 from decimal import Decimal, ROUND_CEILING
 
 
@@ -47,7 +48,8 @@ def test_deposit_and_withdraw_udys(chainnet, generate_account, faucet, register_
         code_path,
         "--from",
         alice_name,
-        "--yes",
+        "--gas",
+        "auto",
     )
     assert up.get("code", 1) == 0, f"update failed: {up}"
 
@@ -81,6 +83,8 @@ def test_deposit_and_withdraw_udys(chainnet, generate_account, faucet, register_
         alice_name,
         "--attached-message",
         attached,
+        "--gas",
+        "auto",
     )
     assert dep.get("code", 1) == 0, f"deposit failed: {dep}"
 
@@ -94,9 +98,12 @@ def test_deposit_and_withdraw_udys(chainnet, generate_account, faucet, register_
     resp = json.loads(attrs["response"])
     parsed = json.loads(resp.get("result", "{}"))
     liquid = parsed.get("result", {}).get("liquid_denom")
-    assert isinstance(liquid, str) and liquid.endswith(
-        "/coins/ZFVkeXM"
-    ), f"unexpected liquid: {liquid}"
+    # Compute expected liquid denom dynamically: {root}/coins/{base64url_no_pad(denom)}
+    enc = base64.urlsafe_b64encode(b"udys").decode("ascii").rstrip("=")
+    expected = f"{root}/coins/{enc}"
+    assert (
+        isinstance(liquid, str) and liquid == expected
+    ), f"unexpected liquid: {liquid}, expected: {expected}"
 
     # Withdraw the same amount
     w = dysond(
@@ -111,5 +118,7 @@ def test_deposit_and_withdraw_udys(chainnet, generate_account, faucet, register_
         json.dumps([liquid, str(deposit_amount)]),
         "--from",
         alice_name,
+        "--gas",
+        "auto",
     )
     assert w.get("code", 1) == 0, f"withdraw failed: {w}"

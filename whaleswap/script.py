@@ -635,7 +635,7 @@ def mint_pfand_to(to_address: str, amount: Any) -> Dict[str, Any]:
         raise ValueError("amount must be > 0")
     attachments = _sum_attached_to_script_by_denom()
     fee_per = _get_mint_fee_per_coin()
-    required_udys = amt * fee_per
+    required_udys = (amt * fee_per).to_integral_value(rounding=ROUND_CEILING)
     attached_udys = attachments.get(UDYS_DENOM, Decimal(0))
     if attached_udys < required_udys:
         raise ValueError(

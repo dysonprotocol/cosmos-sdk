@@ -984,6 +984,16 @@ dyslang.WHITELIST_FUNCTIONS.update(
         "Datetime.utcnow",
         "Datetime.utcoffset",
         "Datetime.utctimetuple",
+        # decimal
+        "Decimal.to_integral_value",
+        "Decimal.to_integral",
+        "Decimal.to_integral_exact",
+        "Decimal.round",
+        "Decimal.quantize",
+        "Decimal.as_integer_ratio",
+        "Decimal.as_tuple",
+        "Decimal.exp",
+        "Decimal.sqrt",
         # re2.Match.re
         "re2._Regexp.match",
         "re2._Match.groupdict",

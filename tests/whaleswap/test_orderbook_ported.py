@@ -10,8 +10,9 @@ def _script_exec(
     *,
     args="",
     kwargs="",
+    attached_messages=None,
 ):
-    tx = dysond_bin(
+    cmd = [
         "tx",
         "script",
         "exec",
@@ -27,7 +28,10 @@ def _script_exec(
         "auto",
         "--from",
         from_name,
-    )
+    ]
+    for m in attached_messages or []:
+        cmd += ["--attached-message", m]
+    tx = dysond_bin(*cmd)
     assert tx.get("code", 1) == 0, f"Exec failed: {tx}"
     return tx
 
@@ -91,6 +95,8 @@ def test_make_happy_path(chainnet, generate_account, faucet, dex_dys_name):
         f"100{have}",
         "--from",
         maker_name,
+        "--mint-fee",
+        "100000udys",
         "--note",
         "mint_have",
     )
@@ -103,6 +109,8 @@ def test_make_happy_path(chainnet, generate_account, faucet, dex_dys_name):
         f"100{want}",
         "--from",
         maker_name,
+        "--mint-fee",
+        "100000udys",
         "--note",
         "mint_want",
     )
@@ -115,7 +123,23 @@ def test_make_happy_path(chainnet, generate_account, faucet, dex_dys_name):
             "want_coin": {"denom": want, "amount": 45},
         }
     )
-    tx_make = _script_exec(dysond, maker_addr, maker_name, "make", kwargs=make_kwargs)
+    # Normal mode requires escrow of have via attached MsgSend to the script address
+    attached_have = json.dumps(
+        {
+            "@type": "/cosmos.bank.v1beta1.MsgSend",
+            "from_address": maker_addr,
+            "to_address": maker_addr,
+            "amount": [{"denom": have, "amount": "30"}],
+        }
+    )
+    tx_make = _script_exec(
+        dysond,
+        maker_addr,
+        maker_name,
+        "make",
+        kwargs=make_kwargs,
+        attached_messages=[attached_have],
+    )
     result = _extract_script_result(tx_make)
     assert (
         "offer_id" in result

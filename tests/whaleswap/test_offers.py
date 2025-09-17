@@ -35,6 +35,8 @@ def _update_whaleswap_for_root(dysond, script_owner_name, script_owner_addr, roo
         "--from",
         script_owner_name,
         "--yes",
+        "--gas",
+        "auto",
     )
     assert up.get("code", 1) == 0, f"update failed: {up}"
 
@@ -61,6 +63,10 @@ def test_make_take_normal(chainnet, generate_account, faucet, register_name):
         f"100{have}",
         "--from",
         maker_name,
+        "--mint-fee",
+        "100000udys",
+        "--gas",
+        "auto",
     )
     dysond(
         "tx",
@@ -70,6 +76,10 @@ def test_make_take_normal(chainnet, generate_account, faucet, register_name):
         f"100{want}",
         "--from",
         maker_name,
+        "--mint-fee",
+        "100000udys",
+        "--gas",
+        "auto",
     )
     # Send want to taker
     dysond("tx", "bank", "send", maker_name, taker_addr, f"100{want}", "--yes")
@@ -95,6 +105,8 @@ def test_make_take_normal(chainnet, generate_account, faucet, register_name):
         maker_name,
         "--attached-message",
         attached,
+        "--gas",
+        "auto",
     )
     assert mk.get("code", 1) == 0, f"make failed: {mk}"
     # Parse offer id
@@ -126,6 +138,8 @@ def test_make_take_normal(chainnet, generate_account, faucet, register_name):
         taker_name,
         "--attached-message",
         attach_t,
+        "--gas",
+        "auto",
     )
     assert tk.get("code", 1) == 0, f"take failed: {tk}"
 
@@ -156,6 +170,8 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         json.dumps(["1"]),
         "--from",
         owner_name,
+        "--gas",
+        "auto",
     )
     assert sp.get("code", 1) == 0, f"set pfand failed: {sp}"
 
@@ -180,6 +196,8 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         owner_name,
         "--attached-message",
         attached,
+        "--gas",
+        "auto",
     )
     assert mp.get("code", 1) == 0, f"mint_pfand_to failed: {mp}"
 
@@ -193,13 +211,17 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         f"100{have}",
         "--from",
         owner_name,
+        "--mint-fee",
+        "100000udys",
+        "--gas",
+        "auto",
     )
     dysond("tx", "bank", "send", owner_name, maker_addr, f"100{have}", "--yes")
 
     params = dysond("query", "nameservice", "params")
     fee_per2 = Decimal(params["params"]["mint_fee_per_coin"])  # 0.01
     dep_amt = Decimal(40)
-    req_udys = dep_amt * fee_per2
+    req_udys = _ceil_dec(dep_amt * fee_per2)
     attach_dep = _build_msg_send(
         maker_addr, owner_addr, [{"denom": have, "amount": str(dep_amt)}]
     )
@@ -222,6 +244,8 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         attach_dep,
         "--attached-message",
         attach_fee,
+        "--gas",
+        "auto",
     )
     assert dep.get("code", 1) == 0, f"deposit failed: {dep}"
     events = {e.get("type"): e for e in dep.get("events", [])}
@@ -242,6 +266,10 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         f"100{want}",
         "--from",
         owner_name,
+        "--mint-fee",
+        "100000udys",
+        "--gas",
+        "auto",
     )
     dysond("tx", "bank", "send", owner_name, taker_addr, f"100{want}", "--yes")
 
@@ -260,6 +288,8 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         ),
         "--from",
         maker_name,
+        "--gas",
+        "auto",
     )
     assert mk.get("code", 1) == 0, f"make liquid failed: {mk}"
     events = {e.get("type"): e for e in mk.get("events", [])}
@@ -289,6 +319,8 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         taker_name,
         "--attached-message",
         attach_pay,
+        "--gas",
+        "auto",
     )
     assert tk.get("code", 1) == 0, f"take liquid failed: {tk}"
 
@@ -318,6 +350,8 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         json.dumps(["1"]),
         "--from",
         owner_name,
+        "--gas",
+        "auto",
     )
     params = dysond("query", "nameservice", "params")
     fee_per = Decimal(params["params"]["mint_fee_per_coin"])  # e.g. 0.01
@@ -339,12 +373,27 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         owner_name,
         "--attached-message",
         attach,
+        "--gas",
+        "auto",
     )
 
     # Maker: deposit base have to get liquid
     have = f"{root}/H"
     dysond(
         "tx", "nameservice", "mint-coins", "--amount", f"10{have}", "--from", owner_name
+    )
+    dysond(
+        "tx",
+        "nameservice",
+        "mint-coins",
+        "--amount",
+        f"10{have}",
+        "--from",
+        owner_name,
+        "--mint-fee",
+        "100000udys",
+        "--gas",
+        "auto",
     )
     dysond("tx", "bank", "send", owner_name, maker_addr, f"10{have}", "--yes")
     dep_amt = Decimal(5)
@@ -371,6 +420,8 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         attach_dep,
         "--attached-message",
         attach_fee,
+        "--gas",
+        "auto",
     )
     assert dep.get("code", 1) == 0
     events = {e.get("type"): e for e in dep.get("events", [])}
@@ -396,6 +447,8 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         ),
         "--from",
         maker_name,
+        "--gas",
+        "auto",
     )
     assert mk.get("code", 1) == 0
     # drain L(have)
@@ -414,5 +467,7 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         json.dumps([1]),
         "--from",
         third_name,
+        "--gas",
+        "auto",
     )
     assert ca.get("code", 1) == 0, f"cancel failed: {ca}"

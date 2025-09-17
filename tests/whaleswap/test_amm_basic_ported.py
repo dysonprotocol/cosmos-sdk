@@ -111,6 +111,8 @@ def test_amm_create_join_swap_exit(chainnet, generate_account, faucet, dex_dys_n
             f"1000{a}",
             "--from",
             maker_name,
+            "--mint-fee",
+            "100000udys",
             "--note",
             "mint_a",
         ).get("code", 1)
@@ -125,6 +127,8 @@ def test_amm_create_join_swap_exit(chainnet, generate_account, faucet, dex_dys_n
             f"1000{b}",
             "--from",
             maker_name,
+            "--mint-fee",
+            "100000udys",
             "--note",
             "mint_b",
         ).get("code", 1)
