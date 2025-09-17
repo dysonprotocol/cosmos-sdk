@@ -98,7 +98,7 @@ def test_make_take_normal(chainnet, generate_account, faucet, register_name):
         "--script-address",
         maker_addr,
         "--function-name",
-        "make",
+        "make_offer",
         "--args",
         make_args,
         "--from",
@@ -131,7 +131,7 @@ def test_make_take_normal(chainnet, generate_account, faucet, register_name):
         "--script-address",
         maker_addr,
         "--function-name",
-        "take",
+        "take_offer",
         "--args",
         take_args,
         "--from",
@@ -165,7 +165,7 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         "--script-address",
         owner_addr,
         "--function-name",
-        "set_pfand_per_offer",
+        "admin_set_pfand_per_offer",
         "--args",
         json.dumps(["1"]),
         "--from",
@@ -189,7 +189,7 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         "--script-address",
         owner_addr,
         "--function-name",
-        "mint_pfand_to",
+        "admin_mint_pfand_to",
         "--args",
         json.dumps([maker_addr, str(pfand_amt)]),
         "--from",
@@ -199,7 +199,7 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         "--gas",
         "auto",
     )
-    assert mp.get("code", 1) == 0, f"mint_pfand_to failed: {mp}"
+    assert mp.get("code", 1) == 0, f"_mint_pfand_to failed: {mp}"
 
     # Maker deposits base have into liquid and obtains L(have)
     have = f"{root}/Lhave"
@@ -235,7 +235,7 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         "--script-address",
         owner_addr,
         "--function-name",
-        "deposit",
+        "convert_to_liquid",
         "--args",
         json.dumps([have, str(dep_amt)]),
         "--from",
@@ -281,7 +281,7 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         "--script-address",
         owner_addr,
         "--function-name",
-        "make",
+        "make_offer",
         "--args",
         json.dumps(
             [{"denom": liquid_have, "amount": "20"}, {"denom": want, "amount": "30"}]
@@ -312,7 +312,7 @@ def test_make_take_liquid_and_pfand(chainnet, generate_account, faucet, register
         "--script-address",
         owner_addr,
         "--function-name",
-        "take",
+        "take_offer",
         "--args",
         json.dumps([[{"offer_id": offer_id, "take_units": None}]]),
         "--from",
@@ -345,7 +345,7 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         "--script-address",
         owner_addr,
         "--function-name",
-        "set_pfand_per_offer",
+        "admin_set_pfand_per_offer",
         "--args",
         json.dumps(["1"]),
         "--from",
@@ -366,7 +366,7 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         "--script-address",
         owner_addr,
         "--function-name",
-        "mint_pfand_to",
+        "admin_mint_pfand_to",
         "--args",
         json.dumps([maker_addr, "1"]),
         "--from",
@@ -411,7 +411,7 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         "--script-address",
         owner_addr,
         "--function-name",
-        "deposit",
+        "convert_to_liquid",
         "--args",
         json.dumps([have, str(dep_amt)]),
         "--from",
@@ -440,7 +440,7 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         "--script-address",
         owner_addr,
         "--function-name",
-        "make",
+        "make_offer",
         "--args",
         json.dumps(
             [{"denom": liquid_have, "amount": "5"}, {"denom": have, "amount": "5"}]
@@ -462,7 +462,7 @@ def test_cancel_liquid_third_party(chainnet, generate_account, faucet, register_
         "--script-address",
         owner_addr,
         "--function-name",
-        "cancel",
+        "cancel_offer",
         "--args",
         json.dumps([1]),
         "--from",

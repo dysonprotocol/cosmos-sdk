@@ -221,7 +221,9 @@ def test_amm_create_join_swap_exit(chainnet, generate_account, faucet, dex_dys_n
             "out_denom": b,
         }
     )
-    tx_swap = _script_exec(dysond, maker_addr, trader_name, "swap", kwargs=swap_kwargs)
+    tx_swap = _script_exec(
+        dysond, maker_addr, trader_name, "pool_swap", kwargs=swap_kwargs
+    )
     swap_res = _extract_script_result(tx_swap)
     assert (
         swap_res.get("denom") == b and int(swap_res.get("amount", 0)) > 0

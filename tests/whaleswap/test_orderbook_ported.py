@@ -136,7 +136,7 @@ def test_make_happy_path(chainnet, generate_account, faucet, dex_dys_name):
         dysond,
         maker_addr,
         maker_name,
-        "make",
+        "make_offer",
         kwargs=make_kwargs,
         attached_messages=[attached_have],
     )

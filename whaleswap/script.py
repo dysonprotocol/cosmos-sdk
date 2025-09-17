@@ -43,7 +43,13 @@ def _b64url_decode_no_pad(value: str) -> str:
     return raw.decode("utf-8")
 
 
-def _liquid_denom_for(base_denom: str) -> str:
+def quote_liquid_denom(base_denom: str) -> str:
+    """
+    Return the liquid denom L(S) for solid denom S.
+
+    Solid (S) refers to a normal on-ledger denom like `DYS_ROOT/foo`.
+    Liquid (L) refers to `DYS_NAME/coins/<base64url(S)>`.
+    """
     return LIQUID_PREFIX + _b64url_encode_no_pad(base_denom)
 
 
@@ -51,7 +57,10 @@ def _is_liquid_denom(denom: str) -> bool:
     return isinstance(denom, str) and denom.startswith(LIQUID_PREFIX)
 
 
-def _decode_liquid_denom(liquid_denom: str) -> str:
+def decode_liquid_denom(liquid_denom: str) -> str:
+    """
+    Return the solid denom S from a liquid denom L(S).
+    """
     assert _is_liquid_denom(liquid_denom), f"invalid liquid denom: {liquid_denom}"
     tail = liquid_denom[len(LIQUID_PREFIX) :]
     return _b64url_decode_no_pad(tail)
@@ -90,6 +99,22 @@ def _sum_attached_to_script_by_denom() -> Dict[str, Decimal]:
         a = Decimal(c["amount"])  # type: ignore[arg-type]
         totals[d] = totals.get(d, Decimal(0)) + a
     return totals
+
+
+# -----------------------------
+# Read-only helper APIs
+# -----------------------------
+def estimate_mint_fee(amount: int | Decimal | str) -> Decimal:
+    """Return the required udys fee (integer string) for minting `amount` units.
+
+    Computes ceil(amount * mint_fee_per_coin).
+    """
+    amt = Decimal(amount)
+    if amt < 0:
+        raise ValueError("amount must be >= 0")
+    fee_per = _get_mint_fee_per_coin()
+    required = (amt * fee_per).to_integral_value(rounding=ROUND_CEILING)
+    return required
 
 
 #############################
@@ -281,8 +306,7 @@ def _mint_coins(coin: Coin, mint_fee: Any) -> Dict[str, Any]:
     - Sends MsgMintCoins with explicit mint_fee
     """
     amt = Decimal(coin["amount"])
-    fee_per = _get_mint_fee_per_coin()
-    required = (amt * fee_per).to_integral_value(rounding=ROUND_CEILING)
+    required = estimate_mint_fee(amt)
     provided = Decimal(mint_fee)
     if provided < required:
         raise ValueError(
@@ -492,45 +516,17 @@ def _get_pool_index(pool_id: int) -> str:
     return f"pool|{pool_id:010d}"
 
 
-def get_pool(pool_id: int) -> Pool:
-    """Return pool by id (JSON-decoded), normalizing Decimal amounts."""
-    pool_index = _get_pool_index(pool_id)
-    raw = _storage_get(pool_index)
-    data: Pool = {
-        "pool_id": raw["pool_id"],
-        "coin1": {
-            "denom": raw["coin1"]["denom"],
-            "balance": Decimal(raw["coin1"]["balance"]),
-            "lent": Decimal(raw["coin1"]["lent"]),
-            "collateral": Decimal(raw["coin1"]["collateral"]),
-        },
-        "total_shares": Decimal(raw["total_shares"]),
-        "coin2": {
-            "denom": raw["coin2"]["denom"],
-            "balance": Decimal(raw["coin2"]["balance"]),
-            "lent": Decimal(raw["coin2"]["lent"]),
-            "collateral": Decimal(raw["coin2"]["collateral"]),
-        },
-        "shares_denom": raw["shares_denom"],
-        "block_height": raw["block_height"],
-        "created": raw["created"],
-        "updated": raw.get("updated"),
-        "num_trades": raw.get("num_trades", 0),
-    }
-    return data
-
-
 #############################
 # Liquid trading conversions
 #############################
 
 
-def deposit(denom: str, amount: Any) -> Dict[str, Any]:
-    """Convert base denom X to liquid L(X) 1:1 by minting; escrow X on script.
+def convert_to_liquid(denom: str, amount: Any) -> Dict[str, Any]:
+    """Convert solid denom `S` to liquid `L(S)` at 1:1 by minting; escrow `S` on `SCRIPT`.
 
     Requirements:
-    - Attach at least `amount` of X to the script in the same tx
-    - Attach at least floor(amount * nameservice.mint_fee_per_coin) of udys
+    - Attach at least `amount` of solid `denom` to `SCRIPT` in the same tx (escrow backing)
+    - Attach at least `estimate_mint_fee(amount)` of `udys` (mint fee)
     """
     caller = get_executor_address()
     amt = Decimal(amount)
@@ -539,8 +535,7 @@ def deposit(denom: str, amount: Any) -> Dict[str, Any]:
 
     attachments = _sum_attached_to_script_by_denom()
     attached_denom = attachments.get(denom, Decimal(0))
-    fee_per = _get_mint_fee_per_coin()
-    required_udys = (amt * fee_per).to_integral_value(rounding=ROUND_CEILING)
+    required_udys = estimate_mint_fee(amt)
 
     attached_udys = attachments.get(UDYS_DENOM, Decimal(0))
 
@@ -560,7 +555,7 @@ def deposit(denom: str, amount: Any) -> Dict[str, Any]:
                 f"insufficient attached {UDYS_DENOM}: {attached_udys} < required {required_udys}"
             )
 
-    liquid_denom = _liquid_denom_for(denom)
+    liquid_denom = quote_liquid_denom(denom)
     _mint_coins({"denom": liquid_denom, "amount": amt}, required_udys)
     _send_coins(get_script_address(), caller, [{"denom": liquid_denom, "amount": amt}])
 
@@ -569,12 +564,12 @@ def deposit(denom: str, amount: Any) -> Dict[str, Any]:
     return {"liquid_denom": liquid_denom, "amount": amt}
 
 
-def withdraw(liquid_denom: str, amount: Any) -> Dict[str, Any]:
-    """Burn L(X) and release X from script escrow to the caller."""
+def convert_to_solid(liquid_denom: str, amount: Any) -> Dict[str, Any]:
+    """Burn liquid `L(S)` and release solid `S` from `SCRIPT` escrow to the caller."""
     caller = get_executor_address()
     if not _is_liquid_denom(liquid_denom):
         raise ValueError(f"invalid liquid denom: {liquid_denom}")
-    denom = _decode_liquid_denom(liquid_denom)
+    denom = decode_liquid_denom(liquid_denom)
     amt = Decimal(amount)
     if amt <= 0:
         raise ValueError("amount must be > 0")
@@ -608,53 +603,11 @@ def withdraw(liquid_denom: str, amount: Any) -> Dict[str, Any]:
 
 
 #############################
-# Admin utilities
-#############################
-
-
-def set_pfand_per_offer(value: Any) -> Dict[str, Any]:
-    """Owner-only: set pfand_per_offer parameter (Decimal >= 0)."""
-    caller = get_executor_address()
-    if caller != get_script_address():
-        raise ValueError("only script owner can set pfand_per_offer")
-    v = Decimal(value)
-    if v < 0:
-        raise ValueError("pfand_per_offer must be >= 0")
-    _set_pfand_per_offer(v)
-    emit_event("pfand_param", str(v))
-    return {"pfand_per_offer": str(v)}
-
-
-def mint_pfand_to(to_address: str, amount: Any) -> Dict[str, Any]:
-    """Owner-only: mint PFAND_DENOM to `to_address`. Requires attached udys for fee."""
-    caller = get_executor_address()
-    if caller != get_script_address():
-        raise ValueError("only script owner can mint pfand")
-    amt = Decimal(amount)
-    if amt <= 0:
-        raise ValueError("amount must be > 0")
-    attachments = _sum_attached_to_script_by_denom()
-    fee_per = _get_mint_fee_per_coin()
-    required_udys = (amt * fee_per).to_integral_value(rounding=ROUND_CEILING)
-    attached_udys = attachments.get(UDYS_DENOM, Decimal(0))
-    if attached_udys < required_udys:
-        raise ValueError(
-            f"insufficient attached udys: {attached_udys} < required {required_udys}"
-        )
-    _mint_coins({"denom": PFAND_DENOM, "amount": amt}, required_udys)
-    _send_coins(
-        get_script_address(), to_address, [{"denom": PFAND_DENOM, "amount": amt}]
-    )
-    emit_event("pfand_minted", str(amt))
-    return {"minted": str(amt)}
-
-
-#############################
 # Core DEX API (Order Book)
 #############################
 
 
-def make(have_coin: Any, want_coin: Any) -> Dict[str, int]:
+def make_offer(have_coin: Any, want_coin: Any) -> Dict[str, int]:
     """Create an offer in one of two modes:
 
     - normal: maker attaches base have coins to script; they are escrowed; no pfand.
@@ -761,7 +714,7 @@ def make(have_coin: Any, want_coin: Any) -> Dict[str, int]:
     return {"offer_id": offer_id}
 
 
-def take(
+def take_offer(
     trades: List[TakeOffer] = [TakeOffer(offer_id=0, take_units=0)],
 ) -> Dict[str, Any]:
     """Batch take with mixed settlement:
@@ -863,7 +816,7 @@ def take(
                 maker_liquid_inputs[maker].get(have_denom, Decimal(0)) + actual_receive
             )
             # base have sent to taker
-            base_have = _decode_liquid_denom(have_denom)
+            base_have = decode_liquid_denom(have_denom)
             send_to_taker_base[base_have] = (
                 send_to_taker_base.get(base_have, Decimal(0)) + actual_receive
             )
@@ -889,7 +842,7 @@ def take(
     # taker L(want)
     taker_liquid_inputs: Dict[str, Decimal] = {}
     for base_d, amt in taker_liquid_want_by_denom.items():
-        lden = _liquid_denom_for(base_d)
+        lden = quote_liquid_denom(base_d)
         taker_liquid_inputs[lden] = taker_liquid_inputs.get(lden, Decimal(0)) + amt
     taker_input_coins: List[Coin] = []
     for den, amt in taker_liquid_inputs.items():
@@ -1012,7 +965,7 @@ def take(
     return {"ok": True}
 
 
-def cancel(offer_id: int):
+def cancel_offer(offer_id: int):
 
     offer = _get_offer(offer_id)
     closer = get_executor_address()
@@ -1064,6 +1017,34 @@ def cancel(offer_id: int):
 #############################
 # Core AMM Primitives
 #############################
+
+
+def get_pool(pool_id: int) -> Pool:
+    """Return pool by id (JSON-decoded), normalizing Decimal amounts."""
+    pool_index = _get_pool_index(pool_id)
+    raw = _storage_get(pool_index)
+    data: Pool = {
+        "pool_id": raw["pool_id"],
+        "coin1": {
+            "denom": raw["coin1"]["denom"],
+            "balance": Decimal(raw["coin1"]["balance"]),
+            "lent": Decimal(raw["coin1"]["lent"]),
+            "collateral": Decimal(raw["coin1"]["collateral"]),
+        },
+        "total_shares": Decimal(raw["total_shares"]),
+        "coin2": {
+            "denom": raw["coin2"]["denom"],
+            "balance": Decimal(raw["coin2"]["balance"]),
+            "lent": Decimal(raw["coin2"]["lent"]),
+            "collateral": Decimal(raw["coin2"]["collateral"]),
+        },
+        "shares_denom": raw["shares_denom"],
+        "block_height": raw["block_height"],
+        "created": raw["created"],
+        "updated": raw.get("updated"),
+        "num_trades": raw.get("num_trades", 0),
+    }
+    return data
 
 
 def create_pool(coin_a: Any, coin_b: Any) -> Dict[str, Any]:
@@ -1138,10 +1119,7 @@ def create_pool(coin_a: Any, coin_b: Any) -> Dict[str, Any]:
     _storage_set(pool_index, pool)
 
     # Mint initial shares – requires explicit mint fee and attached udys
-    fee_per = _get_mint_fee_per_coin()
-    required_udys = (Decimal(initial_shares) * fee_per).to_integral_value(
-        rounding=ROUND_CEILING
-    )
+    required_udys = estimate_mint_fee(Decimal(initial_shares))
     attachments = _sum_attached_to_script_by_denom()
     attached_udys = attachments.get(UDYS_DENOM, Decimal(0))
     if attached_udys < required_udys:
@@ -1254,8 +1232,7 @@ def join_pool(pool_id: int, coin1: Any, coin2: Any) -> Dict[str, Any]:
     _storage_set(pool_index, pool)
 
     # Mint new shares – requires explicit mint fee and attached udys
-    fee_per2 = _get_mint_fee_per_coin()
-    required_udys = (shares * fee_per2).to_integral_value(rounding=ROUND_CEILING)
+    required_udys = estimate_mint_fee(shares)
     attachments = _sum_attached_to_script_by_denom()
     attached_udys = attachments.get(UDYS_DENOM, Decimal(0))
     if attached_udys < required_udys:
@@ -1275,7 +1252,7 @@ def join_pool(pool_id: int, coin1: Any, coin2: Any) -> Dict[str, Any]:
     if refund2 > 0:
         refund.append({"denom": pool["coin2"]["denom"], "amount": refund2})
 
-    emit_event("poolupdate", str(pool_id))
+    emit_event("pool_id", str(pool_id))
     return {
         "pool_id": pool_id,
         "shares": shares,
@@ -1354,11 +1331,11 @@ def exit_pool(pool_id: int, shares_coin: Any) -> List[Coin]:
             [{"denom": out2_coin["denom"], "amount": out2}],
         )
 
-    emit_event("poolupdate", str(pool_id))
+    emit_event("pool_id", str(pool_id))
     return amount
 
 
-def swap(
+def pool_swap(
     pool_ids_str: str, input_coin: Coin, minimum_out_amount: int, out_denom: str
 ) -> Dict[str, Any]:
     """Multi-hop constant-product swap.
@@ -1432,7 +1409,7 @@ def swap(
             pool["num_trades"] + 1 if pool["num_trades"] is not None else 1
         )
         _storage_set(_get_pool_index(pool_id), pool)
-        emit_event("poolupdate", str(pool_id))
+        emit_event("pool_id", str(pool_id))
 
     if current_amount < minimum_out_amount:
         raise ValueError(
@@ -1448,3 +1425,44 @@ def swap(
     )
 
     return {"denom": current_denom, "amount": current_amount}
+
+
+#############################
+# Admin utilities
+#############################
+
+
+def admin_set_pfand_per_offer(value: Decimal | str | int) -> Dict[str, Any]:
+    """Owner-only: set pfand_per_offer parameter (Decimal >= 0)."""
+    caller = get_executor_address()
+    if caller != get_script_address():
+        raise ValueError("only script owner can set pfand_per_offer")
+    v = Decimal(value)
+    if v < 0:
+        raise ValueError("pfand_per_offer must be >= 0")
+    _set_pfand_per_offer(v)
+    emit_event("pfand_param", str(v))
+    return {"pfand_per_offer": str(v)}
+
+
+def admin_mint_pfand_to(to_address: str, amount: Any) -> Dict[str, Any]:
+    """Owner-only: mint PFAND_DENOM to `to_address`. Requires attached udys for fee."""
+    caller = get_executor_address()
+    if caller != get_script_address():
+        raise ValueError("only script owner can mint pfand")
+    amt = Decimal(amount)
+    if amt <= 0:
+        raise ValueError("amount must be > 0")
+    attachments = _sum_attached_to_script_by_denom()
+    required_udys = estimate_mint_fee(amt)
+    attached_udys = attachments.get(UDYS_DENOM, Decimal(0))
+    if attached_udys < required_udys:
+        raise ValueError(
+            f"insufficient attached udys: {attached_udys} < required {required_udys}"
+        )
+    _mint_coins({"denom": PFAND_DENOM, "amount": amt}, required_udys)
+    _send_coins(
+        get_script_address(), to_address, [{"denom": PFAND_DENOM, "amount": amt}]
+    )
+    emit_event("pfand_minted", str(amt))
+    return {"minted": str(amt)}
