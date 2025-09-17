@@ -345,6 +345,11 @@ message MsgMintCoins {
     (amino.dont_omitempty) = true,
     (amino.encoding) = "legacy_coins"
   ];
+  // mint_fee is the explicit fee authorization provided by the caller.
+  // It must be in udys and be >= the required fee computed as
+  // sum(amount[i].amount) * params.mint_fee_per_coin (ceil to integer).
+  cosmos.base.v1beta1.Coin mint_fee = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 
 // Response for MintCoins

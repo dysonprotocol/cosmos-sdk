@@ -16,6 +16,11 @@
                         "additionalProperties": false,
                         "type": "array",
                         "description": "Using repeated cosmos.base.v1beta1.Coin with the annotation (gogoproto.castrepeated) = \"github.com/cosmos/cosmos-sdk/types.Coins\" so that the generated Go code will have `Amount sdk.Coins` automatically."
+                    },
+                    "mint_fee": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false,
+                        "description": "mint_fee is the explicit fee authorization provided by the caller. It must be in udys and be >= the required fee computed as sum(amount[i].amount) * params.mint_fee_per_coin (ceil to integer)."
                     }
                 },
                 "additionalProperties": false,

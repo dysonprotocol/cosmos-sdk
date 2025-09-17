@@ -18061,6 +18061,21 @@ paths:
 
                   so that the generated Go code will have `Amount sdk.Coins`
                   automatically.
+              mint_fee:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                  amount:
+                    type: string
+                description: >-
+                  Coin defines a token with a denomination and an amount.
+
+
+                  NOTE: The amount field is an Int which implements the custom
+                  method
+
+                  signatures required by gogoproto.
             description: >-
               MsgMintCoins mints coins into the owner's balance, as long as each
               coin's
@@ -46909,6 +46924,18 @@ definitions:
 
           so that the generated Go code will have `Amount sdk.Coins`
           automatically.
+      mint_fee:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
     description: |-
       MsgMintCoins mints coins into the owner's balance, as long as each coin's
       "root name" is owned by that owner.

@@ -90,10 +90,11 @@ func NewMsgSetDestination(owner string, name string, destination string) *MsgSet
 }
 
 // NewMsgMintCoins creates a new MsgMintCoins instance
-func NewMsgMintCoins(nameDestination string, amount sdk.Coins) *MsgMintCoins {
+func NewMsgMintCoins(nameDestination string, amount sdk.Coins, mintFee sdk.Coin) *MsgMintCoins {
 	return &MsgMintCoins{
 		NameDestination: nameDestination,
 		Amount:          amount,
+		MintFee:         mintFee,
 	}
 }
 

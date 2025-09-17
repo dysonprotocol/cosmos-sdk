@@ -1316,6 +1316,10 @@
             "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
           },
           "description": "Using repeated cosmos.base.v1beta1.Coin with the annotation\n(gogoproto.castrepeated) = \"github.com/cosmos/cosmos-sdk/types.Coins\"\nso that the generated Go code will have `Amount sdk.Coins` automatically."
+        },
+        "mint_fee": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "description": "mint_fee is the explicit fee authorization provided by the caller.\nIt must be in udys and be >= the required fee computed as\nsum(amount[i].amount) * params.mint_fee_per_coin (ceil to integer)."
         }
       },
       "description": "MsgMintCoins mints coins into the owner's balance, as long as each coin's\n\"root name\" is owned by that owner."

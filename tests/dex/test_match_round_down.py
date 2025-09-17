@@ -110,21 +110,30 @@ def test_match_round_down_overselects_offer(
     # Taker has 50 of have_denom. With offer (100 want_denom for 80 have_denom):
     # lcm(100,80)=400 => unit_have_int=400//80=5, unit_want_int=400//100=4.
     # Max affordable units with 50 have_denom: floor(50/4)=12 units.
-    take_kwargs = json.dumps({"offer_id": offer_id, "take_units": 12})
+    take_kwargs = json.dumps({"trades": [{"offer_id": offer_id, "take_units": 12}]})
     tx_take = _script_exec(dysond, maker_addr, taker_name, "take", kwargs=take_kwargs)
     result_take = _extract_script_result(tx_take)
 
     # Expect taker sends 12*4=48 have_denom, receives 12*5=60 want_denom
+    inputs = result_take.get("inputs", [])
+    outputs = result_take.get("outputs", [])
+    sent_amt = sum(
+        int(c.get("amount", 0))
+        for e in inputs
+        for c in e.get("coins", [])
+        if e.get("address") == taker_addr and c.get("denom") == have_denom
+    )
+    recv_amt = sum(
+        int(c.get("amount", 0))
+        for e in outputs
+        for c in e.get("coins", [])
+        if e.get("address") == taker_addr and c.get("denom") == want_denom
+    )
     assert (
-        "sent" in result_take and "received" in result_take
-    ), f"Unexpected take result shape: {json.dumps(result_take, indent=2)}"
-    assert (
-        result_take["sent"]["denom"] == have_denom
-        and int(result_take["sent"]["amount"]) == 48
+        sent_amt == 48
     ), f"Taker should send 48 {have_denom}. Full: {json.dumps(result_take, indent=2)}"
     assert (
-        result_take["received"]["denom"] == want_denom
-        and int(result_take["received"]["amount"]) == 60
+        recv_amt == 60
     ), f"Taker should receive 60 {want_denom}. Full: {json.dumps(result_take, indent=2)}"
 
     # Final balances: taker have_denom 50-48=2; taker want_denom 0+60=60

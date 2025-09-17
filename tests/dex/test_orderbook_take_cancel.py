@@ -150,22 +150,50 @@ def test_take_partial_then_full_and_cancel(
 
     # Partial take: 5 units (LCM(30,45)=90 -> unit_have=3, unit_want=2, remaining_units=10)
     # 5 units: taker sends 10 want, receives 15 have
-    take_kwargs = json.dumps({"offer_id": offer_id, "take_units": 5})
+    take_kwargs = json.dumps({"trades": [{"offer_id": offer_id, "take_units": 5}]})
     tx_take1 = _script_exec(dysond, maker_addr, taker_name, "take", kwargs=take_kwargs)
     res1 = _extract_script_result(tx_take1)
-    assert res1 == {
-        "sent": {"denom": want, "amount": 15},
-        "received": {"denom": have, "amount": 10},
-    }, f"Unexpected partial take: {json.dumps(res1, indent=2)}"
+    inputs = res1.get("inputs", [])
+    outputs = res1.get("outputs", [])
+    partial_sent = sum(
+        int(c.get("amount", 0))
+        for e in inputs
+        for c in e.get("coins", [])
+        if e.get("address") == taker_addr and c.get("denom") == want
+    )
+    partial_recv = sum(
+        int(c.get("amount", 0))
+        for e in outputs
+        for c in e.get("coins", [])
+        if e.get("address") == taker_addr and c.get("denom") == have
+    )
+    assert (
+        partial_sent == 15
+    ), f"Partial take sent mismatch: {json.dumps(res1, indent=2)}"
+    assert (
+        partial_recv == 10
+    ), f"Partial take received mismatch: {json.dumps(res1, indent=2)}"
 
     # Full remaining: 5 units remaining after first take (original 10 -> now 5)
-    take_kwargs2 = json.dumps({"offer_id": offer_id})
+    take_kwargs2 = json.dumps({"trades": [{"offer_id": offer_id}]})
     tx_take2 = _script_exec(dysond, maker_addr, taker_name, "take", kwargs=take_kwargs2)
     res2 = _extract_script_result(tx_take2)
-    assert res2 == {
-        "sent": {"denom": want, "amount": 30},
-        "received": {"denom": have, "amount": 20},
-    }, f"Unexpected full take: {json.dumps(res2, indent=2)}"
+    inputs = res2.get("inputs", [])
+    outputs = res2.get("outputs", [])
+    full_sent = sum(
+        int(c.get("amount", 0))
+        for e in inputs
+        for c in e.get("coins", [])
+        if e.get("address") == taker_addr and c.get("denom") == want
+    )
+    full_recv = sum(
+        int(c.get("amount", 0))
+        for e in outputs
+        for c in e.get("coins", [])
+        if e.get("address") == taker_addr and c.get("denom") == have
+    )
+    assert full_sent == 30, f"Full take sent mismatch: {json.dumps(res2, indent=2)}"
+    assert full_recv == 20, f"Full take received mismatch: {json.dumps(res2, indent=2)}"
 
     # Create a second offer and then cancel it
     make_kwargs2 = json.dumps(

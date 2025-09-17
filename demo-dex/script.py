@@ -11,19 +11,12 @@ from dys import (  # type: ignore
     get_script_address,
     get_block_info,
     emit_event,
+    DysQueryException,
+    get_attached_messages,
 )
 
 
 DYS_NAME = "whaleswap.dys"
-
-
-def _floor_div(n: Decimal, d: Decimal) -> Decimal:
-    return n // d
-
-
-def _ceil_div(n: Decimal, d: Decimal) -> Decimal:
-    return (n + d - 1) // d
-
 
 #############################
 # Storage helpers (on-chain)
@@ -32,13 +25,18 @@ def _ceil_div(n: Decimal, d: Decimal) -> Decimal:
 
 def _storage_get(index: str) -> Any:
     """Get value for index (JSON-decoded)."""
-    res = _query(
-        {
-            "@type": "/dysonprotocol.storage.v1.QueryStorageGetRequest",
-            "owner": get_script_address(),
-            "index": index,
-        }
-    )
+    try:
+        res = _query(
+            {
+                "@type": "/dysonprotocol.storage.v1.QueryStorageGetRequest",
+                "owner": get_script_address(),
+                "index": index,
+            }
+        )
+    except DysQueryException as e:
+        if str(e).endswith("doesn\\'t exist')"):
+            raise ValueError(f"NotFound: {index}")
+        raise e
     return json.loads(res["entry"]["data"])
 
 
@@ -172,6 +170,11 @@ class Output(TypedDict):
     coins: List[Coin]
 
 
+class TakeOffer(TypedDict):
+    offer_id: int
+    take_units: Optional[int]
+
+
 #############################
 # Msg helpers
 #############################
@@ -227,6 +230,33 @@ def _send_coins(
             "amount": coins,
         }
     )
+
+
+def _get_attached_coins_to_script():
+    coins = []
+    script_addr = get_script_address()
+    for msg in get_attached_messages() or []:
+        if (
+            isinstance(msg, dict)
+            and msg.get("@type") == "/cosmos.bank.v1beta1.MsgSend"
+            and msg.get("to_address") == script_addr
+        ):
+            for c in msg.get("amount", []) or []:
+                coins.append({"denom": c["denom"], "amount": c["amount"]})
+    return coins
+
+
+#############################
+# Math helpers
+#############################
+
+
+def _floor_div(n: Decimal, d: Decimal) -> Decimal:
+    return n // d
+
+
+def _ceil_div(n: Decimal, d: Decimal) -> Decimal:
+    return (n + d - 1) // d
 
 
 #############################
@@ -453,109 +483,207 @@ def make(have_coin: Any, want_coin: Any) -> Dict[str, int]:
     return {"offer_id": offer_id}
 
 
-def take(offer_id: int, take_units: int | Decimal | None = None) -> Dict[str, Any]:
-    """Take specified units from an open offer; validate units, balances, move coins, record trade, update offer, and return actual sent/received coins for taker."""
+def take(
+    trades: List[TakeOffer] = [TakeOffer(offer_id=0, take_units=0)],
+) -> Dict[str, List[Input] | List[Output]]:
+    """Batch take across multiple offers in one transaction.
+
+    Input:
+    - trades: list of (offer_id, take_units|None). None means take all remaining units.
+
+    Decisions:
+    - Two-pass flow:
+      1) Compute exact integer amounts (LCM-based units, no rounding), validate per-offer
+         constraints and aggregate balance sufficiency (taker and each maker).
+      2) Record Trade entries and reverse lookups, update Offer (remaining units/amounts,
+         status/indices), emit events, then perform a single MsgMoveCoins with batched inputs/outputs.
+    - Duplicate offer_ids are rejected to avoid double-processing.
+
+    Returns:
+    - A summary dict containing the batched inputs/outputs used for MsgMoveCoins.
+    """
     taker = get_executor_address()
 
-    offer = _get_offer(offer_id)
+    if not trades:
+        raise ValueError("trades list must be non-empty")
 
-    if _get_status(offer) != "open":
-        raise ValueError(f"offer not open: {_get_status(offer)}")
+    taker_sent: Dict[str, Decimal] = {}
+    taker_received: Dict[str, Decimal] = {}
+    maker_sent: Dict[str, Dict[str, Decimal]] = {}
+    maker_received: Dict[str, Dict[str, Decimal]] = {}
+    per_trade_info: List[Dict[str, Any]] = []
+    seen_offer_ids: set[int] = set()
 
-    remaining_units = Decimal(offer["remaining_units"])
-    if take_units is None:
-        take_units = remaining_units
-    if not (1 <= take_units <= remaining_units):
-        raise ValueError(
-            f"take_units must satisfy 1 <= take_units ({take_units}) <= remaining_units ({remaining_units})"
+    # First pass: compute and accumulate transfers, validate per-offer constraints
+    for t in trades:
+        offer_id = t["offer_id"]
+        take_units_opt = t.get("take_units")
+        if offer_id in seen_offer_ids:
+            raise ValueError(f"duplicate offer_id {offer_id} in trades list")
+        seen_offer_ids.add(offer_id)
+
+        offer = _get_offer(offer_id)
+
+        if _get_status(offer) != "open":
+            raise ValueError(f"offer {offer_id} not open: {_get_status(offer)}")
+
+        remaining_units = offer["remaining_units"]
+        take_units = (
+            remaining_units if take_units_opt is None else Decimal(take_units_opt)
+        )
+        if not (Decimal(1) <= take_units <= remaining_units):
+            raise ValueError(
+                f"take_units for offer {offer_id} must satisfy 1 <= take_units ({take_units}) <= remaining_units ({remaining_units})"
+            )
+
+        unit_want_int = offer["unit_want_int"]
+        unit_have_int = offer["unit_have_int"]
+        actual_sent = take_units * unit_want_int
+        actual_receive = take_units * unit_have_int
+
+        want_denom = offer["remaining_want"]["denom"]
+        have_denom = offer["remaining_have"]["denom"]
+
+        # Accumulate transfers
+        taker_sent[want_denom] = taker_sent.get(want_denom, Decimal(0)) + actual_sent
+        taker_received[have_denom] = (
+            taker_received.get(have_denom, Decimal(0)) + actual_receive
+        )
+        maker = offer["maker"]
+        if maker not in maker_sent:
+            maker_sent[maker] = {}
+        if maker not in maker_received:
+            maker_received[maker] = {}
+        maker_sent[maker][have_denom] = (
+            maker_sent[maker].get(have_denom, Decimal(0)) + actual_receive
+        )
+        maker_received[maker][want_denom] = (
+            maker_received[maker].get(want_denom, Decimal(0)) + actual_sent
         )
 
-    unit_want_int = offer["unit_want_int"]
-    unit_have_int = offer["unit_have_int"]
-    actual_sent = take_units * unit_want_int
-    actual_receive = take_units * unit_have_int
-
-    have_denom = offer["remaining_have"]["denom"]
-    want_denom = offer["remaining_want"]["denom"]
-
-    if _get_balance(taker, want_denom) < actual_sent:
-        raise ValueError(
-            f"insufficient taker balance for {want_denom}: {_get_balance(taker, want_denom)} {want_denom} < {actual_sent} {want_denom}"
-        )
-    if _get_balance(offer["maker"], have_denom) < actual_receive:
-        raise ValueError(
-            f"insufficient maker balance for {have_denom}: {_get_balance(offer['maker'], have_denom)} {have_denom} < {actual_receive} {have_denom}"
+        # Store info for second pass
+        per_trade_info.append(
+            {
+                "offer_id": offer_id,
+                "take_units": take_units,
+                "actual_sent": actual_sent,
+                "actual_receive": actual_receive,
+                "want_denom": want_denom,
+                "have_denom": have_denom,
+                "maker": maker,
+                "unit_want_int": unit_want_int,
+                "unit_have_int": unit_have_int,
+            }
         )
 
-    have_coin: Coin = {"denom": have_denom, "amount": Decimal(actual_receive)}
-    send_coin_actual: Coin = {"denom": want_denom, "amount": Decimal(actual_sent)}
+    # Validate total balances (aggregate across all requested trades)
+    for denom, amt in taker_sent.items():
+        if _get_balance(taker, denom) < amt:
+            raise ValueError(
+                f"insufficient total taker balance for {denom}: {_get_balance(taker, denom)} {denom} < {amt} {denom}"
+            )
+    for maker, sends in maker_sent.items():
+        for denom, amt in sends.items():
+            if _get_balance(maker, denom) < amt:
+                raise ValueError(
+                    f"insufficient total maker {maker} balance for {denom}: {_get_balance(maker, denom)} {denom} < {amt} {denom}"
+                )
 
-    old_indexes = _get_offer_indexes(offer)
-
-    _move_coins(
-        inputs=[
-            Input(address=offer["maker"], coins=[have_coin]),
-            Input(address=taker, coins=[send_coin_actual]),
-        ],
-        outputs=[
-            Output(address=taker, coins=[have_coin]),
-            Output(address=offer["maker"], coins=[send_coin_actual]),
-        ],
-    )
-
-    # Record trade
-    trade_id = _get_next_trade_id()
+    # Second pass: record trades, update offers, emit events
     block_info = get_block_info()
-    trade: Trade = {
-        "trade_id": trade_id,
-        "offer_id": offer_id,
-        "taker": taker,
-        "height": block_info["height"],
-        "timestamp": block_info["time"],
-        "sent": {"denom": want_denom, "amount": Decimal(actual_sent)},
-        "received": {"denom": have_denom, "amount": Decimal(actual_receive)},
-    }
-    trade_index = _make_trade_id_index(trade_id)
-    _storage_set(trade_index, trade)
+    for info in per_trade_info:
+        # Record trade
+        trade_id = _get_next_trade_id()
+        trade: Trade = {
+            "trade_id": trade_id,
+            "offer_id": info["offer_id"],
+            "taker": taker,
+            "height": block_info["height"],
+            "timestamp": block_info["time"],
+            "sent": {"denom": info["want_denom"], "amount": info["actual_sent"]},
+            "received": {"denom": info["have_denom"], "amount": info["actual_receive"]},
+        }
+        trade_index = _make_trade_id_index(trade_id)
+        _storage_set(trade_index, trade)
 
-    # Trade lookups
-    _storage_set(_make_taker_trade_index(taker, trade_id), trade_index)
-    _storage_set(_make_offer_trade_index(offer_id, trade_id), trade_index)
+        # Trade lookups
+        _storage_set(_make_taker_trade_index(taker, trade_id), trade_index)
+        _storage_set(_make_offer_trade_index(info["offer_id"], trade_id), trade_index)
 
-    # Update offer
-    offer["remaining_units"] -= take_units
-    new_remaining_units = offer["remaining_units"]
-    if new_remaining_units == 0:
-        offer["status"] = "closed"
-        offer["updated_height"] = block_info["height"]
-        offer["updated_timestamp"] = block_info["time"]
-        offer["remaining_have"]["amount"] = Decimal(0)
-        offer["remaining_want"]["amount"] = Decimal(0)
-    else:
-        offer["remaining_have"]["amount"] = Decimal(new_remaining_units * unit_have_int)
-        offer["remaining_want"]["amount"] = Decimal(new_remaining_units * unit_want_int)
-        offer["updated_height"] = block_info["height"]
-        offer["updated_timestamp"] = block_info["time"]
+        # Update offer
+        offer = _get_offer(info["offer_id"])
+        old_indexes = _get_offer_indexes(offer)
 
-    offer_id_index = _make_offer_id_index(offer_id)
-    new_indexes = _get_offer_indexes(offer)
-    to_delete = [k for k in old_indexes if k not in new_indexes]
-    if to_delete:
-        _storage_delete(to_delete)
-    for k in new_indexes:
-        _storage_set(k, offer_id_index)
-    _storage_set(offer_id_index, offer)
+        offer["remaining_units"] -= info["take_units"]
+        new_remaining_units = offer["remaining_units"]
+        if new_remaining_units == 0:
+            offer["status"] = "closed"
+            offer["updated_height"] = block_info["height"]
+            offer["updated_timestamp"] = block_info["time"]
+            offer["remaining_have"]["amount"] = Decimal(0)
+            offer["remaining_want"]["amount"] = Decimal(0)
+        else:
+            offer["remaining_have"]["amount"] = (
+                new_remaining_units * info["unit_have_int"]
+            )
+            offer["remaining_want"]["amount"] = (
+                new_remaining_units * info["unit_want_int"]
+            )
+            offer["updated_height"] = block_info["height"]
+            offer["updated_timestamp"] = block_info["time"]
 
-    emit_event("offer_taken", f"{offer_id}")
-    emit_event("offer_taker", f"{taker}")
-    emit_event("trade_id", f"{trade_id}")
-    emit_event("offer_have_denom", f"{have_denom}")
-    emit_event("offer_want_denom", f"{want_denom}")
+        offer_id_index = _make_offer_id_index(info["offer_id"])
+        new_indexes = _get_offer_indexes(offer)
+        to_delete = [k for k in old_indexes if k not in new_indexes]
+        if to_delete:
+            _storage_delete(to_delete)
+        for k in new_indexes:
+            _storage_set(k, offer_id_index)
+        _storage_set(offer_id_index, offer)
 
-    return {
-        "sent": {"denom": want_denom, "amount": int(actual_sent)},
-        "received": {"denom": have_denom, "amount": int(actual_receive)},
-    }
+        # Emit events per trade
+        emit_event("offer_taken", f"{info['offer_id']}")
+        emit_event("offer_taker", f"{taker}")
+        emit_event("trade_id", f"{trade_id}")
+        emit_event("offer_have_denom", f"{info['have_denom']}")
+        emit_event("offer_want_denom", f"{info['want_denom']}")
+
+    # Batched coin move (one MsgMoveCoins to minimize gas)
+    inputs: List[Input] = []
+    # Taker input (sum across all want denoms)
+    taker_input_coins: List[Coin] = [
+        {"denom": denom, "amount": amt} for denom, amt in taker_sent.items() if amt > 0
+    ]
+    if taker_input_coins:
+        inputs.append({"address": taker, "coins": taker_input_coins})
+    # Makers inputs (sum per maker per denom)
+    for maker, sends in maker_sent.items():
+        maker_input_coins: List[Coin] = [
+            {"denom": denom, "amount": amt} for denom, amt in sends.items() if amt > 0
+        ]
+        if maker_input_coins:
+            inputs.append({"address": maker, "coins": maker_input_coins})
+
+    outputs: List[Output] = []
+    # Taker output (sum across all have denoms)
+    taker_output_coins: List[Coin] = [
+        {"denom": denom, "amount": amt}
+        for denom, amt in taker_received.items()
+        if amt > 0
+    ]
+    if taker_output_coins:
+        outputs.append({"address": taker, "coins": taker_output_coins})
+    # Makers outputs (sum per maker per denom)
+    for maker, recvs in maker_received.items():
+        maker_output_coins: List[Coin] = [
+            {"denom": denom, "amount": amt} for denom, amt in recvs.items() if amt > 0
+        ]
+        if maker_output_coins:
+            outputs.append({"address": maker, "coins": maker_output_coins})
+
+    _move_coins(inputs=inputs, outputs=outputs)
+
+    return {"inputs": inputs, "outputs": outputs}
 
 
 def cancel(offer_id: int):
@@ -593,7 +721,17 @@ def cancel(offer_id: int):
 
 
 def create_pool(coin_a: Any, coin_b: Any) -> Dict[str, Any]:
-    """Create a pool; sorts denoms deterministically (coin1 < coin2 lexicographically), moves coins to script, mints initial shares."""
+    """Create a constant-product pool.
+
+    Decisions:
+    - Canonical order: coin1 < coin2 lexicographically for deterministic pool identity.
+    - Seed reserves by moving caller coins to the script address.
+    - Mint fixed initial shares and send to caller; shares denom: `{DYS_NAME}/pools/{pool_id}`.
+    Rationale:
+    - Canonical ordering prevents duplicate pools; fixed initial shares simplify join math.
+    State/Events:
+    - Persist full Pool to storage and emit `poolupdate` for indexers.
+    """
     caller = get_executor_address()
     denom_a = coin_a["denom"]
     denom_b = coin_b["denom"]
@@ -665,7 +803,15 @@ def create_pool(coin_a: Any, coin_b: Any) -> Dict[str, Any]:
 
 
 def join_pool(pool_id: int, coin1: Any, coin2: Any) -> Dict[str, Any]:
-    """Join a pool proportionally; moves full sent coins to script, refunds excess, mints shares."""
+    """Join a pool proportionally and mint shares.
+
+    Decisions:
+    - Move full sent amounts, then refund excess to keep pool ratios.
+    - Proportions use current reserves; ceil for required amounts (refund favors pool).
+    - Shares = min(floor(added1/ratio1), floor(added2/ratio2)).
+    State/Events:
+    - Update pool balances/total_shares, write storage, mint/send shares, emit `poolupdate`.
+    """
     caller = get_executor_address()
     sent_amount1 = Decimal(coin1["amount"])
     sent_denom1 = coin1["denom"]
@@ -688,6 +834,7 @@ def join_pool(pool_id: int, coin1: Any, coin2: Any) -> Dict[str, Any]:
     pool_coin2_bal = pool["coin2"]["balance"]
     total_shares = pool["total_shares"]
 
+    # proportional join; ceil rounds against joiner → pools are never underfunded
     correct_amount1 = _ceil_div(sent_amount2 * pool_coin1_bal, pool_coin2_bal)
     correct_amount2 = _ceil_div(sent_amount1 * pool_coin2_bal, pool_coin1_bal)
 
@@ -770,7 +917,15 @@ def join_pool(pool_id: int, coin1: Any, coin2: Any) -> Dict[str, Any]:
 
 
 def exit_pool(pool_id: int, shares_coin: Any) -> List[Coin]:
-    """Exit a pool; moves shares to script, burns, sends proportional coins back."""
+    """Exit a pool proportionally and burn shares.
+
+    Decisions:
+    - Require bank supply to match stored `total_shares` (consistency guard).
+    - Send shares to script, burn, then compute floor-proportional outputs per reserve.
+    - If both outputs floor to 0, reject as dust.
+    State/Events:
+    - Update pool balances/total_shares, write storage, send outs, emit `poolupdate`.
+    """
     caller = get_executor_address()
     shares_amount = Decimal(shares_coin["amount"])
     shares_denom = shares_coin["denom"]
@@ -785,6 +940,7 @@ def exit_pool(pool_id: int, shares_coin: Any) -> List[Coin]:
     if _get_balance(caller, shares_denom) < shares_amount:
         raise ValueError(f"insufficient shares balance: {shares_denom}")
 
+    # defend against drift: stored supply must equal bank supply
     total_shares_supply = _get_supply(shares_denom)
     if total_shares_supply != pool["total_shares"]:
         raise ValueError("total shares mismatch between storage and supply")
@@ -837,7 +993,17 @@ def exit_pool(pool_id: int, shares_coin: Any) -> List[Coin]:
 def swap(
     pool_ids_str: str, input_coin: Coin, minimum_out_amount: int, out_denom: str
 ) -> Dict[str, Any]:
-    """Perform swap (multi-hop supported); moves input to script, sends output, updates pools."""
+    """Multi-hop constant-product swap.
+
+    Decisions:
+    - Input is moved to the script first; each hop updates reserves and emits `poolupdate`.
+    - Per-hop AMM: out = r_out - ceil(k / (r_in + in)); rounds against trader.
+    - Reject zero/negative hop outputs or reserve depletion.
+    Post-conditions:
+    - Final output must meet `minimum_out_amount` and match `out_denom`; then send to caller.
+    Atomicity/Gas:
+    - Any failure reverts the tx; multi-hop costs scale with storage writes/events.
+    """
     caller = get_executor_address()
     input_amount = Decimal(input_coin["amount"])
     input_denom = input_coin["denom"]
@@ -868,6 +1034,7 @@ def swap(
 
         if current_denom == pool["coin1"]["denom"]:
             new_in_bal = pool["coin1"]["balance"] + current_amount
+            # constant-product: out = r_out - ceil(k / (r_in + in))
             output_amount = pool["coin2"]["balance"] - _ceil_div(k, new_in_bal)
             if output_amount <= 0:
                 raise ValueError("swap output too small")
@@ -876,6 +1043,7 @@ def swap(
             output_denom = pool["coin2"]["denom"]
         elif current_denom == pool["coin2"]["denom"]:
             new_in_bal = pool["coin2"]["balance"] + current_amount
+            # constant-product: out = r_out - ceil(k / (r_in + in))
             output_amount = pool["coin1"]["balance"] - _ceil_div(k, new_in_bal)
             if output_amount <= 0:
                 raise ValueError("swap output too small")

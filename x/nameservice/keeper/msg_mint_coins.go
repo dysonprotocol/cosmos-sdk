@@ -58,7 +58,20 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 		for _, coin := range msg.Amount {
 			totalUnits = totalUnits.Add(coin.Amount)
 		}
-		totalFeeAmount := mintFeePerCoin.MulInt(totalUnits).TruncateInt()
+		// Round up to the closest int
+		totalFeeAmount := mintFeePerCoin.MulInt(totalUnits).Ceil().TruncateInt()
+
+		// Explicit authorization: require provided mint_fee >= required
+		if msg.MintFee.Denom != "udys" {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "mint_fee denom must be 'udys', got %s", msg.MintFee.Denom)
+		}
+		if msg.MintFee.Amount.LT(totalFeeAmount) {
+			return nil, cosmossdkerrors.Wrapf(
+				sdkerrors.ErrInsufficientFee,
+				"mint_fee amount %s is less than required fee %s",
+				msg.MintFee.Amount.String(), totalFeeAmount.String(),
+			)
+		}
 
 		if !totalFeeAmount.IsZero() {
 			feeCharged = sdk.NewCoins(sdk.NewCoin("udys", totalFeeAmount))

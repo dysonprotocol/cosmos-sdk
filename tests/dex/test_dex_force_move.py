@@ -126,21 +126,30 @@ def test_dex_force_move_flow(
     result_make = _extract_script_result(tx_make)
     offer_id = int(result_make["offer_id"])  # type: ignore[index]
 
-    # 7) acct2 executes take as the taker (current script API: take(offer_id[, take_units]))
-    take_kwargs = json.dumps({"offer_id": offer_id})
+    # 7) acct2 executes take as the taker (new API: take(trades=[{offer_id, take_units?}]))
+    take_kwargs = json.dumps({"trades": [{"offer_id": offer_id}]})
     tx_take = _script_exec(dysond, maker_addr, acct2_name, "take", kwargs=take_kwargs)
     result_take = _extract_script_result(tx_take)
-    # Expect shape: {"sent": {denom: denom_b, amount: 45}, "received": {denom: denom_a, amount: 30}}
+    # Expect taker inputs (send) and outputs (receive) aggregated in batched move
+    inputs = result_take.get("inputs", [])
+    outputs = result_take.get("outputs", [])
+    sent_amt = sum(
+        int(c.get("amount", 0))
+        for e in inputs
+        for c in e.get("coins", [])
+        if e.get("address") == acct2_addr and c.get("denom") == denom_b
+    )
+    recv_amt = sum(
+        int(c.get("amount", 0))
+        for e in outputs
+        for c in e.get("coins", [])
+        if e.get("address") == acct2_addr and c.get("denom") == denom_a
+    )
     assert (
-        "sent" in result_take and "received" in result_take
-    ), f"Unexpected take result shape: {json.dumps(result_take, indent=2)}"
-    assert (
-        result_take["sent"]["denom"] == denom_b
-        and int(result_take["sent"]["amount"]) == 45
+        sent_amt == 45
     ), f"Taker should send 45 {denom_b}. Full: {json.dumps(result_take, indent=2)}"
     assert (
-        result_take["received"]["denom"] == denom_a
-        and int(result_take["received"]["amount"]) == 30
+        recv_amt == 30
     ), f"Taker should receive 30 {denom_a}. Full: {json.dumps(result_take, indent=2)}"
 
     # 8) Final balances
