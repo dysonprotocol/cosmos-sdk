@@ -24,17 +24,12 @@ func (k Keeper) SetNFTClassAllowedDenoms(ctx context.Context, msg *nameservicev1
 	if len(msg.AllowedDenoms) == 0 {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "allowed_denoms list cannot be empty")
 	}
-	hasUdys := false
 	for _, d := range msg.AllowedDenoms {
-		if d == "" {
-			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "denom cannot be empty")
+		// Ensure denom currently exists on-chain (has supply record)
+		if !k.bankKeeper.HasSupply(ctx, d) {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "denom has no current supply: %s", d)
 		}
-		if d == "udys" {
-			hasUdys = true
-		}
-	}
-	if !hasUdys {
-		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "allowed_denoms must contain 'udys'")
+
 	}
 
 	classData.AllowedDenoms = msg.AllowedDenoms

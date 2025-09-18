@@ -63,8 +63,8 @@ def test_make_happy_path(chainnet, generate_account, faucet, dex_dys_name):
     dex_root = dex_dys_name(dysond, maker_name, maker_addr)
 
     # Deploy whaleswap with DYS_NAME
-    with open("whaleswap/script.py", "r") as f:
-        original = f.read()
+    fh = open("whaleswap/orderbook.py")
+    original = fh.read()
     combined = original + f"\nDYS_NAME='{dex_root}'\n"
     tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False)
     tmp.write(combined)

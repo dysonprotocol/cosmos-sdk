@@ -161,6 +161,16 @@ def _get_balance(address: str, denom: str) -> Decimal:
     return Decimal(res["balance"]["amount"])  # type: ignore[index]
 
 
+def _get_supply(denom: str) -> Decimal:
+    res = _query(
+        {
+            "@type": "/cosmos.bank.v1beta1.QuerySupplyOfRequest",
+            "denom": denom,
+        }
+    )
+    return Decimal(res["amount"]["amount"])  # type: ignore[index]
+
+
 # -----------------------------
 # ID mgmt and indices
 # -----------------------------
@@ -213,8 +223,15 @@ def _class_exists(class_id: str) -> bool:
             }
         )
         return isinstance(res, dict) and (res.get("class") is not None)
-    except DysQueryException:
-        return False
+    except DysQueryException as e:
+        msg = str(e)
+        if (
+            ("not found class" in msg)
+            or ("class not found" in msg)
+            or ("ErrClassNotExists" in msg)
+        ):
+            return False
+        raise e
 
 
 def _set_class_with_policy(class_id: str, bid_denom: str) -> None:
@@ -267,14 +284,16 @@ def _set_class_with_policy(class_id: str, bid_denom: str) -> None:
             "bid_timeout": params["bid_timeout"],
         }
     )
-    _msg(
-        {
-            "@type": "/dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms",
-            "name_destination": get_script_address(),
-            "class_id": class_id,
-            "allowed_denoms": [bid_denom],
-        }
-    )
+    # Only allow setting non-default allowed denoms if the denom has supply to satisfy keeper validation
+    if _get_supply(bid_denom) > 0:
+        _msg(
+            {
+                "@type": "/dysonprotocol.nameservice.v1.MsgSetNFTClassAllowedDenoms",
+                "name_destination": get_script_address(),
+                "class_id": class_id,
+                "allowed_denoms": [bid_denom],
+            }
+        )
     _msg(
         {
             "@type": "/dysonprotocol.nameservice.v1.MsgSetNFTClassMinimumBidPercentIncrease",
@@ -298,7 +317,7 @@ def _mint_nft(class_id: str, nft_id: str, owner: str) -> None:
     )
     _msg(
         {
-            "@type": "/cosmos.nft.v1beta1.MsgSend",
+            "@type": "/dysonprotocol.nft.v1beta1.MsgSend",
             "class_id": class_id,
             "id": nft_id,
             "sender": get_script_address(),

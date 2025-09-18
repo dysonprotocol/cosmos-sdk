@@ -12,6 +12,10 @@ charset-normalizer==3.4.2
     # via requests
 click==8.2.1
     # via black
+file:./py-dyslang
+    # via -r requirements.in
+h11==0.14.0
+    # via uvicorn
 configargparse==1.7.1
     # via -r requirements.in
 freezegun==1.5.2
@@ -36,8 +40,6 @@ platformdirs==4.3.8
     # via black
 pluggy==1.6.0
     # via pytest
-file:./py-dyslang
-    # via -r requirements.in
 pygments==2.19.2
     # via pytest
 pytest==8.4.1
@@ -52,3 +54,5 @@ six==1.17.0
     # via python-dateutil
 urllib3==2.5.0
     # via requests
+uvicorn==0.30.6
+    # via -r requirements.in

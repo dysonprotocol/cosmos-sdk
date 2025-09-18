@@ -21,7 +21,7 @@ def _build_msg_send(from_addr: str, to_addr: str, coins) -> str:
 def _update_whaleswap_for_root(dysond, script_owner_name, script_owner_addr, root_name):
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as tf:
         code_path = tf.name
-        with open("whaleswap/script.py", "r") as fh:
+        with open("whaleswap/orderbook.py", "r") as fh:
             code = fh.read()
         code = code.replace('DYS_NAME = "whaleswap.dys"', f'DYS_NAME = "{root_name}"')
         tf.write(code)

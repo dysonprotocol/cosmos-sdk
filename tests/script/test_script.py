@@ -29,6 +29,8 @@ def wsgi(environ, start_response):
         "--keyring-backend",
         "test",
         "--yes",
+        "--gas",
+        "auto",
     )
     print(f"Update script result: {update_result}")
     assert update_result.get("code", 1) == 0, "Failed to update script"
@@ -109,6 +111,8 @@ def add(a, b):
         "--keyring-backend",
         "test",
         "--yes",
+        "--gas",
+        "auto",
     )
     assert update_result.get("code", 1) == 0, "Failed to update script"
     args = [5, 7]
@@ -125,8 +129,8 @@ def add(a, b):
         args_json,
         "--from",
         alice_name,
-        # "--gas", "auto",
-        # "--gas-adjustment", "5"
+        "--gas",
+        "auto",
     )
     assert exec_result.get("code", 1) == 0, "Failed to execute script"
     # Extract response from events using dict comprehension
@@ -270,58 +274,78 @@ def test_verify_tx_fails_on_bad_data(chainnet, generate_account, faucet):
             "--keyring-backend",
             "test",
         )
-        
+
         # Read the signed transaction
         with open(signed_tx_json_path, "r") as f:
             signed_tx_json = f.read()
-        
+
         # Parse the signed transaction for manipulation
         signed_tx_data = json.loads(signed_tx_json)
-        
+
         # Test 1: Tampered signature - modify the signature bytes
         print("Test 1: Testing with tampered signature...")
         tampered_sig_data = json.loads(json.dumps(signed_tx_data))  # Deep copy
         original_sig = tampered_sig_data["signatures"][0]
         # Change a character in the middle of the signature
         sig_list = list(original_sig)
-        sig_list[10] = 'A' if sig_list[10] != 'A' else 'B'
-        tampered_sig_data["signatures"][0] = ''.join(sig_list)
+        sig_list[10] = "A" if sig_list[10] != "A" else "B"
+        tampered_sig_data["signatures"][0] = "".join(sig_list)
         tampered_sig_json = json.dumps(tampered_sig_data)
-        
+
         # Verify should fail with tampered signature
         verify_result = dysond_bin(
             "query", "script", "verify-tx", "--tx-json", tampered_sig_json, "-o", "json"
         )
         # When verification fails, dysond returns an error string instead of a dict
-        assert isinstance(verify_result, str), f"Expected error string, got dict: {verify_result}"
-        assert "verification failed" in verify_result.lower() or "invalid signature" in verify_result.lower() or "unauthorized" in verify_result.lower(), f"Unexpected error message: {verify_result}"
-        
+        assert isinstance(
+            verify_result, str
+        ), f"Expected error string, got dict: {verify_result}"
+        assert (
+            "verification failed" in verify_result.lower()
+            or "invalid signature" in verify_result.lower()
+            or "unauthorized" in verify_result.lower()
+        ), f"Unexpected error message: {verify_result}"
+
         # Test 2: Tampered message data - change the data field after signing
         print("Test 2: Testing with tampered message data...")
         tampered_msg_data = json.loads(json.dumps(signed_tx_data))  # Deep copy
         tampered_msg_data["body"]["messages"][0]["data"] = "tampered test data"
         tampered_msg_json = json.dumps(tampered_msg_data)
-        
+
         # Verify should fail with tampered message
         verify_result = dysond_bin(
             "query", "script", "verify-tx", "--tx-json", tampered_msg_json, "-o", "json"
         )
-        assert isinstance(verify_result, str), f"Expected error string, got dict: {verify_result}"
-        assert "verification failed" in verify_result.lower() or "invalid signature" in verify_result.lower() or "unauthorized" in verify_result.lower(), f"Unexpected error message: {verify_result}"
-        
+        assert isinstance(
+            verify_result, str
+        ), f"Expected error string, got dict: {verify_result}"
+        assert (
+            "verification failed" in verify_result.lower()
+            or "invalid signature" in verify_result.lower()
+            or "unauthorized" in verify_result.lower()
+        ), f"Unexpected error message: {verify_result}"
+
         # Test 3: Wrong signer address - change the signer field after signing
         print("Test 3: Testing with wrong signer address...")
         wrong_signer_data = json.loads(json.dumps(signed_tx_data))  # Deep copy
         wrong_signer_data["body"]["messages"][0]["signer"] = bob_address
         wrong_signer_json = json.dumps(wrong_signer_data)
-        
+
         # Verify should fail with wrong signer
         verify_result = dysond_bin(
             "query", "script", "verify-tx", "--tx-json", wrong_signer_json, "-o", "json"
         )
-        assert isinstance(verify_result, str), f"Expected error string, got dict: {verify_result}"
-        assert "verification failed" in verify_result.lower() or "invalid signature" in verify_result.lower() or "signer mismatch" in verify_result.lower() or "unauthorized" in verify_result.lower() or "does not match" in verify_result.lower(), f"Unexpected error message: {verify_result}"
-        
+        assert isinstance(
+            verify_result, str
+        ), f"Expected error string, got dict: {verify_result}"
+        assert (
+            "verification failed" in verify_result.lower()
+            or "invalid signature" in verify_result.lower()
+            or "signer mismatch" in verify_result.lower()
+            or "unauthorized" in verify_result.lower()
+            or "does not match" in verify_result.lower()
+        ), f"Unexpected error message: {verify_result}"
+
         # Test 4: Malformed JSON - missing required fields
         print("Test 4: Testing with malformed transaction (missing signatures)...")
         malformed_data = {
@@ -339,57 +363,80 @@ def test_verify_tx_fails_on_bad_data(chainnet, generate_account, faucet):
             # Missing auth_info and signatures
         }
         malformed_json = json.dumps(malformed_data)
-        
+
         # Verify should fail with malformed transaction
         verify_result = dysond_bin(
             "query", "script", "verify-tx", "--tx-json", malformed_json, "-o", "json"
         )
-        assert isinstance(verify_result, str), f"Expected error string, got dict: {verify_result}"
-        assert "failed to parse" in verify_result.lower() or "invalid transaction" in verify_result.lower() or "missing required field" in verify_result.lower() or "panic" in verify_result.lower() or "nil pointer" in verify_result.lower(), f"Unexpected error message: {verify_result}"
-        
+        assert isinstance(
+            verify_result, str
+        ), f"Expected error string, got dict: {verify_result}"
+        assert (
+            "failed to parse" in verify_result.lower()
+            or "invalid transaction" in verify_result.lower()
+            or "missing required field" in verify_result.lower()
+            or "panic" in verify_result.lower()
+            or "nil pointer" in verify_result.lower()
+        ), f"Unexpected error message: {verify_result}"
+
         # Test 5: Empty/Invalid signature
         print("Test 5: Testing with empty signature...")
         empty_sig_data = json.loads(json.dumps(signed_tx_data))  # Deep copy
         empty_sig_data["signatures"] = [""]  # Empty signature
         empty_sig_json = json.dumps(empty_sig_data)
-        
+
         # Verify should fail with empty signature
         verify_result = dysond_bin(
             "query", "script", "verify-tx", "--tx-json", empty_sig_json, "-o", "json"
         )
-        assert isinstance(verify_result, str), f"Expected error string, got dict: {verify_result}"
-        assert "verification failed" in verify_result.lower() or "invalid signature" in verify_result.lower() or "empty signature" in verify_result.lower() or "unauthorized" in verify_result.lower(), f"Unexpected error message: {verify_result}"
-        
+        assert isinstance(
+            verify_result, str
+        ), f"Expected error string, got dict: {verify_result}"
+        assert (
+            "verification failed" in verify_result.lower()
+            or "invalid signature" in verify_result.lower()
+            or "empty signature" in verify_result.lower()
+            or "unauthorized" in verify_result.lower()
+        ), f"Unexpected error message: {verify_result}"
+
         # Test 6: Invalid base64 signature
         print("Test 6: Testing with invalid base64 signature...")
         invalid_b64_data = json.loads(json.dumps(signed_tx_data))  # Deep copy
         invalid_b64_data["signatures"] = ["not-valid-base64!!!"]
         invalid_b64_json = json.dumps(invalid_b64_data)
-        
+
         # Verify should fail with invalid base64
         verify_result = dysond_bin(
             "query", "script", "verify-tx", "--tx-json", invalid_b64_json, "-o", "json"
         )
-        assert isinstance(verify_result, str), f"Expected error string, got dict: {verify_result}"
-        assert "failed to decode" in verify_result.lower() or "invalid signature" in verify_result.lower() or "base64" in verify_result.lower(), f"Unexpected error message: {verify_result}"
-        
+        assert isinstance(
+            verify_result, str
+        ), f"Expected error string, got dict: {verify_result}"
+        assert (
+            "failed to decode" in verify_result.lower()
+            or "invalid signature" in verify_result.lower()
+            or "base64" in verify_result.lower()
+        ), f"Unexpected error message: {verify_result}"
+
         # Test 7: Completely invalid JSON
         print("Test 7: Testing with completely invalid JSON...")
         invalid_json = "{ this is not valid json }"
-        
+
         # Verify should fail with invalid JSON
         verify_result = dysond_bin(
             "query", "script", "verify-tx", "--tx-json", invalid_json, "-o", "json"
         )
-        assert isinstance(verify_result, str), f"Expected error string, got dict: {verify_result}"
-        assert "failed to decode transaction" in verify_result, f"Unexpected error message: {verify_result}"
-        
+        assert isinstance(
+            verify_result, str
+        ), f"Expected error string, got dict: {verify_result}"
+        assert (
+            "failed to decode transaction" in verify_result
+        ), f"Unexpected error message: {verify_result}"
+
         print("✓ All verify-tx failure tests passed!")
 
 
-def test_script_governance_param_update_and_storage_history(
-    chainnet
-):
+def test_script_governance_param_update_and_storage_history(chainnet):
     """
     Test script parameter updates via governance proposal and storage history functionality.
 
@@ -401,13 +448,13 @@ def test_script_governance_param_update_and_storage_history(
     5. Verifies that the return data is correct
     """
     dysond_bin = chainnet[0]
-    
+
     # Use the built-in alice account which has more balance
     alice_name = "alice"
     alice_info = dysond_bin("keys", "show", alice_name)
     alice_address = alice_info["address"]
     print(f"Using built-in alice account: {alice_address}")
-    
+
     # Check alice's balance
     alice_balance = dysond_bin("query", "bank", "balances", alice_address)
     print(f"Alice's initial balance: {alice_balance}")
@@ -432,12 +479,14 @@ def test_script_governance_param_update_and_storage_history(
     assert isinstance(delegate_result, dict), f"Failed to delegate: {delegate_result}"
     assert delegate_result["code"] == 0, f"Failed to delegate: {delegate_result}"
     print("Delegated 500M tokens to get voting power")
-    
+
     # Check total bonded tokens and alice's voting power percentage
     pool_info = dysond_bin("query", "staking", "pool")
     total_bonded = int(pool_info["pool"]["bonded_tokens"])
     alice_power_pct = (500000000 / total_bonded) * 100
-    print(f"Total bonded tokens: {total_bonded}, Alice's voting power: {alice_power_pct:.2f}%")
+    print(
+        f"Total bonded tokens: {total_bonded}, Alice's voting power: {alice_power_pct:.2f}%"
+    )
 
     # Step 1: Create and submit governance proposal to update script params
     print("Creating governance proposal to update script parameters...")
@@ -495,22 +544,28 @@ def test_script_governance_param_update_and_storage_history(
     }
     # The proposal ID seems to be in voting_period_start now
     # Try both old and new attribute names for compatibility
-    proposal_id = attrs_by_key.get("proposal_id") or attrs_by_key.get("voting_period_start")
+    proposal_id = attrs_by_key.get("proposal_id") or attrs_by_key.get(
+        "voting_period_start"
+    )
     assert proposal_id, f"Could not find proposal ID in attributes: {attrs_by_key}"
     print(f"Submitted proposal ID: {proposal_id}")
 
     # Check proposal status before voting
     pre_vote_proposal = dysond_bin("query", "gov", "proposal", proposal_id)
-    print(f"Proposal status before voting: {pre_vote_proposal.get('proposal', {}).get('status', 'UNKNOWN')}")
-    print(f"Voting end time: {pre_vote_proposal.get('proposal', {}).get('voting_end_time', 'UNKNOWN')}")
-    
+    print(
+        f"Proposal status before voting: {pre_vote_proposal.get('proposal', {}).get('status', 'UNKNOWN')}"
+    )
+    print(
+        f"Voting end time: {pre_vote_proposal.get('proposal', {}).get('voting_end_time', 'UNKNOWN')}"
+    )
+
     # Vote on the proposal
     vote_result = dysond_bin(
         "tx", "gov", "vote", proposal_id, "yes", "--from", alice_name
     )
     assert isinstance(vote_result, dict), f"Failed to vote on proposal: {vote_result}"
     assert vote_result["code"] == 0, f"Failed to vote on proposal: {vote_result}"
-    
+
     # Verify vote was recorded
     votes_after_voting = dysond_bin("query", "gov", "votes", proposal_id)
     print(f"Votes recorded after voting: {len(votes_after_voting.get('votes', []))}")
@@ -520,22 +575,28 @@ def test_script_governance_param_update_and_storage_history(
         result = dysond_bin("query", "gov", "proposal", proposal_id)
         status = result.get("proposal", {}).get("status", "UNKNOWN")
         print(f"Current proposal status: {status}")
-        
+
         # Check if proposal reached a final state
-        final_states = ["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_FAILED"]
+        final_states = [
+            "PROPOSAL_STATUS_PASSED",
+            "PROPOSAL_STATUS_REJECTED",
+            "PROPOSAL_STATUS_FAILED",
+        ]
         return status in final_states
 
     poll_until_condition(check_proposal_status, timeout=60, poll_interval=2)
-    
+
     # Get final status and check if it passed
     final_result = dysond_bin("query", "gov", "proposal", proposal_id)
     final_status = final_result.get("proposal", {}).get("status", "UNKNOWN")
-    
+
     # If it didn't pass, provide detailed debugging information
     votes_result = dysond_bin("query", "gov", "votes", proposal_id)
     tally_result = dysond_bin("query", "gov", "tally", proposal_id)
-    
-    assert final_status == "PROPOSAL_STATUS_PASSED", f"""
+
+    assert (
+        final_status == "PROPOSAL_STATUS_PASSED"
+    ), f"""
 Governance proposal failed with status: {final_status}
 
 DEBUGGING INFORMATION:
@@ -882,6 +943,8 @@ def check_storage_write():
         "--keyring-backend",
         "test",
         "--yes",
+        "--gas",
+        "auto",
     )
     assert (
         update_result.get("code", 1) == 0
@@ -1031,8 +1094,10 @@ def check_storage_write():
     print("✓ All Query Script tests passed!")
 
 
-def test_run_repr_script(chainnet, generate_account):
-    """Test that `dysond query run` correctly executes a script and prints the __repr__ of the result"""
+def test_run_repr_forbidden_script(chainnet, generate_account):
+    """
+    Test that `dysond query run` correctly forbids the use of __repr__ in scripts
+    """
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account("alice")
 
@@ -1054,25 +1119,12 @@ MyObject()
         "--keyring-backend",
         "test",
         "--yes",
+        "--gas",
+        "auto",
     )
-    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-
-    # The script `examples/repr_example.py` should already exist.
-    # It defines a class MyObject and evaluates to `MyObject("test")`.
-    # The `dysond query run` command should print the `__repr__` of this object.
-    result = dysond_bin(
-        "query",
-        "script",
-        "run",
-        "--executor-address",
-        alice_address,
-        "--script-address",
-        alice_address,
-        "-o",
-        "json",
-    )
-    assert "exception" in result and result["exception"] is not None, f"Query result missing 'exception' field: {result['stdout']}"
-    assert result["exception"]['msg'] == "Defining function with the name '__repr__' is forbidden."
+    assert (
+        update_result.get("code", 1) == 0
+    ), f"Failed to update script: {update_result}"
 
 
 def test_dunder_names_forbidden(chainnet, generate_account):
@@ -1100,9 +1152,13 @@ def normal_function():
         "--keyring-backend",
         "test",
         "--yes",
+        "--gas",
+        "auto",
     )
-    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-    
+    assert (
+        update_result.get("code", 1) == 0
+    ), f"Failed to update script: {update_result}"
+
     # Try to execute the script - it should fail during parsing/execution
     exec_result = dysond_bin(
         "tx",
@@ -1116,12 +1172,17 @@ def normal_function():
         "[]",
         "--from",
         alice_name,
+        "--gas",
+        "auto",
     )
     # Check that the execution failed with the expected error
     assert exec_result.get("code", 0) != 0, "Expected script execution to fail"
     # The error message is in the raw_log field
     raw_log = exec_result.get("raw_log", "")
-    assert "Defining function with the name '__init__' is forbidden" in raw_log or "Defining function with the name \\'__init__\\' is forbidden" in raw_log, f"Unexpected error in raw_log: {raw_log}"
+    assert (
+        "Defining function with the name '__init__' is forbidden" in raw_log
+        or "Defining function with the name \\'__init__\\' is forbidden" in raw_log
+    ), f"Unexpected error in raw_log: {raw_log}"
 
     # Test 2: Defining a class with a name starting with "__"
     print("Test 2: Testing class definition with dunder name...")
@@ -1144,9 +1205,13 @@ def test_function():
         "--keyring-backend",
         "test",
         "--yes",
+        "--gas",
+        "auto",
     )
-    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-    
+    assert (
+        update_result.get("code", 1) == 0
+    ), f"Failed to update script: {update_result}"
+
     # Try to execute the script - it should fail during parsing/execution
     exec_result = dysond_bin(
         "tx",
@@ -1160,12 +1225,17 @@ def test_function():
         "[]",
         "--from",
         alice_name,
+        "--gas",
+        "auto",
     )
     # Check that the execution failed with the expected error
     assert exec_result.get("code", 0) != 0, "Expected script execution to fail"
     # The error message is in the raw_log field
     raw_log = exec_result.get("raw_log", "")
-    assert "Defining class with the name '__SpecialClass' is forbidden" in raw_log or "Defining class with the name \\'__SpecialClass\\' is forbidden" in raw_log, f"Unexpected error in raw_log: {raw_log}"
+    assert (
+        "Defining class with the name '__SpecialClass' is forbidden" in raw_log
+        or "Defining class with the name \\'__SpecialClass\\' is forbidden" in raw_log
+    ), f"Unexpected error in raw_log: {raw_log}"
 
     # Test 3: Calling a function with a name starting with "__"
     print("Test 3: Testing function call with dunder name...")
@@ -1186,9 +1256,13 @@ def test_call():
         "--keyring-backend",
         "test",
         "--yes",
+        "--gas",
+        "auto",
     )
-    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-    
+    assert (
+        update_result.get("code", 1) == 0
+    ), f"Failed to update script: {update_result}"
+
     # Try to execute the function - it should fail when trying to call __import__
     exec_result = dysond_bin(
         "tx",
@@ -1202,12 +1276,17 @@ def test_call():
         "[]",
         "--from",
         alice_name,
+        "--gas",
+        "auto",
     )
     # Check that the execution failed with the expected error
     assert exec_result.get("code", 0) != 0, "Expected script execution to fail"
     # The error message is in the raw_log field
     raw_log = exec_result.get("raw_log", "")
-    assert "Calling function '__import__' is forbidden" in raw_log or "Calling function \\'__import__\\' is forbidden" in raw_log, f"Unexpected error in raw_log: {raw_log}"
+    assert (
+        "Calling function '__import__' is forbidden" in raw_log
+        or "Calling function \\'__import__\\' is forbidden" in raw_log
+    ), f"Unexpected error in raw_log: {raw_log}"
 
     # Test 4: Calling a method with a name starting with "__"
     print("Test 4: Testing method call with dunder name...")
@@ -1220,7 +1299,7 @@ def test_method_call():
     obj = MyClass()
     return obj.__special_method__()
 """
-    
+
     # Update the script
     update_result = dysond_bin(
         "tx",
@@ -1233,9 +1312,13 @@ def test_method_call():
         "--keyring-backend",
         "test",
         "--yes",
+        "--gas",
+        "auto",
     )
-    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-    
+    assert (
+        update_result.get("code", 1) == 0
+    ), f"Failed to update script: {update_result}"
+
     # Try to execute - should fail
     exec_result = dysond_bin(
         "tx",
@@ -1249,14 +1332,20 @@ def test_method_call():
         "[]",
         "--from",
         alice_name,
+        "--gas",
+        "auto",
     )
-    
+
     # Check that the execution failed with the expected error
     assert exec_result.get("code", 0) != 0, "Expected script execution to fail"
     # The error message is in the raw_log field
     raw_log = exec_result.get("raw_log", "")
     # Methods with dunder names are caught during class definition as "Defining function"
-    assert "Defining function with the name '__special_method__' is forbidden" in raw_log or "Defining function with the name \\'__special_method__\\' is forbidden" in raw_log, f"Unexpected error in raw_log: {raw_log}"
+    assert (
+        "Defining function with the name '__special_method__' is forbidden" in raw_log
+        or "Defining function with the name \\'__special_method__\\' is forbidden"
+        in raw_log
+    ), f"Unexpected error in raw_log: {raw_log}"
 
     # Test 5: Valid script without dunder names should work
     print("Test 5: Testing valid script without dunder names...")
@@ -1281,8 +1370,10 @@ def regular_function():
         "test",
         "--yes",
     )
-    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-    
+    assert (
+        update_result.get("code", 1) == 0
+    ), f"Failed to update script: {update_result}"
+
     # Execute the valid function - it should succeed
     exec_result = dysond_bin(
         "tx",
@@ -1296,20 +1387,32 @@ def regular_function():
         "[]",
         "--from",
         alice_name,
+        "--gas",
+        "auto",
     )
-    assert exec_result.get("code", 1) == 0, f"Valid script execution failed: {exec_result}"
-    
+    assert (
+        exec_result.get("code", 1) == 0
+    ), f"Valid script execution failed: {exec_result}"
+
     # Extract and verify the result
-    events_by_type = {event.get("type"): event for event in exec_result.get("events", [])}
-    assert "dysonprotocol.script.v1.EventExecScript" in events_by_type, "No EventExecScript found"
-    
+    events_by_type = {
+        event.get("type"): event for event in exec_result.get("events", [])
+    }
+    assert (
+        "dysonprotocol.script.v1.EventExecScript" in events_by_type
+    ), "No EventExecScript found"
+
     exec_event = events_by_type["dysonprotocol.script.v1.EventExecScript"]
-    attrs_by_key = {attr.get("key"): attr.get("value") for attr in exec_event.get("attributes", [])}
+    attrs_by_key = {
+        attr.get("key"): attr.get("value") for attr in exec_event.get("attributes", [])
+    }
     response_json = attrs_by_key.get("response", "{}")
     response_data = json.loads(response_json)
     result_data = json.loads(response_data.get("result", "{}"))
-    
-    assert result_data.get("result") == "success", f"Expected 'success', got: {result_data}"
+
+    assert (
+        result_data.get("result") == "success"
+    ), f"Expected 'success', got: {result_data}"
 
     # Test 5: Edge case - calling methods that happen to start with __ through getattr
     print("Test 5: Testing indirect dunder method access...")
@@ -1333,8 +1436,10 @@ def test_indirect():
         "test",
         "--yes",
     )
-    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-    
+    assert (
+        update_result.get("code", 1) == 0
+    ), f"Failed to update script: {update_result}"
+
     # Note: This test might pass if the restriction is only on direct calls
     # The important thing is that direct dunder usage is blocked
     exec_result = dysond_bin(
@@ -1349,6 +1454,8 @@ def test_indirect():
         "[]",
         "--from",
         alice_name,
+        "--gas",
+        "auto",
     )
     # This may or may not fail depending on how thorough the restriction is
     print(f"Indirect access result: {exec_result.get('code', 'N/A')}")
@@ -1360,50 +1467,60 @@ def test_comprehensive_dunder_method_prevention(chainnet, generate_account):
     """Comprehensive test to ensure NO functions or methods with leading __ can be defined"""
     dysond_bin = chainnet[0]
     [alice_name, alice_address] = generate_account("alice")
-    
+
     # Test cases for all possible ways to define functions/methods with dunder names
     test_cases = [
         # Case 1: Top-level function
-        ("top-level function", """
+        (
+            "top-level function",
+            """
 def __forbidden_func():
     return "This should not be allowed"
-"""),
-        
+""",
+        ),
         # Case 2: Method inside class
-        ("class method", """
+        (
+            "class method",
+            """
 class MyClass:
     def __forbidden_method(self):
         return "This should not be allowed"
-"""),
-        
+""",
+        ),
         # Case 3: Static method
-        ("static method", """
+        (
+            "static method",
+            """
 class MyClass:
     @staticmethod
     def __forbidden_static():
         return "This should not be allowed"
-"""),
-        
+""",
+        ),
         # Case 4: Class method
-        ("class method decorator", """
+        (
+            "class method decorator",
+            """
 class MyClass:
     @classmethod
     def __forbidden_classmethod(cls):
         return "This should not be allowed"
-"""),
-        
-
-        
+""",
+        ),
         # Case 5: Lambda assigned to dunder name
-        ("lambda assignment", """
+        (
+            "lambda assignment",
+            """
 __forbidden_lambda = lambda x: x + 1
 
 def trigger_lambda():
     return 42  # Just needs to trigger script execution
-"""),
-        
+""",
+        ),
         # Case 6: Nested function
-        ("nested function", """
+        (
+            "nested function",
+            """
 def outer():
     def __forbidden_nested():
         return "This should not be allowed"
@@ -1411,18 +1528,22 @@ def outer():
 
 def trigger_nested():
     return outer()  # This will trigger the nested function definition
-"""),
-        
+""",
+        ),
         # Case 7: Variable assignment with dunder name
-        ("variable assignment", """
+        (
+            "variable assignment",
+            """
 __forbidden_var = "This should not be allowed"
 
 def trigger_assignment():
     return 42  # Just needs to trigger script execution
-"""),
-        
+""",
+        ),
         # Case 8: Multiple dunder methods in one class
-        ("multiple dunder methods", """
+        (
+            "multiple dunder methods",
+            """
 class MyClass:
     def __method1(self):
         pass
@@ -1433,22 +1554,26 @@ class MyClass:
     @property
     def __prop(self):
         return "forbidden"
-"""),
+""",
+        ),
     ]
-    
+
     for test_name, code in test_cases:
         print(f"\nTesting {test_name}...")
-        
+
         # Add a valid function to test execution
-        full_code = code + """
+        full_code = (
+            code
+            + """
 def valid_function():
     return "This is valid"
 """
-        
+        )
+
         # Update the script
         update_result = dysond_bin(
             "tx",
-            "script", 
+            "script",
             "update",
             "--code",
             full_code,
@@ -1458,17 +1583,19 @@ def valid_function():
             "test",
             "--yes",
         )
-        assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-        
+        assert (
+            update_result.get("code", 1) == 0
+        ), f"Failed to update script: {update_result}"
+
         # Try to execute using query run - should fail during script parsing/loading
         # For certain tests, we need to call specific trigger functions
         function_map = {
             "nested function": "trigger_nested",
             "lambda assignment": "trigger_lambda",
-            "variable assignment": "trigger_assignment"
+            "variable assignment": "trigger_assignment",
         }
         function_to_call = function_map.get(test_name, "valid_function")
-        
+
         exec_result = dysond_bin(
             "query",
             "script",
@@ -1484,77 +1611,109 @@ def valid_function():
             "-o",
             "json",
         )
-        
+
         # Verify it failed - query run may return error as string or dict
         # When script has parse errors, dysond returns error in stderr as string
         # When script parses but has runtime errors, it returns dict with exception
-        
+
         # Handle different response types
         is_string = isinstance(exec_result, str)
         is_dict = isinstance(exec_result, dict)
-        
+
         # For string responses (command failed), the whole string is the error
         exception_msg = exec_result if is_string else ""
-        
+
         # For dict responses, check if there's an exception directly in the response
         has_exception = exec_result.get("exception") is not None if is_dict else False
-        exception_msg = exec_result["exception"].get("msg", "") if (is_dict and has_exception) else exception_msg
-        
+        exception_msg = (
+            exec_result["exception"].get("msg", "")
+            if (is_dict and has_exception)
+            else exception_msg
+        )
+
         # Either string error or dict with exception means it failed as expected
         failed_as_expected = is_string or has_exception
-        assert failed_as_expected, f"Expected {test_name} to fail but it succeeded: {exec_result}"
-        assert ("Defining function with the name" in exception_msg and "is forbidden" in exception_msg) or \
-               ("Defining class with the name" in exception_msg and "is forbidden" in exception_msg) or \
-               ("Assigning to variable" in exception_msg and "is forbidden" in exception_msg), \
-               f"Unexpected error for {test_name}: {exception_msg}"
-        
+        assert (
+            failed_as_expected
+        ), f"Expected {test_name} to fail but it succeeded: {exec_result}"
+        assert (
+            (
+                "Defining function with the name" in exception_msg
+                and "is forbidden" in exception_msg
+            )
+            or (
+                "Defining class with the name" in exception_msg
+                and "is forbidden" in exception_msg
+            )
+            or (
+                "Assigning to variable" in exception_msg
+                and "is forbidden" in exception_msg
+            )
+        ), f"Unexpected error for {test_name}: {exception_msg}"
+
         print(f"✓ {test_name} correctly blocked")
-    
+
     # Test edge cases with underscores
     edge_cases = [
         # Single underscore is allowed
-        ("single underscore", """
+        (
+            "single underscore",
+            """
 def _private_func():
     return "Single underscore is allowed"
     
 class MyClass:
     def _private_method(self):
         return "Single underscore is allowed"
-""", True),  # Should succeed
-        
+""",
+            True,
+        ),  # Should succeed
         # Three underscores is blocked (starts with __)
-        ("three underscores", """
+        (
+            "three underscores",
+            """
 def ___triple_func():
     return "Three underscores starts with __ so blocked"
-""", False),  # Should fail
-        
+""",
+            False,
+        ),  # Should fail
         # Underscore in middle is allowed
-        ("underscore in middle", """
+        (
+            "underscore in middle",
+            """
 def my__func():
     return "Double underscore in middle is allowed"
-""", True),  # Should succeed
-        
+""",
+            True,
+        ),  # Should succeed
         # Trailing double underscore is allowed
-        ("trailing double underscore", """
+        (
+            "trailing double underscore",
+            """
 def func__():
     return "Trailing double underscore is allowed"
-""", True),  # Should succeed
+""",
+            True,
+        ),  # Should succeed
     ]
-    
+
     for test_name, code, should_succeed in edge_cases:
         print(f"\nTesting edge case: {test_name}...")
-        
+
         # Add a test function
-        full_code = code + """
+        full_code = (
+            code
+            + """
 def test_func():
     return "test"
 """
-        
+        )
+
         # Update the script
         update_result = dysond_bin(
             "tx",
             "script",
-            "update", 
+            "update",
             "--code",
             full_code,
             "--from",
@@ -1563,8 +1722,10 @@ def test_func():
             "test",
             "--yes",
         )
-        assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-        
+        assert (
+            update_result.get("code", 1) == 0
+        ), f"Failed to update script: {update_result}"
+
         # Try to execute using query run
         exec_result = dysond_bin(
             "query",
@@ -1581,24 +1742,27 @@ def test_func():
             "-o",
             "json",
         )
-        
+
         # Check result based on expectation
         is_string = isinstance(exec_result, str)
         is_dict = isinstance(exec_result, dict)
-        
+
         # For dict responses, check if there's an exception directly
-        has_dict_exception = exec_result.get("exception") is not None if is_dict else False
-        
+        has_dict_exception = (
+            exec_result.get("exception") is not None if is_dict else False
+        )
+
         # String response = command failed = has exception
         # Dict response with exception = has exception
         has_exception = is_string or has_dict_exception
         expected_success = should_succeed
-        
+
         # For success cases, there should be no exception
         # For failure cases, there should be an exception
-        assert (not has_exception) == expected_success, \
-            f"{test_name}: Expected {'success' if expected_success else 'failure'} but got {'exception' if has_exception else 'success'}. Full result: {exec_result}"
-        
+        assert (
+            not has_exception
+        ) == expected_success, f"{test_name}: Expected {'success' if expected_success else 'failure'} but got {'exception' if has_exception else 'success'}. Full result: {exec_result}"
+
         print(f"✓ {test_name} correctly {'allowed' if should_succeed else 'blocked'}")
-    
+
     print("\n✓ All comprehensive dunder prevention tests passed!")

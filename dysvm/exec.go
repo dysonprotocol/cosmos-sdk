@@ -2,6 +2,7 @@ package dysvm
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"dysonprotocol.com/dysvm/internal/data"
@@ -11,6 +12,10 @@ import (
 )
 
 func Exec(msgJSON, scriptJSON, attachedMsgResultsJSON, headerInfoJSON, port string) (string, error) {
+	if os.Getenv("DYSLANG_SERVER") == "1" {
+		// Route through long-running server
+		return getServer().Exec(msgJSON, scriptJSON, attachedMsgResultsJSON, headerInfoJSON, port)
+	}
 	var lib *embed_util.EmbeddedFiles
 	ep, err := python.NewEmbeddedPython("dyslang")
 	if err != nil {
@@ -39,6 +44,9 @@ func Exec(msgJSON, scriptJSON, attachedMsgResultsJSON, headerInfoJSON, port stri
 }
 
 func Benchmark(iterations int, details bool) (string, error) {
+	if os.Getenv("DYSLANG_SERVER") == "1" {
+		return getServer().Benchmark(iterations, details)
+	}
 	var lib *embed_util.EmbeddedFiles
 	ep, err := python.NewEmbeddedPython("dyslang")
 	if err != nil {
@@ -72,6 +80,9 @@ func Benchmark(iterations int, details bool) (string, error) {
 }
 
 func Wsgi(port, scriptName, scriptJSON, blockInfoJSON, httpreq string) (string, error) {
+	if os.Getenv("DYSLANG_SERVER") == "1" {
+		return getServer().Wsgi(port, scriptName, scriptJSON, blockInfoJSON, httpreq)
+	}
 	var lib *embed_util.EmbeddedFiles
 	ep, err := python.NewEmbeddedPython("dyslang")
 	if err != nil {
@@ -103,6 +114,9 @@ func Wsgi(port, scriptName, scriptJSON, blockInfoJSON, httpreq string) (string, 
 }
 
 func DysFormat(code string) (string, error) {
+	if os.Getenv("DYSLANG_SERVER") == "1" {
+		return getServer().DysFormat(code)
+	}
 	var lib *embed_util.EmbeddedFiles
 	ep, err := python.NewEmbeddedPython("dyslang")
 	if err != nil {
@@ -135,6 +149,9 @@ func DysFormat(code string) (string, error) {
 }
 
 func ExtractFunctionSchema(scriptJSON, blockInfoJSON, port, executorAddress, scriptName string) (string, error) {
+	if os.Getenv("DYSLANG_SERVER") == "1" {
+		return getServer().ExtractFunctionSchema(scriptJSON, blockInfoJSON, port, executorAddress, scriptName)
+	}
 	var lib *embed_util.EmbeddedFiles
 	ep, err := python.NewEmbeddedPython("dyslang")
 	if err != nil {

@@ -137,3 +137,29 @@ if __name__ == "__main__":
             json.dumps(result, separators=(",", ":"), cls=DecimalEncoder),
             end="",
         )
+
+    elif sys.argv[1] == "serve":
+        import os
+        import sys
+        import uvicorn
+
+        # Prefer argv for host/port (index 2,3) to avoid relying solely on environment
+        host = (len(sys.argv) > 2 and sys.argv[2]) or os.getenv(
+            "DYSLANG_HOST", "127.0.0.1"
+        )
+        port_env = (len(sys.argv) > 3 and sys.argv[3]) or os.getenv("DYSLANG_PORT", "0")
+        try:
+            port = int(port_env)
+        except Exception:
+            port = 0
+        # Port 0 selects an ephemeral free port
+
+        # Use a single worker and low timeout to keep behavior deterministic
+        uvicorn.run(
+            "dyslang.server_asgi:app",
+            host=host,
+            port=port,
+            log_level="info",
+            timeout_keep_alive=5,
+            workers=1,
+        )

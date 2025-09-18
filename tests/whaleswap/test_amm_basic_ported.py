@@ -60,8 +60,8 @@ def _extract_script_result(wait_tx_json):
 
 
 def _deploy_whaleswap_with_root(dysond, from_name, script_addr, root_name):
-    with open("whaleswap/script.py", "r") as f:
-        original = f.read()
+    fh = open("whaleswap/amm.py")
+    original = fh.read()
     # Replace DYS_NAME inline to propagate to dependent constants
     updated = original.replace(
         'DYS_NAME = "whaleswap.dys"', f'DYS_NAME = "{root_name}"'

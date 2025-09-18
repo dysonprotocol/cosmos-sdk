@@ -33,7 +33,7 @@ def test_deposit_and_withdraw_udys(chainnet, generate_account, faucet, register_
         code_path = tf.name
         src = dysond("query", "script", "script-info", "--address", alice_addr)
         # Load on-disk whaleswap script and replace DYS_NAME
-        with open("whaleswap/script.py", "r") as fh:
+        with open("whaleswap/orderbook.py", "r") as fh:
             code = fh.read()
         code = code.replace('DYS_NAME = "whaleswap.dys"', f'DYS_NAME = "{root}"')
         tf.write(code)
