@@ -185,7 +185,14 @@ def get_info():
 
         # This should fail with an unauthorized error
         exec_result = dysond_bin(
-            "tx", "authz", "exec", tx_file.name, "--from", bob_name, "--gas", "1000000"
+            "tx",
+            "authz",
+            "exec",
+            tx_file.name,
+            "--from",
+            bob_name,
+            "--gas",
+            "1000000",  # specify gas to skip pre tx validation and get the actual code error
         )
 
     assert (
@@ -244,6 +251,8 @@ def some_function():
     create_result = dysond_bin(
         "tx", "script", "create-new-script", "--code", script_code, "--from", alice_name
     )
+
+    assert create_result["code"] == 0, f"Failed to create script: {create_result}"
 
     # Extract script address from events using list comprehensions
     script_events = [
@@ -314,7 +323,14 @@ def some_function():
         tx_file.flush()
 
         exec_result = dysond_bin(
-            "tx", "authz", "exec", tx_file.name, "--from", bob_name
+            "tx",
+            "authz",
+            "exec",
+            tx_file.name,
+            "--from",
+            bob_name,
+            "--gas",
+            "1000000",  # specify gas to skip pre tx validation and get the actual code error
         )
 
     # With the simplified logic, if function_name is provided, it must be in the list

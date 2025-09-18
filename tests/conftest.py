@@ -205,7 +205,7 @@ def make_run_command(dysond_bin, node_home):
                 if "--yes" not in args and "-y" not in args:
                     commands += ["--yes"]
                 if "--gas" not in args:
-                    commands += ["--gas", "auto"]
+                    commands += ["--gas", "2000000"]
                 # Run the tx command
                 original_out = subprocess.run(commands, capture_output=True, text=True)
                 try:
