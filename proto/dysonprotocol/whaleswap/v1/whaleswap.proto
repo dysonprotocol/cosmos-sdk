@@ -41,6 +41,11 @@ message Pool {
   google.protobuf.Timestamp created = 11 [ (gogoproto.stdtime) = true ];
   google.protobuf.Timestamp updated = 12 [ (gogoproto.stdtime) = true ];
   uint64 num_trades = 13;
+  // cumulative swap fees retained by the pool (accrue to LPs)
+  repeated cosmos.base.v1beta1.Coin fees_earned = 14 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
 }
 
 // OfferData mirrors orderbook offer state.

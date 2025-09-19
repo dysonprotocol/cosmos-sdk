@@ -28,7 +28,7 @@ func (k Keeper) ConvertToLiquid(ctx context.Context, msg *whaleswapv1.MsgConvert
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
 	}
 	if err := k.bank.SendCoinsFromAccountToModule(ctx, caller, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(msg.Denom, amt))); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to escrow solid %s from %s", sdk.NewCoin(msg.Denom, amt).String(), msg.Caller)
 	}
 	liquidDenom := liquidPrefix + msg.Denom
 	mintMsg := &nameservicev1.MsgMintCoins{
@@ -37,10 +37,10 @@ func (k Keeper) ConvertToLiquid(ctx context.Context, msg *whaleswapv1.MsgConvert
 		MintFee:         sdk.NewCoin("udys", math.NewInt(0)),
 	}
 	if _, err := k.nameSvc.MintCoins(ctx, mintMsg); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to mint liquid %s", sdk.NewCoin(liquidDenom, amt).String())
 	}
 	if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, caller, sdk.NewCoins(sdk.NewCoin(liquidDenom, amt))); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to send liquid %s to %s", sdk.NewCoin(liquidDenom, amt).String(), msg.Caller)
 	}
 	return &whaleswapv1.MsgConvertToLiquidResponse{LiquidDenom: liquidDenom, Amount: amt.String()}, nil
 }
@@ -63,20 +63,20 @@ func (k Keeper) ConvertToSolid(ctx context.Context, msg *whaleswapv1.MsgConvertT
 		return nil, err
 	}
 	if err := k.bank.SendCoinsFromAccountToModule(ctx, caller, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(msg.LiquidDenom, amt))); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to escrow liquid %s from %s", sdk.NewCoin(msg.LiquidDenom, amt).String(), msg.Caller)
 	}
 	if _, err := k.nameSvc.BurnCoins(ctx, &nameservicev1.MsgBurnCoins{
 		NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
 		Amount:          sdk.NewCoins(sdk.NewCoin(msg.LiquidDenom, amt)),
 	}); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to burn liquid %s", sdk.NewCoin(msg.LiquidDenom, amt).String())
 	}
 	backing := k.bank.GetBalance(ctx, k.accKeeper.GetModuleAddress(whaleswap.ModuleName), solid).Amount
 	if backing.LT(amt) {
 		return nil, fmt.Errorf("insufficient escrow backing")
 	}
 	if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, caller, sdk.NewCoins(sdk.NewCoin(solid, amt))); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to send solid %s to %s", sdk.NewCoin(solid, amt).String(), msg.Caller)
 	}
 	return &whaleswapv1.MsgConvertToSolidResponse{AmountOut: sdk.NewCoin(solid, amt)}, nil
 }

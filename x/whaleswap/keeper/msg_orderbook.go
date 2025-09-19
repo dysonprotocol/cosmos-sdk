@@ -35,27 +35,27 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "want denom is liquid: %s", want.Denom)
 	}
 	// Per-offer balance check: maker must currently hold at least `have` amount
-	balHave := k.bank.GetBalance(ctx, maker, have.Denom).Amount
-	if have.Amount.GT(balHave) {
-		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "have exceeds maker balance: %s < %s", balHave.String(), have.Amount.String())
+	balHaveCoin := k.bank.GetBalance(ctx, maker, have.Denom)
+	if !balHaveCoin.IsGTE(have) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "have exceeds maker balance: %s < %s", balHaveCoin.String(), have.String())
 	}
 
 	pfandCoin := sdk.NewCoin(k.GetParams(ctx).PfandPerOffer.Denom, math.NewInt(0))
 	if k.isLiquidDenom(have.Denom) {
 		req := k.GetParams(ctx).PfandPerOffer
 		if !req.Amount.IsZero() {
-			bal := k.bank.GetBalance(ctx, maker, req.Denom).Amount
-			if bal.LT(req.Amount) {
-				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient pfand: %s < %s", bal.String(), req.Amount.String())
+			bal := k.bank.GetBalance(ctx, maker, req.Denom)
+			if !bal.IsGTE(req) {
+				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient pfand: %s < %s", bal.String(), req.String())
 			}
 			if err := k.bank.SendCoinsFromAccountToModule(ctx, maker, whaleswap.ModuleName, sdk.NewCoins(req)); err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrapf(err, "failed to lock pfand %s from maker %s", req.String(), msg.Maker)
 			}
 		}
 		pfandCoin = k.GetParams(ctx).PfandPerOffer
 	} else {
 		if err := k.bank.SendCoinsFromAccountToModule(ctx, maker, whaleswap.ModuleName, sdk.NewCoins(have)); err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "failed to escrow have %s from maker %s", have.String(), msg.Maker)
 		}
 	}
 
@@ -96,16 +96,16 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 		PfandLocked:      pfandCoin,
 	}
 	if err := k.OffersMap.Set(ctx, id, offer); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to save offer %d", id)
 	}
 	// Reverse indexes
 	// have, id -> id
 	if err := k.OffersByHave.Set(ctx, collections.Join(offer.RemainingHave.Denom, offer.OfferId), offer.OfferId); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d by have", id)
 	}
 	// want, id -> id
 	if err := k.OffersByWant.Set(ctx, collections.Join(offer.RemainingWant.Denom, offer.OfferId), offer.OfferId); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d by want", id)
 	}
 	// Price index normalized by sorted pair key: low|high, price = (high per low)
 	haveDenom := offer.RemainingHave.Denom
@@ -123,11 +123,11 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 	}
 	priceKey := priceDec.String()
 	if err := k.OffersByPairPrice.Set(ctx, collections.Join3(pairKey, priceKey, offer.OfferId), offer.OfferId); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d by price", id)
 	}
 	// owner+status index
 	if err := k.OffersByOwnerStatus.Set(ctx, collections.Join3(offer.Maker, offer.Status, offer.OfferId), offer.OfferId); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d by owner/status", id)
 	}
 	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventOfferCreated{OfferId: id})
 	if pfandCoin.Amount.IsPositive() {

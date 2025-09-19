@@ -28,7 +28,7 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 	}
 
 	if err := k.bank.SendCoinsFromAccountToModule(ctx, trader, whaleswap.ModuleName, sdk.NewCoins(msg.Input)); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to escrow input %s for trader %s", msg.Input.String(), msg.Trader)
 	}
 
 	currentDenom := msg.Input.Denom
@@ -36,7 +36,7 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 
 	pool, gerr := k.PoolsMap.Get(ctx, msg.PoolId)
 	if gerr != nil {
-		return nil, gerr
+		return nil, cosmossdkerrors.Wrapf(gerr, "pool not found: %d", msg.PoolId)
 	}
 
 	r1Int := pool.CoinA.Amount
@@ -65,44 +65,54 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 		// concentrated swap approximation using sqrt-price integration
 		sa, sb, err := k.bandSqrt(pool)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrap(err, "failed to compute band sqrt prices")
 		}
 		sp, err := k.poolSqrtPrice(pool)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrap(err, "failed to compute current sqrt price")
+		}
+		Lcur, _, _, err := k.liquidityForReserves(pool)
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "invalid pool liquidity")
+		}
+		if !Lcur.IsPositive() {
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid pool liquidity")
 		}
 		effIn := math.LegacyNewDecFromInt(currentAmount).Mul(one.Sub(fee))
+		// track fees earned = input - effIn
+		feeInt := currentAmount.Sub(effIn.TruncateInt())
+		if feeInt.IsPositive() {
+			fees := sdk.NewCoins(pool.FeesEarned...).Add(sdk.NewCoin(currentDenom, feeInt))
+			pool.FeesEarned = fees
+		}
+		// use current liquidity once
+		L := Lcur
 		if currentDenom == pool.CoinA.Denom {
-			// token1 -> token2: move price up: dxe = L*(1/sp - 1/sp')
-			L, _, _, err := k.liquidityForReserves(pool)
-			if err != nil {
-				return nil, err
-			}
-			// solve for sp': 1/sp' = 1/sp - dxe/L
-			invSpPrime := math.LegacyOneDec().Quo(sp).Sub(effIn.Quo(L))
+			// token0 (coin A) in: price moves DOWN within band
+			// 1/sp' = 1/sp + dX/L  => sp' = 1 / (1/sp + dX/L)
+			invSpPrime := math.LegacyOneDec().Quo(sp).Add(effIn.Quo(L))
 			if invSpPrime.LTE(math.LegacyZeroDec()) {
 				return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, "insufficient liquidity")
 			}
 			spPrime, err := k.sqrtPrice(math.LegacyOneDec().Quo(invSpPrime))
 			if err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrap(err, "failed to compute next sqrt price")
 			}
-			if spPrime.GT(sb) {
-				spPrime = sb
-			}
-			outDec := L.Mul(spPrime.Sub(sp))
-			outAmt = outDec.TruncateInt()
-		} else {
-			// token2 -> token1: move price down: dye = L*(sp' - sp)
-			L, _, _, err := k.liquidityForReserves(pool)
-			if err != nil {
-				return nil, err
-			}
-			spPrime := sp.Sub(effIn.Quo(L))
 			if spPrime.LT(sa) {
 				spPrime = sa
 			}
+			// out = L * (sp - sp')
 			outDec := L.Mul(sp.Sub(spPrime))
+			outAmt = outDec.TruncateInt()
+		} else {
+			// token1 (coin B) in: price moves UP within band
+			// sp' = sp + dY/L
+			spPrime := sp.Add(effIn.Quo(L))
+			if spPrime.GT(sb) {
+				spPrime = sb
+			}
+			// out = L * (1/sp - 1/sp')
+			outDec := L.Mul(math.LegacyOneDec().Quo(sp).Sub(math.LegacyOneDec().Quo(spPrime)))
 			outAmt = outDec.TruncateInt()
 		}
 		if !outAmt.IsPositive() {
@@ -134,6 +144,11 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 		// v2 constant product path
 		if currentDenom == pool.CoinA.Denom {
 			effIn := math.LegacyNewDecFromInt(currentAmount).Mul(one.Sub(fee))
+			feeInt := currentAmount.Sub(effIn.TruncateInt())
+			if feeInt.IsPositive() {
+				fees := sdk.NewCoins(pool.FeesEarned...).Add(sdk.NewCoin(currentDenom, feeInt))
+				pool.FeesEarned = fees
+			}
 			kDec := r1.Mul(r2)
 			q := kDec.Quo(r1.Add(effIn)).Ceil()
 			outDec := r2.Sub(q)
@@ -146,6 +161,11 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 			outDenom = pool.CoinB.Denom
 		} else {
 			effIn := math.LegacyNewDecFromInt(currentAmount).Mul(one.Sub(fee))
+			feeInt := currentAmount.Sub(effIn.TruncateInt())
+			if feeInt.IsPositive() {
+				fees := sdk.NewCoins(pool.FeesEarned...).Add(sdk.NewCoin(currentDenom, feeInt))
+				pool.FeesEarned = fees
+			}
 			kDec := r1.Mul(r2)
 			q := kDec.Quo(r2.Add(effIn)).Ceil()
 			outDec := r1.Sub(q)
@@ -162,7 +182,7 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 	// persist and emit pool update
 	pool.NumTrades += 1
 	if err := k.updatePool(ctx, &pool); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to update pool %d after swap", pool.PoolId)
 	}
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolSwap{PoolId: pool.PoolId})
@@ -182,7 +202,7 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 	}
 
 	if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, trader, sdk.NewCoins(sdk.NewCoin(currentDenom, currentAmount))); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to send output %s to trader %s", sdk.NewCoin(currentDenom, currentAmount).String(), msg.Trader)
 	}
 	return &whaleswapv1.MsgPoolSwapResponse{AmountOut: sdk.NewCoin(currentDenom, currentAmount)}, nil
 }

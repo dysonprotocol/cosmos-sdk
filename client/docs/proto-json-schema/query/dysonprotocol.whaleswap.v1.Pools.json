@@ -148,6 +148,14 @@
                     },
                     "num_trades": {
                         "type": "string"
+                    },
+                    "fees_earned": {
+                        "items": {
+                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+                        },
+                        "additionalProperties": false,
+                        "type": "array",
+                        "description": "cumulative swap fees retained by the pool (accrue to LPs)"
                     }
                 },
                 "additionalProperties": false,

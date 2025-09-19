@@ -214,12 +214,17 @@ func (k Keeper) normalizeBand(band sdk.Coins, denom1, denom2 string) (sdk.Coins,
 	if len(band) != 2 {
 		return nil, fmt.Errorf("price band must contain exactly two coins or be empty")
 	}
+	// Build canonical two-coin set in requested denom order and rely on SDK validation
 	c1 := band.AmountOf(denom1)
 	c2 := band.AmountOf(denom2)
-	if !c1.IsPositive() || !c2.IsPositive() {
-		return nil, fmt.Errorf("price band amounts must be > 0")
+	coins := sdk.NewCoins(
+		sdk.NewCoin(denom1, c1),
+		sdk.NewCoin(denom2, c2),
+	)
+	if err := coins.Validate(); err != nil {
+		return nil, fmt.Errorf("invalid price band: %w", err)
 	}
-	return sdk.NewCoins(sdk.NewCoin(denom1, c1), sdk.NewCoin(denom2, c2)), nil
+	return coins, nil
 }
 
 func (k Keeper) bandRatio(band sdk.Coins, denom1, denom2 string) (cosmossdk_math.LegacyDec, error) {

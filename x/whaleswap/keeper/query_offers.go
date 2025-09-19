@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/collections"
+	cosmossdkerrors "cosmossdk.io/errors"
 	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
@@ -28,7 +29,7 @@ func (k Keeper) OffersByOwner(ctx context.Context, req *whaleswapv1.QueryOffersB
 				if k1, k2, _ := key.K1(), key.K2(), key.K3(); k1 == owner && k2 == status {
 					v, err := k.OffersMap.Get(ctx, value)
 					if err != nil {
-						return nil, err
+						return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", value)
 					}
 					return &v, nil
 				}
@@ -36,7 +37,7 @@ func (k Keeper) OffersByOwner(ctx context.Context, req *whaleswapv1.QueryOffersB
 			},
 		)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "paginate offers by owner/status failed: %s/%s", owner, status)
 		}
 		return &whaleswapv1.QueryOffersByOwnerResponse{Offers: results, Pagination: pageRes}, nil
 	}
@@ -57,7 +58,7 @@ func (k Keeper) OffersByOwner(ctx context.Context, req *whaleswapv1.QueryOffersB
 		},
 	)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrap(err, "paginate offers failed")
 	}
 	return &whaleswapv1.QueryOffersByOwnerResponse{Offers: results, Pagination: pageRes}, nil
 }
@@ -87,7 +88,7 @@ func (k Keeper) Offers(ctx context.Context, req *whaleswapv1.QueryOffersRequest)
 				}
 				v, err := k.OffersMap.Get(ctx, id)
 				if err != nil {
-					return nil, err
+					return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
 				}
 				if v.RemainingHave.Denom != have || v.RemainingWant.Denom != want {
 					return nil, nil
@@ -96,7 +97,7 @@ func (k Keeper) Offers(ctx context.Context, req *whaleswapv1.QueryOffersRequest)
 			},
 		)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "paginate offers by pair failed: %s", pairKey)
 		}
 		return &whaleswapv1.QueryOffersResponse{Offers: offers, Pagination: pageRes}, nil
 	}
@@ -113,7 +114,7 @@ func (k Keeper) Offers(ctx context.Context, req *whaleswapv1.QueryOffersRequest)
 				}
 				v, err := k.OffersMap.Get(ctx, id)
 				if err != nil {
-					return nil, err
+					return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
 				}
 				if want != "" && v.RemainingWant.Denom != want {
 					return nil, nil
@@ -122,7 +123,7 @@ func (k Keeper) Offers(ctx context.Context, req *whaleswapv1.QueryOffersRequest)
 			},
 		)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "paginate offers by have failed: %s", have)
 		}
 		return &whaleswapv1.QueryOffersResponse{Offers: offers, Pagination: pageRes}, nil
 	}
@@ -139,7 +140,7 @@ func (k Keeper) Offers(ctx context.Context, req *whaleswapv1.QueryOffersRequest)
 				}
 				v, err := k.OffersMap.Get(ctx, id)
 				if err != nil {
-					return nil, err
+					return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
 				}
 				if have != "" && v.RemainingHave.Denom != have {
 					return nil, nil
@@ -148,7 +149,7 @@ func (k Keeper) Offers(ctx context.Context, req *whaleswapv1.QueryOffersRequest)
 			},
 		)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "paginate offers by want failed: %s", want)
 		}
 		return &whaleswapv1.QueryOffersResponse{Offers: offers, Pagination: pageRes}, nil
 	}
@@ -164,7 +165,7 @@ func (k Keeper) Offers(ctx context.Context, req *whaleswapv1.QueryOffersRequest)
 		},
 	)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrap(err, "paginate offers failed")
 	}
 	return &whaleswapv1.QueryOffersResponse{Offers: offers, Pagination: pageRes}, nil
 }

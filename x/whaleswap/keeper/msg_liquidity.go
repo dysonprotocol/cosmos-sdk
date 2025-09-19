@@ -15,7 +15,7 @@ import (
 func (k Keeper) AddLiquidity(ctx context.Context, msg *whaleswapv1.MsgAddLiquidity) (*whaleswapv1.MsgAddLiquidityResponse, error) {
 	pool, err := k.PoolsMap.Get(ctx, msg.PoolId)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "pool not found: %d", msg.PoolId)
 	}
 	signer, err := k.addr(ctx, msg.Signer)
 	if err != nil {
@@ -108,7 +108,7 @@ func (k Keeper) AddLiquidity(ctx context.Context, msg *whaleswapv1.MsgAddLiquidi
 	}
 
 	if err := k.sendToModule(ctx, signer, sdk.NewCoins(sdk.NewCoin(pool.CoinA.Denom, add1), sdk.NewCoin(pool.CoinB.Denom, add2))); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to escrow adds %s,%s", sdk.NewCoin(pool.CoinA.Denom, add1).String(), sdk.NewCoin(pool.CoinB.Denom, add2).String())
 	}
 	refunds := sdk.NewCoins()
 	if refund1.IsPositive() {
@@ -119,7 +119,7 @@ func (k Keeper) AddLiquidity(ctx context.Context, msg *whaleswapv1.MsgAddLiquidi
 	}
 	if !refunds.Empty() {
 		if err := k.sendFromModule(ctx, signer, refunds); err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "failed to refund %s", refunds.String())
 		}
 	}
 
@@ -130,6 +130,9 @@ func (k Keeper) AddLiquidity(ctx context.Context, msg *whaleswapv1.MsgAddLiquidi
 		Lcur, _, _, err := k.liquidityForReserves(pool)
 		if err != nil {
 			return nil, err
+		}
+		if !Lcur.IsPositive() {
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid pool liquidity")
 		}
 		minted = dL.MulInt(totalShares).Quo(Lcur).TruncateInt()
 	} else {
@@ -163,7 +166,7 @@ func (k Keeper) AddLiquidity(ctx context.Context, msg *whaleswapv1.MsgAddLiquidi
 	}
 	// Persist and emit poolupdate
 	if err := k.updatePool(ctx, &pool); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to update pool %d after add", pool.PoolId)
 	}
 
 	mintMsg := &nameservicev1.MsgMintCoins{
@@ -172,10 +175,10 @@ func (k Keeper) AddLiquidity(ctx context.Context, msg *whaleswapv1.MsgAddLiquidi
 		MintFee:         sdk.NewCoin("udys", math.NewInt(0)),
 	}
 	if _, err := k.nameSvc.MintCoins(ctx, mintMsg); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to mint shares %s", sdk.NewCoin(pool.SharesDenom, minted).String())
 	}
 	if err := k.sendFromModule(ctx, signer, sdk.NewCoins(sdk.NewCoin(pool.SharesDenom, minted))); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to send shares %s to %s", sdk.NewCoin(pool.SharesDenom, minted).String(), msg.Signer)
 	}
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolLiquidityAdded{PoolId: pool.PoolId, Shares: minted.String()})
@@ -185,7 +188,7 @@ func (k Keeper) AddLiquidity(ctx context.Context, msg *whaleswapv1.MsgAddLiquidi
 func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveLiquidity) (*whaleswapv1.MsgRemoveLiquidityResponse, error) {
 	pool, err := k.PoolsMap.Get(ctx, msg.PoolId)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "pool not found: %d", msg.PoolId)
 	}
 	sharesAmt, ok := math.NewIntFromString(msg.Shares)
 	if !ok || !sharesAmt.IsPositive() {
@@ -193,7 +196,7 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveL
 	}
 	signer, err := k.addr(ctx, msg.Signer)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidAddress, err.Error())
 	}
 	bal := k.bank.GetBalance(ctx, signer, pool.SharesDenom).Amount
 	if bal.LT(sharesAmt) {
@@ -206,10 +209,10 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveL
 		out1 := pool.CoinA.Amount
 		out2 := pool.CoinB.Amount
 		if err := k.sendToModule(ctx, signer, sdk.NewCoins(sdk.NewCoin(pool.SharesDenom, sharesAmt))); err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "failed to escrow shares %s", sharesAmt.String())
 		}
 		if err := k.burnModule(ctx, sdk.NewCoins(sdk.NewCoin(pool.SharesDenom, sharesAmt))); err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "failed to burn shares %s", sharesAmt.String())
 		}
 		// Remove pool from state (no poolupdate emitted on deletion)
 		if err := k.PoolsMap.Remove(ctx, msg.PoolId); err != nil {
@@ -232,17 +235,25 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveL
 		return &whaleswapv1.MsgRemoveLiquidityResponse{Amount: outs}, nil
 	}
 	var out1, out2 math.Int
+	var Lbefore math.LegacyDec
+	var dLExpected math.LegacyDec
 	if len(pool.MinPrice) == 2 {
 		// Concentrated removal by ΔL
 		Lcur, sa, sb, err := k.liquidityForReserves(pool)
 		if err != nil {
 			return nil, err
 		}
+		if !Lcur.IsPositive() {
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid pool liquidity")
+		}
 		sp, err := k.poolSqrtPrice(pool)
 		if err != nil {
 			return nil, err
 		}
-		dL := Lcur.MulInt(sharesAmt).QuoInt(totalShares)
+		// record before-state liquidity and expected delta
+		Lbefore = Lcur
+		dLExpected = Lcur.MulInt(sharesAmt).QuoInt(totalShares)
+		dL := dLExpected
 		if sp.LTE(sa) {
 			// out1 = floor(ΔL * (sb - sa) / (sa*sb)); out2 = 0
 			out1 = dL.Mul(sb.Sub(sa)).Quo(sa.Mul(sb)).TruncateInt()
@@ -273,8 +284,33 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveL
 	}
 	dR1 := math.LegacyNewDecFromInt(pool.CoinA.Amount)
 	dR2 := math.LegacyNewDecFromInt(pool.CoinB.Amount)
-	pool.CoinA.Amount = dR1.Sub(math.LegacyNewDecFromInt(out1)).TruncateInt()
-	pool.CoinB.Amount = dR2.Sub(math.LegacyNewDecFromInt(out2)).TruncateInt()
+	newA := dR1.Sub(math.LegacyNewDecFromInt(out1)).TruncateInt()
+	newB := dR2.Sub(math.LegacyNewDecFromInt(out2)).TruncateInt()
+	if !newA.IsPositive() || !newB.IsPositive() {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "would deplete reserve")
+	}
+	// Apply updates
+	pool.CoinA.Amount = newA
+	pool.CoinB.Amount = newB
+	// L consistency (concentrated mode): ensure L decreases by ~ΔL within tolerance
+	if len(pool.MinPrice) == 2 {
+		Lafter, _, _, err := k.liquidityForReserves(pool)
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to recompute liquidity after remove")
+		}
+		if Lbefore.IsZero() {
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid pre-remove liquidity state")
+		}
+		delta := Lbefore.Sub(Lafter)
+		if delta.IsNegative() {
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "liquidity increased on remove")
+		}
+		tol := math.LegacyNewDecWithPrec(1, 6)
+		allowed := dLExpected.Mul(math.LegacyOneDec().Add(tol))
+		if delta.GT(allowed) {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "liquidity delta too large: %s > %s", delta.String(), allowed.String())
+		}
+	}
 	// Prevent reserve depletion on partial exits
 	if pool.CoinA.Amount.IsZero() || pool.CoinB.Amount.IsZero() {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "would deplete reserve; use full exit to withdraw all liquidity")
@@ -295,7 +331,7 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveL
 		}
 	}
 	if err := k.updatePool(ctx, &pool); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to update pool %d after remove", pool.PoolId)
 	}
 	outs := sdk.NewCoins()
 	if out1.IsPositive() {
@@ -305,7 +341,7 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveL
 		outs = outs.Add(sdk.NewCoin(pool.CoinB.Denom, out2))
 	}
 	if err := k.sendFromModule(ctx, signer, outs); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to send outputs %s to %s", outs.String(), msg.Signer)
 	}
 	sdkCtx2 := sdk.UnwrapSDKContext(ctx)
 	_ = sdkCtx2.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolLiquidityRemoved{PoolId: pool.PoolId, Shares: sharesAmt.String()})
