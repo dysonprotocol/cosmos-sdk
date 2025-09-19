@@ -30,6 +30,12 @@ type NameserviceKeeper interface {
 	GetParams(ctx context.Context) nameservicev1.Params
 	MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) (*nameservicev1.MsgMintCoinsResponse, error)
 	BurnCoins(ctx context.Context, msg *nameservicev1.MsgBurnCoins) (*nameservicev1.MsgBurnCoinsResponse, error)
+	// Name administration
+	ResolveNameOrAddress(ctx context.Context, nameOrAddress string) (string, error)
+	SetDestination(ctx context.Context, msg *nameservicev1.MsgSetDestination) (*nameservicev1.MsgSetDestinationResponse, error)
+	MintNFT(ctx context.Context, msg *nameservicev1.MsgMintNFT) (*nameservicev1.MsgMintNFTResponse, error)
+	// Authority helper
+	GetAuthority() string
 	// NFT/Class administration used by auctions
 	SaveClass(ctx context.Context, msg *nameservicev1.MsgSaveClass) (*nameservicev1.MsgSaveClassResponse, error)
 	SetNFTClassAlwaysListed(ctx context.Context, msg *nameservicev1.MsgSetNFTClassAlwaysListed) (*nameservicev1.MsgSetNFTClassAlwaysListedResponse, error)
@@ -38,14 +44,17 @@ type NameserviceKeeper interface {
 	SetNFTClassBidTimeout(ctx context.Context, msg *nameservicev1.MsgSetNFTClassBidTimeout) (*nameservicev1.MsgSetNFTClassBidTimeoutResponse, error)
 	SetNFTClassAllowedDenoms(ctx context.Context, msg *nameservicev1.MsgSetNFTClassAllowedDenoms) (*nameservicev1.MsgSetNFTClassAllowedDenomsResponse, error)
 	SetNFTClassMinimumBidPercentIncrease(ctx context.Context, msg *nameservicev1.MsgSetNFTClassMinimumBidPercentIncrease) (*nameservicev1.MsgSetNFTClassMinimumBidPercentIncreaseResponse, error)
-	MintNFT(ctx context.Context, msg *nameservicev1.MsgMintNFT) (*nameservicev1.MsgMintNFTResponse, error)
 	MoveNft(ctx context.Context, msg *nameservicev1.MsgMoveNft) (*nameservicev1.MsgMoveNftResponse, error)
 	BurnNFT(ctx context.Context, msg *nameservicev1.MsgBurnNFT) (*nameservicev1.MsgBurnNFTResponse, error)
 	// Read NFT data (for bidder checks)
 	GetNFTData(ctx context.Context, classId string, nftId string) (nameservicev1.NFTData, error)
 }
 
-type NFTKeeper interface{}
+type NFTKeeper interface {
+	// Read current owner of an NFT
+	GetOwner(ctx context.Context, classID, nftID string) sdk.AccAddress
+	HasNFT(ctx context.Context, classID, nftID string) bool
+}
 
 type CommunityPoolKeeper interface{}
 

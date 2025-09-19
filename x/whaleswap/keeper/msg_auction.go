@@ -26,8 +26,17 @@ func (k Keeper) OpenAuction(ctx context.Context, msg *whaleswapv1.MsgOpenAuction
 	if !msg.Sell.Amount.IsPositive() {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sell amount must be > 0")
 	}
+	if err := sdk.ValidateDenom(msg.Sell.Denom); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "invalid sell denom: %s", msg.Sell.Denom)
+	}
 	if k.isLiquidDenom(msg.Sell.Denom) {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "sell denom is liquid: %s", msg.Sell.Denom)
+	}
+	if err := sdk.ValidateDenom(msg.BidDenom); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "invalid bid denom: %s", msg.BidDenom)
+	}
+	if k.isLiquidDenom(msg.BidDenom) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "bid denom is liquid: %s", msg.BidDenom)
 	}
 	if msg.Sell.Denom == msg.BidDenom {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "sell and bid denoms must differ: %s", msg.Sell.Denom)
@@ -50,19 +59,31 @@ func (k Keeper) OpenAuction(ctx context.Context, msg *whaleswapv1.MsgOpenAuction
 	}); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to save class")
 	}
-	// Apply policy knobs using params
+	// Apply policy knobs using params (propagate errors)
 	p := k.GetParams(ctx)
-	_, _ = k.nameSvc.SetNFTClassAlwaysListed(ctx, &nameservicev1.MsgSetNFTClassAlwaysListed{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, AlwaysListed: true})
-	_, _ = k.nameSvc.SetNFTClassValuationFeePct(ctx, &nameservicev1.MsgSetNFTClassValuationFeePct{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, ValuationFeePct: p.ValuationFeePct})
-	_, _ = k.nameSvc.SetNFTClassValuationPeriod(ctx, &nameservicev1.MsgSetNFTClassValuationPeriod{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, ValuationPeriod: p.ValuationPeriod})
-	_, _ = k.nameSvc.SetNFTClassBidTimeout(ctx, &nameservicev1.MsgSetNFTClassBidTimeout{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, BidTimeout: p.BidTimeout})
-	_, _ = k.nameSvc.SetNFTClassMinimumBidPercentIncrease(ctx, &nameservicev1.MsgSetNFTClassMinimumBidPercentIncrease{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, MinimumBidPercentIncrease: p.MinimumBidPercentIncrease})
+	if _, err := k.nameSvc.SetNFTClassAlwaysListed(ctx, &nameservicev1.MsgSetNFTClassAlwaysListed{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, AlwaysListed: true}); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to set always_listed for class %s", classID)
+	}
+	if _, err := k.nameSvc.SetNFTClassValuationFeePct(ctx, &nameservicev1.MsgSetNFTClassValuationFeePct{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, ValuationFeePct: p.ValuationFeePct}); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to set valuation_fee_pct for class %s", classID)
+	}
+	if _, err := k.nameSvc.SetNFTClassValuationPeriod(ctx, &nameservicev1.MsgSetNFTClassValuationPeriod{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, ValuationPeriod: p.ValuationPeriod}); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to set valuation_period for class %s", classID)
+	}
+	if _, err := k.nameSvc.SetNFTClassBidTimeout(ctx, &nameservicev1.MsgSetNFTClassBidTimeout{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, BidTimeout: p.BidTimeout}); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to set bid_timeout for class %s", classID)
+	}
+	if _, err := k.nameSvc.SetNFTClassMinimumBidPercentIncrease(ctx, &nameservicev1.MsgSetNFTClassMinimumBidPercentIncrease{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: classID, MinimumBidPercentIncrease: p.MinimumBidPercentIncrease}); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to set minimum_bid_percent_increase for class %s", classID)
+	}
 	// Allowed denoms: only bid_denom
-	_, _ = k.nameSvc.SetNFTClassAllowedDenoms(ctx, &nameservicev1.MsgSetNFTClassAllowedDenoms{
+	if _, err := k.nameSvc.SetNFTClassAllowedDenoms(ctx, &nameservicev1.MsgSetNFTClassAllowedDenoms{
 		NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
 		ClassId:         classID,
 		AllowedDenoms:   []string{msg.BidDenom},
-	})
+	}); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to set allowed_denoms for class %s", classID)
+	}
 
 	// Mint NFT id = auctionSeq, send to seller
 	id, err := k.auctionSeq.Next(ctx)
@@ -99,8 +120,14 @@ func (k Keeper) RedeemAuction(ctx context.Context, msg *whaleswapv1.MsgRedeemAuc
 	if err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "auction not found: %d", msg.AuctionId)
 	}
-	if rec.Seller != msg.Caller {
-		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrUnauthorized, "only seller can redeem in MVP")
+	// Require current NFT owner to redeem
+	ownerAddr := k.nft.GetOwner(ctx, rec.ClassId, rec.NftId)
+	ownerStr, err := k.accKeeper.AddressCodec().BytesToString(ownerAddr.Bytes())
+	if err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to encode nft owner for %s/%s", rec.ClassId, rec.NftId)
+	}
+	if ownerStr != msg.Caller {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "only current owner can redeem: owner=%s caller=%s", ownerStr, msg.Caller)
 	}
 	// Enforce no current bidder
 	nftData, err := k.nameSvc.GetNFTData(ctx, rec.ClassId, rec.NftId)
@@ -109,6 +136,12 @@ func (k Keeper) RedeemAuction(ctx context.Context, msg *whaleswapv1.MsgRedeemAuc
 	}
 	if strings.TrimSpace(nftData.CurrentBidder) != "" {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "cannot redeem while a bid is active")
+	}
+	// Escrow pre-check
+	moduleAddr := k.accKeeper.GetModuleAddress(whaleswap.ModuleName)
+	bal := k.bank.GetBalance(ctx, moduleAddr, rec.Sell.Denom)
+	if !bal.IsGTE(rec.Sell) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "module escrow insufficient: have=%s need=%s", bal.String(), rec.Sell.String())
 	}
 	to, err2 := k.accKeeper.AddressCodec().StringToBytes(msg.Caller)
 	if err2 != nil {
@@ -120,12 +153,16 @@ func (k Keeper) RedeemAuction(ctx context.Context, msg *whaleswapv1.MsgRedeemAuc
 	if _, err := k.nameSvc.BurnNFT(ctx, &nameservicev1.MsgBurnNFT{NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(), ClassId: rec.ClassId, NftId: rec.NftId}); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to burn nft")
 	}
-	// Delete record + reverse indexes
-	if err := k.AuctionsMap.Remove(ctx, msg.AuctionId); err != nil {
-		return nil, cosmossdkerrors.Wrapf(err, "failed to remove auction")
+	// Delete reverse indexes first, then primary record
+	if err := k.AuctionsBySellBid.Remove(ctx, collections.Join3(rec.Sell.Denom, rec.BidDenom, rec.AuctionId)); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to remove auction index (sell|bid): %s|%s id=%d", rec.Sell.Denom, rec.BidDenom, rec.AuctionId)
 	}
-	_ = k.AuctionsBySellBid.Remove(ctx, collections.Join3(rec.Sell.Denom, rec.BidDenom, rec.AuctionId))
-	_ = k.AuctionsByBidSell.Remove(ctx, collections.Join3(rec.BidDenom, rec.Sell.Denom, rec.AuctionId))
+	if err := k.AuctionsByBidSell.Remove(ctx, collections.Join3(rec.BidDenom, rec.Sell.Denom, rec.AuctionId)); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to remove auction index (bid|sell): %s|%s id=%d", rec.BidDenom, rec.Sell.Denom, rec.AuctionId)
+	}
+	if err := k.AuctionsMap.Remove(ctx, msg.AuctionId); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to remove auction %d", msg.AuctionId)
+	}
 	_ = sdk.UnwrapSDKContext(ctx).EventManager().EmitTypedEvent(&whaleswapv1.EventAuctionRedeemed{AuctionId: msg.AuctionId})
 	return &whaleswapv1.MsgRedeemAuctionResponse{}, nil
 }

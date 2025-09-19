@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"cosmossdk.io/collections"
@@ -19,12 +18,18 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 	// Parse maker
 	makerBz, err := k.accKeeper.AddressCodec().StringToBytes(msg.Maker)
 	if err != nil {
-		return nil, fmt.Errorf("invalid maker")
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid maker: %s", err.Error())
 	}
 	maker := sdk.AccAddress(makerBz)
 
 	have := msg.Have
 	want := msg.Want
+	if err := sdk.ValidateDenom(have.Denom); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "invalid have denom: %s", have.Denom)
+	}
+	if err := sdk.ValidateDenom(want.Denom); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "invalid want denom: %s", want.Denom)
+	}
 	if have.Denom == want.Denom {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "have and want denoms must differ: %s", have.Denom)
 	}
@@ -133,17 +138,20 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 	if pfandCoin.Amount.IsPositive() {
 		_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandLocked{Amount: pfandCoin})
 	}
+	if err := k.AssertInvariants(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "invariant failed after MakeOffer")
+	}
 	return &whaleswapv1.MsgMakeOfferResponse{OfferId: id}, nil
 }
 
 func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*whaleswapv1.MsgTakeOfferResponse, error) {
 	takerBz, err := k.accKeeper.AddressCodec().StringToBytes(msg.Taker)
 	if err != nil {
-		return nil, fmt.Errorf("invalid taker")
+		return nil, cosmossdkerrors.Wrapf(err, "invalid taker: %s", msg.Taker)
 	}
 	taker := sdk.AccAddress(takerBz)
 	if len(msg.Trades) == 0 {
-		return nil, fmt.Errorf("trades list must be non-empty")
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "trades list must be non-empty")
 	}
 	seen := map[uint64]struct{}{}
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
@@ -164,7 +172,7 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 		}
 		remainingUnits, ok := math.NewIntFromString(offer.RemainingUnits)
 		if !ok || remainingUnits.IsZero() {
-			return nil, fmt.Errorf("invalid remaining units")
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid remaining units")
 		}
 		takeUnits := remainingUnits
 		if strings.TrimSpace(it.TakeUnits) != "" {
@@ -187,7 +195,7 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 		haveDenom := offer.RemainingHave.Denom
 		makerBz, err := k.accKeeper.AddressCodec().StringToBytes(offer.Maker)
 		if err != nil {
-			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid maker address: %s %s", offer.Maker, err.Error())
+			return nil, cosmossdkerrors.Wrapf(err, "invalid maker address: %s", offer.Maker)
 		}
 		maker := sdk.AccAddress(makerBz)
 
@@ -209,17 +217,23 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient liquid remainder: %s < %s", liqBal.String(), remainder.String())
 			}
 			if err := k.bank.SendCoinsFromAccountToModule(ctx, taker, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(liquidWant, remainder))); err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrapf(err, "failed to escrow liquid want remainder %s from taker %s", sdk.NewCoin(liquidWant, remainder).String(), msg.Taker)
 			}
 			if _, err := k.nameSvc.BurnCoins(ctx, &nameservicev1.MsgBurnCoins{
 				NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
 				Amount:          sdk.NewCoins(sdk.NewCoin(liquidWant, remainder)),
 			}); err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrapf(err, "failed to burn liquid want %s", sdk.NewCoin(liquidWant, remainder).String())
 			}
 		}
+		// Ensure module has enough base want to pay maker
+		moduleAddr := k.accKeeper.GetModuleAddress(whaleswap.ModuleName)
+		wantBal := k.bank.GetBalance(ctx, moduleAddr, wantDenom).Amount
+		if wantBal.LT(requiredWant) {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "module want backing insufficient: have=%s need=%s", wantBal.String(), requiredWant.String())
+		}
 		if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, maker, sdk.NewCoins(sdk.NewCoin(wantDenom, requiredWant))); err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "failed to pay maker %s %s", requiredWant.String(), wantDenom)
 		}
 
 		if k.isLiquidDenom(haveDenom) {
@@ -228,13 +242,13 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "maker insufficient liquid have: %s < %s", makerBal.String(), deliverHave.String())
 			}
 			if err := k.bank.SendCoinsFromAccountToModule(ctx, maker, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(haveDenom, deliverHave))); err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrapf(err, "failed to escrow liquid have %s from maker %s", sdk.NewCoin(haveDenom, deliverHave).String(), offer.Maker)
 			}
 			if _, err := k.nameSvc.BurnCoins(ctx, &nameservicev1.MsgBurnCoins{
 				NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
 				Amount:          sdk.NewCoins(sdk.NewCoin(haveDenom, deliverHave)),
 			}); err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrapf(err, "failed to burn liquid have %s", sdk.NewCoin(haveDenom, deliverHave).String())
 			}
 			baseHave, err := k.decodeLiquidDenom(haveDenom)
 			if err != nil {
@@ -245,17 +259,25 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient backing for have: %s < %s", backing.String(), deliverHave.String())
 			}
 			if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, taker, sdk.NewCoins(sdk.NewCoin(baseHave, deliverHave))); err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrapf(err, "failed to send base have %s to taker %s", sdk.NewCoin(baseHave, deliverHave).String(), msg.Taker)
 			}
 		} else {
 			if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, taker, sdk.NewCoins(sdk.NewCoin(haveDenom, deliverHave))); err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrapf(err, "failed to send have %s to taker %s", sdk.NewCoin(haveDenom, deliverHave).String(), msg.Taker)
 			}
 		}
 
 		tradeId, err := k.tradeSeq.Next(ctx)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrap(err, "failed to allocate trade id")
+		}
+		// Use base denom in Received when have is liquid
+		recDenom := haveDenom
+		if k.isLiquidDenom(haveDenom) {
+			baseHave, berr := k.decodeLiquidDenom(haveDenom)
+			if berr == nil {
+				recDenom = baseHave
+			}
 		}
 		trade := whaleswapv1.Trade{
 			TradeId:   tradeId,
@@ -264,10 +286,10 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 			Height:    uint64(sdkCtx.BlockHeight()),
 			Timestamp: &t,
 			Sent:      sdk.NewCoin(wantDenom, requiredWant),
-			Received:  sdk.NewCoin(haveDenom, deliverHave),
+			Received:  sdk.NewCoin(recDenom, deliverHave),
 		}
 		if err := k.TradesMap.Set(ctx, tradeId, trade); err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrap(err, "failed to save trade")
 		}
 
 		newUnits := remainingUnits.Sub(takeUnits)
@@ -314,10 +336,13 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 			offer.RemainingWant.Amount = newUnits.Mul(unitWant)
 		}
 		if err := k.OffersMap.Set(ctx, offer.OfferId, offer); err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "failed to update offer %d", offer.OfferId)
 		}
 
 		_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventOfferTaken{OfferId: offer.OfferId, TradeId: tradeId})
+	}
+	if err := k.AssertInvariants(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "invariant failed after TakeOffer")
 	}
 	return &whaleswapv1.MsgTakeOfferResponse{Ok: true}, nil
 }
@@ -325,19 +350,19 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer) (*whaleswapv1.MsgCancelOfferResponse, error) {
 	offer, err := k.OffersMap.Get(ctx, msg.OfferId)
 	if err != nil {
-		return nil, fmt.Errorf("offer not found")
+		return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", msg.OfferId)
 	}
 	if offer.Status != "open" {
-		return nil, fmt.Errorf("offer not open: %s", offer.Status)
+		return nil, cosmossdkerrors.Wrapf(err, "offer not open: %s", offer.Status)
 	}
 	closerBz, err := k.accKeeper.AddressCodec().StringToBytes(msg.Closer)
 	if err != nil {
-		return nil, fmt.Errorf("invalid closer")
+		return nil, cosmossdkerrors.Wrapf(err, "invalid closer: %s", msg.Closer)
 	}
 	closer := sdk.AccAddress(closerBz)
 	makerBz, err := k.accKeeper.AddressCodec().StringToBytes(offer.Maker)
 	if err != nil {
-		return nil, fmt.Errorf("invalid maker")
+		return nil, cosmossdkerrors.Wrapf(err, "invalid maker: %s", offer.Maker)
 	}
 	maker := sdk.AccAddress(makerBz)
 
@@ -348,7 +373,7 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 		unitHave := offer.UnitHaveInt
 		unit, ok := math.NewIntFromString(unitHave)
 		if !ok || !unit.IsPositive() {
-			return nil, fmt.Errorf("invalid unit_have_int")
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid unit_have_int")
 		}
 		makerBal := k.bank.GetBalance(ctx, maker, haveDenom).Amount
 		if makerBal.LT(unit) {
@@ -356,12 +381,12 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 		}
 	}
 	if !eligible {
-		return nil, fmt.Errorf("not eligible to cancel offer")
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrUnauthorized, "not eligible to cancel offer")
 	}
 
 	offer.Status = "cancelled"
 	if err := k.OffersMap.Set(ctx, offer.OfferId, offer); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to update offer %d", offer.OfferId)
 	}
 	// Remove reverse index entries on cancel
 	_ = k.OffersByHave.Remove(ctx, collections.Join(offer.RemainingHave.Denom, offer.OfferId))
@@ -386,9 +411,15 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 	}
 	_ = k.OffersByOwnerStatus.Remove(ctx, collections.Join3(offer.Maker, "open", offer.OfferId))
 	_ = k.OffersByOwnerStatus.Set(ctx, collections.Join3(offer.Maker, offer.Status, offer.OfferId), offer.OfferId)
+	// Refund escrowed base have for normal offers
+	if !k.isLiquidDenom(offer.RemainingHave.Denom) && offer.RemainingHave.Amount.IsPositive() {
+		if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, maker, sdk.NewCoins(offer.RemainingHave)); err != nil {
+			return nil, cosmossdkerrors.Wrapf(err, "failed to refund escrowed have %s to maker %s", offer.RemainingHave.String(), offer.Maker)
+		}
+	}
 	if pfandLocked.Amount.IsPositive() {
 		if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, closer, sdk.NewCoins(pfandLocked)); err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "failed to send pfand %s to closer %s", pfandLocked.String(), msg.Closer)
 		}
 	}
 
@@ -397,6 +428,9 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventOfferCancelled{OfferId: offer.OfferId})
 	if pfandLocked.Amount.IsPositive() {
 		_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandReleased{Amount: pfandLocked})
+	}
+	if err := k.AssertInvariants(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "invariant failed after CancelOffer")
 	}
 	return &whaleswapv1.MsgCancelOfferResponse{}, nil
 }

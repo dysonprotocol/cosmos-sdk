@@ -125,6 +125,12 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 	}
 
 	// Mint initial shares to creator via nameservice (no fee when destination is module)
+	// Ensure whaleswap root name exists and resolves to the module address so nameservice
+	// mint verification passes for shares denom whaleswap.dys/pools/<id>.
+	if err := k.ensureWhaleswapRootName(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed ensuring whaleswap.dys root before minting shares for pool %d", id)
+	}
+
 	// Build mint request with zero udys fee; nameservice skips fee for module destinations
 	mintMsg := &nameservicev1.MsgMintCoins{
 		NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
@@ -141,6 +147,11 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 	// Emit events
 	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolCreated{PoolId: id})
 	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolUpdate{PoolId: id})
-
+	if err := k.AssertAMMInvariants(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err,
+			"AMM invariant after CreatePool: pool_id=%d coinA=%s coinB=%s shares_denom=%s",
+			id, coinA.String(), coinB.String(), sharesDenom,
+		)
+	}
 	return &whaleswapv1.MsgCreatePoolResponse{PoolId: id}, nil
 }

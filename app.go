@@ -38,6 +38,11 @@ import (
 	nftkeeper "dysonprotocol.com/x/nft/keeper"
 	nftmodule "dysonprotocol.com/x/nft/module"
 
+	// Whaleswap module
+	whaleswapv1 "dysonprotocol.com/x/whaleswap"
+	whaleswapkeeper "dysonprotocol.com/x/whaleswap/keeper"
+	whaleswapmodule "dysonprotocol.com/x/whaleswap/module"
+
 	dysondserver "dysonprotocol.com/dysond/server"
 	crontaskkeeper "dysonprotocol.com/x/crontask/keeper"
 	nameservicekeeper "dysonprotocol.com/x/nameservice/keeper"
@@ -171,6 +176,7 @@ var (
 		crontaskv1.ModuleName:                       nil,
 		ibctransfertypes.ModuleName:                 {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:                         nil,
+		whaleswapv1.ModuleName:                      nil,
 	}
 )
 
@@ -226,6 +232,7 @@ type DysApp struct {
 	ScriptKeeper      scriptkeeper.Keeper
 	StorageKeeper     storagekeeper.Keeper
 	CrontaskKeeper    crontaskkeeper.Keeper
+	WhaleswapKeeper   whaleswapkeeper.Keeper
 
 	// the module manager
 	ModuleManager      *module.Manager
@@ -342,6 +349,7 @@ func NewDysApp(
 		scriptv1.StoreKey,
 		storagev1.StoreKey,
 		crontaskv1.StoreKey,
+		whaleswapv1.StoreKey,
 		// IBC keys
 		ibcexported.StoreKey,
 		ibctransfertypes.StoreKey,
@@ -707,6 +715,18 @@ func NewDysApp(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
+	// Whaleswap keeper
+	app.WhaleswapKeeper = whaleswapkeeper.NewKeeper(
+		appCodec,
+		runtime.NewKVStoreService(keys[whaleswapv1.StoreKey]),
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.NameserviceKeeper,
+		app.NFTKeeper,
+		logger,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
 	/****  Module Options ****/
 
 	// NOTE: Any module instantiated in the module manager that is later modified
@@ -737,6 +757,7 @@ func NewDysApp(
 		scriptmodule.NewAppModule(appCodec, app.ScriptKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		storagemodule.NewAppModule(appCodec, app.StorageKeeper, app.AccountKeeper, app.interfaceRegistry),
 		crontaskmodule.NewAppModule(appCodec, app.CrontaskKeeper, app.AccountKeeper, app.interfaceRegistry),
+		whaleswapmodule.NewAppModule(appCodec, app.WhaleswapKeeper, app.interfaceRegistry),
 
 		// IBC modules
 		ibc.NewAppModule(app.IBCKeeper),
@@ -789,6 +810,7 @@ func NewDysApp(
 		nameservicev1.ModuleName,
 		scriptv1.ModuleName,
 		storagev1.ModuleName,
+		whaleswapv1.ModuleName,
 		crontaskv1.ModuleName,
 	)
 	app.ModuleManager.SetOrderEndBlockers(
@@ -804,6 +826,7 @@ func NewDysApp(
 		nameservicev1.ModuleName,
 		scriptv1.ModuleName,
 		storagev1.ModuleName,
+		whaleswapv1.ModuleName,
 		crontaskv1.ModuleName,
 	)
 
@@ -836,6 +859,7 @@ func NewDysApp(
 		nameservicev1.ModuleName,
 		scriptv1.ModuleName,
 		storagev1.ModuleName,
+		whaleswapv1.ModuleName,
 		crontaskv1.ModuleName,
 	}
 
@@ -865,6 +889,7 @@ func NewDysApp(
 		nameservicev1.ModuleName,
 		scriptv1.ModuleName,
 		storagev1.ModuleName,
+		whaleswapv1.ModuleName,
 		crontaskv1.ModuleName,
 	}
 

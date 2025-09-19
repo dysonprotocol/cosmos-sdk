@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"cosmossdk.io/collections"
 	cosmossdk_math "cosmossdk.io/math"
 	"dysonprotocol.com/x/whaleswap/types"
@@ -86,6 +88,8 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 
 	// Auctions
 	var maxAuctionID uint64
+	// Optional sanity: aggregate required escrow per denom
+	requiredEscrow := map[string]sdk.Coin{}
 	for _, a := range gs.Auctions {
 		if a.AuctionId > maxAuctionID {
 			maxAuctionID = a.AuctionId
@@ -96,10 +100,26 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 		// Reverse indexes
 		_ = k.AuctionsBySellBid.Set(ctx, collections.Join3(a.Sell.Denom, a.BidDenom, a.AuctionId), a.AuctionId)
 		_ = k.AuctionsByBidSell.Set(ctx, collections.Join3(a.BidDenom, a.Sell.Denom, a.AuctionId), a.AuctionId)
+		// Tally escrow requirement
+		if ex, ok := requiredEscrow[a.Sell.Denom]; ok {
+			sum := ex
+			sum.Amount = sum.Amount.Add(a.Sell.Amount)
+			requiredEscrow[a.Sell.Denom] = sum
+		} else {
+			requiredEscrow[a.Sell.Denom] = a.Sell
+		}
 	}
 	if maxAuctionID > 0 {
 		if err := k.auctionSeq.Set(ctx, maxAuctionID); err != nil {
 			panic(err)
+		}
+	}
+	// Validate module escrow balances cover required sums (best-effort; panic on deficit)
+	moduleAddr := k.accKeeper.GetModuleAddress("whaleswap")
+	for denom, need := range requiredEscrow {
+		bal := k.bank.GetBalance(ctx, moduleAddr, denom)
+		if !bal.IsGTE(need) {
+			panic(fmt.Sprintf("genesis escrow deficit for denom %s: have=%s need=%s", denom, bal.String(), need.String()))
 		}
 	}
 }

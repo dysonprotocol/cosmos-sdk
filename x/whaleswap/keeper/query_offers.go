@@ -7,6 +7,7 @@ import (
 	"cosmossdk.io/collections"
 	cosmossdkerrors "cosmossdk.io/errors"
 	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
@@ -19,8 +20,11 @@ func (k Keeper) OffersByOwner(ctx context.Context, req *whaleswapv1.QueryOffersB
 	if owner == "" {
 		return nil, fmt.Errorf("owner required")
 	}
-	// If status provided, use owner+status index; else fall back to filtered scan
+	// If status provided, validate it and use owner+status index; else fall back to filtered scan
 	if owner != "" && status != "" {
+		if status != "open" && status != "closed" && status != "cancelled" {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid status: %s", status)
+		}
 		results, pageRes, err := query.CollectionPaginate(
 			ctx,
 			k.OffersByOwnerStatus,

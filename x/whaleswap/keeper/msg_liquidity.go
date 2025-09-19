@@ -182,6 +182,17 @@ func (k Keeper) AddLiquidity(ctx context.Context, msg *whaleswapv1.MsgAddLiquidi
 	}
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolLiquidityAdded{PoolId: pool.PoolId, Shares: minted.String()})
+	if err := k.AssertAMMInvariants(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err,
+			"AMM invariant after AddLiquidity: pool_id=%d add1=%s add2=%s minted=%s newR=(%s,%s)",
+			pool.PoolId,
+			sdk.NewCoin(pool.CoinA.Denom, add1).String(),
+			sdk.NewCoin(pool.CoinB.Denom, add2).String(),
+			minted.String(),
+			sdk.NewCoin(pool.CoinA.Denom, pool.CoinA.Amount).String(),
+			sdk.NewCoin(pool.CoinB.Denom, pool.CoinB.Amount).String(),
+		)
+	}
 	return &whaleswapv1.MsgAddLiquidityResponse{Shares: minted.String()}, nil
 }
 
@@ -345,5 +356,16 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveL
 	}
 	sdkCtx2 := sdk.UnwrapSDKContext(ctx)
 	_ = sdkCtx2.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolLiquidityRemoved{PoolId: pool.PoolId, Shares: sharesAmt.String()})
+	if err := k.AssertAMMInvariants(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err,
+			"AMM invariant after RemoveLiquidity: pool_id=%d burn_shares=%s out=(%s,%s) newR=(%s,%s)",
+			pool.PoolId,
+			sharesAmt.String(),
+			sdk.NewCoin(pool.CoinA.Denom, out1).String(),
+			sdk.NewCoin(pool.CoinB.Denom, out2).String(),
+			sdk.NewCoin(pool.CoinA.Denom, pool.CoinA.Amount).String(),
+			sdk.NewCoin(pool.CoinB.Denom, pool.CoinB.Amount).String(),
+		)
+	}
 	return &whaleswapv1.MsgRemoveLiquidityResponse{Amount: outs}, nil
 }

@@ -113,7 +113,8 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 	}
 
 	// 6. Send the minted coins from the module to the owner
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, nameservice.ModuleName, ownerAddr, msg.Amount)
+	moduleAddr := k.accountKeeper.GetModuleAddress(nameservice.ModuleName)
+	err = k.bankKeeper.SendCoins(ctx, moduleAddr, ownerAddr, msg.Amount)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to send minted coins to owner")
 	}

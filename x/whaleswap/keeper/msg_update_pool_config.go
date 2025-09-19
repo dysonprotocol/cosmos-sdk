@@ -76,5 +76,14 @@ func (k Keeper) UpdatePoolConfig(ctx context.Context, msg *whaleswapv1.MsgUpdate
 		return nil, cosmossdkerrors.Wrapf(err, "failed to set pool: %d", pool.PoolId)
 	}
 	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolUpdate{PoolId: pool.PoolId})
+	if err := k.AssertAMMInvariants(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err,
+			"AMM invariant after UpdatePoolConfig: pool_id=%d fee_pct=%s min=%s max=%s",
+			pool.PoolId,
+			pool.FeePct,
+			pool.MinPrice.String(),
+			pool.MaxPrice.String(),
+		)
+	}
 	return &whaleswapv1.MsgUpdatePoolConfigResponse{}, nil
 }

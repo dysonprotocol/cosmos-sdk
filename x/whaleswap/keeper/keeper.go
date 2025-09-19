@@ -10,6 +10,7 @@ import (
 	"cosmossdk.io/log"
 	cosmossdk_math "cosmossdk.io/math"
 
+	nameservicev1 "dysonprotocol.com/x/nameservice/types"
 	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -372,4 +373,43 @@ func (k Keeper) gcdInt(a, b cosmossdk_math.Int) cosmossdk_math.Int {
 		b = t
 	}
 	return a
+}
+
+// ensureWhaleswapRootName ensures that the root name "whaleswap.dys" exists and
+// resolves to the whaleswap module account. This allows nameservice auth checks
+// to pass when minting shares under the denom prefix "whaleswap.dys/...".
+func (k Keeper) ensureWhaleswapRootName(ctx context.Context) error {
+	// Resolve destination if the name exists already
+	authority := k.nameSvc.GetAuthority()
+
+	want := k.accKeeper.GetModuleAddress("whaleswap").String()
+	if dest, err := k.nameSvc.ResolveNameOrAddress(ctx, "whaleswap.dys"); err == nil {
+		if dest == want {
+			return nil
+		}
+		// Update destination to whaleswap module address; owner is current NFT owner
+		owner := k.nft.GetOwner(ctx, "nameservice.dys", "whaleswap.dys").String()
+		set := &nameservicev1.MsgSetDestination{Owner: owner, Name: "whaleswap.dys", Destination: want}
+		if _, err := k.nameSvc.SetDestination(ctx, set); err != nil {
+			return fmt.Errorf("failed to set destination for whaleswap.dys to module: %w", err)
+		}
+		return nil
+	}
+
+	// Name not found: mint the name NFT to nameservice authority, then set destination
+	mint := &nameservicev1.MsgMintNFT{
+		NameDestination: authority,
+		ClassId:         "nameservice.dys",
+		NftId:           "whaleswap.dys",
+		Uri:             want,
+		UriHash:         "",
+	}
+	if _, err := k.nameSvc.MintNFT(ctx, mint); err != nil {
+		return fmt.Errorf("failed to mint name NFT whaleswap.dys to nameservice authority: %w", err)
+	}
+	set := &nameservicev1.MsgSetDestination{Owner: authority, Name: "whaleswap.dys", Destination: want}
+	if _, err := k.nameSvc.SetDestination(ctx, set); err != nil {
+		return fmt.Errorf("failed to set destination for whaleswap.dys to module after mint: %w", err)
+	}
+	return nil
 }

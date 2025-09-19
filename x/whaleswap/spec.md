@@ -221,8 +221,8 @@ Msgs
 - OpenAuction(sell, bid_denom)
   - Move explicit solid `sell` coin from seller → module (escrow).
   - Create/upsert NFT class `whaleswap.dys/auction/{bid_denom}`.
-  - Set class policy from whaleswap params: always_listed=true; valuation_fee_pct; valuation_period; bid_timeout; minimum_bid_percent_increase.
-  - Set allowed_denoms to only `bid_denom`.
+  - Set class policy from whaleswap params: always_listed=true; valuation_fee_pct; valuation_period; bid_timeout; minimum_bid_percent_increase. All setter errors are propagated (tx fails if any policy update fails).
+  - Set allowed_denoms to only `bid_denom` (error if setter fails).
   - Mint NFT with id equal to the allocated `auction_id` (zero-padded) to seller.
   - Store `AuctionRecord` keyed by `auction_id`.
   - Populate reverse indexes:
@@ -230,8 +230,11 @@ Msgs
     - (bid_denom, sell_denom, auction_id) → auction_id
 
 - RedeemAuction(auction_id)
-  - Only NFT owner; only if no current bidder; send escrowed sell denom back; burn NFT.
-  - Delete primary `AuctionRecord` and both reverse index entries.
+  - Authority: current NFT owner only (not necessarily original seller). Owner is fetched at execution time from NFT keeper.
+  - Guard: only if no current bidder (checked via nameservice NFT data `current_bidder == ""`).
+  - Escrow check: pre-validate module has ≥ the escrowed `sell` coin; otherwise fail with ErrInsufficientFunds.
+  - Settlement: send escrowed `sell` to owner; burn the NFT.
+  - Indexing: remove reverse index entries first, then delete the primary `AuctionRecord`; any index removal error aborts the tx.
 
 
 ### 10. Advanced composed execution (atomic multi-op match-and-settle)
@@ -262,6 +265,7 @@ This section was removed. The module will not implement composed execution in th
 
 - Contents: params, counters, pools, offers, trades, auctions.
 - Validate: denoms format, params ranges, unique shares denom per pool, no duplicate indexes, counters ≥ max id in state.
+- Additional check: sum of `AuctionRecord.sell` per denom must be ≤ the module account's on-chain balance for that denom; otherwise genesis is invalid.
 - Export/import symmetric.
 
 
@@ -272,6 +276,7 @@ This section was removed. The module will not implement composed execution in th
 - Add/remove liquidity: owner-only; must keep price within band; shares > 0.
 - Orderbook: forbid liquid attachments at make; want must be solid; all computed amounts integral.
 - Liquid conversions: enforce fee sufficiency; escrow backing checks.
+- Auctions: enforce valid denoms (`sdk.ValidateDenom`); reject liquid `sell`/`bid` denoms; propagate errors from all class policy setters; owner-based redeem; explicit escrow insufficiency errors; reverse indexes must be removed on redeem.
 
 
 ### 14. Math and rounding policy
@@ -868,3 +873,90 @@ Remaining high-value TODOs I can take next:
   - Minted to creator as before; pool persisted first.
 
 All changes lint clean.
+==================================================
+### Plan to fix auction logic
+
+- Authority: redeem by current NFT owner
+  - Change `RedeemAuction` to require `caller == nftKeeper.GetOwner(classID, nftID)`.
+  - Keep “no current bidder” check via nameservice `GetNFTData`.
+  - Files: `x/whaleswap/keeper/msg_auction.go` (replace seller-only check), optionally `types/expected_keepers.go` (ensure `GetOwner` in interface).
+
+- Strict validation on inputs
+  - In `OpenAuction`:
+    - Validate `msg.BidDenom` with `sdk.ValidateDenom`.
+    - Reject if `k.isLiquidDenom(msg.BidDenom)` is true.
+    - Keep `sell.Amount > 0`, `sell.Denom != msg.BidDenom`, `sell` solid.
+  - Files: `msg_auction.go`.
+
+- Propagate errors for all class policy setters
+  - Stop ignoring errors from:
+    - `SetNFTClassAlwaysListed`
+    - `SetNFTClassValuationFeePct`
+    - `SetNFTClassValuationPeriod`
+    - `SetNFTClassBidTimeout`
+    - `SetNFTClassMinimumBidPercentIncrease`
+    - `SetNFTClassAllowedDenoms` (exactly `[bid_denom]`)
+  - Wrap with context (classID, bid_denom).
+  - Files: `msg_auction.go`.
+
+- Escrow sanity before redeem
+  - Before sending funds out, pre-check module balance >= `rec.Sell`.
+  - Wrap insufficient escrow with helpful error including `rec.Sell` and module address.
+  - Files: `msg_auction.go`.
+
+- Index removal robustness
+  - Check and wrap errors on:
+    - `AuctionsBySellBid.Remove`
+    - `AuctionsByBidSell.Remove`
+  - Prefer all-or-nothing: if any removal fails, abort after primary deletion? Safer: remove indexes first, then primary.
+  - Files: `msg_auction.go`.
+
+- Query hardening and efficiency
+  - Wrap all `Get`/pagination errors with request context (ids/filters).
+  - If feasible, use prefix-range pagination on `(sell,bid,auction_id)` and `(bid,sell,auction_id)` indexes to avoid in-transform filtering.
+  - Files: `x/whaleswap/keeper/query_auctions.go`.
+
+- Genesis escrow validation (optional but recommended)
+  - During `InitGenesis`, aggregate required escrow by denom from `Auctions` and ensure module balance covers totals; panic or log error with precise deficit.
+  - Files: `x/whaleswap/keeper/genesis.go`.
+
+- Invariants
+  - Add module invariants:
+    - Sum of `AuctionRecord.Sell` per denom ≤ module escrow balances.
+    - Reverse indexes present for every auction; no dangling entries.
+  - Files: `x/whaleswap/module/module.go` (register invariants), new `keeper/invariants.go`.
+
+- Events (optional enhancement)
+  - Enrich `EventAuctionCreated`/`EventAuctionRedeemed` to include `seller`, `sell`, `bid_denom` if proto supports; otherwise keep as-is.
+  - Files: `proto/dysonprotocol/whaleswap/v1/events.proto`, regen, then emit richer events in `msg_auction.go`.
+
+- Class ID hygiene
+  - `classID = whaleswap.dys/auction/{bid_denom}`: ensure `bid_denom` is valid; if nameservice has stricter rules, add a clear error.
+  - Files: `msg_auction.go`.
+
+- Tests
+  - Add pytest e2e:
+    - OpenAuction happy path; class policy verification.
+    - Redeem by current owner; fail if non-owner; fail if current_bidder set.
+    - Escrow deficit simulated (state tweak) → redeem fails with clear error.
+    - Reverse index presence and cleanup on redeem.
+  - Files: `tests/whaleswap/test_auction.py` (expand), run with `make test PYTEST_ARGS="tests/whaleswap/test_auction.py --ff --nf -x -s"`.
+
+- Docs/spec
+  - Update `x/whaleswap/spec.md`:
+    - Clarify redeem authority = current NFT owner.
+    - Note strict error propagation on policy setters.
+    - Document escrow checks, invariants, query filtering behavior.
+
+- CLI help
+  - Ensure AutoCLI long help reflects owner-based redeem and failure causes (bidder active, escrow missing, non-owner).
+  - Files: `x/whaleswap/module/autocli.go`.
+
+Acceptance criteria:
+- Redeem requires current NFT owner and no active bidder.
+- All class policy setters are error-checked.
+- Redeem fails early with explicit message if escrow insufficient.
+- Reverse indexes are always removed on redeem; no stale entries.
+- Queries wrap errors with context; filtered pagination works with indexes.
+- Genesis optional check enforces escrow ≥ sum of sells.
+- Tests cover happy and failure paths and pass locally.

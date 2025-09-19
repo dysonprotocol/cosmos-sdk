@@ -204,5 +204,15 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 	if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, trader, sdk.NewCoins(sdk.NewCoin(currentDenom, currentAmount))); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to send output %s to trader %s", sdk.NewCoin(currentDenom, currentAmount).String(), msg.Trader)
 	}
+	if err := k.AssertAMMInvariants(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err,
+			"AMM invariant after PoolSwap: pool_id=%d in=%s out=%s newR=(%s,%s)",
+			pool.PoolId,
+			sdk.NewCoin(msg.Input.Denom, msg.Input.Amount).String(),
+			sdk.NewCoin(currentDenom, currentAmount).String(),
+			sdk.NewCoin(pool.CoinA.Denom, pool.CoinA.Amount).String(),
+			sdk.NewCoin(pool.CoinB.Denom, pool.CoinB.Amount).String(),
+		)
+	}
 	return &whaleswapv1.MsgPoolSwapResponse{AmountOut: sdk.NewCoin(currentDenom, currentAmount)}, nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cosmossdk.io/collections"
+	cosmossdkerrors "cosmossdk.io/errors"
 	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
@@ -11,7 +12,7 @@ import (
 func (k Keeper) Auction(ctx context.Context, req *whaleswapv1.QueryAuctionRequest) (*whaleswapv1.QueryAuctionResponse, error) {
 	rec, err := k.AuctionsMap.Get(ctx, req.AuctionId)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "auction not found: %d", req.AuctionId)
 	}
 	return &whaleswapv1.QueryAuctionResponse{Auction: &rec}, nil
 }
@@ -44,7 +45,7 @@ func (k Keeper) Auctions(ctx context.Context, req *whaleswapv1.QueryAuctionsRequ
 			},
 		)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "Auctions query (sell=[%s],bid=[%s]) failed", sell, bid)
 		}
 		return &whaleswapv1.QueryAuctionsResponse{Auctions: results, Pagination: pageRes}, nil
 
@@ -69,7 +70,7 @@ func (k Keeper) Auctions(ctx context.Context, req *whaleswapv1.QueryAuctionsRequ
 			},
 		)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "Auctions query (sell=[%s]) failed", sell)
 		}
 		return &whaleswapv1.QueryAuctionsResponse{Auctions: results, Pagination: pageRes}, nil
 
@@ -94,7 +95,7 @@ func (k Keeper) Auctions(ctx context.Context, req *whaleswapv1.QueryAuctionsRequ
 			},
 		)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "Auctions query (bid=[%s]) failed", bid)
 		}
 		return &whaleswapv1.QueryAuctionsResponse{Auctions: results, Pagination: pageRes}, nil
 	}
@@ -110,7 +111,7 @@ func (k Keeper) Auctions(ctx context.Context, req *whaleswapv1.QueryAuctionsRequ
 		},
 	)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "Auctions query failed")
 	}
 	return &whaleswapv1.QueryAuctionsResponse{Auctions: results, Pagination: pageRes}, nil
 }
