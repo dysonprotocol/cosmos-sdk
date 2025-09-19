@@ -1,0 +1,49 @@
+syntax = "proto3";
+package dysonprotocol.whaleswap.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "google/protobuf/duration.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "dysonprotocol.com/x/whaleswap/types";
+
+message Params {
+  // pfand_per_offer is the PFAND coin required for liquid-mode offers.
+  cosmos.base.v1beta1.Coin pfand_per_offer = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"pfand_per_offer\""
+  ];
+
+  // Default auction knobs applied when creating auction NFT classes
+  // via whaleswap. These mirror nameservice per-class policy knobs.
+
+  // valuation_fee_pct is the percentage applied per valuation_period.
+  string valuation_fee_pct = 2 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.moretags) = "yaml:\"valuation_fee_pct\""
+  ];
+
+  // valuation_period defines the time duration to which valuation_fee_pct
+  // applies.
+  google.protobuf.Duration valuation_period = 3 [
+    (gogoproto.stdduration) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"valuation_period\""
+  ];
+
+  // bid_timeout defines the minimum duration a placed bid must remain pending
+  // before it can be claimed by the bidder.
+  google.protobuf.Duration bid_timeout = 4 [
+    (gogoproto.stdduration) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"bid_timeout\""
+  ];
+
+  // minimum_bid_percent_increase specifies the minimum percent increase
+  // required over the current valuation for a new bid to be accepted.
+  string minimum_bid_percent_increase = 5 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.moretags) = "yaml:\"minimum_bid_percent_increase\""
+  ];
+}

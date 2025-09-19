@@ -191,6 +191,12 @@
         {"type":"file","name":"query.swagger.json"},
         {"type":"file","name":"tx.swagger.json"}
       ]}
+    ]},
+    {"type":"directory","name":"whaleswap","contents":[
+      {"type":"directory","name":"v1","contents":[
+        {"type":"file","name":"query.swagger.json"},
+        {"type":"file","name":"tx.swagger.json"}
+      ]}
     ]}
   ]},
   {"type":"directory","name":"ibc","contents":[
@@ -246,5 +252,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":87,"files":72}
+  {"type":"report","directories":89,"files":74}
 ]

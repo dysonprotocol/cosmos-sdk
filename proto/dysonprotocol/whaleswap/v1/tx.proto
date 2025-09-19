@@ -1,0 +1,219 @@
+syntax = "proto3";
+package dysonprotocol.whaleswap.v1;
+
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/bank/v1beta1/bank.proto";
+import "cosmos/msg/v1/msg.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "amino/amino.proto";
+import "dysonprotocol/whaleswap/v1/params.proto";
+
+option go_package = "dysonprotocol.com/x/whaleswap/types";
+
+// Msg defines the whaleswap Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // AMM
+  rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
+  rpc UpdatePoolConfig(MsgUpdatePoolConfig)
+      returns (MsgUpdatePoolConfigResponse);
+  rpc AddLiquidity(MsgAddLiquidity) returns (MsgAddLiquidityResponse);
+  rpc RemoveLiquidity(MsgRemoveLiquidity) returns (MsgRemoveLiquidityResponse);
+  rpc PoolSwap(MsgPoolSwap) returns (MsgPoolSwapResponse);
+
+  // Wrapping (liquid conversions)
+  rpc ConvertToLiquid(MsgConvertToLiquid) returns (MsgConvertToLiquidResponse);
+  rpc ConvertToSolid(MsgConvertToSolid) returns (MsgConvertToSolidResponse);
+
+  // Orderbook
+  rpc MakeOffer(MsgMakeOffer) returns (MsgMakeOfferResponse);
+  rpc TakeOffer(MsgTakeOffer) returns (MsgTakeOfferResponse);
+  rpc CancelOffer(MsgCancelOffer) returns (MsgCancelOfferResponse);
+
+  // Auctions
+  rpc OpenAuction(MsgOpenAuction) returns (MsgOpenAuctionResponse);
+  rpc RedeemAuction(MsgRedeemAuction) returns (MsgRedeemAuctionResponse);
+
+  // Params
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+}
+
+// Create a pool. If min/max price are unset (or represent [0,+∞)), pool behaves
+// as v2 (constant product).
+message MsgCreatePool {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  cosmos.base.v1beta1.Coin coin_a = 2
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  cosmos.base.v1beta1.Coin coin_b = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  // Optional price band expressed as ratios coin2/coin1 using two coins.
+  // Each must either be empty (unset) or contain exactly two coins whose
+  // denoms match coin_a and coin_b.
+  repeated cosmos.base.v1beta1.Coin min_price = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins"
+  ];
+  repeated cosmos.base.v1beta1.Coin max_price = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins"
+  ];
+  string fee_pct = 6; // cosmos.Dec string in [0,1)
+}
+message MsgCreatePoolResponse { uint64 pool_id = 1; }
+
+// Update pool config (owner-only: majority of shares > 50%).
+message MsgUpdatePoolConfig {
+  option (cosmos.msg.v1.signer) = "signer";
+  string signer = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  uint64 pool_id = 2;
+  // Optional fields; empty string means no change
+  string fee_pct = 3; // cosmos.Dec string
+  repeated cosmos.base.v1beta1.Coin min_price = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins"
+  ];
+  repeated cosmos.base.v1beta1.Coin max_price = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins"
+  ];
+}
+message MsgUpdatePoolConfigResponse {}
+
+// Add liquidity (owner-only). Behavior depends on v2/v3 mode.
+message MsgAddLiquidity {
+  option (cosmos.msg.v1.signer) = "signer";
+  string signer = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  uint64 pool_id = 2;
+  cosmos.base.v1beta1.Coin amount1 = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  cosmos.base.v1beta1.Coin amount2 = 4
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+}
+message MsgAddLiquidityResponse {
+  // minted shares amount (sdk.Int string)
+  string shares = 1;
+}
+
+// Remove liquidity (anyone). Must respect price band and produce non-zero
+// outputs.
+message MsgRemoveLiquidity {
+  option (cosmos.msg.v1.signer) = "signer";
+  string signer = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  uint64 pool_id = 2;
+  // shares to burn (sdk.Int string)
+  string shares = 3;
+}
+message MsgRemoveLiquidityResponse {
+  // coins returned
+  repeated cosmos.base.v1beta1.Coin amount = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins"
+  ];
+}
+
+// Multi-hop pool swap.
+message MsgPoolSwap {
+  option (cosmos.msg.v1.signer) = "trader";
+  string trader = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // space-separated pool ids (e.g. "1 2 3")
+  string route_ids = 2;
+  cosmos.base.v1beta1.Coin input = 3
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  string minimum_out_amount = 4; // sdk.Int string
+  string out_denom = 5;
+}
+message MsgPoolSwapResponse {
+  cosmos.base.v1beta1.Coin amount_out = 1 [ (gogoproto.nullable) = false ];
+}
+
+// Convert solid denom to liquid wrapper L(denom).
+message MsgConvertToLiquid {
+  option (cosmos.msg.v1.signer) = "caller";
+  string caller = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string denom = 2;
+  string amount = 3; // sdk.Int string
+}
+message MsgConvertToLiquidResponse {
+  string liquid_denom = 1;
+  string amount = 2; // sdk.Int string
+}
+
+// Convert liquid denom L(denom) to solid denom.
+message MsgConvertToSolid {
+  option (cosmos.msg.v1.signer) = "caller";
+  string caller = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string liquid_denom = 2;
+  string amount = 3; // sdk.Int string
+}
+message MsgConvertToSolidResponse {
+  cosmos.base.v1beta1.Coin amount_out = 1 [ (gogoproto.nullable) = false ];
+}
+
+// Make an orderbook offer.
+message MsgMakeOffer {
+  option (cosmos.msg.v1.signer) = "maker";
+  string maker = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  cosmos.base.v1beta1.Coin have = 2 [ (gogoproto.nullable) = false ];
+  cosmos.base.v1beta1.Coin want = 3 [ (gogoproto.nullable) = false ];
+}
+message MsgMakeOfferResponse { uint64 offer_id = 1; }
+
+// Take one or more offers (batch).
+message MsgTakeOffer {
+  option (cosmos.msg.v1.signer) = "taker";
+  string taker = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  repeated TakeItem trades = 2 [ (gogoproto.nullable) = false ];
+}
+message TakeItem {
+  uint64 offer_id = 1;
+  // units to take (sdk.Int string). If empty, take full remaining.
+  string take_units = 2;
+}
+message MsgTakeOfferResponse { bool ok = 1; }
+
+// Cancel an offer (maker or eligible third-party for liquid offers).
+message MsgCancelOffer {
+  option (cosmos.msg.v1.signer) = "closer";
+  string closer = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  uint64 offer_id = 2;
+}
+message MsgCancelOfferResponse {}
+
+// Open an auction by escrowing exactly one solid denom amount.
+message MsgOpenAuction {
+  option (cosmos.msg.v1.signer) = "seller";
+  string seller = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string bid_denom = 2;
+  // Explicit solid sell coin to escrow from seller → module.
+  cosmos.base.v1beta1.Coin sell = 3 [ (gogoproto.nullable) = false ];
+}
+message MsgOpenAuctionResponse { uint64 auction_id = 1; }
+
+// Redeem auction escrow by NFT owner when no current bidder exists.
+message MsgRedeemAuction {
+  option (cosmos.msg.v1.signer) = "caller";
+  string caller = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  uint64 auction_id = 2;
+}
+message MsgRedeemAuctionResponse {}
+
+// UpdateParams is the Msg/UpdateParams request type.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  string authority = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  Params params = 2 [ (gogoproto.nullable) = false ];
+}
+message MsgUpdateParamsResponse {}

@@ -82,6 +82,10 @@ import (
 	storagemodulev1 "dysonprotocol.com/api/storage/module/v1"
 	storagev1 "dysonprotocol.com/x/storage"
 	storagemodule "dysonprotocol.com/x/storage/module"
+
+	whaleswapmodulev1 "dysonprotocol.com/api/whaleswap/module/v1"
+	whaleswapv1 "dysonprotocol.com/x/whaleswap"
+	whaleswapmodule "dysonprotocol.com/x/whaleswap/module"
 )
 
 var (
@@ -147,6 +151,7 @@ var (
 					nameservicev1.ModuleName,
 					scriptv1.ModuleName,
 					storagev1.ModuleName,
+					whaleswapv1.ModuleName,
 					crontaskv1.ModuleName,
 				},
 				EndBlockers: []string{
@@ -158,6 +163,7 @@ var (
 					nameservicev1.ModuleName,
 					scriptv1.ModuleName,
 					storagev1.ModuleName,
+					whaleswapv1.ModuleName,
 					crontaskv1.ModuleName,
 				},
 				OverrideStoreKeys: []*runtimev1alpha1.StoreKeyConfig{
@@ -191,6 +197,7 @@ var (
 					nameservicev1.ModuleName,
 					scriptv1.ModuleName,
 					storagev1.ModuleName,
+					whaleswapv1.ModuleName,
 					crontaskv1.ModuleName,
 				},
 				// When ExportGenesis is not specified, the export genesis module order
@@ -312,6 +319,10 @@ var (
 			Config: appconfig.WrapAny(&scriptmodulev1.Module{}),
 		},
 		{
+			Name:   whaleswapv1.ModuleName,
+			Config: appconfig.WrapAny(&whaleswapmodulev1.Module{}),
+		},
+		{
 			Name: nameservicev1.ModuleName,
 			Config: appconfig.WrapAny(&nameservicemodulev1.Module{
 				MaxNameLength:     100,
@@ -350,6 +361,7 @@ var (
 				nftv1.ModuleName:         nftmodule.AppModuleBasic{},
 				scriptv1.ModuleName:      scriptmodule.AppModuleBasic{},
 				storagev1.ModuleName:     storagemodule.AppModuleBasic{},
+				whaleswapv1.ModuleName:   whaleswapmodule.AppModuleBasic{},
 			},
 		),
 	)

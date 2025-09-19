@@ -1,0 +1,47 @@
+syntax = "proto3";
+package dysonprotocol.whaleswap.v1;
+
+import "gogoproto/gogo.proto";
+import "amino/amino.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "dysonprotocol.com/x/whaleswap/types";
+
+// Events emitted by whaleswap module
+
+message EventPoolCreated { uint64 pool_id = 1; }
+
+message EventPoolUpdate { uint64 pool_id = 1; }
+
+message EventPoolSwap { uint64 pool_id = 1; }
+
+message EventPoolLiquidityAdded {
+  uint64 pool_id = 1;
+  string shares = 2; // sdk.Int string
+}
+
+message EventPoolLiquidityRemoved {
+  uint64 pool_id = 1;
+  string shares = 2; // sdk.Int string
+}
+
+message EventOfferCreated { uint64 offer_id = 1; }
+
+message EventOfferTaken {
+  uint64 offer_id = 1;
+  uint64 trade_id = 2;
+}
+
+message EventOfferCancelled { uint64 offer_id = 1; }
+
+message EventPfandLocked {
+  cosmos.base.v1beta1.Coin amount = 1 [ (gogoproto.nullable) = false ];
+}
+
+message EventPfandReleased {
+  cosmos.base.v1beta1.Coin amount = 1 [ (gogoproto.nullable) = false ];
+}
+
+message EventAuctionCreated { uint64 auction_id = 1; }
+
+message EventAuctionRedeemed { uint64 auction_id = 1; }

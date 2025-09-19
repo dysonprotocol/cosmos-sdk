@@ -640,9 +640,9 @@ def make_offer(have_coin: Any, want_coin: Any) -> Dict[str, int]:
         emit_event("pfand_locked", str(pfand_locked))
     else:
         # Normal mode: require attached have == have_amount, escrow to script
-        if attached_have < have_amount:
+        if attached_have != have_amount:
             raise ValueError(
-                f"insufficient attached have for escrow: {attached_have} < {have_amount}"
+                f"invalid attached have for escrow: {attached_have} {have_denom} != {have_amount} {have_denom}"
             )
         # After attachments, coins are already at script.
 
@@ -890,7 +890,7 @@ def take_offer(
         offer["remaining_units"] -= info["take_units"]
         new_remaining_units = offer["remaining_units"]
         just_closed = False
-        if new_remaining_units == 0:
+        if new_remaining_units <= 0:
             offer["status"] = "closed"
             offer["updated_height"] = block_info["height"]
             offer["updated_timestamp"] = block_info["time"]

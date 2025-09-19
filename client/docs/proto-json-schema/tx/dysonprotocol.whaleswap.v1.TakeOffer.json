@@ -1,0 +1,56 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgTakeOffer",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.MsgTakeOffer": {
+                "properties": {
+                    "taker": {
+                        "type": "string"
+                    },
+                    "trades": {
+                        "items": {
+                            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.TakeItem"
+                        },
+                        "additionalProperties": false,
+                        "type": "array"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Take Offer",
+                "description": "Take one or more offers (batch)."
+            },
+            "dysonprotocol.whaleswap.v1.TakeItem": {
+                "properties": {
+                    "offer_id": {
+                        "type": "string"
+                    },
+                    "take_units": {
+                        "type": "string",
+                        "description": "units to take (sdk.Int string). If empty, take full remaining."
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Take Item"
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgTakeOfferResponse",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.MsgTakeOfferResponse": {
+                "properties": {
+                    "ok": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Take Offer Response"
+            }
+        }
+    }
+}

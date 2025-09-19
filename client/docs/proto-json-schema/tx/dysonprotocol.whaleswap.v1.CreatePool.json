@@ -1,0 +1,76 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgCreatePool",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.MsgCreatePool": {
+                "properties": {
+                    "creator": {
+                        "type": "string"
+                    },
+                    "coin_a": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "coin_b": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "min_price": {
+                        "items": {
+                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+                        },
+                        "additionalProperties": false,
+                        "type": "array",
+                        "description": "Optional price band expressed as ratios coin2/coin1 using two coins. Each must either be empty (unset) or contain exactly two coins whose denoms match coin_a and coin_b."
+                    },
+                    "max_price": {
+                        "items": {
+                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+                        },
+                        "additionalProperties": false,
+                        "type": "array"
+                    },
+                    "fee_pct": {
+                        "type": "string",
+                        "description": "cosmos.Dec string in [0,1)"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Create Pool",
+                "description": "Create a pool. If min/max price are unset (or represent [0,+\u221e)), pool behaves as v2 (constant product)."
+            },
+            "cosmos.base.v1beta1.Coin": {
+                "properties": {
+                    "denom": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Coin",
+                "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgCreatePoolResponse",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.MsgCreatePoolResponse": {
+                "properties": {
+                    "pool_id": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Create Pool Response"
+            }
+        }
+    }
+}

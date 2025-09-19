@@ -137,6 +137,16 @@
       {"type":"file","name":"dysonprotocol.storage.v1.Params.json"},
       {"type":"file","name":"dysonprotocol.storage.v1.StorageGet.json"},
       {"type":"file","name":"dysonprotocol.storage.v1.StorageList.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.Auction.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.Auctions.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.Offer.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.Offers.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.OffersByOwner.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.Params.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.Pool.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.Pools.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.TradesByOffer.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.TradesByTaker.json"},
       {"type":"file","name":"ibc.applications.interchain_accounts.controller.v1.InterchainAccount.json"},
       {"type":"file","name":"ibc.applications.interchain_accounts.controller.v1.Params.json"},
       {"type":"file","name":"ibc.applications.interchain_accounts.host.v1.Params.json"},
@@ -291,6 +301,19 @@
       {"type":"file","name":"dysonprotocol.storage.v1.StorageDelete.json"},
       {"type":"file","name":"dysonprotocol.storage.v1.StorageSet.json"},
       {"type":"file","name":"dysonprotocol.storage.v1.UpdateParams.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.AddLiquidity.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.CancelOffer.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.ConvertToLiquid.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.ConvertToSolid.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.CreatePool.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.MakeOffer.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.OpenAuction.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolSwap.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.RedeemAuction.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.RemoveLiquidity.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.TakeOffer.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.UpdateParams.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.UpdatePoolConfig.json"},
       {"type":"file","name":"ibc.applications.interchain_accounts.controller.v1.RegisterInterchainAccount.json"},
       {"type":"file","name":"ibc.applications.interchain_accounts.controller.v1.SendTx.json"},
       {"type":"file","name":"ibc.applications.interchain_accounts.controller.v1.UpdateParams.json"},
@@ -330,5 +353,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":324}
+  {"type":"report","directories":3,"files":347}
 ]

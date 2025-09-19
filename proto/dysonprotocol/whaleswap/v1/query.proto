@@ -1,0 +1,138 @@
+syntax = "proto3";
+package dysonprotocol.whaleswap.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+import "dysonprotocol/whaleswap/v1/whaleswap.proto";
+import "dysonprotocol/whaleswap/v1/params.proto";
+
+option go_package = "dysonprotocol.com/x/whaleswap/types";
+
+// Query defines the gRPC querier service for whaleswap.
+service Query {
+  // Params queries the whaleswap module parameters
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/dysonprotocol/whaleswap/v1/params";
+  }
+
+  // Pools
+  rpc Pool(QueryPoolRequest) returns (QueryPoolResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/pools/{pool_id}";
+  }
+  rpc Pools(QueryPoolsRequest) returns (QueryPoolsResponse) {
+    option (google.api.http).get = "/dysonprotocol/whaleswap/v1/pools";
+  }
+
+  // Offers
+  rpc Offer(QueryOfferRequest) returns (QueryOfferResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/offers/{offer_id}";
+  }
+  rpc OffersByOwner(QueryOffersByOwnerRequest)
+      returns (QueryOffersByOwnerResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/offers/owner/{owner}";
+  }
+  // Unified offers listing with optional filters and pagination
+  rpc Offers(QueryOffersRequest) returns (QueryOffersResponse) {
+    option (google.api.http).get = "/dysonprotocol/whaleswap/v1/offers";
+  }
+
+  // Trades
+  rpc TradesByOffer(QueryTradesByOfferRequest)
+      returns (QueryTradesByOfferResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/trades/offer/{offer_id}";
+  }
+  rpc TradesByTaker(QueryTradesByTakerRequest)
+      returns (QueryTradesByTakerResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/trades/taker/{taker}";
+  }
+
+  // Auctions
+  rpc Auction(QueryAuctionRequest) returns (QueryAuctionResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/auctions/{auction_id}";
+  }
+  // List auctions with optional filters and pagination
+  rpc Auctions(QueryAuctionsRequest) returns (QueryAuctionsResponse) {
+    option (google.api.http).get = "/dysonprotocol/whaleswap/v1/auctions";
+  }
+}
+
+message QueryParamsRequest {}
+message QueryParamsResponse {
+  Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+message QueryPoolRequest { uint64 pool_id = 1; }
+message QueryPoolResponse { Pool pool = 1; }
+
+message QueryPoolsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+message QueryPoolsResponse {
+  repeated Pool pools = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryOfferRequest { uint64 offer_id = 1; }
+message QueryOfferResponse { OfferData offer = 1; }
+
+message QueryOffersByOwnerRequest {
+  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string status = 2; // optional filter
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+message QueryOffersByOwnerResponse {
+  repeated OfferData offers = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryOffersRequest {
+  // optional filters; if unset returns all
+  string have_denom = 1;
+  string want_denom = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+message QueryOffersResponse {
+  repeated OfferData offers = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryTradesByOfferRequest {
+  uint64 offer_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+message QueryTradesByOfferResponse {
+  repeated Trade trades = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryTradesByTakerRequest {
+  string taker = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+message QueryTradesByTakerResponse {
+  repeated Trade trades = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAuctionRequest { uint64 auction_id = 1; }
+message QueryAuctionResponse { AuctionRecord auction = 1; }
+
+message QueryAuctionsRequest {
+  // optional filters; if unset, returns all
+  string sell_denom = 1;
+  string bid_denom = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+message QueryAuctionsResponse {
+  repeated AuctionRecord auctions = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

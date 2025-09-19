@@ -1,0 +1,61 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgAddLiquidity",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.MsgAddLiquidity": {
+                "properties": {
+                    "signer": {
+                        "type": "string"
+                    },
+                    "pool_id": {
+                        "type": "string"
+                    },
+                    "amount1": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "amount2": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Add Liquidity",
+                "description": "Add liquidity (owner-only). Behavior depends on v2/v3 mode."
+            },
+            "cosmos.base.v1beta1.Coin": {
+                "properties": {
+                    "denom": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Coin",
+                "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgAddLiquidityResponse",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.MsgAddLiquidityResponse": {
+                "properties": {
+                    "shares": {
+                        "type": "string",
+                        "description": "minted shares amount (sdk.Int string)"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Add Liquidity Response"
+            }
+        }
+    }
+}

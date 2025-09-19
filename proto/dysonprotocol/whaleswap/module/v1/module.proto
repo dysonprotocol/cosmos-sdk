@@ -1,0 +1,19 @@
+syntax = "proto3";
+package dysonprotocol.whaleswap.module.v1;
+
+import "cosmos/app/v1alpha1/module.proto";
+import "gogoproto/gogo.proto";
+import "amino/amino.proto";
+
+// Module is the config object of the whaleswap module.
+option go_package = "dysonprotocol.com/x/whaleswap/module/v1";
+
+message Module {
+  option (cosmos.app.v1alpha1.module) = {
+    go_import : "dysonprotocol.com/x/whaleswap"
+  };
+
+  // authority defines the custom module authority. If not set, defaults to the
+  // governance module.
+  string authority = 1;
+}

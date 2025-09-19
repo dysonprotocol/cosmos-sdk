@@ -1,0 +1,921 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "dysonprotocol/whaleswap/v1/query.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/dysonprotocol/whaleswap/v1/auctions": {
+      "get": {
+        "summary": "List auctions with optional filters and pagination",
+        "operationId": "dysonprotocol.whaleswap.v1.QueryAuctionsRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryAuctionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "sell_denom",
+            "description": "optional filters; if unset, returns all.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "bid_denom",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/whaleswap/v1/auctions/{auction_id}": {
+      "get": {
+        "summary": "Auctions",
+        "operationId": "dysonprotocol.whaleswap.v1.QueryAuctionRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryAuctionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "auction_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/whaleswap/v1/offers": {
+      "get": {
+        "summary": "Unified offers listing with optional filters and pagination",
+        "operationId": "dysonprotocol.whaleswap.v1.QueryOffersRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryOffersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "have_denom",
+            "description": "optional filters; if unset returns all.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "want_denom",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/whaleswap/v1/offers/owner/{owner}": {
+      "get": {
+        "operationId": "dysonprotocol.whaleswap.v1.QueryOffersByOwnerRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/whaleswap/v1/offers/{offer_id}": {
+      "get": {
+        "summary": "Offers",
+        "operationId": "dysonprotocol.whaleswap.v1.QueryOfferRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryOfferResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "offer_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/whaleswap/v1/params": {
+      "get": {
+        "summary": "Params queries the whaleswap module parameters",
+        "operationId": "dysonprotocol.whaleswap.v1.QueryParamsRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryParamsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/whaleswap/v1/pools": {
+      "get": {
+        "operationId": "dysonprotocol.whaleswap.v1.QueryPoolsRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/whaleswap/v1/pools/{pool_id}": {
+      "get": {
+        "summary": "Pools",
+        "operationId": "dysonprotocol.whaleswap.v1.QueryPoolRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pool_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/whaleswap/v1/trades/offer/{offer_id}": {
+      "get": {
+        "summary": "Trades",
+        "operationId": "dysonprotocol.whaleswap.v1.QueryTradesByOfferRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "offer_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/whaleswap/v1/trades/taker/{taker}": {
+      "get": {
+        "operationId": "dysonprotocol.whaleswap.v1.QueryTradesByTakerRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "taker",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "cosmos.base.query.v1beta1.PageRequest": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "format": "byte",
+          "description": "key is a value returned in PageResponse.next_key to begin\nquerying the next page most efficiently. Only one of offset or key\nshould be set."
+        },
+        "offset": {
+          "type": "string",
+          "format": "uint64",
+          "description": "offset is a numeric offset that can be used when key is unavailable.\nIt is less efficient than using key. Only one of offset or key should\nbe set."
+        },
+        "limit": {
+          "type": "string",
+          "format": "uint64",
+          "description": "limit is the total number of results to be returned in the result page.\nIf left empty it will default to a value to be set by each app."
+        },
+        "count_total": {
+          "type": "boolean",
+          "description": "count_total is set to true  to indicate that the result set should include\na count of the total number of items available for pagination in UIs.\ncount_total is only respected when offset is used. It is ignored when key\nis set."
+        },
+        "reverse": {
+          "type": "boolean",
+          "description": "reverse is set to true if results are to be returned in the descending\norder."
+        }
+      },
+      "description": "message SomeRequest {\n         Foo some_parameter = 1;\n         PageRequest pagination = 2;\n }",
+      "title": "PageRequest is to be embedded in gRPC request messages for efficient\npagination. Ex:"
+    },
+    "cosmos.base.query.v1beta1.PageResponse": {
+      "type": "object",
+      "properties": {
+        "next_key": {
+          "type": "string",
+          "format": "byte",
+          "description": "next_key is the key to be passed to PageRequest.key to\nquery the next page most efficiently. It will be empty if\nthere are no more results."
+        },
+        "total": {
+          "type": "string",
+          "format": "uint64",
+          "title": "total is total number of results available if PageRequest.count_total\nwas set, its value is undefined otherwise"
+        }
+      },
+      "description": "PageResponse is to be embedded in gRPC response messages where the\ncorresponding request message has used PageRequest.\n\n message SomeResponse {\n         repeated Bar results = 1;\n         PageResponse page = 2;\n }"
+    },
+    "cosmos.base.v1beta1.Coin": {
+      "type": "object",
+      "properties": {
+        "denom": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        }
+      },
+      "description": "Coin defines a token with a denomination and an amount.\n\nNOTE: The amount field is an Int which implements the custom method\nsignatures required by gogoproto."
+    },
+    "dysonprotocol.whaleswap.v1.AuctionRecord": {
+      "type": "object",
+      "properties": {
+        "auction_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        },
+        "sell": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "bid_denom": {
+          "type": "string"
+        },
+        "seller": {
+          "type": "string"
+        }
+      },
+      "description": "AuctionRecord stores metadata for a whaleswap-created auction escrow."
+    },
+    "dysonprotocol.whaleswap.v1.OfferData": {
+      "type": "object",
+      "properties": {
+        "offer_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "status": {
+          "type": "string"
+        },
+        "maker": {
+          "type": "string"
+        },
+        "updated_height": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "updated_timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "initial_have": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "initial_want": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "remaining_have": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "remaining_want": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "unit_have_int": {
+          "type": "string"
+        },
+        "unit_want_int": {
+          "type": "string"
+        },
+        "remaining_units": {
+          "type": "string"
+        },
+        "pfand_locked": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "description": "pfand_locked is the PFAND coin locked for liquid-mode offers."
+        }
+      },
+      "description": "OfferData mirrors orderbook offer state.\n\nStatus values: \"open\" | \"closed\" | \"cancelled\"."
+    },
+    "dysonprotocol.whaleswap.v1.Params": {
+      "type": "object",
+      "properties": {
+        "pfand_per_offer": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "description": "pfand_per_offer is the PFAND coin required for liquid-mode offers."
+        },
+        "valuation_fee_pct": {
+          "type": "string",
+          "description": "valuation_fee_pct is the percentage applied per valuation_period."
+        },
+        "valuation_period": {
+          "type": "string",
+          "description": "valuation_period defines the time duration to which valuation_fee_pct\napplies."
+        },
+        "bid_timeout": {
+          "type": "string",
+          "description": "bid_timeout defines the minimum duration a placed bid must remain pending\nbefore it can be claimed by the bidder."
+        },
+        "minimum_bid_percent_increase": {
+          "type": "string",
+          "description": "minimum_bid_percent_increase specifies the minimum percent increase\nrequired over the current valuation for a new bid to be accepted."
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.Pool": {
+      "type": "object",
+      "properties": {
+        "pool_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "coin_a": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "coin_b": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "shares_denom": {
+          "type": "string"
+        },
+        "fee_pct": {
+          "type": "string",
+          "description": "fee_pct is the pool swap fee percentage (cosmos.Dec string in [0,1))."
+        },
+        "min_price": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          },
+          "description": "min_price/max_price optionally set a price band for concentrated liquidity.\nEach is expressed as exactly two coins representing the ratio\ncoin_b/coin_a. For example, [{amount: 1, denom: coin_a}, {amount: 2, denom:\ncoin_b}] means min P = 2/1 of coin2 per coin1. Empty means unset."
+        },
+        "max_price": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          }
+        },
+        "block_height": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "num_trades": {
+          "type": "string",
+          "format": "uint64"
+        }
+      },
+      "description": "Pool describes AMM pool state.\n\nNotes:\n- coin_a.denom < coin_b.denom lexicographically (canonical order)\n- fee_pct is a decimal string in [0,1)\n- min_price/max_price are optional decimal strings defining a price band over\n  P = coin_b.amount/coin_a.amount. If unset (or effectively [0, +\u221e)) the pool\n  behaves as constant-product (v2). If set, concentrated-liquidity math\n  applies.\n- coin_a.amount/coin_b.amount are sdk.Int strings."
+    },
+    "dysonprotocol.whaleswap.v1.QueryAuctionResponse": {
+      "type": "object",
+      "properties": {
+        "auction": {
+          "$ref": "#/definitions/dysonprotocol.whaleswap.v1.AuctionRecord"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.QueryAuctionsResponse": {
+      "type": "object",
+      "properties": {
+        "auctions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.AuctionRecord"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.QueryOfferResponse": {
+      "type": "object",
+      "properties": {
+        "offer": {
+          "$ref": "#/definitions/dysonprotocol.whaleswap.v1.OfferData"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse": {
+      "type": "object",
+      "properties": {
+        "offers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.OfferData"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.QueryOffersResponse": {
+      "type": "object",
+      "properties": {
+        "offers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.OfferData"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.QueryParamsResponse": {
+      "type": "object",
+      "properties": {
+        "params": {
+          "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Params"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.QueryPoolResponse": {
+      "type": "object",
+      "properties": {
+        "pool": {
+          "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Pool"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.QueryPoolsResponse": {
+      "type": "object",
+      "properties": {
+        "pools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Pool"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse": {
+      "type": "object",
+      "properties": {
+        "trades": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Trade"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse": {
+      "type": "object",
+      "properties": {
+        "trades": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Trade"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.Trade": {
+      "type": "object",
+      "properties": {
+        "trade_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "offer_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "taker": {
+          "type": "string"
+        },
+        "height": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sent": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "received": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        }
+      },
+      "description": "Trade captures a single fill of an offer."
+    },
+    "google.protobuf.Any": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "grpc.gateway.runtime.Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/google.protobuf.Any"
+          }
+        }
+      }
+    }
+  }
+}

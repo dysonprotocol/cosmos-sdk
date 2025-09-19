@@ -44,7 +44,23 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 		}
 	}
 
-	// 4. Calculate and collect minting fee
+	// 4. Calculate and collect minting fee (skip if destination is a module account)
+	// Detect module account destination
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	isModuleDest := false
+	if acc := k.accountKeeper.GetAccount(sdkCtx, ownerAddr); acc != nil {
+		if modAcc, ok := acc.(sdk.ModuleAccountI); ok {
+			modAccAddr := modAcc.GetAddress()
+			if modAccAddr.Equals(ownerAddr) {
+				// if the module account address is the same as the owner address, then it is a module destination
+				isModuleDest = true
+			} else {
+				// this should never happen
+				k.Logger.Error("MintCoins: Module account address does not match owner address", "module_account_address", modAccAddr.String(), "owner_address", ownerAddr.String())
+			}
+		}
+	}
+
 	params := k.GetParams(ctx)
 	mintFeePerCoin, err := params.GetMintFeePerCoinAsDec()
 	if err != nil {
@@ -52,7 +68,7 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 	}
 
 	var feeCharged sdk.Coins
-	if !mintFeePerCoin.IsZero() {
+	if !isModuleDest && !mintFeePerCoin.IsZero() {
 		// Calculate total fee: total_units_minted × mint_fee_per_coin
 		totalUnits := math.NewInt(0)
 		for _, coin := range msg.Amount {
@@ -86,6 +102,8 @@ func (k Keeper) MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) 
 				"units_minted", totalUnits.String(),
 				"fee_charged", feeCharged.String())
 		}
+	} else if isModuleDest {
+		k.Logger.Info("MintCoins: Skipping mint fee for module destination", "name_destination", msg.NameDestination)
 	}
 
 	// 5. Mint the coins to the module account

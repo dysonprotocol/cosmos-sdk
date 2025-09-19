@@ -1,0 +1,107 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryOfferRequest",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.QueryOfferRequest": {
+                "properties": {
+                    "offer_id": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Offer Request"
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryOfferResponse",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.QueryOfferResponse": {
+                "properties": {
+                    "offer": {
+                        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.OfferData",
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Offer Response"
+            },
+            "cosmos.base.v1beta1.Coin": {
+                "properties": {
+                    "denom": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Coin",
+                "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
+            },
+            "dysonprotocol.whaleswap.v1.OfferData": {
+                "properties": {
+                    "offer_id": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "\"open\" | \"closed\" | \"cancelled\""
+                    },
+                    "maker": {
+                        "type": "string"
+                    },
+                    "updated_height": {
+                        "type": "string"
+                    },
+                    "updated_timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "initial_have": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "initial_want": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "remaining_have": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "remaining_want": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "unit_have_int": {
+                        "type": "string",
+                        "description": "sdk.Int string"
+                    },
+                    "unit_want_int": {
+                        "type": "string",
+                        "description": "sdk.Int string"
+                    },
+                    "remaining_units": {
+                        "type": "string",
+                        "description": "sdk.Int string"
+                    },
+                    "pfand_locked": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false,
+                        "description": "pfand_locked is the PFAND coin locked for liquid-mode offers."
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Offer Data",
+                "description": "OfferData mirrors orderbook offer state. Status values: \"open\" | \"closed\" | \"cancelled\"."
+            }
+        }
+    }
+}

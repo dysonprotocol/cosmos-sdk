@@ -1,0 +1,61 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgRemoveLiquidity",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.MsgRemoveLiquidity": {
+                "properties": {
+                    "signer": {
+                        "type": "string"
+                    },
+                    "pool_id": {
+                        "type": "string"
+                    },
+                    "shares": {
+                        "type": "string",
+                        "description": "shares to burn (sdk.Int string)"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Remove Liquidity",
+                "description": "Remove liquidity (anyone). Must respect price band and produce non-zero outputs."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgRemoveLiquidityResponse",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.MsgRemoveLiquidityResponse": {
+                "properties": {
+                    "amount": {
+                        "items": {
+                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+                        },
+                        "additionalProperties": false,
+                        "type": "array",
+                        "description": "coins returned"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Remove Liquidity Response"
+            },
+            "cosmos.base.v1beta1.Coin": {
+                "properties": {
+                    "denom": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Coin",
+                "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
+            }
+        }
+    }
+}

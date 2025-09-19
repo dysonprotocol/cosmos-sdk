@@ -1,0 +1,848 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "dysonprotocol/whaleswap/v1/tx.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "dysonprotocol.whaleswap.v1.MsgAddLiquidity": {
+      "post": {
+        "operationId": "dysonprotocol.whaleswap.v1.MsgAddLiquidity",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgAddLiquidityResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgAddLiquidity"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgCancelOffer": {
+      "post": {
+        "operationId": "dysonprotocol.whaleswap.v1.MsgCancelOffer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgCancelOfferResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgCancelOffer"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgConvertToLiquid": {
+      "post": {
+        "summary": "Wrapping (liquid conversions)",
+        "operationId": "dysonprotocol.whaleswap.v1.MsgConvertToLiquid",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgConvertToLiquidResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgConvertToLiquid"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgConvertToSolid": {
+      "post": {
+        "operationId": "dysonprotocol.whaleswap.v1.MsgConvertToSolid",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgConvertToSolidResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgConvertToSolid"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgCreatePool": {
+      "post": {
+        "summary": "AMM",
+        "operationId": "dysonprotocol.whaleswap.v1.MsgCreatePool",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgCreatePoolResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgCreatePool"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgMakeOffer": {
+      "post": {
+        "summary": "Orderbook",
+        "operationId": "dysonprotocol.whaleswap.v1.MsgMakeOffer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgMakeOfferResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgMakeOffer"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgOpenAuction": {
+      "post": {
+        "summary": "Auctions",
+        "operationId": "dysonprotocol.whaleswap.v1.MsgOpenAuction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgOpenAuctionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgOpenAuction"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgPoolSwap": {
+      "post": {
+        "operationId": "dysonprotocol.whaleswap.v1.MsgPoolSwap",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgPoolSwapResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgPoolSwap"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgRedeemAuction": {
+      "post": {
+        "operationId": "dysonprotocol.whaleswap.v1.MsgRedeemAuction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgRedeemAuctionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgRedeemAuction"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgRemoveLiquidity": {
+      "post": {
+        "operationId": "dysonprotocol.whaleswap.v1.MsgRemoveLiquidity",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgRemoveLiquidityResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgRemoveLiquidity"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgTakeOffer": {
+      "post": {
+        "operationId": "dysonprotocol.whaleswap.v1.MsgTakeOffer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgTakeOfferResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgTakeOffer"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgUpdateParams": {
+      "post": {
+        "summary": "Params",
+        "operationId": "dysonprotocol.whaleswap.v1.MsgUpdateParams",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgUpdateParamsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgUpdateParams"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgUpdatePoolConfig": {
+      "post": {
+        "operationId": "dysonprotocol.whaleswap.v1.MsgUpdatePoolConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgUpdatePoolConfigResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.whaleswap.v1.MsgUpdatePoolConfig"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "cosmos.base.v1beta1.Coin": {
+      "type": "object",
+      "properties": {
+        "denom": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        }
+      },
+      "description": "Coin defines a token with a denomination and an amount.\n\nNOTE: The amount field is an Int which implements the custom method\nsignatures required by gogoproto."
+    },
+    "dysonprotocol.whaleswap.v1.MsgAddLiquidity": {
+      "type": "object",
+      "properties": {
+        "signer": {
+          "type": "string"
+        },
+        "pool_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "amount1": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "amount2": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        }
+      },
+      "description": "Add liquidity (owner-only). Behavior depends on v2/v3 mode."
+    },
+    "dysonprotocol.whaleswap.v1.MsgAddLiquidityResponse": {
+      "type": "object",
+      "properties": {
+        "shares": {
+          "type": "string",
+          "title": "minted shares amount (sdk.Int string)"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgCancelOffer": {
+      "type": "object",
+      "properties": {
+        "closer": {
+          "type": "string"
+        },
+        "offer_id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      },
+      "description": "Cancel an offer (maker or eligible third-party for liquid offers)."
+    },
+    "dysonprotocol.whaleswap.v1.MsgCancelOfferResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.whaleswap.v1.MsgConvertToLiquid": {
+      "type": "object",
+      "properties": {
+        "caller": {
+          "type": "string"
+        },
+        "denom": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        }
+      },
+      "description": "Convert solid denom to liquid wrapper L(denom)."
+    },
+    "dysonprotocol.whaleswap.v1.MsgConvertToLiquidResponse": {
+      "type": "object",
+      "properties": {
+        "liquid_denom": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgConvertToSolid": {
+      "type": "object",
+      "properties": {
+        "caller": {
+          "type": "string"
+        },
+        "liquid_denom": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        }
+      },
+      "description": "Convert liquid denom L(denom) to solid denom."
+    },
+    "dysonprotocol.whaleswap.v1.MsgConvertToSolidResponse": {
+      "type": "object",
+      "properties": {
+        "amount_out": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgCreatePool": {
+      "type": "object",
+      "properties": {
+        "creator": {
+          "type": "string"
+        },
+        "coin_a": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "coin_b": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "min_price": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          },
+          "description": "Optional price band expressed as ratios coin2/coin1 using two coins.\nEach must either be empty (unset) or contain exactly two coins whose\ndenoms match coin_a and coin_b."
+        },
+        "max_price": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          }
+        },
+        "fee_pct": {
+          "type": "string"
+        }
+      },
+      "description": "Create a pool. If min/max price are unset (or represent [0,+\u221e)), pool behaves\nas v2 (constant product)."
+    },
+    "dysonprotocol.whaleswap.v1.MsgCreatePoolResponse": {
+      "type": "object",
+      "properties": {
+        "pool_id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgMakeOffer": {
+      "type": "object",
+      "properties": {
+        "maker": {
+          "type": "string"
+        },
+        "have": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "want": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        }
+      },
+      "description": "Make an orderbook offer."
+    },
+    "dysonprotocol.whaleswap.v1.MsgMakeOfferResponse": {
+      "type": "object",
+      "properties": {
+        "offer_id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgOpenAuction": {
+      "type": "object",
+      "properties": {
+        "seller": {
+          "type": "string"
+        },
+        "bid_denom": {
+          "type": "string"
+        },
+        "sell": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "description": "Explicit solid sell coin to escrow from seller \u2192 module."
+        }
+      },
+      "description": "Open an auction by escrowing exactly one solid denom amount."
+    },
+    "dysonprotocol.whaleswap.v1.MsgOpenAuctionResponse": {
+      "type": "object",
+      "properties": {
+        "auction_id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgPoolSwap": {
+      "type": "object",
+      "properties": {
+        "trader": {
+          "type": "string"
+        },
+        "route_ids": {
+          "type": "string",
+          "title": "space-separated pool ids (e.g. \"1 2 3\")"
+        },
+        "input": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "minimum_out_amount": {
+          "type": "string"
+        },
+        "out_denom": {
+          "type": "string"
+        }
+      },
+      "description": "Multi-hop pool swap."
+    },
+    "dysonprotocol.whaleswap.v1.MsgPoolSwapResponse": {
+      "type": "object",
+      "properties": {
+        "amount_out": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgRedeemAuction": {
+      "type": "object",
+      "properties": {
+        "caller": {
+          "type": "string"
+        },
+        "auction_id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      },
+      "description": "Redeem auction escrow by NFT owner when no current bidder exists."
+    },
+    "dysonprotocol.whaleswap.v1.MsgRedeemAuctionResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.whaleswap.v1.MsgRemoveLiquidity": {
+      "type": "object",
+      "properties": {
+        "signer": {
+          "type": "string"
+        },
+        "pool_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "shares": {
+          "type": "string",
+          "title": "shares to burn (sdk.Int string)"
+        }
+      },
+      "description": "Remove liquidity (anyone). Must respect price band and produce non-zero\noutputs."
+    },
+    "dysonprotocol.whaleswap.v1.MsgRemoveLiquidityResponse": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          },
+          "title": "coins returned"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgTakeOffer": {
+      "type": "object",
+      "properties": {
+        "taker": {
+          "type": "string"
+        },
+        "trades": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.TakeItem"
+          }
+        }
+      },
+      "description": "Take one or more offers (batch)."
+    },
+    "dysonprotocol.whaleswap.v1.MsgTakeOfferResponse": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.MsgUpdateParams": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "type": "string"
+        },
+        "params": {
+          "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Params"
+        }
+      },
+      "description": "UpdateParams is the Msg/UpdateParams request type."
+    },
+    "dysonprotocol.whaleswap.v1.MsgUpdateParamsResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.whaleswap.v1.MsgUpdatePoolConfig": {
+      "type": "object",
+      "properties": {
+        "signer": {
+          "type": "string"
+        },
+        "pool_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "fee_pct": {
+          "type": "string",
+          "title": "Optional fields; empty string means no change"
+        },
+        "min_price": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          }
+        },
+        "max_price": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          }
+        }
+      },
+      "description": "Update pool config (owner-only: majority of shares > 50%)."
+    },
+    "dysonprotocol.whaleswap.v1.MsgUpdatePoolConfigResponse": {
+      "type": "object"
+    },
+    "dysonprotocol.whaleswap.v1.Params": {
+      "type": "object",
+      "properties": {
+        "pfand_per_offer": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "description": "pfand_per_offer is the PFAND coin required for liquid-mode offers."
+        },
+        "valuation_fee_pct": {
+          "type": "string",
+          "description": "valuation_fee_pct is the percentage applied per valuation_period."
+        },
+        "valuation_period": {
+          "type": "string",
+          "description": "valuation_period defines the time duration to which valuation_fee_pct\napplies."
+        },
+        "bid_timeout": {
+          "type": "string",
+          "description": "bid_timeout defines the minimum duration a placed bid must remain pending\nbefore it can be claimed by the bidder."
+        },
+        "minimum_bid_percent_increase": {
+          "type": "string",
+          "description": "minimum_bid_percent_increase specifies the minimum percent increase\nrequired over the current valuation for a new bid to be accepted."
+        }
+      }
+    },
+    "dysonprotocol.whaleswap.v1.TakeItem": {
+      "type": "object",
+      "properties": {
+        "offer_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "take_units": {
+          "type": "string",
+          "description": "units to take (sdk.Int string). If empty, take full remaining."
+        }
+      }
+    },
+    "google.protobuf.Any": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "grpc.gateway.runtime.Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/google.protobuf.Any"
+          }
+        }
+      }
+    }
+  }
+}
