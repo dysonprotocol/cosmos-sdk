@@ -832,3 +832,39 @@ If you want, I can implement these targeted refactors now in keeper.normalizeBan
   - Consistent error wrapping on all state-mutating paths.
 
 If you want, I can continue this pass across remaining files (convert/auction/query paths) to replace manual Int compares and bare errors with sdk Coin/Coins methods and contextual wraps.
+==================================================
+[7 tools called]
+
+- Added L consistency checks to RemoveLiquidity (concentrated mode):
+  - Capture Lbefore and expected dL = Lbefore * shares/total.
+  - After applying out1/out2, recompute Lafter and ensure delta = Lbefore − Lafter is non-negative and ≤ dL*(1+1e−6).
+  - Prevent reserve depletion on partial exits; keep full-exit path allowed.
+
+- Corrected v3 swap math earlier; fees_earned tracking remains.
+
+Everything lints clean.
+
+==================================================
+[3 tools called]
+
+- Reviewed outstanding items and continued:
+  - Added L-consistency checks in RemoveLiquidity (concentrated mode) with tolerance, and prevented partial exits that zero reserves; full-exit path transfers all and deletes the pool.
+  - Corrected concentrated swap math in PoolSwap earlier; retained fees_earned tracking.
+  - Fixed Pools pagination signature; lints clean.
+  - Implemented a helper `formatDec18` in `keeper.go` for canonical 18-decimal string formatting (to use later for stable price string indexes).
+
+Remaining high-value TODOs I can take next:
+- Use formatDec18 for price index keys in orderbook (OffersByPairPrice) and in genesis rebuilds.
+- Add unit tests for v3 formulas and L-consistency.
+- Consider proportional initial shares minting based on L (instead of a fixed 100,000).
+
+==================================================
+[2 tools called]
+
+- Initial shares are now proportional to initial liquidity:
+  - v3 (band set): initialShares = floor(L) from liquidityForReserves.
+  - v2 (no band): initialShares = floor(sqrt(R1*R2)).
+  - Fallback to 1 if non-positive.
+  - Minted to creator as before; pool persisted first.
+
+All changes lint clean.

@@ -28,10 +28,9 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid fee_pct: %v", err)
 		}
 		if fee.IsNegative() || fee.GTE(math.LegacyNewDec(1)) {
-			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee_pct must satisfy 0 <= fee < 1")
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "fee_pct must satisfy 0 <= fee < 1: %s", fee.String())
 		}
 	}
-	// Normalize and validate optional min/max price bands as two-coin ratios
 
 	// Normalize bands against canonical denom order
 	minBand, err := k.normalizeBand(msg.MinPrice, coinA.Denom, coinB.Denom)
@@ -51,24 +50,24 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 			return nil, fmt.Errorf("max_price must be >= min_price")
 		}
 	} else if len(minBand) != 0 || len(maxBand) != 0 {
-		return nil, fmt.Errorf("min_price and max_price must be both set or both unset")
+		return nil, fmt.Errorf("min_price [%s] and max_price [%s] must be both set or both unset", minBand.String(), maxBand.String())
 	}
 
 	// Move funds from creator to module
 	from, err := k.addr(ctx, msg.Creator)
 	if err != nil {
-		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidAddress, err.Error())
+		return nil, cosmossdkerrors.Wrapf(err, "failed to get creator address: %s", msg.Creator)
 	}
 
 	coins := sdk.NewCoins(coinA, coinB)
 	if err := k.sendToModule(ctx, from, coins); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to send funds to module: %s", from.String())
 	}
 
-	// Allocate new pool id and persist pool
+	// Allocate new pool id and construct pool (we'll compute initial shares proportionally)
 	id, err := k.poolSeq.Next(ctx)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to allocate new pool id")
 	}
 	sharesDenom := fmt.Sprintf("whaleswap.dys/pools/%d", id)
 
@@ -101,13 +100,31 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 		Updated:     &t,
 		NumTrades:   0,
 	}
+	// Compute initial shares proportional to liquidity
+	var initialShares math.Int
+	if len(minBand) == 2 {
+		L, _, _, err := k.liquidityForReserves(pool)
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to compute initial liquidity")
+		}
+		initialShares = L.TruncateInt()
+	} else {
+		// v2: initial shares = floor(sqrt(R1*R2))
+		prod := math.LegacyNewDecFromInt(coinA.Amount).Mul(math.LegacyNewDecFromInt(coinB.Amount))
+		sqrt, err := prod.ApproxSqrt()
+		if err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "failed to sqrt initial product")
+		}
+		initialShares = sqrt.TruncateInt()
+	}
+	if !initialShares.IsPositive() {
+		initialShares = math.NewInt(1)
+	}
 	if err := k.PoolsMap.Set(ctx, id, pool); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrap(err, "failed to set pool")
 	}
 
 	// Mint initial shares to creator via nameservice (no fee when destination is module)
-	// Use fixed initial shares supply for bootstrap
-	initialShares := math.NewInt(100000)
 	// Build mint request with zero udys fee; nameservice skips fee for module destinations
 	mintMsg := &nameservicev1.MsgMintCoins{
 		NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
@@ -115,10 +132,10 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 		MintFee:         sdk.NewCoin("udys", math.NewInt(0)),
 	}
 	if _, err := k.nameSvc.MintCoins(ctx, mintMsg); err != nil {
-		return nil, fmt.Errorf("mint shares failed: %w", err)
+		return nil, cosmossdkerrors.Wrap(err, "mint shares failed")
 	}
 	if err := k.sendFromModule(ctx, from, sdk.NewCoins(sdk.NewCoin(sharesDenom, initialShares))); err != nil {
-		return nil, fmt.Errorf("send minted shares failed: %w", err)
+		return nil, cosmossdkerrors.Wrap(err, "send minted shares failed")
 	}
 
 	// Emit events
