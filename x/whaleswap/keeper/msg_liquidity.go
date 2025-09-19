@@ -200,6 +200,37 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveL
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient shares: %s < %s", bal.String(), sharesAmt.String())
 	}
 	totalShares := k.bank.GetSupply(ctx, pool.SharesDenom).Amount
+	// Full exit special-case: allow zeroing reserves only if burning all shares
+	if sharesAmt.Equal(totalShares) {
+		// Payout full reserves and delete the pool
+		out1 := pool.CoinA.Amount
+		out2 := pool.CoinB.Amount
+		if err := k.sendToModule(ctx, signer, sdk.NewCoins(sdk.NewCoin(pool.SharesDenom, sharesAmt))); err != nil {
+			return nil, err
+		}
+		if err := k.burnModule(ctx, sdk.NewCoins(sdk.NewCoin(pool.SharesDenom, sharesAmt))); err != nil {
+			return nil, err
+		}
+		// Remove pool from state (no poolupdate emitted on deletion)
+		if err := k.PoolsMap.Remove(ctx, msg.PoolId); err != nil {
+			return nil, err
+		}
+		outs := sdk.NewCoins()
+		if out1.IsPositive() {
+			outs = outs.Add(sdk.NewCoin(pool.CoinA.Denom, out1))
+		}
+		if out2.IsPositive() {
+			outs = outs.Add(sdk.NewCoin(pool.CoinB.Denom, out2))
+		}
+		if !outs.Empty() {
+			if err := k.sendFromModule(ctx, signer, outs); err != nil {
+				return nil, err
+			}
+		}
+		sdkCtx := sdk.UnwrapSDKContext(ctx)
+		_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolLiquidityRemoved{PoolId: pool.PoolId, Shares: sharesAmt.String()})
+		return &whaleswapv1.MsgRemoveLiquidityResponse{Amount: outs}, nil
+	}
 	var out1, out2 math.Int
 	if len(pool.MinPrice) == 2 {
 		// Concentrated removal by ΔL
@@ -244,6 +275,10 @@ func (k Keeper) RemoveLiquidity(ctx context.Context, msg *whaleswapv1.MsgRemoveL
 	dR2 := math.LegacyNewDecFromInt(pool.CoinB.Amount)
 	pool.CoinA.Amount = dR1.Sub(math.LegacyNewDecFromInt(out1)).TruncateInt()
 	pool.CoinB.Amount = dR2.Sub(math.LegacyNewDecFromInt(out2)).TruncateInt()
+	// Prevent reserve depletion on partial exits
+	if pool.CoinA.Amount.IsZero() || pool.CoinB.Amount.IsZero() {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "would deplete reserve; use full exit to withdraw all liquidity")
+	}
 
 	// Enforce price band after remove
 	if len(pool.MinPrice) == 2 {

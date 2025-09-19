@@ -634,9 +634,10 @@
         "trader": {
           "type": "string"
         },
-        "route_ids": {
+        "pool_id": {
           "type": "string",
-          "title": "space-separated pool ids (e.g. \"1 2 3\")"
+          "format": "uint64",
+          "title": "target pool id to execute the swap against"
         },
         "input": {
           "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
@@ -648,7 +649,7 @@
           "type": "string"
         }
       },
-      "description": "Multi-hop pool swap."
+      "description": "Single-pool swap."
     },
     "dysonprotocol.whaleswap.v1.MsgPoolSwapResponse": {
       "type": "object",

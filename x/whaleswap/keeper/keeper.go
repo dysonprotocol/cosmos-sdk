@@ -368,12 +368,3 @@ func (k Keeper) gcdInt(a, b cosmossdk_math.Int) cosmossdk_math.Int {
 	}
 	return a
 }
-
-// lcmInt returns LCM(a,b) = a/gcd(a,b) * b, with LCM(0, b) = 0
-func (k Keeper) lcmInt(a, b cosmossdk_math.Int) cosmossdk_math.Int {
-	if a.IsZero() || b.IsZero() {
-		return cosmossdk_math.NewInt(0)
-	}
-	g := k.gcdInt(a, b)
-	return a.Quo(g).Mul(b)
-}

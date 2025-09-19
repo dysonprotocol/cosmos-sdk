@@ -34,6 +34,11 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 	if k.isLiquidDenom(want.Denom) {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "want denom is liquid: %s", want.Denom)
 	}
+	// Per-offer balance check: maker must currently hold at least `have` amount
+	balHave := k.bank.GetBalance(ctx, maker, have.Denom).Amount
+	if have.Amount.GT(balHave) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "have exceeds maker balance: %s < %s", balHave.String(), have.Amount.String())
+	}
 
 	pfandCoin := sdk.NewCoin(k.GetParams(ctx).PfandPerOffer.Denom, math.NewInt(0))
 	if k.isLiquidDenom(have.Denom) {
@@ -54,16 +59,17 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 		}
 	}
 
-	lcm := k.lcmInt(have.Amount, want.Amount)
-	if !lcm.IsPositive() {
-		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid lcm")
+	// GCD-first units: reduce ratio to simplest terms
+	g := k.gcdInt(have.Amount, want.Amount)
+	if !g.IsPositive() {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid gcd")
 	}
-	unitHave := lcm.Quo(want.Amount)
-	unitWant := lcm.Quo(have.Amount)
+	unitHave := have.Amount.Quo(g)
+	unitWant := want.Amount.Quo(g)
 	if unitHave.IsZero() || unitWant.IsZero() {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid unit ints")
 	}
-	remainingUnits := have.Amount.Quo(unitHave)
+	remainingUnits := g
 	if remainingUnits.IsZero() {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "remaining units is zero")
 	}
@@ -115,7 +121,8 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 	if low == wantDenom && high == haveDenom {
 		priceDec = priceHavePerWant
 	}
-	if err := k.OffersByPairPrice.Set(ctx, collections.Join3(pairKey, priceDec.String(), offer.OfferId), offer.OfferId); err != nil {
+	priceKey := priceDec.String()
+	if err := k.OffersByPairPrice.Set(ctx, collections.Join3(pairKey, priceKey, offer.OfferId), offer.OfferId); err != nil {
 		return nil, err
 	}
 	// owner+status index
@@ -290,7 +297,8 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 				if low == wantDenom && high == haveDenom {
 					priceDec = priceHavePerWant
 				}
-				_ = k.OffersByPairPrice.Remove(ctx, collections.Join3(pairKey, priceDec.String(), offer.OfferId))
+				priceKey := priceDec.String()
+				_ = k.OffersByPairPrice.Remove(ctx, collections.Join3(pairKey, priceKey, offer.OfferId))
 			}
 			_ = k.OffersByOwnerStatus.Remove(ctx, collections.Join3(offer.Maker, "open", offer.OfferId))
 			_ = k.OffersByOwnerStatus.Set(ctx, collections.Join3(offer.Maker, offer.Status, offer.OfferId), offer.OfferId)

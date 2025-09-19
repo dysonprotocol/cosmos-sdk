@@ -8,9 +8,9 @@
                     "trader": {
                         "type": "string"
                     },
-                    "route_ids": {
+                    "pool_id": {
                         "type": "string",
-                        "description": "space-separated pool ids (e.g. \"1 2 3\")"
+                        "description": "target pool id to execute the swap against"
                     },
                     "input": {
                         "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
@@ -27,7 +27,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Msg Pool Swap",
-                "description": "Multi-hop pool swap."
+                "description": "Single-pool swap."
             },
             "cosmos.base.v1beta1.Coin": {
                 "properties": {

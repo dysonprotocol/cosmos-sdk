@@ -115,6 +115,8 @@ Mode A (v2, no price range)
 - Msg: RemoveLiquidity(pool_id, shares)
   - Proportional exit: out1 = floor(shares * R1 / total_shares), out2 analogously.
   - Burn shares; send outs; update reserves.
+  - Full exit special-case: if shares == total_shares, pay out entire reserves (R1,R2), burn all shares, and delete the pool. Skip post-op price/band checks.
+  - Partial exits must leave both reserves > 0; otherwise reject with an error instructing to use full exit.
 
 Mode B (v3-style, price range set)
 - Notation: P = R2/R1, s = sqrt(P). Let sa = sqrt(min_price), sb = sqrt(max_price), sp = sqrt(current_price). Liquidity L is constant within [sa, sb].
@@ -135,8 +137,9 @@ Mode B (v3-style, price range set)
 - In all cases, enforce post-condition price remains within [min,max].
 
 Swaps (any user)
-- Msg: PoolSwap(route_ids, input_coin, minimum_out_amount, out_denom)
-  - For each hop, apply based on pool mode:
+- Msg: PoolSwap(pool_id, input_coin, minimum_out_amount, out_denom)
+  - Single-pool swap only. To route across multiple pools, include multiple PoolSwap messages in the same transaction or call the module multiple times from a script.
+  - Apply math based on pool mode:
     - Mode A (v2): constant product with fee on input.
       - k = R1*R2; effective_in = dx * (1 - fee_pct).
       - out = R2 - ceil(k / (R1 + effective_in)) (or symmetric for coin2 input).
@@ -145,10 +148,10 @@ Swaps (any user)
       - Use sqrt-price integration with constant liquidity L.
       - For token1→token2 swap (input denom1, output denom2), price moves up: with fee on input, let dxe = dx*(1-fee_pct).
         - Move from sp to sp' within [sa, sb] such that dxe = L * (1/sp - 1/sp').
-        - out = floor(L * (sp' - sp)). If input exhausts before hitting band edge, stop; else stop at boundary.
+        - out = floor(L * (sp' - sp)). If input exhausts before hitting band edge, stop at boundary.
       - For token2→token1, symmetric with price moving down: dye = dy*(1-fee_pct), dxe = floor(L * (1/sp' - 1/sp)).
       - Reject if resulting price exits band.
-  - After final hop, require out_denom match and amount ≥ minimum_out_amount; send to caller.
+  - Require out_denom match and amount ≥ minimum_out_amount; send to caller.
 
 Pool configuration updates (only owner)
 - Msg: UpdatePoolConfig(pool_id, fee_pct?, min_price?, max_price?)
@@ -274,7 +277,7 @@ This section was removed. The module will not implement composed execution in th
 ### 14. Math and rounding policy
 
 - Prefer sdk.Int storage for amounts; use math.Dec for fee_pct and price bounds.
-- AMM per-hop swap: `out = R_out - ceil(k / (R_in + effective_in))` with `effective_in = in * (1 - fee_pct)`.
+- AMM swap: `out = R_out - ceil(k / (R_in + effective_in))` with `effective_in = in * (1 - fee_pct)`.
 - Shares mint/burn: floor for proportional calculations; reject if both outs floor to 0.
 
 
@@ -511,3 +514,227 @@ I'll remove the ComposeOperations stub and clean the codec registrations to elim
 - Mint fee field removed from proto; code regenerated and binary builds clean.
 - Wrapping flow now matches keeper: mint to module with zero fee, then forward.
 ==================================================
+[6 tools called]
+
+- AMM polish done:
+  - RemoveLiquidity now uses updatePool and emits poolupdate.
+  - PoolSwap adds post-swap band check (v3); error wrapping standardized.
+  - Insufficient shares now uses sdkerrors with details.
+
+- Errors unified across keeper msgs:
+  - Updated orderbook, auctions, convert, liquidity, swap to use sdkerrors/cosmossdkerrors with Wrap/Wrapf.
+
+- Next major items remaining:
+  - Implement full genesis (InitGenesis/ExportGenesis) to persist params, sequences, pools/offers/trades/auctions, and rebuild reverse indexes.
+  - Add invariants (shares supply, escrow/pfand, auction escrow).
+  - CLI/REST commands and tests.
+  - Spec tidy: mark AMM items complete; remove leftover ComposeOperations TODOs.
+==================================================
+[6 tools called]
+
+- Implemented keeper genesis:
+  - InitGenesis: sets params; loads pools/offers/trades/auctions; sets sequences to max IDs; rebuilds reverse indexes (`OffersByHave/Want/OwnerStatus/PairPrice`, `AuctionsBySellBid/BidSell`).
+  - ExportGenesis: exports params plus all pools/offers/trades/auctions.
+
+- Fixed imports and Dec usage; lints clean for `keeper/genesis.go`.
+
+- Remaining: invariants, CLI/REST, and tests; and spec tidying to reflect completed AMM and genesis.
+==================================================
+I'll review the whaleswap query message field names to ensure correct positional args and potential flags when expanding help text and examples. Then I'll reformat x/whaleswap/module/autocli.go with multiline keyed fields and add Short, Long, and Example for each command.
+
+[4 tools called]
+
+I'll expand the whaleswap AutoCLI options to be multiline and add Short, Long, and Example for every query and tx command. Then I'll lint the file.
+
+[5 tools called]
+
+- Reformatted x/whaleswap/module/autocli.go with multiline keyed fields and added Short, Long, and Example for every whaleswap query and tx RPC:
+  - Query: Params, Pool, Pools, Offer, OffersByOwner, Offers, TradesByOffer, TradesByTaker, Auction, Auctions.
+  - Tx: CreatePool, UpdatePoolConfig, AddLiquidity, RemoveLiquidity, PoolSwap, ConvertToLiquid, ConvertToSolid, MakeOffer, TakeOffer, CancelOffer, OpenAuction, RedeemAuction, UpdateParams.
+  - Added positional arg descriptors where applicable.
+  - Lints clean.
+
+- You can now run:
+  - dysond query whaleswap --help
+  - dysond tx whaleswap --help
+  - And each subcommand shows verbose descriptions and examples.
+
+- No changes to options.pulsar.go were needed; we used its fields (Short, Long, Example) correctly.
+
+- If you want even more detailed flag help (aliases, defaults), I can add FlagOptions per field next.
+==================================================
+I'll update the AMM section in x/whaleswap/spec.md to define PoolSwap as single-pool only, removing multi-hop language and clarifying how to chain swaps. Then I'll adjust x/whaleswap/test_spec.md to remove multi-hop references and update examples to use a single pool_id.
+
+[4 tools called]
+
+- Updated `x/whaleswap/spec.md` to make PoolSwap single-pool only, removed multi-hop routing text, clarified chaining via multiple msgs or script calls, and adjusted math section wording.
+- Updated `x/whaleswap/test_spec.md` to reflect single-pool swaps and corrected CLI examples to use `--pool-id` instead of route IDs.
+
+Let me know if you want me to also adjust the tx.proto and keeper to enforce single-pool inputs at the type level (and simplify AutoCLI help accordingly).
+
+==================================================
+I'll scan the tx.proto to confirm the current MsgPoolSwap fields and update them to single pool_id. Then I'll modify keeper/msg_pool_swap.go to accept a single pool_id and remove route logic, and adjust the AutoCLI command help accordingly.
+
+[6 tools called]
+
+I’m going to regenerate protobufs and rebuild since we changed tx.proto to make PoolSwap single-pool. Then I’ll fix any compile errors.
+
+[5 tools called]
+
+- Changed proto: `MsgPoolSwap` now single-pool with `uint64 pool_id` (removed `route_ids`). Updated `proto/dysonprotocol/whaleswap/v1/tx.proto`.
+- Updated keeper: `msg_pool_swap.go` enforces `pool_id` and removed route parsing/multi-hop loop. Logic executes exactly one pool swap, then enforces min-out and sends output.
+- Updated CLI help in `x/whaleswap/module/autocli.go` to use `--pool-id` and clarified multi-pool chaining via multiple messages.
+
+You should run: make proto-gen install to regenerate types and rebuild.
+
+==================================================
+Here are the main edge cases and undefined/underspecified behaviors to firm up:
+
+- AMM (v2/v3)
+  - Price band edge equalities: sa == sb, min == max, or sp exactly at a boundary → several formulas divide by (sb−sp), (sp−sa), or (sb−sa). Define allowed zero-width bands or reject; guard all divisions.
+  - Zero reserves after remove: p = R2/R1 divides by zero if R1→0. Decide whether zero reserve is allowed; if not, prevent exits that zero-out R1 (or define behavior).
+  - Fee semantics: Fees are applied to input (effective_in). Clarify fee destination (accrue to pool reserves vs separate fee bucket). Right now they implicitly accrue to LPs via reserves.
+  - Multi-hop with mixed modes: Define exact rounding/order for v2→v3→v2 hops. Ensure consistent truncation and failure if any hop yields out=0 while minimum_out unmet.
+  - Majority-owner changes: Shares transfers can flip ownership between Add/Remove. Confirm we only check majority on Add/UpdateConfig (current code) and never on Remove (as spec states anyone can remove).
+  - Shares↔ΔL mapping: For v3, Δshares = floor(ΔL * totalShares / Lcur). Define behavior when Lcur=0 (brand-new band or fully out-of-range).
+  - Refund rules: In v3 AddLiquidity we refund the opposite side to match ΔL; specify overflow/precision policy and ensure consistent eventing when refunds are zero.
+
+- Math/rounding
+  - Canonical Dec string formatting in indexes (price strings): trailing zeros/precision can alter lexicographic order. Define fixed precision or canonical string representation.
+  - Truncation floors: Many outputs are floor(). Specify that zero outputs cause rejection (current behavior), and ensure consistent error types.
+  - LCM/GCD units for orderbook: Extremely large amounts can produce huge LCMs. Consider caps or earlier normalization to avoid pathological gas/overflow.
+
+- Orderbook
+  - Want must be solid: Ensure MakeOffer rejects liquid want; confirm error and event semantics.
+  - Mixed settlement source for taker (base then liquid) with batch: Overpayment/refund semantics are not spelled out. Define exact payment priority and refund behavior if batched takes overshoot.
+  - Liquid-have close/cancel by third-party: Eligibility check is “maker lacks ≥1 unit liquid have”. Define exact check (balance at execution height) and race with concurrent transfers.
+  - Reverse index consistency: On partial takes (still open), indexes remain; on close/cancel, all related indexes must be removed. Ensure behavior under repeated close/cancel attempts (idempotent).
+  - Price-tree direction: Unified pair index uses normalized low|high + price. Define how Offers query validates requested direction, especially when both have and want are provided.
+
+- Auctions
+  - Redeem authority: Spec says “NFT owner can redeem”; code currently restricts to original seller. Decide final rule; if owner-based, use current owner (and update code).
+  - Active bidder check: We use nameservice NFT data current_bidder. Define what counts as “no bidder” (strict empty string) and behavior if metadata missing/unset.
+  - NFT class reuse per bid_denom: If policy/allowed denoms change later, clarify effects on existing auctions; define idempotence of SaveClass/policy setters.
+  - Reverse index deletion: Ensure idempotence and behavior if redeem is called twice or after out-of-band burn.
+
+- Conversions (wrapping)
+  - Backing underflow: ConvertToSolid aborts if backing < amount. Define whether partial redemption is allowed (currently no). Confirm no fee charged on module-destination mints and that direct user mints still require fee.
+  - Liquid denom format: whaleswap.dys/coins/<solid>. Disallow nested wrapping and clarify errors if given already-liquid denom to ConvertToLiquid.
+
+- Params/authority
+  - UpdateParams authority: Clarify who is the authority (gov module address) and error code if mismatched. Document that pfand_per_offer denom/amount zero is valid (disables pfand).
+
+- Queries/pagination
+  - Stable ordering: Define order for offers/trades/auctions when using reverse indexes and when scanning primary maps (id ASC by default unless page_reverse).
+  - OffersByOwner requires owner: we now error if missing; reflect in API docs. Behavior for unknown status value should error (not silent).
+
+- Genesis/migrations
+  - Band and fee defaults in existing pools on import; sequences ≥ max id. Confirm that reverse indexes rebuilt only for open offers and that price index precision matches runtime.
+
+- Events
+  - Event completeness: Ensure we emit consistent poolupdate on any reserve mutation. Spec mentions pool_owner_changed (doc still lists it) but events.proto omits it; reconcile doc vs code.
+
+- Errors and types
+  - Ensure all user-facing rejects use sdkerrors with consistent codes (ErrInvalidRequest, ErrUnauthorized, ErrInsufficientFunds, ErrNotFound). Replace remaining fmt.Errorf.
+
+- Operational
+  - Module account authority over whaleswap.dys root must exist at genesis. Without it, mints/burns/class ops will fail at runtime.
+  - Gas scaling: Large orderbook batches, big LCMs, or large AMM hops can exceed default gas; CLI defaults help but document expectations.
+
+If you want, I can open issues in-spec and add guardrails in code for the high-risk items: zero-width bands, zero reserve division, auction redeem authority, and canonical price string precision.
+==================================================
+- AMM (v2/v3)
+  - Price band edge equalities
+    - Decision: reject zero-width bands (min==max or sa==sb). Validation: in CreatePool/UpdatePoolConfig require min_price != max_price and (sb−sa) > 0; return ErrInvalidRequest.
+    - Boundary math: if sp==sa use token2-only branch; if sp==sb use token1-only branch; never divide by (sp−sa) or (sb−sp) when zero. Guard denominators in AddLiquidity/RemoveLiquidity/PoolSwap and switch branches explicitly.
+  - Zero reserves after remove
+    - Decision: disallow exits that zero-out either reserve (would make P undefined or violate band). After compute, if new R1<=0 or R2<=0 → ErrInvalidRequest “would deplete reserve”.
+    - Rationale: we store P=R2/R1 and enforce band; zero reserve breaks price checks.
+  - Fee semantics
+    - Decision: fee applied on input (effective_in = in*(1−fee_pct)), fees accrue to LPs via reserves; no separate fee bucket in MVP. Document in spec/events.
+  - Multi-hop (removed)
+    - Decision: single-pool swaps only. Routing = multiple PoolSwap msgs in one tx or multiple script calls. Spec/autocli/proto already aligned.
+  - Majority-owner changes
+    - Decision: check majority only on AddLiquidity and UpdatePoolConfig; RemoveLiquidity remains permissionless (current code). Note in spec.
+  - Shares ↔ ΔL mapping (v3)
+    - Decision: Δshares = floor(ΔL * totalShares / Lcur). If Lcur ≤ 0 (should not happen with valid band/reserves) → ErrInvalidRequest “invalid pool liquidity”. Zero minted shares → reject.
+  - Refund rules (v3 Add)
+    - Decision: compute ΔL, refund opposite side to exact match; emit refunds only if >0; safe Int arithmetics throughout. Keep current behavior.
+
+- Math/rounding
+  - Canonical Dec formatting for price indexes
+    - Problem: Dec.String() is not order-stable lexicographically; can break price-tree ordering.
+    - Decision: define a fixed-scale canonical price string, e.g., 18 decimals, no exponent, left-pad integer, right-pad fraction: FormatDec18(d) → “000000000000000123.450000000000000000”.
+    - Implementation: add helper in keeper (or types util), use it in OffersByPairPrice keying (genesis rebuild, MakeOffer index builds). Keep existing pairKey low|high.
+  - Truncation floors
+    - Decision: zero outputs are errors. Explicitly enforce:
+      - PoolSwap: out > 0 else ErrInvalidRequest “swap output too small”.
+      - RemoveLiquidity: out1>0 or out2>0 else ErrInvalidRequest “shares too small to exit”.
+      - AddLiquidity: minted > 0 else ErrInvalidRequest “shares must be > 0”.
+  - LCM/GCD units for orderbook
+    - Risk: huge LCMs → blow up gas/bit length.
+    - Decision: rely on GCD reduction for unit sizes; avoid LCM for single-offer units. If any intermediate product bitlen > 256 (or a chosen cap), reject ErrInvalidRequest “unit size overflow”. Keep helpers but prefer gcd-based normalization.
+
+If you want, I can:
+- Add zero-width band checks to CreatePool/UpdatePoolConfig, and guard denominators in v3 branches.
+- Add reserve-depletion guard after swaps/exits.
+- Introduce FormatDec18 and migrate price index building + genesis rebuild.
+- Add Int bitlen caps for orderbook unit math.
+==================================================
+Allow zero only on full exit.
+
+- Rule
+  - Partial removes must leave both reserves > 0.
+  - Full exit is allowed when shares == totalShares. In that case:
+    - Payout out1=R1, out2=R2.
+    - Burn all shares.
+    - Delete the pool (remove from `PoolsMap`), emit a terminal event (e.g., pool_removed), and skip post-op band/price checks.
+
+- Rationale
+  - Keeps price well-defined for any remaining pool.
+  - Lets last LP (or any signer with all shares) exit cleanly.
+
+- Rounding
+  - With shares == totalShares, v2 yields exact R1/R2; v3 yields R1/R2 from L-based formulas (up to floor, which matches integer reserves).
+  - If dust ever remains due to integer math, require shares == totalShares for deletion; otherwise reject attempts that would zero a reserve.
+
+If you want, I can add this special-case path to `RemoveLiquidity` and update the spec/events accordingly. (done)
+==================================================
+- Why GCD over LCM for a single offer
+  - One offer defines a fixed exchange ratio have:want. The minimal indivisible “unit” is just that ratio reduced to simplest terms.
+  - Use gcd(have, want) to reduce:
+    - unitHave = have / gcd(have, want)
+    - unitWant = want / gcd(have, want)
+    - remainingUnits = gcd(have, want)
+  - This is exact, smallest possible, and cannot overflow. LCM is unnecessary unless you’re trying to align multiple distinct ratios (not our case).
+
+- What goes wrong with LCM here
+  - LCM explodes for large, co-prime numbers: lcm(a, b) = a/gcd(a, b) * b can grow ~a*b, causing huge integers, gas, and index keys.
+  - For a single offer, LCM gives you no benefit and only risk.
+
+- Algorithm (single offer)
+  - Inputs: haveAmt, wantAmt (sdk.Int > 0)
+  - g = gcd(haveAmt, wantAmt)
+  - unitHave = haveAmt / g
+  - unitWant = wantAmt / g
+  - remainingUnits = g
+  - Store unitHave, unitWant, remainingUnits in the offer; all subsequent takes operate in integer multiples of these units.
+
+- Overflow/DoS guard (cap bit length)
+  - Even with GCD, intermediate ops elsewhere (e.g., gross scaling) can blow up.
+  - Add a simple cap:
+    - If any intermediate product requires > 256 bits (or chosen cap), reject with ErrInvalidRequest("unit size overflow").
+    - Practical check for LCM when it’s ever used: q = a / gcd; if bitlen(q) + bitlen(b) > 256 → overflow risk; reject.
+
+- Examples
+  - have=100, want=50 → gcd=50
+    - unitHave=2, unitWant=1, remainingUnits=50
+  - have=123456789000000000, want=36000000000 → gcd=9000000000
+    - unitHave=13717421, unitWant=4, remainingUnits=9000000000
+
+- Benefits
+  - Minimal unit size → fewer units, simpler arithmetic
+  - Stable, deterministic, lowest gas
+  - Avoids pathological big integers and index keys
+
+If you want, I can update MakeOffer/TakeOffer to explicitly use this GCD-first policy and add a 256-bit cap check with consistent sdkerrors.
