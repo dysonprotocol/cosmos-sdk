@@ -35,6 +35,7 @@ import (
 
 	nameservicetypes "dysonprotocol.com/x/nameservice/types"
 	storagetypes "dysonprotocol.com/x/storage/types"
+	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
 	gogoprotoany "github.com/cosmos/gogoproto/types/any"
 )
 
@@ -251,6 +252,18 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 		&upgradetypes.QueryAppliedPlanRequest{}, &upgradetypes.QueryAppliedPlanResponse{},
 		&upgradetypes.QueryModuleVersionsRequest{}, &upgradetypes.QueryModuleVersionsResponse{},
 		&upgradetypes.QueryAuthorityRequest{}, &upgradetypes.QueryAuthorityResponse{},
+
+		// whaleswap (register both Msg responses and Query requests/responses for dyslang)
+
+		&whaleswapv1.QueryOfferRequest{}, &whaleswapv1.QueryOfferResponse{},
+		&whaleswapv1.QueryOffersRequest{}, &whaleswapv1.QueryOffersResponse{},
+		&whaleswapv1.QueryOffersByOwnerRequest{}, &whaleswapv1.QueryOffersByOwnerResponse{},
+		&whaleswapv1.QueryOffersByDenomRequest{}, &whaleswapv1.QueryOffersResponse{},
+		&whaleswapv1.QueryOffersByPairPriceRangeRequest{}, &whaleswapv1.QueryOffersResponse{},
+		&whaleswapv1.QueryOffersBestRequest{}, &whaleswapv1.QueryOffersResponse{},
+		&whaleswapv1.QueryTradesByOfferRequest{}, &whaleswapv1.QueryTradesByOfferResponse{},
+		&whaleswapv1.QueryTradesByTakerRequest{}, &whaleswapv1.QueryTradesByTakerResponse{},
+		&whaleswapv1.QueryParamsRequest{}, &whaleswapv1.QueryParamsResponse{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registrar, &scripttypes.Msg_serviceDesc)

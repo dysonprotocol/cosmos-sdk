@@ -28,5 +28,22 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 		&types.MsgUpdateParams{},
 	)
 
+	registrar.RegisterImplementations(
+		(*sdk.Msg)(nil),
+		&types.MsgCreatePoolResponse{},
+		&types.MsgUpdatePoolConfigResponse{},
+		&types.MsgAddLiquidityResponse{},
+		&types.MsgRemoveLiquidityResponse{},
+		&types.MsgPoolSwapResponse{},
+		&types.MsgConvertToLiquidResponse{},
+		&types.MsgConvertToSolidResponse{},
+		&types.MsgMakeOfferResponse{},
+		&types.MsgTakeOfferResponse{},
+		&types.MsgCancelOfferResponse{},
+		&types.MsgOpenAuctionResponse{},
+		&types.MsgRedeemAuctionResponse{},
+		&types.MsgUpdateParamsResponse{},
+	)
+
 	msgservice.RegisterMsgServiceDesc(registrar, &types.Msg_serviceDesc)
 }

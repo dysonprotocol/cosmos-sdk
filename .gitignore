@@ -11,6 +11,7 @@ test-results
 .dyson-data
 .venv
 coverage.html
+__pycache__
 
 draft_msg.json
 AGENT_NOTES.md
