@@ -138,13 +138,24 @@
       {"type":"file","name":"dysonprotocol.storage.v1.StorageGet.json"},
       {"type":"file","name":"dysonprotocol.storage.v1.StorageList.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Auction.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.AuctionByNFT.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Auctions.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.AuctionsByPairPriceRange.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.AuctionsBySeller.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Offer.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Offers.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.OffersBest.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.OffersByDenom.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.OffersByOwner.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.OffersByPairPriceRange.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Params.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Pool.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolByPair.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolBySharesDenom.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Pools.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolsByDenom.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolsByOwner.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolsByPairPriceRange.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.TradesByOffer.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.TradesByTaker.json"},
       {"type":"file","name":"ibc.applications.interchain_accounts.controller.v1.InterchainAccount.json"},
@@ -353,5 +364,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":347}
+  {"type":"report","directories":3,"files":358}
 ]

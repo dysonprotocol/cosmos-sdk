@@ -8,13 +8,13 @@
                     "creator": {
                         "type": "string"
                     },
-                    "coin_a": {
-                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
-                        "additionalProperties": false
-                    },
-                    "coin_b": {
-                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
-                        "additionalProperties": false
+                    "coins": {
+                        "items": {
+                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+                        },
+                        "additionalProperties": false,
+                        "type": "array",
+                        "description": "Two initial reserves as coins; order will be canonicalized internally (by denom lexicographic order)."
                     },
                     "min_price": {
                         "items": {
@@ -22,7 +22,7 @@
                         },
                         "additionalProperties": false,
                         "type": "array",
-                        "description": "Optional price band expressed as ratios coin2/coin1 using two coins. Each must either be empty (unset) or contain exactly two coins whose denoms match coin_a and coin_b."
+                        "description": "Optional price band expressed as ratios coin2/coin1 using two coins. Each must either be empty (unset) or contain exactly two coins whose denoms match the two pool reserve denoms."
                     },
                     "max_price": {
                         "items": {
@@ -39,7 +39,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Msg Create Pool",
-                "description": "Create a pool. If min/max price are unset (or represent [0,+\u221e)), pool behaves as v2 (constant product)."
+                "description": "Create a pool. Behavior: - If min_price/max_price are both unset (or effectively encode [0, +\u221e)), the   pool behaves as constant product (v2). - If a finite band is provided, concentrated-liquidity math applies within   [min_price, max_price] where price is coin_b / coin_a (see conventions)."
             },
             "cosmos.base.v1beta1.Coin": {
                 "properties": {

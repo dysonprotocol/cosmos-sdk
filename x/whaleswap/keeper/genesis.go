@@ -5,6 +5,7 @@ import (
 
 	"cosmossdk.io/collections"
 	cosmossdk_math "cosmossdk.io/math"
+	whaleswap "dysonprotocol.com/x/whaleswap"
 	"dysonprotocol.com/x/whaleswap/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -25,7 +26,11 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 		}
 	}
 	if maxPoolID > 0 {
-		if err := k.poolSeq.Set(ctx, maxPoolID); err != nil {
+		if err := k.poolSeq.Set(ctx, maxPoolID+1); err != nil {
+			panic(err)
+		}
+	} else {
+		if err := k.poolSeq.Set(ctx, 1); err != nil {
 			panic(err)
 		}
 	}
@@ -47,7 +52,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 		// owner+status
 		_ = k.OffersByOwnerStatus.Set(ctx, collections.Join3(o.Maker, o.Status, o.OfferId), o.OfferId)
 		// price index only for open offers
-		if o.Status == "open" {
+		if o.Status == types.OfferStatusOpen {
 			haveDenom := o.RemainingHave.Denom
 			wantDenom := o.RemainingWant.Denom
 			low, high := haveDenom, wantDenom
@@ -65,7 +70,11 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 		}
 	}
 	if maxOfferID > 0 {
-		if err := k.offerSeq.Set(ctx, maxOfferID); err != nil {
+		if err := k.offerSeq.Set(ctx, maxOfferID+1); err != nil {
+			panic(err)
+		}
+	} else {
+		if err := k.offerSeq.Set(ctx, 1); err != nil {
 			panic(err)
 		}
 	}
@@ -81,7 +90,11 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 		}
 	}
 	if maxTradeID > 0 {
-		if err := k.tradeSeq.Set(ctx, maxTradeID); err != nil {
+		if err := k.tradeSeq.Set(ctx, maxTradeID+1); err != nil {
+			panic(err)
+		}
+	} else {
+		if err := k.tradeSeq.Set(ctx, 1); err != nil {
 			panic(err)
 		}
 	}
@@ -110,12 +123,16 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 		}
 	}
 	if maxAuctionID > 0 {
-		if err := k.auctionSeq.Set(ctx, maxAuctionID); err != nil {
+		if err := k.auctionSeq.Set(ctx, maxAuctionID+1); err != nil {
+			panic(err)
+		}
+	} else {
+		if err := k.auctionSeq.Set(ctx, 1); err != nil {
 			panic(err)
 		}
 	}
 	// Validate module escrow balances cover required sums (best-effort; panic on deficit)
-	moduleAddr := k.accKeeper.GetModuleAddress("whaleswap")
+	moduleAddr := k.accKeeper.GetModuleAddress(whaleswap.ModuleName)
 	for denom, need := range requiredEscrow {
 		bal := k.bank.GetBalance(ctx, moduleAddr, denom)
 		if !bal.IsGTE(need) {

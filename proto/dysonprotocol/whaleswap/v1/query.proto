@@ -26,6 +26,39 @@ service Query {
   rpc Pools(QueryPoolsRequest) returns (QueryPoolsResponse) {
     option (google.api.http).get = "/dysonprotocol/whaleswap/v1/pools";
   }
+  // PoolByPair returns the unique pool (if it exists) matching the provided
+  // denom pair. Denom order in the request is irrelevant; the implementation
+  // canonicalizes to pairKey = min(denom1,denom2)|max(denom1,denom2).
+  rpc PoolByPair(QueryPoolByPairRequest) returns (QueryPoolResponse) {
+    option (google.api.http).get = "/dysonprotocol/whaleswap/v1/pools/by_pair";
+  }
+  // PoolsByDenom returns all pools that include the provided denom on either
+  // side of the pair. This leverages a reverse index keyed by denom.
+  rpc PoolsByDenom(QueryPoolsByDenomRequest) returns (QueryPoolsResponse) {
+    option (google.api.http).get = "/dysonprotocol/whaleswap/v1/pools/by_denom";
+  }
+  // PoolBySharesDenom returns the pool that mints the provided shares denom.
+  rpc PoolBySharesDenom(QueryPoolBySharesDenomRequest)
+      returns (QueryPoolResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/pools/by_shares";
+  }
+  // PoolsByPairPriceRange returns pools for a given pair whose instantaneous
+  // price (derived from reserves, P = coin_b/coin_a) falls within the optional
+  // [min_price, max_price] range. Prices are expressed as cosmos.Dec strings.
+  // If neither bound is provided, it returns all pools for the pair.
+  rpc PoolsByPairPriceRange(QueryPoolsByPairPriceRangeRequest)
+      returns (QueryPoolsResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/pools/by_pair_price";
+  }
+  // PoolsByOwner returns pools where the requested owner holds a non-zero
+  // balance of pool shares. This may be implemented via a filtered scan unless
+  // the application maintains a dedicated reverse index.
+  rpc PoolsByOwner(QueryPoolsByOwnerRequest) returns (QueryPoolsResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/pools/owner/{owner}";
+  }
 
   // Offers
   rpc Offer(QueryOfferRequest) returns (QueryOfferResponse) {
@@ -40,6 +73,29 @@ service Query {
   // Unified offers listing with optional filters and pagination
   rpc Offers(QueryOffersRequest) returns (QueryOffersResponse) {
     option (google.api.http).get = "/dysonprotocol/whaleswap/v1/offers";
+  }
+  // OffersByDenom returns offers that mention the provided denom either as the
+  // have or want side, depending on the optional role filter. When role is
+  // unset or empty, both sides are considered.
+  rpc OffersByDenom(QueryOffersByDenomRequest) returns (QueryOffersResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/offers/by_denom";
+  }
+  // OffersByPairPriceRange returns offers for a pair (order of have/want is
+  // irrelevant; the implementation canonicalizes to pairKey) whose price lies
+  // within the optional [min_price, max_price] range. Prices are cosmos.Dec
+  // strings representing want-per-have (high-per-low orientation), so lower is
+  // better for takers paying want to receive have.
+  rpc OffersByPairPriceRange(QueryOffersByPairPriceRangeRequest)
+      returns (QueryOffersResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/offers/by_pair_price";
+  }
+  // OffersBest returns up to `limit` best-priced offers for the given pair
+  // (treating price as want-per-have, sorted ascending). This is a convenience
+  // endpoint for top-of-book queries.
+  rpc OffersBest(QueryOffersBestRequest) returns (QueryOffersResponse) {
+    option (google.api.http).get = "/dysonprotocol/whaleswap/v1/offers/best";
   }
 
   // Trades
@@ -63,6 +119,29 @@ service Query {
   rpc Auctions(QueryAuctionsRequest) returns (QueryAuctionsResponse) {
     option (google.api.http).get = "/dysonprotocol/whaleswap/v1/auctions";
   }
+  // AuctionsBySeller returns auctions opened by the specified seller address.
+  rpc AuctionsBySeller(QueryAuctionsBySellerRequest)
+      returns (QueryAuctionsResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/auctions/seller/{seller}";
+  }
+  // AuctionByNFT returns the auction associated with the specific NFT
+  // (class_id, nft_id) used as the escrow marker.
+  rpc AuctionByNFT(QueryAuctionByNFTRequest) returns (QueryAuctionResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/auctions/by_nft";
+  }
+  // AuctionsByPairPriceRange returns auctions for a given (sell,bid) pair whose
+  // effective price (bid-per-sell) falls within [min_price, max_price].
+  // IMPORTANT: This endpoint requires iterating relevant NFTs/auctions and
+  // computing the current effective price from valuation or current bid and the
+  // redeemable sell-coin amount. It is designed for UI discovery and may be
+  // more expensive than index-backed queries.
+  rpc AuctionsByPairPriceRange(QueryAuctionsByPairPriceRangeRequest)
+      returns (QueryAuctionsResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/auctions/by_pair_price";
+  }
 }
 
 message QueryParamsRequest {}
@@ -79,6 +158,43 @@ message QueryPoolsRequest {
 message QueryPoolsResponse {
   repeated Pool pools = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --- Pool extended queries ---
+
+// QueryPoolByPairRequest selects a pool by denom pair regardless of order.
+// The implementation canonicalizes the pair to a unique internal key.
+message QueryPoolByPairRequest {
+  string have_denom = 1; // first denom (order-insensitive)
+  string want_denom = 2; // second denom (order-insensitive)
+}
+
+// QueryPoolsByDenomRequest lists pools containing the provided denom on either
+// side.
+message QueryPoolsByDenomRequest {
+  string denom = 1; // any pool where coin_a==denom or coin_b==denom
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryPoolBySharesDenomRequest selects the pool that mints the given shares
+// denom.
+message QueryPoolBySharesDenomRequest { string shares_denom = 1; }
+
+// QueryPoolsByPairPriceRangeRequest filters pools for the pair by instantaneous
+// price range. Prices are cosmos.Dec strings; bounds are optional and
+// inclusive.
+message QueryPoolsByPairPriceRangeRequest {
+  string have_denom = 1; // one side of the pair (order-insensitive)
+  string want_denom = 2; // the other side of the pair
+  string min_price = 3 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
+  string max_price = 4 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
+  cosmos.base.query.v1beta1.PageRequest pagination = 5;
+}
+
+// QueryPoolsByOwnerRequest returns pools where the owner holds non-zero shares.
+message QueryPoolsByOwnerRequest {
+  string owner = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 message QueryOfferRequest { uint64 offer_id = 1; }
@@ -103,6 +219,35 @@ message QueryOffersRequest {
 message QueryOffersResponse {
   repeated OfferData offers = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --- Offer extended queries ---
+
+// QueryOffersByDenomRequest lists offers that reference the provided denom.
+// role = "have" restricts to have-denom; role = "want" restricts to want-denom;
+// if empty or unset, both sides are included.
+message QueryOffersByDenomRequest {
+  string denom = 1;
+  string role = 2; // "have" | "want" | ""
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+// QueryOffersByPairPriceRangeRequest filters offers for a pair by price range.
+// Prices are expressed as want-per-have (high-per-low orientation) cosmos.Dec
+// strings.
+message QueryOffersByPairPriceRangeRequest {
+  string have_denom = 1;
+  string want_denom = 2;
+  string min_price = 3 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
+  string max_price = 4 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
+  cosmos.base.query.v1beta1.PageRequest pagination = 5;
+}
+
+// QueryOffersBestRequest fetches up to `limit` best-priced offers for a pair.
+message QueryOffersBestRequest {
+  string have_denom = 1;
+  string want_denom = 2;
+  uint32 limit = 3; // number of top offers to return
 }
 
 message QueryTradesByOfferRequest {
@@ -135,4 +280,29 @@ message QueryAuctionsRequest {
 message QueryAuctionsResponse {
   repeated AuctionRecord auctions = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// --- Auction extended queries ---
+
+// QueryAuctionsBySellerRequest lists auctions created by the seller address.
+message QueryAuctionsBySellerRequest {
+  string seller = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryAuctionByNFTRequest selects an auction by the escrow NFT identity.
+message QueryAuctionByNFTRequest {
+  string class_id = 1;
+  string nft_id = 2;
+}
+
+// QueryAuctionsByPairPriceRangeRequest filters auctions by their effective
+// price (bid-per-sell). Implementations may need to iterate candidate auctions
+// and compute the price from valuation/current bid and redeemable sell amounts.
+message QueryAuctionsByPairPriceRangeRequest {
+  string sell_denom = 1;
+  string bid_denom = 2;
+  string min_price = 3 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
+  string max_price = 4 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
+  cosmos.base.query.v1beta1.PageRequest pagination = 5;
 }

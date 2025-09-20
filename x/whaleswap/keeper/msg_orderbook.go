@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	"cosmossdk.io/collections"
@@ -87,7 +88,7 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 	t := sdkCtx.BlockTime()
 	offer := whaleswapv1.OfferData{
 		OfferId:          id,
-		Status:           "open",
+		Status:           whaleswapv1.OfferStatusOpen,
 		Maker:            msg.Maker,
 		UpdatedHeight:    uint64(sdkCtx.BlockHeight()),
 		UpdatedTimestamp: &t,
@@ -134,7 +135,13 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 	if err := k.OffersByOwnerStatus.Set(ctx, collections.Join3(offer.Maker, offer.Status, offer.OfferId), offer.OfferId); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d by owner/status", id)
 	}
-	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventOfferCreated{OfferId: id})
+	// Emit EventOfferCreated with plain numeric string (no extra quotes) for offer_id
+	sdkCtx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			"dysonprotocol.whaleswap.v1.EventOfferCreated",
+			sdk.NewAttribute("offer_id", strconv.FormatUint(id, 10)),
+		),
+	)
 	if pfandCoin.Amount.IsPositive() {
 		_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandLocked{Amount: pfandCoin})
 	}
@@ -167,7 +174,7 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 		if err != nil {
 			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrNotFound, "offer not found: %d", it.OfferId)
 		}
-		if offer.Status != "open" {
+		if offer.Status != whaleswapv1.OfferStatusOpen {
 			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "offer %d not open", it.OfferId)
 		}
 		remainingUnits, ok := math.NewIntFromString(offer.RemainingUnits)
@@ -211,7 +218,7 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 			}
 		}
 		if remainder.IsPositive() {
-			liquidWant := liquidPrefix + wantDenom
+			liquidWant := whaleswapv1.LiquidDenom(wantDenom)
 			liqBal := k.bank.GetBalance(ctx, taker, liquidWant).Amount
 			if liqBal.LT(remainder) {
 				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient liquid remainder: %s < %s", liqBal.String(), remainder.String())
@@ -296,7 +303,7 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 		offer.UpdatedHeight = uint64(sdkCtx.BlockHeight())
 		offer.UpdatedTimestamp = &t
 		if newUnits.IsZero() {
-			offer.Status = "closed"
+			offer.Status = whaleswapv1.OfferStatusClosed
 			offer.RemainingUnits = newUnits.String()
 			offer.RemainingHave.Amount = math.NewInt(0)
 			offer.RemainingWant.Amount = math.NewInt(0)
@@ -322,7 +329,7 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 				priceKey := priceDec.String()
 				_ = k.OffersByPairPrice.Remove(ctx, collections.Join3(pairKey, priceKey, offer.OfferId))
 			}
-			_ = k.OffersByOwnerStatus.Remove(ctx, collections.Join3(offer.Maker, "open", offer.OfferId))
+			_ = k.OffersByOwnerStatus.Remove(ctx, collections.Join3(offer.Maker, whaleswapv1.OfferStatusOpen, offer.OfferId))
 			_ = k.OffersByOwnerStatus.Set(ctx, collections.Join3(offer.Maker, offer.Status, offer.OfferId), offer.OfferId)
 			if offer.PfandLocked.Amount.IsPositive() {
 				if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, taker, sdk.NewCoins(offer.PfandLocked)); err != nil {
@@ -352,7 +359,7 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 	if err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", msg.OfferId)
 	}
-	if offer.Status != "open" {
+	if offer.Status != whaleswapv1.OfferStatusOpen {
 		return nil, cosmossdkerrors.Wrapf(err, "offer not open: %s", offer.Status)
 	}
 	closerBz, err := k.accKeeper.AddressCodec().StringToBytes(msg.Closer)
@@ -384,7 +391,7 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrUnauthorized, "not eligible to cancel offer")
 	}
 
-	offer.Status = "cancelled"
+	offer.Status = whaleswapv1.OfferStatusCancelled
 	if err := k.OffersMap.Set(ctx, offer.OfferId, offer); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to update offer %d", offer.OfferId)
 	}
@@ -409,7 +416,7 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 		}
 		_ = k.OffersByPairPrice.Remove(ctx, collections.Join3(pairKey, priceDec.String(), offer.OfferId))
 	}
-	_ = k.OffersByOwnerStatus.Remove(ctx, collections.Join3(offer.Maker, "open", offer.OfferId))
+	_ = k.OffersByOwnerStatus.Remove(ctx, collections.Join3(offer.Maker, whaleswapv1.OfferStatusOpen, offer.OfferId))
 	_ = k.OffersByOwnerStatus.Set(ctx, collections.Join3(offer.Maker, offer.Status, offer.OfferId), offer.OfferId)
 	// Refund escrowed base have for normal offers
 	if !k.isLiquidDenom(offer.RemainingHave.Denom) && offer.RemainingHave.Amount.IsPositive() {

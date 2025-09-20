@@ -138,7 +138,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Class",
-                "description": "Class defines the class of the nft type."
+                "description": "Class defines the class of the nft type. Whaleswap notes: - Auction escrows may be represented by NFTs whose (class_id, id) pair is   referenced by auction records. Query endpoints such as AuctionByNFT use   this identity to locate the escrow state."
             }
         }
     }

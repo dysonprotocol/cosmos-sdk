@@ -138,7 +138,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "NFT",
-                "description": "NFT defines the NFT."
+                "description": "NFT defines the NFT. - When used with whaleswap auctions, the (class_id, id) uniquely identifies   the escrow marker that controls redemption of the locked sell coin."
             }
         }
     }

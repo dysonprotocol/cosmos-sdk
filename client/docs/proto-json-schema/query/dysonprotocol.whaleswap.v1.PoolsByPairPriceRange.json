@@ -1,10 +1,24 @@
 {
     "request": {
         "$schema": "http://json-schema.org/draft-04/schema#",
-        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsRequest",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest",
         "definitions": {
-            "dysonprotocol.whaleswap.v1.QueryPoolsRequest": {
+            "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest": {
                 "properties": {
+                    "have_denom": {
+                        "type": "string",
+                        "description": "one side of the pair (order-insensitive)"
+                    },
+                    "want_denom": {
+                        "type": "string",
+                        "description": "the other side of the pair"
+                    },
+                    "min_price": {
+                        "type": "string"
+                    },
+                    "max_price": {
+                        "type": "string"
+                    },
                     "pagination": {
                         "$ref": "#/definitions/cosmos.base.query.v1beta1.PageRequest",
                         "additionalProperties": false
@@ -12,7 +26,8 @@
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Query Pools Request"
+                "title": "Query Pools By Pair Price Range Request",
+                "description": "QueryPoolsByPairPriceRangeRequest filters pools for the pair by instantaneous price range. Prices are cosmos.Dec strings; bounds are optional and inclusive."
             },
             "cosmos.base.query.v1beta1.PageRequest": {
                 "properties": {

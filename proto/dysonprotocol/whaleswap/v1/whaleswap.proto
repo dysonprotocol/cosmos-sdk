@@ -18,6 +18,8 @@ option go_package = "dysonprotocol.com/x/whaleswap/types";
 //   behaves as constant-product (v2). If set, concentrated-liquidity math
 //   applies.
 // - coin_a.amount/coin_b.amount are sdk.Int strings.
+// - The instantaneous price used by price-based queries is derived from
+//   reserves as P = coin_b / coin_a, consistent with the notes above.
 message Pool {
   uint64 pool_id = 1;
   cosmos.base.v1beta1.Coin coin_a = 2 [ (gogoproto.nullable) = false ];
@@ -70,6 +72,9 @@ message OfferData {
 }
 
 // Trade captures a single fill of an offer.
+//
+// - `sent` is the coin paid by the taker (want-denom), and `received` is the
+//   coin delivered by the module (have-denom or base of liquid-have).
 message Trade {
   uint64 trade_id = 1;
   uint64 offer_id = 2;

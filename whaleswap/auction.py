@@ -1,3 +1,6 @@
+raise RuntimeError("This file is not used anymore. Use the module instead.")
+
+
 from typing import Any, Dict, List, Optional
 import json
 from decimal import Decimal

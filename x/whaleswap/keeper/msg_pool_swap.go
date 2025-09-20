@@ -22,7 +22,7 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 	if !msg.Input.Amount.IsPositive() {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "input amount must be > 0")
 	}
-	// single pool swap
+	// single pool swap; enforce non-zero id
 	if msg.PoolId == 0 {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pool_id required")
 	}

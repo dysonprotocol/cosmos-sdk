@@ -10,7 +10,9 @@ import (
 	"cosmossdk.io/log"
 	cosmossdk_math "cosmossdk.io/math"
 
+	nameservicekeeper "dysonprotocol.com/x/nameservice/keeper"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
+	whaleswap "dysonprotocol.com/x/whaleswap"
 	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -332,20 +334,20 @@ func (k Keeper) updatePool(ctx context.Context, pool *whaleswapv1.Pool) error {
 }
 
 func (k Keeper) sendToModule(ctx context.Context, from sdk.AccAddress, coins sdk.Coins) error {
-	return k.bank.SendCoinsFromAccountToModule(ctx, from, "whaleswap", coins)
+	return k.bank.SendCoinsFromAccountToModule(ctx, from, whaleswap.ModuleName, coins)
 }
 
 func (k Keeper) sendFromModule(ctx context.Context, to sdk.AccAddress, coins sdk.Coins) error {
-	return k.bank.SendCoinsFromModuleToAccount(ctx, "whaleswap", to, coins)
+	return k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, to, coins)
 }
 
 func (k Keeper) burnModule(ctx context.Context, coins sdk.Coins) error {
-	return k.bank.BurnCoins(ctx, "whaleswap", coins)
+	return k.bank.BurnCoins(ctx, whaleswap.ModuleName, coins)
 }
 
 // ----- Orderbook + liquid helpers -----
 
-const liquidPrefix = "whaleswap.dys/coins/"
+const liquidPrefix = whaleswapv1.LiquidDenomPrefix
 
 func (k Keeper) isLiquidDenom(denom string) bool {
 	return strings.HasPrefix(denom, liquidPrefix)
@@ -382,16 +384,16 @@ func (k Keeper) ensureWhaleswapRootName(ctx context.Context) error {
 	// Resolve destination if the name exists already
 	authority := k.nameSvc.GetAuthority()
 
-	want := k.accKeeper.GetModuleAddress("whaleswap").String()
-	if dest, err := k.nameSvc.ResolveNameOrAddress(ctx, "whaleswap.dys"); err == nil {
+	want := k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String()
+	if dest, err := k.nameSvc.ResolveNameOrAddress(ctx, whaleswapv1.RootName); err == nil {
 		if dest == want {
 			return nil
 		}
 		// Update destination to whaleswap module address; owner is current NFT owner
-		owner := k.nft.GetOwner(ctx, "nameservice.dys", "whaleswap.dys").String()
-		set := &nameservicev1.MsgSetDestination{Owner: owner, Name: "whaleswap.dys", Destination: want}
+		owner := k.nft.GetOwner(ctx, nameservicekeeper.NamesClassID, whaleswapv1.RootName).String()
+		set := &nameservicev1.MsgSetDestination{Owner: owner, Name: whaleswapv1.RootName, Destination: want}
 		if _, err := k.nameSvc.SetDestination(ctx, set); err != nil {
-			return fmt.Errorf("failed to set destination for whaleswap.dys to module: %w", err)
+			return fmt.Errorf("failed to set destination for %s to module: %w", whaleswapv1.RootName, err)
 		}
 		return nil
 	}
@@ -399,17 +401,17 @@ func (k Keeper) ensureWhaleswapRootName(ctx context.Context) error {
 	// Name not found: mint the name NFT to nameservice authority, then set destination
 	mint := &nameservicev1.MsgMintNFT{
 		NameDestination: authority,
-		ClassId:         "nameservice.dys",
-		NftId:           "whaleswap.dys",
+		ClassId:         nameservicekeeper.NamesClassID,
+		NftId:           whaleswapv1.RootName,
 		Uri:             want,
 		UriHash:         "",
 	}
 	if _, err := k.nameSvc.MintNFT(ctx, mint); err != nil {
-		return fmt.Errorf("failed to mint name NFT whaleswap.dys to nameservice authority: %w", err)
+		return fmt.Errorf("failed to mint name NFT %s to nameservice authority: %w", whaleswapv1.RootName, err)
 	}
-	set := &nameservicev1.MsgSetDestination{Owner: authority, Name: "whaleswap.dys", Destination: want}
+	set := &nameservicev1.MsgSetDestination{Owner: authority, Name: whaleswapv1.RootName, Destination: want}
 	if _, err := k.nameSvc.SetDestination(ctx, set); err != nil {
-		return fmt.Errorf("failed to set destination for whaleswap.dys to module after mint: %w", err)
+		return fmt.Errorf("failed to set destination for %s to module after mint: %w", whaleswapv1.RootName, err)
 	}
 	return nil
 }

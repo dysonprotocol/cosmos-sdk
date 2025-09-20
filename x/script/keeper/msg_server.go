@@ -55,7 +55,7 @@ func (k Keeper) UpdateScript(ctx context.Context, msg *scripttypes.MsgUpdateScri
 	script.Version = script.Version + 1
 	// Set update metadata
 	script.UpdateHeight = uint64(sdkCtx.BlockHeight())
-	k.Logger(sdkCtx).Info("updating script", "script", script)
+	k.Logger(sdkCtx).Info("updating script", "script", script.Address, "version", script.Version)
 	err = k.ScriptMap.Set(ctx, msg.Address, script)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "failed to set script")

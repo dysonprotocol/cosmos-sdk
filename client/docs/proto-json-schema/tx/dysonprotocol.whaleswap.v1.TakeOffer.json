@@ -19,7 +19,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Msg Take Offer",
-                "description": "Take one or more offers (batch)."
+                "description": "Take one or more offers (batch). - Each TakeItem specifies an offer and optional take_units (sdk.Int string).   If unset, the action attempts to fully fill the remaining units. - The taker must provide payment in base want; any remainder may be provided   via liquid want, which is burned on receipt. The module then pays base have   (or base of liquid have) to the taker."
             },
             "dysonprotocol.whaleswap.v1.TakeItem": {
                 "properties": {

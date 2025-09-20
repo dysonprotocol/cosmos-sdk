@@ -27,7 +27,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Msg Pool Swap",
-                "description": "Single-pool swap."
+                "description": "Single-pool swap. - `input` denom must be one of the pool reserves; `out_denom` must be the   other. - `minimum_out_amount` is an sdk.Int string; the swap fails if the computed   output is less than this value after fees."
             },
             "cosmos.base.v1beta1.Coin": {
                 "properties": {

@@ -2,24 +2,28 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // Defaults
-var DefaultPfandPerOffer = sdk.NewCoin("whaleswap.dys/pfand", math.NewInt(0))
+var DefaultPfandPerOffer = sdk.NewCoin(PfandDenom, math.NewInt(0))
 
-func NewParams(pfandPerOffer sdk.Coin, valuationFeePct, minBidPctIncrease string) Params {
+func NewParams(pfandPerOffer sdk.Coin, valuationFeePct, minBidPctIncrease string, valuationPeriod time.Duration, bidTimeout time.Duration) Params {
 	return Params{
 		PfandPerOffer:             pfandPerOffer,
 		ValuationFeePct:           valuationFeePct,
+		ValuationPeriod:           valuationPeriod,
+		BidTimeout:                bidTimeout,
 		MinimumBidPercentIncrease: minBidPctIncrease,
 	}
 }
 
 func DefaultParams() Params {
-	return NewParams(DefaultPfandPerOffer, "0", "0")
+	p := NewParams(DefaultPfandPerOffer, "0", "0", time.Hour, time.Second*5)
+	return p
 }
 
 func (p Params) Validate() error {

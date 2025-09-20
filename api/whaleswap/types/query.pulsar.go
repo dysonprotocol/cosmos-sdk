@@ -2656,6 +2656,2599 @@ func (x *fastReflection_QueryPoolsResponse) ProtoMethods() *protoiface.Methods {
 }
 
 var (
+	md_QueryPoolByPairRequest            protoreflect.MessageDescriptor
+	fd_QueryPoolByPairRequest_have_denom protoreflect.FieldDescriptor
+	fd_QueryPoolByPairRequest_want_denom protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryPoolByPairRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryPoolByPairRequest")
+	fd_QueryPoolByPairRequest_have_denom = md_QueryPoolByPairRequest.Fields().ByName("have_denom")
+	fd_QueryPoolByPairRequest_want_denom = md_QueryPoolByPairRequest.Fields().ByName("want_denom")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryPoolByPairRequest)(nil)
+
+type fastReflection_QueryPoolByPairRequest QueryPoolByPairRequest
+
+func (x *QueryPoolByPairRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryPoolByPairRequest)(x)
+}
+
+func (x *QueryPoolByPairRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryPoolByPairRequest_messageType fastReflection_QueryPoolByPairRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryPoolByPairRequest_messageType{}
+
+type fastReflection_QueryPoolByPairRequest_messageType struct{}
+
+func (x fastReflection_QueryPoolByPairRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryPoolByPairRequest)(nil)
+}
+func (x fastReflection_QueryPoolByPairRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolByPairRequest)
+}
+func (x fastReflection_QueryPoolByPairRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolByPairRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryPoolByPairRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolByPairRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryPoolByPairRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryPoolByPairRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryPoolByPairRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolByPairRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryPoolByPairRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryPoolByPairRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryPoolByPairRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.HaveDenom != "" {
+		value := protoreflect.ValueOfString(x.HaveDenom)
+		if !f(fd_QueryPoolByPairRequest_have_denom, value) {
+			return
+		}
+	}
+	if x.WantDenom != "" {
+		value := protoreflect.ValueOfString(x.WantDenom)
+		if !f(fd_QueryPoolByPairRequest_want_denom, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryPoolByPairRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.have_denom":
+		return x.HaveDenom != ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.want_denom":
+		return x.WantDenom != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolByPairRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolByPairRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolByPairRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.have_denom":
+		x.HaveDenom = ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.want_denom":
+		x.WantDenom = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolByPairRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolByPairRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryPoolByPairRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.have_denom":
+		value := x.HaveDenom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.want_denom":
+		value := x.WantDenom
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolByPairRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolByPairRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolByPairRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.have_denom":
+		x.HaveDenom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.want_denom":
+		x.WantDenom = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolByPairRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolByPairRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolByPairRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.have_denom":
+		panic(fmt.Errorf("field have_denom of message dysonprotocol.whaleswap.v1.QueryPoolByPairRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.want_denom":
+		panic(fmt.Errorf("field want_denom of message dysonprotocol.whaleswap.v1.QueryPoolByPairRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolByPairRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolByPairRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryPoolByPairRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.have_denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryPoolByPairRequest.want_denom":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolByPairRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolByPairRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryPoolByPairRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryPoolByPairRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryPoolByPairRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolByPairRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryPoolByPairRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryPoolByPairRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryPoolByPairRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.HaveDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.WantDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolByPairRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.WantDenom) > 0 {
+			i -= len(x.WantDenom)
+			copy(dAtA[i:], x.WantDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.WantDenom)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.HaveDenom) > 0 {
+			i -= len(x.HaveDenom)
+			copy(dAtA[i:], x.HaveDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.HaveDenom)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolByPairRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolByPairRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolByPairRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field HaveDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.HaveDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field WantDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.WantDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_QueryPoolsByDenomRequest            protoreflect.MessageDescriptor
+	fd_QueryPoolsByDenomRequest_denom      protoreflect.FieldDescriptor
+	fd_QueryPoolsByDenomRequest_pagination protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryPoolsByDenomRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryPoolsByDenomRequest")
+	fd_QueryPoolsByDenomRequest_denom = md_QueryPoolsByDenomRequest.Fields().ByName("denom")
+	fd_QueryPoolsByDenomRequest_pagination = md_QueryPoolsByDenomRequest.Fields().ByName("pagination")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryPoolsByDenomRequest)(nil)
+
+type fastReflection_QueryPoolsByDenomRequest QueryPoolsByDenomRequest
+
+func (x *QueryPoolsByDenomRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryPoolsByDenomRequest)(x)
+}
+
+func (x *QueryPoolsByDenomRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryPoolsByDenomRequest_messageType fastReflection_QueryPoolsByDenomRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryPoolsByDenomRequest_messageType{}
+
+type fastReflection_QueryPoolsByDenomRequest_messageType struct{}
+
+func (x fastReflection_QueryPoolsByDenomRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryPoolsByDenomRequest)(nil)
+}
+func (x fastReflection_QueryPoolsByDenomRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolsByDenomRequest)
+}
+func (x fastReflection_QueryPoolsByDenomRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolsByDenomRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryPoolsByDenomRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolsByDenomRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryPoolsByDenomRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryPoolsByDenomRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryPoolsByDenomRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolsByDenomRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryPoolsByDenomRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryPoolsByDenomRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryPoolsByDenomRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Denom != "" {
+		value := protoreflect.ValueOfString(x.Denom)
+		if !f(fd_QueryPoolsByDenomRequest_denom, value) {
+			return
+		}
+	}
+	if x.Pagination != nil {
+		value := protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+		if !f(fd_QueryPoolsByDenomRequest_pagination, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryPoolsByDenomRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.denom":
+		return x.Denom != ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.pagination":
+		return x.Pagination != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByDenomRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.denom":
+		x.Denom = ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.pagination":
+		x.Pagination = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryPoolsByDenomRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.denom":
+		value := x.Denom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.pagination":
+		value := x.Pagination
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByDenomRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.denom":
+		x.Denom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.pagination":
+		x.Pagination = value.Message().Interface().(*v1beta1.PageRequest)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByDenomRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.pagination":
+		if x.Pagination == nil {
+			x.Pagination = new(v1beta1.PageRequest)
+		}
+		return protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.denom":
+		panic(fmt.Errorf("field denom of message dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryPoolsByDenomRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.pagination":
+		m := new(v1beta1.PageRequest)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryPoolsByDenomRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryPoolsByDenomRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByDenomRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryPoolsByDenomRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryPoolsByDenomRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryPoolsByDenomRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.Denom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Pagination != nil {
+			l = options.Size(x.Pagination)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolsByDenomRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Pagination != nil {
+			encoded, err := options.Marshal(x.Pagination)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.Denom) > 0 {
+			i -= len(x.Denom)
+			copy(dAtA[i:], x.Denom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Denom)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolsByDenomRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolsByDenomRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolsByDenomRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Denom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Denom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Pagination == nil {
+					x.Pagination = &v1beta1.PageRequest{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Pagination); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_QueryPoolBySharesDenomRequest              protoreflect.MessageDescriptor
+	fd_QueryPoolBySharesDenomRequest_shares_denom protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryPoolBySharesDenomRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryPoolBySharesDenomRequest")
+	fd_QueryPoolBySharesDenomRequest_shares_denom = md_QueryPoolBySharesDenomRequest.Fields().ByName("shares_denom")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryPoolBySharesDenomRequest)(nil)
+
+type fastReflection_QueryPoolBySharesDenomRequest QueryPoolBySharesDenomRequest
+
+func (x *QueryPoolBySharesDenomRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryPoolBySharesDenomRequest)(x)
+}
+
+func (x *QueryPoolBySharesDenomRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryPoolBySharesDenomRequest_messageType fastReflection_QueryPoolBySharesDenomRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryPoolBySharesDenomRequest_messageType{}
+
+type fastReflection_QueryPoolBySharesDenomRequest_messageType struct{}
+
+func (x fastReflection_QueryPoolBySharesDenomRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryPoolBySharesDenomRequest)(nil)
+}
+func (x fastReflection_QueryPoolBySharesDenomRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolBySharesDenomRequest)
+}
+func (x fastReflection_QueryPoolBySharesDenomRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolBySharesDenomRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolBySharesDenomRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryPoolBySharesDenomRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolBySharesDenomRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryPoolBySharesDenomRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.SharesDenom != "" {
+		value := protoreflect.ValueOfString(x.SharesDenom)
+		if !f(fd_QueryPoolBySharesDenomRequest_shares_denom, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest.shares_denom":
+		return x.SharesDenom != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest.shares_denom":
+		x.SharesDenom = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest.shares_denom":
+		value := x.SharesDenom
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest.shares_denom":
+		x.SharesDenom = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest.shares_denom":
+		panic(fmt.Errorf("field shares_denom of message dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest.shares_denom":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryPoolBySharesDenomRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryPoolBySharesDenomRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.SharesDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolBySharesDenomRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.SharesDenom) > 0 {
+			i -= len(x.SharesDenom)
+			copy(dAtA[i:], x.SharesDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.SharesDenom)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolBySharesDenomRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolBySharesDenomRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolBySharesDenomRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field SharesDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.SharesDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_QueryPoolsByPairPriceRangeRequest            protoreflect.MessageDescriptor
+	fd_QueryPoolsByPairPriceRangeRequest_have_denom protoreflect.FieldDescriptor
+	fd_QueryPoolsByPairPriceRangeRequest_want_denom protoreflect.FieldDescriptor
+	fd_QueryPoolsByPairPriceRangeRequest_min_price  protoreflect.FieldDescriptor
+	fd_QueryPoolsByPairPriceRangeRequest_max_price  protoreflect.FieldDescriptor
+	fd_QueryPoolsByPairPriceRangeRequest_pagination protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryPoolsByPairPriceRangeRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryPoolsByPairPriceRangeRequest")
+	fd_QueryPoolsByPairPriceRangeRequest_have_denom = md_QueryPoolsByPairPriceRangeRequest.Fields().ByName("have_denom")
+	fd_QueryPoolsByPairPriceRangeRequest_want_denom = md_QueryPoolsByPairPriceRangeRequest.Fields().ByName("want_denom")
+	fd_QueryPoolsByPairPriceRangeRequest_min_price = md_QueryPoolsByPairPriceRangeRequest.Fields().ByName("min_price")
+	fd_QueryPoolsByPairPriceRangeRequest_max_price = md_QueryPoolsByPairPriceRangeRequest.Fields().ByName("max_price")
+	fd_QueryPoolsByPairPriceRangeRequest_pagination = md_QueryPoolsByPairPriceRangeRequest.Fields().ByName("pagination")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryPoolsByPairPriceRangeRequest)(nil)
+
+type fastReflection_QueryPoolsByPairPriceRangeRequest QueryPoolsByPairPriceRangeRequest
+
+func (x *QueryPoolsByPairPriceRangeRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryPoolsByPairPriceRangeRequest)(x)
+}
+
+func (x *QueryPoolsByPairPriceRangeRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryPoolsByPairPriceRangeRequest_messageType fastReflection_QueryPoolsByPairPriceRangeRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryPoolsByPairPriceRangeRequest_messageType{}
+
+type fastReflection_QueryPoolsByPairPriceRangeRequest_messageType struct{}
+
+func (x fastReflection_QueryPoolsByPairPriceRangeRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryPoolsByPairPriceRangeRequest)(nil)
+}
+func (x fastReflection_QueryPoolsByPairPriceRangeRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolsByPairPriceRangeRequest)
+}
+func (x fastReflection_QueryPoolsByPairPriceRangeRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolsByPairPriceRangeRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolsByPairPriceRangeRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryPoolsByPairPriceRangeRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolsByPairPriceRangeRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryPoolsByPairPriceRangeRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.HaveDenom != "" {
+		value := protoreflect.ValueOfString(x.HaveDenom)
+		if !f(fd_QueryPoolsByPairPriceRangeRequest_have_denom, value) {
+			return
+		}
+	}
+	if x.WantDenom != "" {
+		value := protoreflect.ValueOfString(x.WantDenom)
+		if !f(fd_QueryPoolsByPairPriceRangeRequest_want_denom, value) {
+			return
+		}
+	}
+	if x.MinPrice != "" {
+		value := protoreflect.ValueOfString(x.MinPrice)
+		if !f(fd_QueryPoolsByPairPriceRangeRequest_min_price, value) {
+			return
+		}
+	}
+	if x.MaxPrice != "" {
+		value := protoreflect.ValueOfString(x.MaxPrice)
+		if !f(fd_QueryPoolsByPairPriceRangeRequest_max_price, value) {
+			return
+		}
+	}
+	if x.Pagination != nil {
+		value := protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+		if !f(fd_QueryPoolsByPairPriceRangeRequest_pagination, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.have_denom":
+		return x.HaveDenom != ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.want_denom":
+		return x.WantDenom != ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.min_price":
+		return x.MinPrice != ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.max_price":
+		return x.MaxPrice != ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.pagination":
+		return x.Pagination != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.have_denom":
+		x.HaveDenom = ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.want_denom":
+		x.WantDenom = ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.min_price":
+		x.MinPrice = ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.max_price":
+		x.MaxPrice = ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.pagination":
+		x.Pagination = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.have_denom":
+		value := x.HaveDenom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.want_denom":
+		value := x.WantDenom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.min_price":
+		value := x.MinPrice
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.max_price":
+		value := x.MaxPrice
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.pagination":
+		value := x.Pagination
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.have_denom":
+		x.HaveDenom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.want_denom":
+		x.WantDenom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.min_price":
+		x.MinPrice = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.max_price":
+		x.MaxPrice = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.pagination":
+		x.Pagination = value.Message().Interface().(*v1beta1.PageRequest)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.pagination":
+		if x.Pagination == nil {
+			x.Pagination = new(v1beta1.PageRequest)
+		}
+		return protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.have_denom":
+		panic(fmt.Errorf("field have_denom of message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.want_denom":
+		panic(fmt.Errorf("field want_denom of message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.min_price":
+		panic(fmt.Errorf("field min_price of message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.max_price":
+		panic(fmt.Errorf("field max_price of message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.have_denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.want_denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.min_price":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.max_price":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.pagination":
+		m := new(v1beta1.PageRequest)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryPoolsByPairPriceRangeRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryPoolsByPairPriceRangeRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.HaveDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.WantDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MinPrice)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MaxPrice)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Pagination != nil {
+			l = options.Size(x.Pagination)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolsByPairPriceRangeRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Pagination != nil {
+			encoded, err := options.Marshal(x.Pagination)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x2a
+		}
+		if len(x.MaxPrice) > 0 {
+			i -= len(x.MaxPrice)
+			copy(dAtA[i:], x.MaxPrice)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MaxPrice)))
+			i--
+			dAtA[i] = 0x22
+		}
+		if len(x.MinPrice) > 0 {
+			i -= len(x.MinPrice)
+			copy(dAtA[i:], x.MinPrice)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MinPrice)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.WantDenom) > 0 {
+			i -= len(x.WantDenom)
+			copy(dAtA[i:], x.WantDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.WantDenom)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.HaveDenom) > 0 {
+			i -= len(x.HaveDenom)
+			copy(dAtA[i:], x.HaveDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.HaveDenom)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolsByPairPriceRangeRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolsByPairPriceRangeRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolsByPairPriceRangeRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field HaveDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.HaveDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field WantDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.WantDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinPrice", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MinPrice = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxPrice", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MaxPrice = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 5:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Pagination == nil {
+					x.Pagination = &v1beta1.PageRequest{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Pagination); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_QueryPoolsByOwnerRequest            protoreflect.MessageDescriptor
+	fd_QueryPoolsByOwnerRequest_owner      protoreflect.FieldDescriptor
+	fd_QueryPoolsByOwnerRequest_pagination protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryPoolsByOwnerRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryPoolsByOwnerRequest")
+	fd_QueryPoolsByOwnerRequest_owner = md_QueryPoolsByOwnerRequest.Fields().ByName("owner")
+	fd_QueryPoolsByOwnerRequest_pagination = md_QueryPoolsByOwnerRequest.Fields().ByName("pagination")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryPoolsByOwnerRequest)(nil)
+
+type fastReflection_QueryPoolsByOwnerRequest QueryPoolsByOwnerRequest
+
+func (x *QueryPoolsByOwnerRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryPoolsByOwnerRequest)(x)
+}
+
+func (x *QueryPoolsByOwnerRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryPoolsByOwnerRequest_messageType fastReflection_QueryPoolsByOwnerRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryPoolsByOwnerRequest_messageType{}
+
+type fastReflection_QueryPoolsByOwnerRequest_messageType struct{}
+
+func (x fastReflection_QueryPoolsByOwnerRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryPoolsByOwnerRequest)(nil)
+}
+func (x fastReflection_QueryPoolsByOwnerRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolsByOwnerRequest)
+}
+func (x fastReflection_QueryPoolsByOwnerRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolsByOwnerRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryPoolsByOwnerRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryPoolsByOwnerRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryPoolsByOwnerRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryPoolsByOwnerRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryPoolsByOwnerRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryPoolsByOwnerRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryPoolsByOwnerRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryPoolsByOwnerRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryPoolsByOwnerRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Owner != "" {
+		value := protoreflect.ValueOfString(x.Owner)
+		if !f(fd_QueryPoolsByOwnerRequest_owner, value) {
+			return
+		}
+	}
+	if x.Pagination != nil {
+		value := protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+		if !f(fd_QueryPoolsByOwnerRequest_pagination, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryPoolsByOwnerRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.owner":
+		return x.Owner != ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.pagination":
+		return x.Pagination != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByOwnerRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.owner":
+		x.Owner = ""
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.pagination":
+		x.Pagination = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryPoolsByOwnerRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.owner":
+		value := x.Owner
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.pagination":
+		value := x.Pagination
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByOwnerRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.owner":
+		x.Owner = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.pagination":
+		x.Pagination = value.Message().Interface().(*v1beta1.PageRequest)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByOwnerRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.pagination":
+		if x.Pagination == nil {
+			x.Pagination = new(v1beta1.PageRequest)
+		}
+		return protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.owner":
+		panic(fmt.Errorf("field owner of message dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryPoolsByOwnerRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.owner":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.pagination":
+		m := new(v1beta1.PageRequest)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryPoolsByOwnerRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryPoolsByOwnerRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryPoolsByOwnerRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryPoolsByOwnerRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryPoolsByOwnerRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryPoolsByOwnerRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.Owner)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Pagination != nil {
+			l = options.Size(x.Pagination)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolsByOwnerRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Pagination != nil {
+			encoded, err := options.Marshal(x.Pagination)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.Owner) > 0 {
+			i -= len(x.Owner)
+			copy(dAtA[i:], x.Owner)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Owner)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryPoolsByOwnerRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolsByOwnerRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryPoolsByOwnerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Owner = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Pagination == nil {
+					x.Pagination = &v1beta1.PageRequest{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Pagination); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
 	md_QueryOfferRequest          protoreflect.MessageDescriptor
 	fd_QueryOfferRequest_offer_id protoreflect.FieldDescriptor
 )
@@ -2675,7 +5268,7 @@ func (x *QueryOfferRequest) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryOfferRequest) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[6]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3079,7 +5672,7 @@ func (x *QueryOfferResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryOfferResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[7]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3518,7 +6111,7 @@ func (x *QueryOffersByOwnerRequest) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryOffersByOwnerRequest) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[8]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4130,7 +6723,7 @@ func (x *QueryOffersByOwnerResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryOffersByOwnerResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[9]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4654,7 +7247,7 @@ func (x *QueryOffersRequest) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryOffersRequest) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[10]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5266,7 +7859,7 @@ func (x *QueryOffersResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryOffersResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[11]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5767,6 +8360,1792 @@ func (x *fastReflection_QueryOffersResponse) ProtoMethods() *protoiface.Methods 
 }
 
 var (
+	md_QueryOffersByDenomRequest            protoreflect.MessageDescriptor
+	fd_QueryOffersByDenomRequest_denom      protoreflect.FieldDescriptor
+	fd_QueryOffersByDenomRequest_role       protoreflect.FieldDescriptor
+	fd_QueryOffersByDenomRequest_pagination protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryOffersByDenomRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryOffersByDenomRequest")
+	fd_QueryOffersByDenomRequest_denom = md_QueryOffersByDenomRequest.Fields().ByName("denom")
+	fd_QueryOffersByDenomRequest_role = md_QueryOffersByDenomRequest.Fields().ByName("role")
+	fd_QueryOffersByDenomRequest_pagination = md_QueryOffersByDenomRequest.Fields().ByName("pagination")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryOffersByDenomRequest)(nil)
+
+type fastReflection_QueryOffersByDenomRequest QueryOffersByDenomRequest
+
+func (x *QueryOffersByDenomRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryOffersByDenomRequest)(x)
+}
+
+func (x *QueryOffersByDenomRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryOffersByDenomRequest_messageType fastReflection_QueryOffersByDenomRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryOffersByDenomRequest_messageType{}
+
+type fastReflection_QueryOffersByDenomRequest_messageType struct{}
+
+func (x fastReflection_QueryOffersByDenomRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryOffersByDenomRequest)(nil)
+}
+func (x fastReflection_QueryOffersByDenomRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryOffersByDenomRequest)
+}
+func (x fastReflection_QueryOffersByDenomRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryOffersByDenomRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryOffersByDenomRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryOffersByDenomRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryOffersByDenomRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryOffersByDenomRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryOffersByDenomRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryOffersByDenomRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryOffersByDenomRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryOffersByDenomRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryOffersByDenomRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Denom != "" {
+		value := protoreflect.ValueOfString(x.Denom)
+		if !f(fd_QueryOffersByDenomRequest_denom, value) {
+			return
+		}
+	}
+	if x.Role != "" {
+		value := protoreflect.ValueOfString(x.Role)
+		if !f(fd_QueryOffersByDenomRequest_role, value) {
+			return
+		}
+	}
+	if x.Pagination != nil {
+		value := protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+		if !f(fd_QueryOffersByDenomRequest_pagination, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryOffersByDenomRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.denom":
+		return x.Denom != ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.role":
+		return x.Role != ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.pagination":
+		return x.Pagination != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersByDenomRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.denom":
+		x.Denom = ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.role":
+		x.Role = ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.pagination":
+		x.Pagination = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryOffersByDenomRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.denom":
+		value := x.Denom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.role":
+		value := x.Role
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.pagination":
+		value := x.Pagination
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersByDenomRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.denom":
+		x.Denom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.role":
+		x.Role = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.pagination":
+		x.Pagination = value.Message().Interface().(*v1beta1.PageRequest)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersByDenomRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.pagination":
+		if x.Pagination == nil {
+			x.Pagination = new(v1beta1.PageRequest)
+		}
+		return protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.denom":
+		panic(fmt.Errorf("field denom of message dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.role":
+		panic(fmt.Errorf("field role of message dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryOffersByDenomRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.role":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.pagination":
+		m := new(v1beta1.PageRequest)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryOffersByDenomRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryOffersByDenomRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersByDenomRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryOffersByDenomRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryOffersByDenomRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryOffersByDenomRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.Denom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.Role)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Pagination != nil {
+			l = options.Size(x.Pagination)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryOffersByDenomRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Pagination != nil {
+			encoded, err := options.Marshal(x.Pagination)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.Role) > 0 {
+			i -= len(x.Role)
+			copy(dAtA[i:], x.Role)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Role)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.Denom) > 0 {
+			i -= len(x.Denom)
+			copy(dAtA[i:], x.Denom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Denom)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryOffersByDenomRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryOffersByDenomRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryOffersByDenomRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Denom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Denom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Role", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Role = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Pagination == nil {
+					x.Pagination = &v1beta1.PageRequest{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Pagination); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_QueryOffersByPairPriceRangeRequest            protoreflect.MessageDescriptor
+	fd_QueryOffersByPairPriceRangeRequest_have_denom protoreflect.FieldDescriptor
+	fd_QueryOffersByPairPriceRangeRequest_want_denom protoreflect.FieldDescriptor
+	fd_QueryOffersByPairPriceRangeRequest_min_price  protoreflect.FieldDescriptor
+	fd_QueryOffersByPairPriceRangeRequest_max_price  protoreflect.FieldDescriptor
+	fd_QueryOffersByPairPriceRangeRequest_pagination protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryOffersByPairPriceRangeRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryOffersByPairPriceRangeRequest")
+	fd_QueryOffersByPairPriceRangeRequest_have_denom = md_QueryOffersByPairPriceRangeRequest.Fields().ByName("have_denom")
+	fd_QueryOffersByPairPriceRangeRequest_want_denom = md_QueryOffersByPairPriceRangeRequest.Fields().ByName("want_denom")
+	fd_QueryOffersByPairPriceRangeRequest_min_price = md_QueryOffersByPairPriceRangeRequest.Fields().ByName("min_price")
+	fd_QueryOffersByPairPriceRangeRequest_max_price = md_QueryOffersByPairPriceRangeRequest.Fields().ByName("max_price")
+	fd_QueryOffersByPairPriceRangeRequest_pagination = md_QueryOffersByPairPriceRangeRequest.Fields().ByName("pagination")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryOffersByPairPriceRangeRequest)(nil)
+
+type fastReflection_QueryOffersByPairPriceRangeRequest QueryOffersByPairPriceRangeRequest
+
+func (x *QueryOffersByPairPriceRangeRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryOffersByPairPriceRangeRequest)(x)
+}
+
+func (x *QueryOffersByPairPriceRangeRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryOffersByPairPriceRangeRequest_messageType fastReflection_QueryOffersByPairPriceRangeRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryOffersByPairPriceRangeRequest_messageType{}
+
+type fastReflection_QueryOffersByPairPriceRangeRequest_messageType struct{}
+
+func (x fastReflection_QueryOffersByPairPriceRangeRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryOffersByPairPriceRangeRequest)(nil)
+}
+func (x fastReflection_QueryOffersByPairPriceRangeRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryOffersByPairPriceRangeRequest)
+}
+func (x fastReflection_QueryOffersByPairPriceRangeRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryOffersByPairPriceRangeRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryOffersByPairPriceRangeRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryOffersByPairPriceRangeRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryOffersByPairPriceRangeRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryOffersByPairPriceRangeRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.HaveDenom != "" {
+		value := protoreflect.ValueOfString(x.HaveDenom)
+		if !f(fd_QueryOffersByPairPriceRangeRequest_have_denom, value) {
+			return
+		}
+	}
+	if x.WantDenom != "" {
+		value := protoreflect.ValueOfString(x.WantDenom)
+		if !f(fd_QueryOffersByPairPriceRangeRequest_want_denom, value) {
+			return
+		}
+	}
+	if x.MinPrice != "" {
+		value := protoreflect.ValueOfString(x.MinPrice)
+		if !f(fd_QueryOffersByPairPriceRangeRequest_min_price, value) {
+			return
+		}
+	}
+	if x.MaxPrice != "" {
+		value := protoreflect.ValueOfString(x.MaxPrice)
+		if !f(fd_QueryOffersByPairPriceRangeRequest_max_price, value) {
+			return
+		}
+	}
+	if x.Pagination != nil {
+		value := protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+		if !f(fd_QueryOffersByPairPriceRangeRequest_pagination, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.have_denom":
+		return x.HaveDenom != ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.want_denom":
+		return x.WantDenom != ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.min_price":
+		return x.MinPrice != ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.max_price":
+		return x.MaxPrice != ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.pagination":
+		return x.Pagination != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.have_denom":
+		x.HaveDenom = ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.want_denom":
+		x.WantDenom = ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.min_price":
+		x.MinPrice = ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.max_price":
+		x.MaxPrice = ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.pagination":
+		x.Pagination = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.have_denom":
+		value := x.HaveDenom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.want_denom":
+		value := x.WantDenom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.min_price":
+		value := x.MinPrice
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.max_price":
+		value := x.MaxPrice
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.pagination":
+		value := x.Pagination
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.have_denom":
+		x.HaveDenom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.want_denom":
+		x.WantDenom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.min_price":
+		x.MinPrice = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.max_price":
+		x.MaxPrice = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.pagination":
+		x.Pagination = value.Message().Interface().(*v1beta1.PageRequest)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.pagination":
+		if x.Pagination == nil {
+			x.Pagination = new(v1beta1.PageRequest)
+		}
+		return protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.have_denom":
+		panic(fmt.Errorf("field have_denom of message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.want_denom":
+		panic(fmt.Errorf("field want_denom of message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.min_price":
+		panic(fmt.Errorf("field min_price of message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.max_price":
+		panic(fmt.Errorf("field max_price of message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.have_denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.want_denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.min_price":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.max_price":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.pagination":
+		m := new(v1beta1.PageRequest)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryOffersByPairPriceRangeRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryOffersByPairPriceRangeRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.HaveDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.WantDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MinPrice)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MaxPrice)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Pagination != nil {
+			l = options.Size(x.Pagination)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryOffersByPairPriceRangeRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Pagination != nil {
+			encoded, err := options.Marshal(x.Pagination)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x2a
+		}
+		if len(x.MaxPrice) > 0 {
+			i -= len(x.MaxPrice)
+			copy(dAtA[i:], x.MaxPrice)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MaxPrice)))
+			i--
+			dAtA[i] = 0x22
+		}
+		if len(x.MinPrice) > 0 {
+			i -= len(x.MinPrice)
+			copy(dAtA[i:], x.MinPrice)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MinPrice)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.WantDenom) > 0 {
+			i -= len(x.WantDenom)
+			copy(dAtA[i:], x.WantDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.WantDenom)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.HaveDenom) > 0 {
+			i -= len(x.HaveDenom)
+			copy(dAtA[i:], x.HaveDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.HaveDenom)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryOffersByPairPriceRangeRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryOffersByPairPriceRangeRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryOffersByPairPriceRangeRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field HaveDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.HaveDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field WantDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.WantDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinPrice", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MinPrice = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxPrice", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MaxPrice = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 5:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Pagination == nil {
+					x.Pagination = &v1beta1.PageRequest{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Pagination); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_QueryOffersBestRequest            protoreflect.MessageDescriptor
+	fd_QueryOffersBestRequest_have_denom protoreflect.FieldDescriptor
+	fd_QueryOffersBestRequest_want_denom protoreflect.FieldDescriptor
+	fd_QueryOffersBestRequest_limit      protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryOffersBestRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryOffersBestRequest")
+	fd_QueryOffersBestRequest_have_denom = md_QueryOffersBestRequest.Fields().ByName("have_denom")
+	fd_QueryOffersBestRequest_want_denom = md_QueryOffersBestRequest.Fields().ByName("want_denom")
+	fd_QueryOffersBestRequest_limit = md_QueryOffersBestRequest.Fields().ByName("limit")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryOffersBestRequest)(nil)
+
+type fastReflection_QueryOffersBestRequest QueryOffersBestRequest
+
+func (x *QueryOffersBestRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryOffersBestRequest)(x)
+}
+
+func (x *QueryOffersBestRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryOffersBestRequest_messageType fastReflection_QueryOffersBestRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryOffersBestRequest_messageType{}
+
+type fastReflection_QueryOffersBestRequest_messageType struct{}
+
+func (x fastReflection_QueryOffersBestRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryOffersBestRequest)(nil)
+}
+func (x fastReflection_QueryOffersBestRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryOffersBestRequest)
+}
+func (x fastReflection_QueryOffersBestRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryOffersBestRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryOffersBestRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryOffersBestRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryOffersBestRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryOffersBestRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryOffersBestRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryOffersBestRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryOffersBestRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryOffersBestRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryOffersBestRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.HaveDenom != "" {
+		value := protoreflect.ValueOfString(x.HaveDenom)
+		if !f(fd_QueryOffersBestRequest_have_denom, value) {
+			return
+		}
+	}
+	if x.WantDenom != "" {
+		value := protoreflect.ValueOfString(x.WantDenom)
+		if !f(fd_QueryOffersBestRequest_want_denom, value) {
+			return
+		}
+	}
+	if x.Limit != uint32(0) {
+		value := protoreflect.ValueOfUint32(x.Limit)
+		if !f(fd_QueryOffersBestRequest_limit, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryOffersBestRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.have_denom":
+		return x.HaveDenom != ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.want_denom":
+		return x.WantDenom != ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.limit":
+		return x.Limit != uint32(0)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersBestRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersBestRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersBestRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.have_denom":
+		x.HaveDenom = ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.want_denom":
+		x.WantDenom = ""
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.limit":
+		x.Limit = uint32(0)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersBestRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersBestRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryOffersBestRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.have_denom":
+		value := x.HaveDenom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.want_denom":
+		value := x.WantDenom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.limit":
+		value := x.Limit
+		return protoreflect.ValueOfUint32(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersBestRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersBestRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersBestRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.have_denom":
+		x.HaveDenom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.want_denom":
+		x.WantDenom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.limit":
+		x.Limit = uint32(value.Uint())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersBestRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersBestRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersBestRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.have_denom":
+		panic(fmt.Errorf("field have_denom of message dysonprotocol.whaleswap.v1.QueryOffersBestRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.want_denom":
+		panic(fmt.Errorf("field want_denom of message dysonprotocol.whaleswap.v1.QueryOffersBestRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.limit":
+		panic(fmt.Errorf("field limit of message dysonprotocol.whaleswap.v1.QueryOffersBestRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersBestRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersBestRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryOffersBestRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.have_denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.want_denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryOffersBestRequest.limit":
+		return protoreflect.ValueOfUint32(uint32(0))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryOffersBestRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryOffersBestRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryOffersBestRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryOffersBestRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryOffersBestRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryOffersBestRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryOffersBestRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryOffersBestRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryOffersBestRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.HaveDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.WantDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Limit != 0 {
+			n += 1 + runtime.Sov(uint64(x.Limit))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryOffersBestRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Limit != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Limit))
+			i--
+			dAtA[i] = 0x18
+		}
+		if len(x.WantDenom) > 0 {
+			i -= len(x.WantDenom)
+			copy(dAtA[i:], x.WantDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.WantDenom)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.HaveDenom) > 0 {
+			i -= len(x.HaveDenom)
+			copy(dAtA[i:], x.HaveDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.HaveDenom)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryOffersBestRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryOffersBestRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryOffersBestRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field HaveDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.HaveDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field WantDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.WantDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+				}
+				x.Limit = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.Limit |= uint32(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
 	md_QueryTradesByOfferRequest            protoreflect.MessageDescriptor
 	fd_QueryTradesByOfferRequest_offer_id   protoreflect.FieldDescriptor
 	fd_QueryTradesByOfferRequest_pagination protoreflect.FieldDescriptor
@@ -5788,7 +10167,7 @@ func (x *QueryTradesByOfferRequest) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryTradesByOfferRequest) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[12]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6322,7 +10701,7 @@ func (x *QueryTradesByOfferResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryTradesByOfferResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[13]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6844,7 +11223,7 @@ func (x *QueryTradesByTakerRequest) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryTradesByTakerRequest) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[14]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7394,7 +11773,7 @@ func (x *QueryTradesByTakerResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryTradesByTakerResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[15]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7914,7 +12293,7 @@ func (x *QueryAuctionRequest) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryAuctionRequest) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[16]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8318,7 +12697,7 @@ func (x *QueryAuctionResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryAuctionResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[17]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8757,7 +13136,7 @@ func (x *QueryAuctionsRequest) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryAuctionsRequest) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[18]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9369,7 +13748,7 @@ func (x *QueryAuctionsResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QueryAuctionsResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[19]
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9869,6 +14248,1680 @@ func (x *fastReflection_QueryAuctionsResponse) ProtoMethods() *protoiface.Method
 	}
 }
 
+var (
+	md_QueryAuctionsBySellerRequest            protoreflect.MessageDescriptor
+	fd_QueryAuctionsBySellerRequest_seller     protoreflect.FieldDescriptor
+	fd_QueryAuctionsBySellerRequest_pagination protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryAuctionsBySellerRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryAuctionsBySellerRequest")
+	fd_QueryAuctionsBySellerRequest_seller = md_QueryAuctionsBySellerRequest.Fields().ByName("seller")
+	fd_QueryAuctionsBySellerRequest_pagination = md_QueryAuctionsBySellerRequest.Fields().ByName("pagination")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryAuctionsBySellerRequest)(nil)
+
+type fastReflection_QueryAuctionsBySellerRequest QueryAuctionsBySellerRequest
+
+func (x *QueryAuctionsBySellerRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryAuctionsBySellerRequest)(x)
+}
+
+func (x *QueryAuctionsBySellerRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[28]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryAuctionsBySellerRequest_messageType fastReflection_QueryAuctionsBySellerRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryAuctionsBySellerRequest_messageType{}
+
+type fastReflection_QueryAuctionsBySellerRequest_messageType struct{}
+
+func (x fastReflection_QueryAuctionsBySellerRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryAuctionsBySellerRequest)(nil)
+}
+func (x fastReflection_QueryAuctionsBySellerRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryAuctionsBySellerRequest)
+}
+func (x fastReflection_QueryAuctionsBySellerRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryAuctionsBySellerRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryAuctionsBySellerRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryAuctionsBySellerRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryAuctionsBySellerRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryAuctionsBySellerRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryAuctionsBySellerRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryAuctionsBySellerRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryAuctionsBySellerRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryAuctionsBySellerRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryAuctionsBySellerRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Seller != "" {
+		value := protoreflect.ValueOfString(x.Seller)
+		if !f(fd_QueryAuctionsBySellerRequest_seller, value) {
+			return
+		}
+	}
+	if x.Pagination != nil {
+		value := protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+		if !f(fd_QueryAuctionsBySellerRequest_pagination, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryAuctionsBySellerRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.seller":
+		return x.Seller != ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.pagination":
+		return x.Pagination != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionsBySellerRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.seller":
+		x.Seller = ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.pagination":
+		x.Pagination = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryAuctionsBySellerRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.seller":
+		value := x.Seller
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.pagination":
+		value := x.Pagination
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionsBySellerRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.seller":
+		x.Seller = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.pagination":
+		x.Pagination = value.Message().Interface().(*v1beta1.PageRequest)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionsBySellerRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.pagination":
+		if x.Pagination == nil {
+			x.Pagination = new(v1beta1.PageRequest)
+		}
+		return protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.seller":
+		panic(fmt.Errorf("field seller of message dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryAuctionsBySellerRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.seller":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.pagination":
+		m := new(v1beta1.PageRequest)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryAuctionsBySellerRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryAuctionsBySellerRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionsBySellerRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryAuctionsBySellerRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryAuctionsBySellerRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryAuctionsBySellerRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.Seller)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Pagination != nil {
+			l = options.Size(x.Pagination)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryAuctionsBySellerRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Pagination != nil {
+			encoded, err := options.Marshal(x.Pagination)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.Seller) > 0 {
+			i -= len(x.Seller)
+			copy(dAtA[i:], x.Seller)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Seller)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryAuctionsBySellerRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryAuctionsBySellerRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryAuctionsBySellerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Seller", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Seller = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Pagination == nil {
+					x.Pagination = &v1beta1.PageRequest{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Pagination); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_QueryAuctionByNFTRequest          protoreflect.MessageDescriptor
+	fd_QueryAuctionByNFTRequest_class_id protoreflect.FieldDescriptor
+	fd_QueryAuctionByNFTRequest_nft_id   protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryAuctionByNFTRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryAuctionByNFTRequest")
+	fd_QueryAuctionByNFTRequest_class_id = md_QueryAuctionByNFTRequest.Fields().ByName("class_id")
+	fd_QueryAuctionByNFTRequest_nft_id = md_QueryAuctionByNFTRequest.Fields().ByName("nft_id")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryAuctionByNFTRequest)(nil)
+
+type fastReflection_QueryAuctionByNFTRequest QueryAuctionByNFTRequest
+
+func (x *QueryAuctionByNFTRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryAuctionByNFTRequest)(x)
+}
+
+func (x *QueryAuctionByNFTRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[29]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryAuctionByNFTRequest_messageType fastReflection_QueryAuctionByNFTRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryAuctionByNFTRequest_messageType{}
+
+type fastReflection_QueryAuctionByNFTRequest_messageType struct{}
+
+func (x fastReflection_QueryAuctionByNFTRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryAuctionByNFTRequest)(nil)
+}
+func (x fastReflection_QueryAuctionByNFTRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryAuctionByNFTRequest)
+}
+func (x fastReflection_QueryAuctionByNFTRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryAuctionByNFTRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryAuctionByNFTRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryAuctionByNFTRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryAuctionByNFTRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryAuctionByNFTRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryAuctionByNFTRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryAuctionByNFTRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryAuctionByNFTRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryAuctionByNFTRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryAuctionByNFTRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.ClassId != "" {
+		value := protoreflect.ValueOfString(x.ClassId)
+		if !f(fd_QueryAuctionByNFTRequest_class_id, value) {
+			return
+		}
+	}
+	if x.NftId != "" {
+		value := protoreflect.ValueOfString(x.NftId)
+		if !f(fd_QueryAuctionByNFTRequest_nft_id, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryAuctionByNFTRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.class_id":
+		return x.ClassId != ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.nft_id":
+		return x.NftId != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionByNFTRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.class_id":
+		x.ClassId = ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.nft_id":
+		x.NftId = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryAuctionByNFTRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.class_id":
+		value := x.ClassId
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.nft_id":
+		value := x.NftId
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionByNFTRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.class_id":
+		x.ClassId = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.nft_id":
+		x.NftId = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionByNFTRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.class_id":
+		panic(fmt.Errorf("field class_id of message dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.nft_id":
+		panic(fmt.Errorf("field nft_id of message dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryAuctionByNFTRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.class_id":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest.nft_id":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryAuctionByNFTRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryAuctionByNFTRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionByNFTRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryAuctionByNFTRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryAuctionByNFTRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryAuctionByNFTRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.ClassId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.NftId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryAuctionByNFTRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.NftId) > 0 {
+			i -= len(x.NftId)
+			copy(dAtA[i:], x.NftId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.NftId)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.ClassId) > 0 {
+			i -= len(x.ClassId)
+			copy(dAtA[i:], x.ClassId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ClassId)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryAuctionByNFTRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryAuctionByNFTRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryAuctionByNFTRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ClassId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field NftId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.NftId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_QueryAuctionsByPairPriceRangeRequest            protoreflect.MessageDescriptor
+	fd_QueryAuctionsByPairPriceRangeRequest_sell_denom protoreflect.FieldDescriptor
+	fd_QueryAuctionsByPairPriceRangeRequest_bid_denom  protoreflect.FieldDescriptor
+	fd_QueryAuctionsByPairPriceRangeRequest_min_price  protoreflect.FieldDescriptor
+	fd_QueryAuctionsByPairPriceRangeRequest_max_price  protoreflect.FieldDescriptor
+	fd_QueryAuctionsByPairPriceRangeRequest_pagination protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_query_proto_init()
+	md_QueryAuctionsByPairPriceRangeRequest = File_dysonprotocol_whaleswap_v1_query_proto.Messages().ByName("QueryAuctionsByPairPriceRangeRequest")
+	fd_QueryAuctionsByPairPriceRangeRequest_sell_denom = md_QueryAuctionsByPairPriceRangeRequest.Fields().ByName("sell_denom")
+	fd_QueryAuctionsByPairPriceRangeRequest_bid_denom = md_QueryAuctionsByPairPriceRangeRequest.Fields().ByName("bid_denom")
+	fd_QueryAuctionsByPairPriceRangeRequest_min_price = md_QueryAuctionsByPairPriceRangeRequest.Fields().ByName("min_price")
+	fd_QueryAuctionsByPairPriceRangeRequest_max_price = md_QueryAuctionsByPairPriceRangeRequest.Fields().ByName("max_price")
+	fd_QueryAuctionsByPairPriceRangeRequest_pagination = md_QueryAuctionsByPairPriceRangeRequest.Fields().ByName("pagination")
+}
+
+var _ protoreflect.Message = (*fastReflection_QueryAuctionsByPairPriceRangeRequest)(nil)
+
+type fastReflection_QueryAuctionsByPairPriceRangeRequest QueryAuctionsByPairPriceRangeRequest
+
+func (x *QueryAuctionsByPairPriceRangeRequest) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_QueryAuctionsByPairPriceRangeRequest)(x)
+}
+
+func (x *QueryAuctionsByPairPriceRangeRequest) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[30]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_QueryAuctionsByPairPriceRangeRequest_messageType fastReflection_QueryAuctionsByPairPriceRangeRequest_messageType
+var _ protoreflect.MessageType = fastReflection_QueryAuctionsByPairPriceRangeRequest_messageType{}
+
+type fastReflection_QueryAuctionsByPairPriceRangeRequest_messageType struct{}
+
+func (x fastReflection_QueryAuctionsByPairPriceRangeRequest_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_QueryAuctionsByPairPriceRangeRequest)(nil)
+}
+func (x fastReflection_QueryAuctionsByPairPriceRangeRequest_messageType) New() protoreflect.Message {
+	return new(fastReflection_QueryAuctionsByPairPriceRangeRequest)
+}
+func (x fastReflection_QueryAuctionsByPairPriceRangeRequest_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryAuctionsByPairPriceRangeRequest
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) Descriptor() protoreflect.MessageDescriptor {
+	return md_QueryAuctionsByPairPriceRangeRequest
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) Type() protoreflect.MessageType {
+	return _fastReflection_QueryAuctionsByPairPriceRangeRequest_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) New() protoreflect.Message {
+	return new(fastReflection_QueryAuctionsByPairPriceRangeRequest)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) Interface() protoreflect.ProtoMessage {
+	return (*QueryAuctionsByPairPriceRangeRequest)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.SellDenom != "" {
+		value := protoreflect.ValueOfString(x.SellDenom)
+		if !f(fd_QueryAuctionsByPairPriceRangeRequest_sell_denom, value) {
+			return
+		}
+	}
+	if x.BidDenom != "" {
+		value := protoreflect.ValueOfString(x.BidDenom)
+		if !f(fd_QueryAuctionsByPairPriceRangeRequest_bid_denom, value) {
+			return
+		}
+	}
+	if x.MinPrice != "" {
+		value := protoreflect.ValueOfString(x.MinPrice)
+		if !f(fd_QueryAuctionsByPairPriceRangeRequest_min_price, value) {
+			return
+		}
+	}
+	if x.MaxPrice != "" {
+		value := protoreflect.ValueOfString(x.MaxPrice)
+		if !f(fd_QueryAuctionsByPairPriceRangeRequest_max_price, value) {
+			return
+		}
+	}
+	if x.Pagination != nil {
+		value := protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+		if !f(fd_QueryAuctionsByPairPriceRangeRequest_pagination, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.sell_denom":
+		return x.SellDenom != ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.bid_denom":
+		return x.BidDenom != ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.min_price":
+		return x.MinPrice != ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.max_price":
+		return x.MaxPrice != ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.pagination":
+		return x.Pagination != nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.sell_denom":
+		x.SellDenom = ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.bid_denom":
+		x.BidDenom = ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.min_price":
+		x.MinPrice = ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.max_price":
+		x.MaxPrice = ""
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.pagination":
+		x.Pagination = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.sell_denom":
+		value := x.SellDenom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.bid_denom":
+		value := x.BidDenom
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.min_price":
+		value := x.MinPrice
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.max_price":
+		value := x.MaxPrice
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.pagination":
+		value := x.Pagination
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.sell_denom":
+		x.SellDenom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.bid_denom":
+		x.BidDenom = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.min_price":
+		x.MinPrice = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.max_price":
+		x.MaxPrice = value.Interface().(string)
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.pagination":
+		x.Pagination = value.Message().Interface().(*v1beta1.PageRequest)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.pagination":
+		if x.Pagination == nil {
+			x.Pagination = new(v1beta1.PageRequest)
+		}
+		return protoreflect.ValueOfMessage(x.Pagination.ProtoReflect())
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.sell_denom":
+		panic(fmt.Errorf("field sell_denom of message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.bid_denom":
+		panic(fmt.Errorf("field bid_denom of message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.min_price":
+		panic(fmt.Errorf("field min_price of message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest is not mutable"))
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.max_price":
+		panic(fmt.Errorf("field max_price of message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.sell_denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.bid_denom":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.min_price":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.max_price":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.pagination":
+		m := new(v1beta1.PageRequest)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_QueryAuctionsByPairPriceRangeRequest) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*QueryAuctionsByPairPriceRangeRequest)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.SellDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.BidDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MinPrice)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MaxPrice)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Pagination != nil {
+			l = options.Size(x.Pagination)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*QueryAuctionsByPairPriceRangeRequest)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Pagination != nil {
+			encoded, err := options.Marshal(x.Pagination)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x2a
+		}
+		if len(x.MaxPrice) > 0 {
+			i -= len(x.MaxPrice)
+			copy(dAtA[i:], x.MaxPrice)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MaxPrice)))
+			i--
+			dAtA[i] = 0x22
+		}
+		if len(x.MinPrice) > 0 {
+			i -= len(x.MinPrice)
+			copy(dAtA[i:], x.MinPrice)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MinPrice)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.BidDenom) > 0 {
+			i -= len(x.BidDenom)
+			copy(dAtA[i:], x.BidDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.BidDenom)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.SellDenom) > 0 {
+			i -= len(x.SellDenom)
+			copy(dAtA[i:], x.SellDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.SellDenom)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*QueryAuctionsByPairPriceRangeRequest)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryAuctionsByPairPriceRangeRequest: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: QueryAuctionsByPairPriceRangeRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field SellDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.SellDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field BidDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.BidDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MinPrice", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MinPrice = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MaxPrice", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MaxPrice = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 5:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Pagination == nil {
+					x.Pagination = &v1beta1.PageRequest{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Pagination); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -10091,6 +16144,247 @@ func (x *QueryPoolsResponse) GetPagination() *v1beta1.PageResponse {
 	return nil
 }
 
+// QueryPoolByPairRequest selects a pool by denom pair regardless of order.
+// The implementation canonicalizes the pair to a unique internal key.
+type QueryPoolByPairRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	HaveDenom string `protobuf:"bytes,1,opt,name=have_denom,json=haveDenom,proto3" json:"have_denom,omitempty"` // first denom (order-insensitive)
+	WantDenom string `protobuf:"bytes,2,opt,name=want_denom,json=wantDenom,proto3" json:"want_denom,omitempty"` // second denom (order-insensitive)
+}
+
+func (x *QueryPoolByPairRequest) Reset() {
+	*x = QueryPoolByPairRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryPoolByPairRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryPoolByPairRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryPoolByPairRequest.ProtoReflect.Descriptor instead.
+func (*QueryPoolByPairRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *QueryPoolByPairRequest) GetHaveDenom() string {
+	if x != nil {
+		return x.HaveDenom
+	}
+	return ""
+}
+
+func (x *QueryPoolByPairRequest) GetWantDenom() string {
+	if x != nil {
+		return x.WantDenom
+	}
+	return ""
+}
+
+// QueryPoolsByDenomRequest lists pools containing the provided denom on either
+// side.
+type QueryPoolsByDenomRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Denom      string               `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"` // any pool where coin_a==denom or coin_b==denom
+	Pagination *v1beta1.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (x *QueryPoolsByDenomRequest) Reset() {
+	*x = QueryPoolsByDenomRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryPoolsByDenomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryPoolsByDenomRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryPoolsByDenomRequest.ProtoReflect.Descriptor instead.
+func (*QueryPoolsByDenomRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *QueryPoolsByDenomRequest) GetDenom() string {
+	if x != nil {
+		return x.Denom
+	}
+	return ""
+}
+
+func (x *QueryPoolsByDenomRequest) GetPagination() *v1beta1.PageRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// QueryPoolBySharesDenomRequest selects the pool that mints the given shares
+// denom.
+type QueryPoolBySharesDenomRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SharesDenom string `protobuf:"bytes,1,opt,name=shares_denom,json=sharesDenom,proto3" json:"shares_denom,omitempty"`
+}
+
+func (x *QueryPoolBySharesDenomRequest) Reset() {
+	*x = QueryPoolBySharesDenomRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryPoolBySharesDenomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryPoolBySharesDenomRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryPoolBySharesDenomRequest.ProtoReflect.Descriptor instead.
+func (*QueryPoolBySharesDenomRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *QueryPoolBySharesDenomRequest) GetSharesDenom() string {
+	if x != nil {
+		return x.SharesDenom
+	}
+	return ""
+}
+
+// QueryPoolsByPairPriceRangeRequest filters pools for the pair by instantaneous
+// price range. Prices are cosmos.Dec strings; bounds are optional and
+// inclusive.
+type QueryPoolsByPairPriceRangeRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	HaveDenom  string               `protobuf:"bytes,1,opt,name=have_denom,json=haveDenom,proto3" json:"have_denom,omitempty"` // one side of the pair (order-insensitive)
+	WantDenom  string               `protobuf:"bytes,2,opt,name=want_denom,json=wantDenom,proto3" json:"want_denom,omitempty"` // the other side of the pair
+	MinPrice   string               `protobuf:"bytes,3,opt,name=min_price,json=minPrice,proto3" json:"min_price,omitempty"`
+	MaxPrice   string               `protobuf:"bytes,4,opt,name=max_price,json=maxPrice,proto3" json:"max_price,omitempty"`
+	Pagination *v1beta1.PageRequest `protobuf:"bytes,5,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (x *QueryPoolsByPairPriceRangeRequest) Reset() {
+	*x = QueryPoolsByPairPriceRangeRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryPoolsByPairPriceRangeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryPoolsByPairPriceRangeRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryPoolsByPairPriceRangeRequest.ProtoReflect.Descriptor instead.
+func (*QueryPoolsByPairPriceRangeRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *QueryPoolsByPairPriceRangeRequest) GetHaveDenom() string {
+	if x != nil {
+		return x.HaveDenom
+	}
+	return ""
+}
+
+func (x *QueryPoolsByPairPriceRangeRequest) GetWantDenom() string {
+	if x != nil {
+		return x.WantDenom
+	}
+	return ""
+}
+
+func (x *QueryPoolsByPairPriceRangeRequest) GetMinPrice() string {
+	if x != nil {
+		return x.MinPrice
+	}
+	return ""
+}
+
+func (x *QueryPoolsByPairPriceRangeRequest) GetMaxPrice() string {
+	if x != nil {
+		return x.MaxPrice
+	}
+	return ""
+}
+
+func (x *QueryPoolsByPairPriceRangeRequest) GetPagination() *v1beta1.PageRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// QueryPoolsByOwnerRequest returns pools where the owner holds non-zero shares.
+type QueryPoolsByOwnerRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Owner      string               `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
+	Pagination *v1beta1.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (x *QueryPoolsByOwnerRequest) Reset() {
+	*x = QueryPoolsByOwnerRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryPoolsByOwnerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryPoolsByOwnerRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryPoolsByOwnerRequest.ProtoReflect.Descriptor instead.
+func (*QueryPoolsByOwnerRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *QueryPoolsByOwnerRequest) GetOwner() string {
+	if x != nil {
+		return x.Owner
+	}
+	return ""
+}
+
+func (x *QueryPoolsByOwnerRequest) GetPagination() *v1beta1.PageRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
 type QueryOfferRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -10102,7 +16396,7 @@ type QueryOfferRequest struct {
 func (x *QueryOfferRequest) Reset() {
 	*x = QueryOfferRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[6]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10116,7 +16410,7 @@ func (*QueryOfferRequest) ProtoMessage() {}
 
 // Deprecated: Use QueryOfferRequest.ProtoReflect.Descriptor instead.
 func (*QueryOfferRequest) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{6}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *QueryOfferRequest) GetOfferId() uint64 {
@@ -10137,7 +16431,7 @@ type QueryOfferResponse struct {
 func (x *QueryOfferResponse) Reset() {
 	*x = QueryOfferResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[7]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10151,7 +16445,7 @@ func (*QueryOfferResponse) ProtoMessage() {}
 
 // Deprecated: Use QueryOfferResponse.ProtoReflect.Descriptor instead.
 func (*QueryOfferResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{7}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *QueryOfferResponse) GetOffer() *OfferData {
@@ -10174,7 +16468,7 @@ type QueryOffersByOwnerRequest struct {
 func (x *QueryOffersByOwnerRequest) Reset() {
 	*x = QueryOffersByOwnerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[8]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10188,7 +16482,7 @@ func (*QueryOffersByOwnerRequest) ProtoMessage() {}
 
 // Deprecated: Use QueryOffersByOwnerRequest.ProtoReflect.Descriptor instead.
 func (*QueryOffersByOwnerRequest) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{8}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *QueryOffersByOwnerRequest) GetOwner() string {
@@ -10224,7 +16518,7 @@ type QueryOffersByOwnerResponse struct {
 func (x *QueryOffersByOwnerResponse) Reset() {
 	*x = QueryOffersByOwnerResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[9]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10238,7 +16532,7 @@ func (*QueryOffersByOwnerResponse) ProtoMessage() {}
 
 // Deprecated: Use QueryOffersByOwnerResponse.ProtoReflect.Descriptor instead.
 func (*QueryOffersByOwnerResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{9}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *QueryOffersByOwnerResponse) GetOffers() []*OfferData {
@@ -10269,7 +16563,7 @@ type QueryOffersRequest struct {
 func (x *QueryOffersRequest) Reset() {
 	*x = QueryOffersRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[10]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10283,7 +16577,7 @@ func (*QueryOffersRequest) ProtoMessage() {}
 
 // Deprecated: Use QueryOffersRequest.ProtoReflect.Descriptor instead.
 func (*QueryOffersRequest) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{10}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *QueryOffersRequest) GetHaveDenom() string {
@@ -10319,7 +16613,7 @@ type QueryOffersResponse struct {
 func (x *QueryOffersResponse) Reset() {
 	*x = QueryOffersResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[11]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10333,7 +16627,7 @@ func (*QueryOffersResponse) ProtoMessage() {}
 
 // Deprecated: Use QueryOffersResponse.ProtoReflect.Descriptor instead.
 func (*QueryOffersResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{11}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *QueryOffersResponse) GetOffers() []*OfferData {
@@ -10350,6 +16644,182 @@ func (x *QueryOffersResponse) GetPagination() *v1beta1.PageResponse {
 	return nil
 }
 
+// QueryOffersByDenomRequest lists offers that reference the provided denom.
+// role = "have" restricts to have-denom; role = "want" restricts to want-denom;
+// if empty or unset, both sides are included.
+type QueryOffersByDenomRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Denom      string               `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"`
+	Role       string               `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"` // "have" | "want" | ""
+	Pagination *v1beta1.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (x *QueryOffersByDenomRequest) Reset() {
+	*x = QueryOffersByDenomRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryOffersByDenomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryOffersByDenomRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryOffersByDenomRequest.ProtoReflect.Descriptor instead.
+func (*QueryOffersByDenomRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *QueryOffersByDenomRequest) GetDenom() string {
+	if x != nil {
+		return x.Denom
+	}
+	return ""
+}
+
+func (x *QueryOffersByDenomRequest) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *QueryOffersByDenomRequest) GetPagination() *v1beta1.PageRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// QueryOffersByPairPriceRangeRequest filters offers for a pair by price range.
+// Prices are expressed as want-per-have (high-per-low orientation) cosmos.Dec
+// strings.
+type QueryOffersByPairPriceRangeRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	HaveDenom  string               `protobuf:"bytes,1,opt,name=have_denom,json=haveDenom,proto3" json:"have_denom,omitempty"`
+	WantDenom  string               `protobuf:"bytes,2,opt,name=want_denom,json=wantDenom,proto3" json:"want_denom,omitempty"`
+	MinPrice   string               `protobuf:"bytes,3,opt,name=min_price,json=minPrice,proto3" json:"min_price,omitempty"`
+	MaxPrice   string               `protobuf:"bytes,4,opt,name=max_price,json=maxPrice,proto3" json:"max_price,omitempty"`
+	Pagination *v1beta1.PageRequest `protobuf:"bytes,5,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (x *QueryOffersByPairPriceRangeRequest) Reset() {
+	*x = QueryOffersByPairPriceRangeRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryOffersByPairPriceRangeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryOffersByPairPriceRangeRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryOffersByPairPriceRangeRequest.ProtoReflect.Descriptor instead.
+func (*QueryOffersByPairPriceRangeRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *QueryOffersByPairPriceRangeRequest) GetHaveDenom() string {
+	if x != nil {
+		return x.HaveDenom
+	}
+	return ""
+}
+
+func (x *QueryOffersByPairPriceRangeRequest) GetWantDenom() string {
+	if x != nil {
+		return x.WantDenom
+	}
+	return ""
+}
+
+func (x *QueryOffersByPairPriceRangeRequest) GetMinPrice() string {
+	if x != nil {
+		return x.MinPrice
+	}
+	return ""
+}
+
+func (x *QueryOffersByPairPriceRangeRequest) GetMaxPrice() string {
+	if x != nil {
+		return x.MaxPrice
+	}
+	return ""
+}
+
+func (x *QueryOffersByPairPriceRangeRequest) GetPagination() *v1beta1.PageRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// QueryOffersBestRequest fetches up to `limit` best-priced offers for a pair.
+type QueryOffersBestRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	HaveDenom string `protobuf:"bytes,1,opt,name=have_denom,json=haveDenom,proto3" json:"have_denom,omitempty"`
+	WantDenom string `protobuf:"bytes,2,opt,name=want_denom,json=wantDenom,proto3" json:"want_denom,omitempty"`
+	Limit     uint32 `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"` // number of top offers to return
+}
+
+func (x *QueryOffersBestRequest) Reset() {
+	*x = QueryOffersBestRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryOffersBestRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryOffersBestRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryOffersBestRequest.ProtoReflect.Descriptor instead.
+func (*QueryOffersBestRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *QueryOffersBestRequest) GetHaveDenom() string {
+	if x != nil {
+		return x.HaveDenom
+	}
+	return ""
+}
+
+func (x *QueryOffersBestRequest) GetWantDenom() string {
+	if x != nil {
+		return x.WantDenom
+	}
+	return ""
+}
+
+func (x *QueryOffersBestRequest) GetLimit() uint32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
 type QueryTradesByOfferRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -10362,7 +16832,7 @@ type QueryTradesByOfferRequest struct {
 func (x *QueryTradesByOfferRequest) Reset() {
 	*x = QueryTradesByOfferRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[12]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10376,7 +16846,7 @@ func (*QueryTradesByOfferRequest) ProtoMessage() {}
 
 // Deprecated: Use QueryTradesByOfferRequest.ProtoReflect.Descriptor instead.
 func (*QueryTradesByOfferRequest) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{12}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *QueryTradesByOfferRequest) GetOfferId() uint64 {
@@ -10405,7 +16875,7 @@ type QueryTradesByOfferResponse struct {
 func (x *QueryTradesByOfferResponse) Reset() {
 	*x = QueryTradesByOfferResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[13]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10419,7 +16889,7 @@ func (*QueryTradesByOfferResponse) ProtoMessage() {}
 
 // Deprecated: Use QueryTradesByOfferResponse.ProtoReflect.Descriptor instead.
 func (*QueryTradesByOfferResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{13}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *QueryTradesByOfferResponse) GetTrades() []*Trade {
@@ -10448,7 +16918,7 @@ type QueryTradesByTakerRequest struct {
 func (x *QueryTradesByTakerRequest) Reset() {
 	*x = QueryTradesByTakerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[14]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10462,7 +16932,7 @@ func (*QueryTradesByTakerRequest) ProtoMessage() {}
 
 // Deprecated: Use QueryTradesByTakerRequest.ProtoReflect.Descriptor instead.
 func (*QueryTradesByTakerRequest) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{14}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *QueryTradesByTakerRequest) GetTaker() string {
@@ -10491,7 +16961,7 @@ type QueryTradesByTakerResponse struct {
 func (x *QueryTradesByTakerResponse) Reset() {
 	*x = QueryTradesByTakerResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[15]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10505,7 +16975,7 @@ func (*QueryTradesByTakerResponse) ProtoMessage() {}
 
 // Deprecated: Use QueryTradesByTakerResponse.ProtoReflect.Descriptor instead.
 func (*QueryTradesByTakerResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{15}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *QueryTradesByTakerResponse) GetTrades() []*Trade {
@@ -10533,7 +17003,7 @@ type QueryAuctionRequest struct {
 func (x *QueryAuctionRequest) Reset() {
 	*x = QueryAuctionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[16]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10547,7 +17017,7 @@ func (*QueryAuctionRequest) ProtoMessage() {}
 
 // Deprecated: Use QueryAuctionRequest.ProtoReflect.Descriptor instead.
 func (*QueryAuctionRequest) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{16}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *QueryAuctionRequest) GetAuctionId() uint64 {
@@ -10568,7 +17038,7 @@ type QueryAuctionResponse struct {
 func (x *QueryAuctionResponse) Reset() {
 	*x = QueryAuctionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[17]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10582,7 +17052,7 @@ func (*QueryAuctionResponse) ProtoMessage() {}
 
 // Deprecated: Use QueryAuctionResponse.ProtoReflect.Descriptor instead.
 func (*QueryAuctionResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{17}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *QueryAuctionResponse) GetAuction() *AuctionRecord {
@@ -10606,7 +17076,7 @@ type QueryAuctionsRequest struct {
 func (x *QueryAuctionsRequest) Reset() {
 	*x = QueryAuctionsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[18]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10620,7 +17090,7 @@ func (*QueryAuctionsRequest) ProtoMessage() {}
 
 // Deprecated: Use QueryAuctionsRequest.ProtoReflect.Descriptor instead.
 func (*QueryAuctionsRequest) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{18}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *QueryAuctionsRequest) GetSellDenom() string {
@@ -10656,7 +17126,7 @@ type QueryAuctionsResponse struct {
 func (x *QueryAuctionsResponse) Reset() {
 	*x = QueryAuctionsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[19]
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -10670,7 +17140,7 @@ func (*QueryAuctionsResponse) ProtoMessage() {}
 
 // Deprecated: Use QueryAuctionsResponse.ProtoReflect.Descriptor instead.
 func (*QueryAuctionsResponse) Descriptor() ([]byte, []int) {
-	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{19}
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *QueryAuctionsResponse) GetAuctions() []*AuctionRecord {
@@ -10681,6 +17151,164 @@ func (x *QueryAuctionsResponse) GetAuctions() []*AuctionRecord {
 }
 
 func (x *QueryAuctionsResponse) GetPagination() *v1beta1.PageResponse {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// QueryAuctionsBySellerRequest lists auctions created by the seller address.
+type QueryAuctionsBySellerRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Seller     string               `protobuf:"bytes,1,opt,name=seller,proto3" json:"seller,omitempty"`
+	Pagination *v1beta1.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (x *QueryAuctionsBySellerRequest) Reset() {
+	*x = QueryAuctionsBySellerRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[28]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryAuctionsBySellerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryAuctionsBySellerRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryAuctionsBySellerRequest.ProtoReflect.Descriptor instead.
+func (*QueryAuctionsBySellerRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *QueryAuctionsBySellerRequest) GetSeller() string {
+	if x != nil {
+		return x.Seller
+	}
+	return ""
+}
+
+func (x *QueryAuctionsBySellerRequest) GetPagination() *v1beta1.PageRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+// QueryAuctionByNFTRequest selects an auction by the escrow NFT identity.
+type QueryAuctionByNFTRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ClassId string `protobuf:"bytes,1,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	NftId   string `protobuf:"bytes,2,opt,name=nft_id,json=nftId,proto3" json:"nft_id,omitempty"`
+}
+
+func (x *QueryAuctionByNFTRequest) Reset() {
+	*x = QueryAuctionByNFTRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[29]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryAuctionByNFTRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryAuctionByNFTRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryAuctionByNFTRequest.ProtoReflect.Descriptor instead.
+func (*QueryAuctionByNFTRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *QueryAuctionByNFTRequest) GetClassId() string {
+	if x != nil {
+		return x.ClassId
+	}
+	return ""
+}
+
+func (x *QueryAuctionByNFTRequest) GetNftId() string {
+	if x != nil {
+		return x.NftId
+	}
+	return ""
+}
+
+// QueryAuctionsByPairPriceRangeRequest filters auctions by their effective
+// price (bid-per-sell). Implementations may need to iterate candidate auctions
+// and compute the price from valuation/current bid and redeemable sell amounts.
+type QueryAuctionsByPairPriceRangeRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SellDenom  string               `protobuf:"bytes,1,opt,name=sell_denom,json=sellDenom,proto3" json:"sell_denom,omitempty"`
+	BidDenom   string               `protobuf:"bytes,2,opt,name=bid_denom,json=bidDenom,proto3" json:"bid_denom,omitempty"`
+	MinPrice   string               `protobuf:"bytes,3,opt,name=min_price,json=minPrice,proto3" json:"min_price,omitempty"`
+	MaxPrice   string               `protobuf:"bytes,4,opt,name=max_price,json=maxPrice,proto3" json:"max_price,omitempty"`
+	Pagination *v1beta1.PageRequest `protobuf:"bytes,5,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (x *QueryAuctionsByPairPriceRangeRequest) Reset() {
+	*x = QueryAuctionsByPairPriceRangeRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[30]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryAuctionsByPairPriceRangeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryAuctionsByPairPriceRangeRequest) ProtoMessage() {}
+
+// Deprecated: Use QueryAuctionsByPairPriceRangeRequest.ProtoReflect.Descriptor instead.
+func (*QueryAuctionsByPairPriceRangeRequest) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *QueryAuctionsByPairPriceRangeRequest) GetSellDenom() string {
+	if x != nil {
+		return x.SellDenom
+	}
+	return ""
+}
+
+func (x *QueryAuctionsByPairPriceRangeRequest) GetBidDenom() string {
+	if x != nil {
+		return x.BidDenom
+	}
+	return ""
+}
+
+func (x *QueryAuctionsByPairPriceRangeRequest) GetMinPrice() string {
+	if x != nil {
+		return x.MinPrice
+	}
+	return ""
+}
+
+func (x *QueryAuctionsByPairPriceRangeRequest) GetMaxPrice() string {
+	if x != nil {
+		return x.MaxPrice
+	}
+	return ""
+}
+
+func (x *QueryAuctionsByPairPriceRangeRequest) GetPagination() *v1beta1.PageRequest {
 	if x != nil {
 		return x.Pagination
 	}
@@ -10739,231 +17367,462 @@ var file_dysonprotocol_whaleswap_v1_query_proto_rawDesc = []byte{
 	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e,
 	0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70,
 	0x6f, 0x6e, 0x73, 0x65, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e,
-	0x22, 0x2e, 0x0a, 0x11, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x5f, 0x69,
-	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x49, 0x64,
-	0x22, 0x51, 0x0a, 0x12, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3b, 0x0a, 0x05, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x25, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e,
-	0x76, 0x31, 0x2e, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x05, 0x6f, 0x66,
-	0x66, 0x65, 0x72, 0x22, 0xab, 0x01, 0x0a, 0x19, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66,
-	0x65, 0x72, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x12, 0x2e, 0x0a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
-	0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64,
-	0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65,
-	0x72, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67,
-	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e,
+	0x22, 0x56, 0x0a, 0x16, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x42, 0x79, 0x50,
+	0x61, 0x69, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x68, 0x61,
+	0x76, 0x65, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09,
+	0x68, 0x61, 0x76, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x1d, 0x0a, 0x0a, 0x77, 0x61, 0x6e,
+	0x74, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x77,
+	0x61, 0x6e, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x22, 0x78, 0x0a, 0x18, 0x51, 0x75, 0x65, 0x72,
+	0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x42, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61,
+	0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26,
+	0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65,
+	0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x22, 0x42, 0x0a, 0x1d, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x42,
+	0x79, 0x53, 0x68, 0x61, 0x72, 0x65, 0x73, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x21, 0x0a, 0x0c, 0x73, 0x68, 0x61, 0x72, 0x65, 0x73, 0x5f, 0x64, 0x65,
+	0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x73, 0x68, 0x61, 0x72, 0x65,
+	0x73, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x22, 0x83, 0x02, 0x0a, 0x21, 0x51, 0x75, 0x65, 0x72, 0x79,
+	0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x42, 0x79, 0x50, 0x61, 0x69, 0x72, 0x50, 0x72, 0x69, 0x63, 0x65,
+	0x52, 0x61, 0x6e, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a,
+	0x68, 0x61, 0x76, 0x65, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x09, 0x68, 0x61, 0x76, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x1d, 0x0a, 0x0a, 0x77,
+	0x61, 0x6e, 0x74, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x09, 0x77, 0x61, 0x6e, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x2b, 0x0a, 0x09, 0x6d, 0x69,
+	0x6e, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0e, 0xd2,
+	0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x08, 0x6d,
+	0x69, 0x6e, 0x50, 0x72, 0x69, 0x63, 0x65, 0x12, 0x2b, 0x0a, 0x09, 0x6d, 0x61, 0x78, 0x5f, 0x70,
+	0x72, 0x69, 0x63, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0e, 0xd2, 0xb4, 0x2d, 0x0a,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x08, 0x6d, 0x61, 0x78, 0x50,
+	0x72, 0x69, 0x63, 0x65, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
+	0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62,
+	0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x92, 0x01, 0x0a,
+	0x18, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e,
+	0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2e, 0x0a, 0x05, 0x6f, 0x77, 0x6e,
+	0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f,
+	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69,
+	0x6e, 0x67, 0x52, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67,
+	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e,
 	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72,
 	0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x22, 0xa4, 0x01, 0x0a, 0x1a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72,
-	0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x3d, 0x0a, 0x06, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x25, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x66,
-	0x66, 0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x12,
-	0x47, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73,
-	0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e,
-	0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x0a, 0x70, 0x61,
-	0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x9a, 0x01, 0x0a, 0x12, 0x51, 0x75, 0x65,
-	0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
-	0x1d, 0x0a, 0x0a, 0x68, 0x61, 0x76, 0x65, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x09, 0x68, 0x61, 0x76, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x1d,
-	0x0a, 0x0a, 0x77, 0x61, 0x6e, 0x74, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x09, 0x77, 0x61, 0x6e, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x46, 0x0a,
-	0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e,
-	0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61,
-	0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x9d, 0x01, 0x0a, 0x13, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f,
-	0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3d, 0x0a,
-	0x06, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x25, 0x2e,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68,
-	0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x66, 0x66, 0x65, 0x72,
-	0x44, 0x61, 0x74, 0x61, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x12, 0x47, 0x0a, 0x0a,
-	0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x27, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71,
-	0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67,
-	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x7e, 0x0a, 0x19, 0x51, 0x75, 0x65, 0x72, 0x79, 0x54, 0x72,
-	0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x49, 0x64, 0x12, 0x46, 0x0a,
+	0x6e, 0x22, 0x2e, 0x0a, 0x11, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x5f,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x49,
+	0x64, 0x22, 0x51, 0x0a, 0x12, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3b, 0x0a, 0x05, 0x6f, 0x66, 0x66, 0x65, 0x72,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x25, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
+	0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x05, 0x6f,
+	0x66, 0x66, 0x65, 0x72, 0x22, 0xab, 0x01, 0x0a, 0x19, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66,
+	0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x2e, 0x0a, 0x05, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64,
+	0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x05, 0x6f, 0x77, 0x6e,
+	0x65, 0x72, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61,
+	0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26,
+	0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65,
+	0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x22, 0xa4, 0x01, 0x0a, 0x1a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65,
+	0x72, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x3d, 0x0a, 0x06, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x25, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x4f,
+	0x66, 0x66, 0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73,
+	0x12, 0x47, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61,
+	0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31,
+	0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x0a, 0x70,
+	0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x9a, 0x01, 0x0a, 0x12, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x1d, 0x0a, 0x0a, 0x68, 0x61, 0x76, 0x65, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x68, 0x61, 0x76, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12,
+	0x1d, 0x0a, 0x0a, 0x77, 0x61, 0x6e, 0x74, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x09, 0x77, 0x61, 0x6e, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x46,
+	0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65,
+	0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50,
+	0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69,
+	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x9d, 0x01, 0x0a, 0x13, 0x51, 0x75, 0x65, 0x72, 0x79,
+	0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3d,
+	0x0a, 0x06, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x25,
+	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77,
+	0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x66, 0x66, 0x65,
+	0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x12, 0x47, 0x0a,
 	0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e,
+	0x0b, 0x32, 0x27, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e,
 	0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61,
-	0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0xa0, 0x01, 0x0a, 0x1a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x54,
-	0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x39, 0x0a, 0x06, 0x74, 0x72, 0x61, 0x64, 0x65, 0x73, 0x18, 0x01,
-	0x20, 0x03, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76,
-	0x31, 0x2e, 0x54, 0x72, 0x61, 0x64, 0x65, 0x52, 0x06, 0x74, 0x72, 0x61, 0x64, 0x65, 0x73, 0x12,
-	0x47, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73,
+	0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69,
+	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x8d, 0x01, 0x0a, 0x19, 0x51, 0x75, 0x65, 0x72, 0x79,
+	0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x6f,
+	0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x12, 0x46,
+	0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65,
+	0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50,
+	0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69,
+	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x84, 0x02, 0x0a, 0x22, 0x51, 0x75, 0x65, 0x72, 0x79,
+	0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x50, 0x61, 0x69, 0x72, 0x50, 0x72, 0x69, 0x63,
+	0x65, 0x52, 0x61, 0x6e, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a,
+	0x0a, 0x68, 0x61, 0x76, 0x65, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x09, 0x68, 0x61, 0x76, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x1d, 0x0a, 0x0a,
+	0x77, 0x61, 0x6e, 0x74, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x09, 0x77, 0x61, 0x6e, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x2b, 0x0a, 0x09, 0x6d,
+	0x69, 0x6e, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0e,
+	0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x08,
+	0x6d, 0x69, 0x6e, 0x50, 0x72, 0x69, 0x63, 0x65, 0x12, 0x2b, 0x0a, 0x09, 0x6d, 0x61, 0x78, 0x5f,
+	0x70, 0x72, 0x69, 0x63, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0e, 0xd2, 0xb4, 0x2d,
+	0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52, 0x08, 0x6d, 0x61, 0x78,
+	0x50, 0x72, 0x69, 0x63, 0x65, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d,
+	0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31,
+	0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x6c, 0x0a,
+	0x16, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x65, 0x73, 0x74,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x68, 0x61, 0x76, 0x65, 0x5f,
+	0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x68, 0x61, 0x76,
+	0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x1d, 0x0a, 0x0a, 0x77, 0x61, 0x6e, 0x74, 0x5f, 0x64,
+	0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x77, 0x61, 0x6e, 0x74,
+	0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x14, 0x0a, 0x05, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x22, 0x7e, 0x0a, 0x19, 0x51,
+	0x75, 0x65, 0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x4f, 0x66, 0x66, 0x65,
+	0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x66, 0x66, 0x65,
+	0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x6f, 0x66, 0x66, 0x65,
+	0x72, 0x49, 0x64, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
+	0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65,
+	0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52,
+	0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0xa0, 0x01, 0x0a, 0x1a,
+	0x51, 0x75, 0x65, 0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x4f, 0x66, 0x66,
+	0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x39, 0x0a, 0x06, 0x74, 0x72,
+	0x61, 0x64, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65,
+	0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x54, 0x72, 0x61, 0x64, 0x65, 0x52, 0x06, 0x74,
+	0x72, 0x61, 0x64, 0x65, 0x73, 0x12, 0x47, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x63, 0x6f, 0x73, 0x6d,
+	0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31,
+	0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x93,
+	0x01, 0x0a, 0x19, 0x51, 0x75, 0x65, 0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79,
+	0x54, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2e, 0x0a, 0x05,
+	0x74, 0x61, 0x6b, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d,
+	0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53,
+	0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x05, 0x74, 0x61, 0x6b, 0x65, 0x72, 0x12, 0x46, 0x0a, 0x0a,
+	0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71,
+	0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x22, 0xa0, 0x01, 0x0a, 0x1a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x54, 0x72,
+	0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x54, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x39, 0x0a, 0x06, 0x74, 0x72, 0x61, 0x64, 0x65, 0x73, 0x18, 0x01, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31,
+	0x2e, 0x54, 0x72, 0x61, 0x64, 0x65, 0x52, 0x06, 0x74, 0x72, 0x61, 0x64, 0x65, 0x73, 0x12, 0x47,
+	0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x27, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65,
+	0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50,
+	0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x0a, 0x70, 0x61, 0x67,
+	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x34, 0x0a, 0x13, 0x51, 0x75, 0x65, 0x72, 0x79,
+	0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1d,
+	0x0a, 0x0a, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x04, 0x52, 0x09, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x5b, 0x0a,
+	0x14, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x43, 0x0a, 0x07, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x29, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
+	0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x63, 0x6f, 0x72,
+	0x64, 0x52, 0x07, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x9a, 0x01, 0x0a, 0x14, 0x51,
+	0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x65, 0x6c, 0x6c, 0x5f, 0x64, 0x65, 0x6e, 0x6f,
+	0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x65, 0x6c, 0x6c, 0x44, 0x65, 0x6e,
+	0x6f, 0x6d, 0x12, 0x1b, 0x0a, 0x09, 0x62, 0x69, 0x64, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x62, 0x69, 0x64, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12,
+	0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73,
 	0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e,
-	0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x0a, 0x70, 0x61,
-	0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x93, 0x01, 0x0a, 0x19, 0x51, 0x75, 0x65,
-	0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x54, 0x61, 0x6b, 0x65, 0x72, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2e, 0x0a, 0x05, 0x74, 0x61, 0x6b, 0x65, 0x72, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
-	0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52,
-	0x05, 0x74, 0x61, 0x6b, 0x65, 0x72, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73,
-	0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76,
-	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0xa0,
-	0x01, 0x0a, 0x1a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79,
-	0x54, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x39, 0x0a,
-	0x06, 0x74, 0x72, 0x61, 0x64, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x21, 0x2e,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68,
-	0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x54, 0x72, 0x61, 0x64, 0x65,
-	0x52, 0x06, 0x74, 0x72, 0x61, 0x64, 0x65, 0x73, 0x12, 0x47, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69,
+	0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67,
+	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0xa7, 0x01, 0x0a, 0x15, 0x51, 0x75, 0x65, 0x72,
+	0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x45, 0x0a, 0x08, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x01, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x29, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31,
+	0x2e, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x52, 0x08,
+	0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x47, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69,
 	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x63,
 	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79,
 	0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x22, 0x34, 0x0a, 0x13, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x61, 0x75, 0x63, 0x74,
-	0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x61, 0x75,
-	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x5b, 0x0a, 0x14, 0x51, 0x75, 0x65, 0x72, 0x79,
-	0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x43, 0x0a, 0x07, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x29, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75,
-	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x52, 0x07, 0x61, 0x75, 0x63,
-	0x74, 0x69, 0x6f, 0x6e, 0x22, 0x9a, 0x01, 0x0a, 0x14, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75,
-	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a,
-	0x0a, 0x73, 0x65, 0x6c, 0x6c, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x09, 0x73, 0x65, 0x6c, 0x6c, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x1b, 0x0a, 0x09,
-	0x62, 0x69, 0x64, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x08, 0x62, 0x69, 0x64, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67,
-	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e,
+	0x6e, 0x22, 0x98, 0x01, 0x0a, 0x1c, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x73, 0x42, 0x79, 0x53, 0x65, 0x6c, 0x6c, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x30, 0x0a, 0x06, 0x73, 0x65, 0x6c, 0x6c, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41,
+	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x06, 0x73, 0x65,
+	0x6c, 0x6c, 0x65, 0x72, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
+	0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62,
+	0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x4c, 0x0a, 0x18,
+	0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x79, 0x4e, 0x46,
+	0x54, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73,
+	0x73, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x61, 0x73,
+	0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66, 0x74, 0x49, 0x64, 0x22, 0x84, 0x02, 0x0a, 0x24, 0x51,
+	0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x42, 0x79, 0x50, 0x61,
+	0x69, 0x72, 0x50, 0x72, 0x69, 0x63, 0x65, 0x52, 0x61, 0x6e, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x65, 0x6c, 0x6c, 0x5f, 0x64, 0x65, 0x6e, 0x6f,
+	0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x65, 0x6c, 0x6c, 0x44, 0x65, 0x6e,
+	0x6f, 0x6d, 0x12, 0x1b, 0x0a, 0x09, 0x62, 0x69, 0x64, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x62, 0x69, 0x64, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12,
+	0x2b, 0x0a, 0x09, 0x6d, 0x69, 0x6e, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x09, 0x42, 0x0e, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44,
+	0x65, 0x63, 0x52, 0x08, 0x6d, 0x69, 0x6e, 0x50, 0x72, 0x69, 0x63, 0x65, 0x12, 0x2b, 0x0a, 0x09,
+	0x6d, 0x61, 0x78, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x42,
+	0x0e, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x44, 0x65, 0x63, 0x52,
+	0x08, 0x6d, 0x61, 0x78, 0x50, 0x72, 0x69, 0x63, 0x65, 0x12, 0x46, 0x0a, 0x0a, 0x70, 0x61, 0x67,
+	0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x26, 0x2e,
 	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72,
 	0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x22, 0xa7, 0x01, 0x0a, 0x15, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69,
-	0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x45, 0x0a, 0x08, 0x61,
-	0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x29, 0x2e,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68,
-	0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75, 0x63, 0x74, 0x69,
-	0x6f, 0x6e, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x52, 0x08, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0x12, 0x47, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e,
-	0x62, 0x61, 0x73, 0x65, 0x2e, 0x71, 0x75, 0x65, 0x72, 0x79, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74,
-	0x61, 0x31, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x52,
-	0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x32, 0x84, 0x0d, 0x0a, 0x05,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0x95, 0x01, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73,
-	0x12, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75,
-	0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75,
-	0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x2a, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x24, 0x12, 0x22, 0x2f, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73,
-	0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x98, 0x01,
-	0x0a, 0x04, 0x50, 0x6f, 0x6f, 0x6c, 0x12, 0x2c, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6e, 0x32, 0xd1, 0x1c, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0x95, 0x01, 0x0a, 0x06,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
-	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76,
-	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x33, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2d, 0x12, 0x2b, 0x2f, 0x64, 0x79,
-	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c,
-	0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x2f, 0x7b,
-	0x70, 0x6f, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x7d, 0x12, 0x91, 0x01, 0x0a, 0x05, 0x50, 0x6f, 0x6f,
-	0x6c, 0x73, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
+	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2a, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x24, 0x12,
+	0x22, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f,
+	0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x61, 0x72,
+	0x61, 0x6d, 0x73, 0x12, 0x98, 0x01, 0x0a, 0x04, 0x50, 0x6f, 0x6f, 0x6c, 0x12, 0x2c, 0x2e, 0x64,
+	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61,
+	0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50,
+	0x6f, 0x6f, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2d, 0x2e, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65,
+	0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f,
+	0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x33, 0x82, 0xd3, 0xe4, 0x93, 0x02,
+	0x2d, 0x12, 0x2b, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70,
+	0x6f, 0x6f, 0x6c, 0x73, 0x2f, 0x7b, 0x70, 0x6f, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x7d, 0x12, 0x91,
+	0x01, 0x0a, 0x05, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
+	0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61,
+	0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x29, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x23, 0x12,
+	0x21, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f,
+	0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x6f, 0x6f,
+	0x6c, 0x73, 0x12, 0xa2, 0x01, 0x0a, 0x0a, 0x50, 0x6f, 0x6f, 0x6c, 0x42, 0x79, 0x50, 0x61, 0x69,
+	0x72, 0x12, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
 	0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51,
-	0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x29, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x23, 0x12, 0x21, 0x2f, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73,
-	0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x12, 0x9d, 0x01, 0x0a,
-	0x05, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
-	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
+	0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x42, 0x79, 0x50, 0x61, 0x69, 0x72, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e,
-	0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x35, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2f, 0x12, 0x2d, 0x2f,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68,
-	0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x6f, 0x66, 0x66, 0x65, 0x72,
-	0x73, 0x2f, 0x7b, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x7d, 0x12, 0xb8, 0x01, 0x0a,
-	0x0d, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x35,
+	0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x31, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2b, 0x12, 0x29, 0x2f, 0x64,
+	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61,
+	0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x2f,
+	0x62, 0x79, 0x5f, 0x70, 0x61, 0x69, 0x72, 0x12, 0xa8, 0x01, 0x0a, 0x0c, 0x50, 0x6f, 0x6f, 0x6c,
+	0x73, 0x42, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x34, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
+	0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73,
+	0x42, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e,
 	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77,
 	0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72,
-	0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x36, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e,
-	0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x79,
-	0x4f, 0x77, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x38, 0x82,
-	0xd3, 0xe4, 0x93, 0x02, 0x32, 0x12, 0x30, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f,
-	0x76, 0x31, 0x2f, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x2f, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x2f,
-	0x7b, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x7d, 0x12, 0x95, 0x01, 0x0a, 0x06, 0x4f, 0x66, 0x66, 0x65,
-	0x72, 0x73, 0x12, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
-	0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e,
-	0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x2a, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x24, 0x12, 0x22, 0x2f, 0x64, 0x79,
-	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c,
-	0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x12,
-	0xbb, 0x01, 0x0a, 0x0d, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x4f, 0x66, 0x66, 0x65,
-	0x72, 0x12, 0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x32,
+	0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2c, 0x12, 0x2a, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
+	0x2f, 0x76, 0x31, 0x2f, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x2f, 0x62, 0x79, 0x5f, 0x64, 0x65, 0x6e,
+	0x6f, 0x6d, 0x12, 0xb2, 0x01, 0x0a, 0x11, 0x50, 0x6f, 0x6f, 0x6c, 0x42, 0x79, 0x53, 0x68, 0x61,
+	0x72, 0x65, 0x73, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x39, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
+	0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x42,
+	0x79, 0x53, 0x68, 0x61, 0x72, 0x65, 0x73, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31,
+	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x33, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2d, 0x12, 0x2b, 0x2f, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65,
+	0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x2f, 0x62, 0x79,
+	0x5f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x73, 0x12, 0xbf, 0x01, 0x0a, 0x15, 0x50, 0x6f, 0x6f, 0x6c,
+	0x73, 0x42, 0x79, 0x50, 0x61, 0x69, 0x72, 0x50, 0x72, 0x69, 0x63, 0x65, 0x52, 0x61, 0x6e, 0x67,
+	0x65, 0x12, 0x3d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
 	0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51,
-	0x75, 0x65, 0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x4f, 0x66, 0x66, 0x65,
-	0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x36, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x42, 0x79, 0x50, 0x61, 0x69, 0x72, 0x50,
+	0x72, 0x69, 0x63, 0x65, 0x52, 0x61, 0x6e, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x37, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x31, 0x12, 0x2f, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
+	0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x2f, 0x62, 0x79, 0x5f, 0x70,
+	0x61, 0x69, 0x72, 0x5f, 0x70, 0x72, 0x69, 0x63, 0x65, 0x12, 0xad, 0x01, 0x0a, 0x0c, 0x50, 0x6f,
+	0x6f, 0x6c, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x34, 0x2e, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65,
+	0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f,
+	0x6c, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x50, 0x6f, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x37, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x31, 0x12, 0x2f, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
+	0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x2f, 0x6f, 0x77, 0x6e, 0x65,
+	0x72, 0x2f, 0x7b, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x7d, 0x12, 0x9d, 0x01, 0x0a, 0x05, 0x4f, 0x66,
+	0x66, 0x65, 0x72, 0x12, 0x2d, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31,
+	0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
+	0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e,
+	0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x35, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2f, 0x12, 0x2d, 0x2f, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65,
+	0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x2f, 0x7b,
+	0x6f, 0x66, 0x66, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x7d, 0x12, 0xb8, 0x01, 0x0a, 0x0d, 0x4f, 0x66,
+	0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x35, 0x2e, 0x64, 0x79,
+	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c,
+	0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66,
+	0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x36, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
+	0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e,
+	0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x4f, 0x77, 0x6e,
+	0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x38, 0x82, 0xd3, 0xe4, 0x93,
+	0x02, 0x32, 0x12, 0x30, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63,
+	0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f,
+	0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x2f, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x2f, 0x7b, 0x6f, 0x77,
+	0x6e, 0x65, 0x72, 0x7d, 0x12, 0x95, 0x01, 0x0a, 0x06, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x12,
+	0x2e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
+	0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65,
+	0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
+	0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65,
+	0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x2a, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x24, 0x12, 0x22, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
+	0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x12, 0xac, 0x01, 0x0a,
+	0x0d, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x35,
+	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77,
+	0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72,
+	0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e,
+	0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x33, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2d, 0x12, 0x2b,
+	0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77,
+	0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x6f, 0x66, 0x66, 0x65,
+	0x72, 0x73, 0x2f, 0x62, 0x79, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0xc3, 0x01, 0x0a, 0x16,
+	0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x79, 0x50, 0x61, 0x69, 0x72, 0x50, 0x72, 0x69, 0x63,
+	0x65, 0x52, 0x61, 0x6e, 0x67, 0x65, 0x12, 0x3e, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
+	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42,
+	0x79, 0x50, 0x61, 0x69, 0x72, 0x50, 0x72, 0x69, 0x63, 0x65, 0x52, 0x61, 0x6e, 0x67, 0x65, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
+	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x38, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x32, 0x12,
+	0x30, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f,
+	0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x6f, 0x66, 0x66,
+	0x65, 0x72, 0x73, 0x2f, 0x62, 0x79, 0x5f, 0x70, 0x61, 0x69, 0x72, 0x5f, 0x70, 0x72, 0x69, 0x63,
+	0x65, 0x12, 0xa2, 0x01, 0x0a, 0x0a, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x65, 0x73, 0x74,
+	0x12, 0x32, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x42, 0x65, 0x73, 0x74, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76,
+	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2f, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x29, 0x12, 0x27, 0x2f,
+	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68,
+	0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x6f, 0x66, 0x66, 0x65, 0x72,
+	0x73, 0x2f, 0x62, 0x65, 0x73, 0x74, 0x12, 0xbb, 0x01, 0x0a, 0x0d, 0x54, 0x72, 0x61, 0x64, 0x65,
+	0x73, 0x42, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x12, 0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
 	0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65,
-	0x73, 0x42, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x22, 0x3b, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x35, 0x12, 0x33, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
-	0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x74, 0x72, 0x61, 0x64, 0x65, 0x73, 0x2f, 0x6f, 0x66, 0x66,
-	0x65, 0x72, 0x2f, 0x7b, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x7d, 0x12, 0xb8, 0x01,
-	0x0a, 0x0d, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x54, 0x61, 0x6b, 0x65, 0x72, 0x12,
-	0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
+	0x73, 0x42, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x36, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
 	0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65,
-	0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x54, 0x61, 0x6b, 0x65, 0x72, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x36, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x4f, 0x66, 0x66, 0x65, 0x72, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x3b, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x35, 0x12,
+	0x33, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f,
+	0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x74, 0x72, 0x61,
+	0x64, 0x65, 0x73, 0x2f, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x2f, 0x7b, 0x6f, 0x66, 0x66, 0x65, 0x72,
+	0x5f, 0x69, 0x64, 0x7d, 0x12, 0xb8, 0x01, 0x0a, 0x0d, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42,
+	0x79, 0x54, 0x61, 0x6b, 0x65, 0x72, 0x12, 0x35, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
 	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42,
-	0x79, 0x54, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x38,
-	0x82, 0xd3, 0xe4, 0x93, 0x02, 0x32, 0x12, 0x30, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x79, 0x54, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x36, 0x2e,
+	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68,
+	0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79,
+	0x54, 0x72, 0x61, 0x64, 0x65, 0x73, 0x42, 0x79, 0x54, 0x61, 0x6b, 0x65, 0x72, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x38, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x32, 0x12, 0x30, 0x2f,
+	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68,
+	0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x74, 0x72, 0x61, 0x64, 0x65,
+	0x73, 0x2f, 0x74, 0x61, 0x6b, 0x65, 0x72, 0x2f, 0x7b, 0x74, 0x61, 0x6b, 0x65, 0x72, 0x7d, 0x12,
+	0xa7, 0x01, 0x0a, 0x07, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2f, 0x2e, 0x64, 0x79,
+	0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c,
+	0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30, 0x2e, 0x64,
+	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61,
+	0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41,
+	0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x39,
+	0x82, 0xd3, 0xe4, 0x93, 0x02, 0x33, 0x12, 0x31, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
-	0x2f, 0x76, 0x31, 0x2f, 0x74, 0x72, 0x61, 0x64, 0x65, 0x73, 0x2f, 0x74, 0x61, 0x6b, 0x65, 0x72,
-	0x2f, 0x7b, 0x74, 0x61, 0x6b, 0x65, 0x72, 0x7d, 0x12, 0xa7, 0x01, 0x0a, 0x07, 0x41, 0x75, 0x63,
-	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2f, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x2f, 0x76, 0x31, 0x2f, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2f, 0x7b, 0x61, 0x75,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x7d, 0x12, 0x9d, 0x01, 0x0a, 0x08, 0x41, 0x75,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
+	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
+	0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2c, 0x82, 0xd3, 0xe4,
+	0x93, 0x02, 0x26, 0x12, 0x24, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31,
+	0x2f, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0xbd, 0x01, 0x0a, 0x10, 0x41, 0x75,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x42, 0x79, 0x53, 0x65, 0x6c, 0x6c, 0x65, 0x72, 0x12, 0x38,
+	0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77,
+	0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72,
+	0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x42, 0x79, 0x53, 0x65, 0x6c, 0x6c, 0x65,
+	0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77,
+	0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x3c, 0x82, 0xd3, 0xe4,
+	0x93, 0x02, 0x36, 0x12, 0x34, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31,
+	0x2f, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2f, 0x73, 0x65, 0x6c, 0x6c, 0x65, 0x72,
+	0x2f, 0x7b, 0x73, 0x65, 0x6c, 0x6c, 0x65, 0x72, 0x7d, 0x12, 0xab, 0x01, 0x0a, 0x0c, 0x41, 0x75,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x79, 0x4e, 0x46, 0x54, 0x12, 0x34, 0x2e, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65,
+	0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x42, 0x79, 0x4e, 0x46, 0x54, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x33, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x2d, 0x12, 0x2b, 0x2f, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65,
+	0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73,
+	0x2f, 0x62, 0x79, 0x5f, 0x6e, 0x66, 0x74, 0x12, 0xcb, 0x01, 0x0a, 0x18, 0x41, 0x75, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x73, 0x42, 0x79, 0x50, 0x61, 0x69, 0x72, 0x50, 0x72, 0x69, 0x63, 0x65, 0x52,
+	0x61, 0x6e, 0x67, 0x65, 0x12, 0x40, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76,
-	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e,
-	0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x39, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x33, 0x12,
-	0x31, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f,
-	0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x61, 0x75, 0x63,
-	0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2f, 0x7b, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69,
-	0x64, 0x7d, 0x12, 0x9d, 0x01, 0x0a, 0x08, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12,
-	0x30, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e,
-	0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65,
-	0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
-	0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2e, 0x76, 0x31, 0x2e, 0x51,
-	0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2c, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x26, 0x12, 0x24, 0x2f, 0x64,
-	0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x77, 0x68, 0x61,
-	0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0x42, 0x25, 0x5a, 0x23, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73,
-	0x77, 0x61, 0x70, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x42,
+	0x79, 0x50, 0x61, 0x69, 0x72, 0x50, 0x72, 0x69, 0x63, 0x65, 0x52, 0x61, 0x6e, 0x67, 0x65, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x31, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
+	0x2e, 0x76, 0x31, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x3a, 0x82, 0xd3, 0xe4, 0x93, 0x02,
+	0x34, 0x12, 0x32, 0x2f, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f,
+	0x6c, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x76, 0x31, 0x2f, 0x61,
+	0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2f, 0x62, 0x79, 0x5f, 0x70, 0x61, 0x69, 0x72, 0x5f,
+	0x70, 0x72, 0x69, 0x63, 0x65, 0x42, 0x25, 0x5a, 0x23, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x77, 0x68, 0x61,
+	0x6c, 0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -10978,84 +17837,124 @@ func file_dysonprotocol_whaleswap_v1_query_proto_rawDescGZIP() []byte {
 	return file_dysonprotocol_whaleswap_v1_query_proto_rawDescData
 }
 
-var file_dysonprotocol_whaleswap_v1_query_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_dysonprotocol_whaleswap_v1_query_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_dysonprotocol_whaleswap_v1_query_proto_goTypes = []interface{}{
-	(*QueryParamsRequest)(nil),         // 0: dysonprotocol.whaleswap.v1.QueryParamsRequest
-	(*QueryParamsResponse)(nil),        // 1: dysonprotocol.whaleswap.v1.QueryParamsResponse
-	(*QueryPoolRequest)(nil),           // 2: dysonprotocol.whaleswap.v1.QueryPoolRequest
-	(*QueryPoolResponse)(nil),          // 3: dysonprotocol.whaleswap.v1.QueryPoolResponse
-	(*QueryPoolsRequest)(nil),          // 4: dysonprotocol.whaleswap.v1.QueryPoolsRequest
-	(*QueryPoolsResponse)(nil),         // 5: dysonprotocol.whaleswap.v1.QueryPoolsResponse
-	(*QueryOfferRequest)(nil),          // 6: dysonprotocol.whaleswap.v1.QueryOfferRequest
-	(*QueryOfferResponse)(nil),         // 7: dysonprotocol.whaleswap.v1.QueryOfferResponse
-	(*QueryOffersByOwnerRequest)(nil),  // 8: dysonprotocol.whaleswap.v1.QueryOffersByOwnerRequest
-	(*QueryOffersByOwnerResponse)(nil), // 9: dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse
-	(*QueryOffersRequest)(nil),         // 10: dysonprotocol.whaleswap.v1.QueryOffersRequest
-	(*QueryOffersResponse)(nil),        // 11: dysonprotocol.whaleswap.v1.QueryOffersResponse
-	(*QueryTradesByOfferRequest)(nil),  // 12: dysonprotocol.whaleswap.v1.QueryTradesByOfferRequest
-	(*QueryTradesByOfferResponse)(nil), // 13: dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse
-	(*QueryTradesByTakerRequest)(nil),  // 14: dysonprotocol.whaleswap.v1.QueryTradesByTakerRequest
-	(*QueryTradesByTakerResponse)(nil), // 15: dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse
-	(*QueryAuctionRequest)(nil),        // 16: dysonprotocol.whaleswap.v1.QueryAuctionRequest
-	(*QueryAuctionResponse)(nil),       // 17: dysonprotocol.whaleswap.v1.QueryAuctionResponse
-	(*QueryAuctionsRequest)(nil),       // 18: dysonprotocol.whaleswap.v1.QueryAuctionsRequest
-	(*QueryAuctionsResponse)(nil),      // 19: dysonprotocol.whaleswap.v1.QueryAuctionsResponse
-	(*Params)(nil),                     // 20: dysonprotocol.whaleswap.v1.Params
-	(*Pool)(nil),                       // 21: dysonprotocol.whaleswap.v1.Pool
-	(*v1beta1.PageRequest)(nil),        // 22: cosmos.base.query.v1beta1.PageRequest
-	(*v1beta1.PageResponse)(nil),       // 23: cosmos.base.query.v1beta1.PageResponse
-	(*OfferData)(nil),                  // 24: dysonprotocol.whaleswap.v1.OfferData
-	(*Trade)(nil),                      // 25: dysonprotocol.whaleswap.v1.Trade
-	(*AuctionRecord)(nil),              // 26: dysonprotocol.whaleswap.v1.AuctionRecord
+	(*QueryParamsRequest)(nil),                   // 0: dysonprotocol.whaleswap.v1.QueryParamsRequest
+	(*QueryParamsResponse)(nil),                  // 1: dysonprotocol.whaleswap.v1.QueryParamsResponse
+	(*QueryPoolRequest)(nil),                     // 2: dysonprotocol.whaleswap.v1.QueryPoolRequest
+	(*QueryPoolResponse)(nil),                    // 3: dysonprotocol.whaleswap.v1.QueryPoolResponse
+	(*QueryPoolsRequest)(nil),                    // 4: dysonprotocol.whaleswap.v1.QueryPoolsRequest
+	(*QueryPoolsResponse)(nil),                   // 5: dysonprotocol.whaleswap.v1.QueryPoolsResponse
+	(*QueryPoolByPairRequest)(nil),               // 6: dysonprotocol.whaleswap.v1.QueryPoolByPairRequest
+	(*QueryPoolsByDenomRequest)(nil),             // 7: dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest
+	(*QueryPoolBySharesDenomRequest)(nil),        // 8: dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest
+	(*QueryPoolsByPairPriceRangeRequest)(nil),    // 9: dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest
+	(*QueryPoolsByOwnerRequest)(nil),             // 10: dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest
+	(*QueryOfferRequest)(nil),                    // 11: dysonprotocol.whaleswap.v1.QueryOfferRequest
+	(*QueryOfferResponse)(nil),                   // 12: dysonprotocol.whaleswap.v1.QueryOfferResponse
+	(*QueryOffersByOwnerRequest)(nil),            // 13: dysonprotocol.whaleswap.v1.QueryOffersByOwnerRequest
+	(*QueryOffersByOwnerResponse)(nil),           // 14: dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse
+	(*QueryOffersRequest)(nil),                   // 15: dysonprotocol.whaleswap.v1.QueryOffersRequest
+	(*QueryOffersResponse)(nil),                  // 16: dysonprotocol.whaleswap.v1.QueryOffersResponse
+	(*QueryOffersByDenomRequest)(nil),            // 17: dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest
+	(*QueryOffersByPairPriceRangeRequest)(nil),   // 18: dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest
+	(*QueryOffersBestRequest)(nil),               // 19: dysonprotocol.whaleswap.v1.QueryOffersBestRequest
+	(*QueryTradesByOfferRequest)(nil),            // 20: dysonprotocol.whaleswap.v1.QueryTradesByOfferRequest
+	(*QueryTradesByOfferResponse)(nil),           // 21: dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse
+	(*QueryTradesByTakerRequest)(nil),            // 22: dysonprotocol.whaleswap.v1.QueryTradesByTakerRequest
+	(*QueryTradesByTakerResponse)(nil),           // 23: dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse
+	(*QueryAuctionRequest)(nil),                  // 24: dysonprotocol.whaleswap.v1.QueryAuctionRequest
+	(*QueryAuctionResponse)(nil),                 // 25: dysonprotocol.whaleswap.v1.QueryAuctionResponse
+	(*QueryAuctionsRequest)(nil),                 // 26: dysonprotocol.whaleswap.v1.QueryAuctionsRequest
+	(*QueryAuctionsResponse)(nil),                // 27: dysonprotocol.whaleswap.v1.QueryAuctionsResponse
+	(*QueryAuctionsBySellerRequest)(nil),         // 28: dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest
+	(*QueryAuctionByNFTRequest)(nil),             // 29: dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest
+	(*QueryAuctionsByPairPriceRangeRequest)(nil), // 30: dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest
+	(*Params)(nil),                               // 31: dysonprotocol.whaleswap.v1.Params
+	(*Pool)(nil),                                 // 32: dysonprotocol.whaleswap.v1.Pool
+	(*v1beta1.PageRequest)(nil),                  // 33: cosmos.base.query.v1beta1.PageRequest
+	(*v1beta1.PageResponse)(nil),                 // 34: cosmos.base.query.v1beta1.PageResponse
+	(*OfferData)(nil),                            // 35: dysonprotocol.whaleswap.v1.OfferData
+	(*Trade)(nil),                                // 36: dysonprotocol.whaleswap.v1.Trade
+	(*AuctionRecord)(nil),                        // 37: dysonprotocol.whaleswap.v1.AuctionRecord
 }
 var file_dysonprotocol_whaleswap_v1_query_proto_depIdxs = []int32{
-	20, // 0: dysonprotocol.whaleswap.v1.QueryParamsResponse.params:type_name -> dysonprotocol.whaleswap.v1.Params
-	21, // 1: dysonprotocol.whaleswap.v1.QueryPoolResponse.pool:type_name -> dysonprotocol.whaleswap.v1.Pool
-	22, // 2: dysonprotocol.whaleswap.v1.QueryPoolsRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
-	21, // 3: dysonprotocol.whaleswap.v1.QueryPoolsResponse.pools:type_name -> dysonprotocol.whaleswap.v1.Pool
-	23, // 4: dysonprotocol.whaleswap.v1.QueryPoolsResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
-	24, // 5: dysonprotocol.whaleswap.v1.QueryOfferResponse.offer:type_name -> dysonprotocol.whaleswap.v1.OfferData
-	22, // 6: dysonprotocol.whaleswap.v1.QueryOffersByOwnerRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
-	24, // 7: dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse.offers:type_name -> dysonprotocol.whaleswap.v1.OfferData
-	23, // 8: dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
-	22, // 9: dysonprotocol.whaleswap.v1.QueryOffersRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
-	24, // 10: dysonprotocol.whaleswap.v1.QueryOffersResponse.offers:type_name -> dysonprotocol.whaleswap.v1.OfferData
-	23, // 11: dysonprotocol.whaleswap.v1.QueryOffersResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
-	22, // 12: dysonprotocol.whaleswap.v1.QueryTradesByOfferRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
-	25, // 13: dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse.trades:type_name -> dysonprotocol.whaleswap.v1.Trade
-	23, // 14: dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
-	22, // 15: dysonprotocol.whaleswap.v1.QueryTradesByTakerRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
-	25, // 16: dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse.trades:type_name -> dysonprotocol.whaleswap.v1.Trade
-	23, // 17: dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
-	26, // 18: dysonprotocol.whaleswap.v1.QueryAuctionResponse.auction:type_name -> dysonprotocol.whaleswap.v1.AuctionRecord
-	22, // 19: dysonprotocol.whaleswap.v1.QueryAuctionsRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
-	26, // 20: dysonprotocol.whaleswap.v1.QueryAuctionsResponse.auctions:type_name -> dysonprotocol.whaleswap.v1.AuctionRecord
-	23, // 21: dysonprotocol.whaleswap.v1.QueryAuctionsResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
-	0,  // 22: dysonprotocol.whaleswap.v1.Query.Params:input_type -> dysonprotocol.whaleswap.v1.QueryParamsRequest
-	2,  // 23: dysonprotocol.whaleswap.v1.Query.Pool:input_type -> dysonprotocol.whaleswap.v1.QueryPoolRequest
-	4,  // 24: dysonprotocol.whaleswap.v1.Query.Pools:input_type -> dysonprotocol.whaleswap.v1.QueryPoolsRequest
-	6,  // 25: dysonprotocol.whaleswap.v1.Query.Offer:input_type -> dysonprotocol.whaleswap.v1.QueryOfferRequest
-	8,  // 26: dysonprotocol.whaleswap.v1.Query.OffersByOwner:input_type -> dysonprotocol.whaleswap.v1.QueryOffersByOwnerRequest
-	10, // 27: dysonprotocol.whaleswap.v1.Query.Offers:input_type -> dysonprotocol.whaleswap.v1.QueryOffersRequest
-	12, // 28: dysonprotocol.whaleswap.v1.Query.TradesByOffer:input_type -> dysonprotocol.whaleswap.v1.QueryTradesByOfferRequest
-	14, // 29: dysonprotocol.whaleswap.v1.Query.TradesByTaker:input_type -> dysonprotocol.whaleswap.v1.QueryTradesByTakerRequest
-	16, // 30: dysonprotocol.whaleswap.v1.Query.Auction:input_type -> dysonprotocol.whaleswap.v1.QueryAuctionRequest
-	18, // 31: dysonprotocol.whaleswap.v1.Query.Auctions:input_type -> dysonprotocol.whaleswap.v1.QueryAuctionsRequest
-	1,  // 32: dysonprotocol.whaleswap.v1.Query.Params:output_type -> dysonprotocol.whaleswap.v1.QueryParamsResponse
-	3,  // 33: dysonprotocol.whaleswap.v1.Query.Pool:output_type -> dysonprotocol.whaleswap.v1.QueryPoolResponse
-	5,  // 34: dysonprotocol.whaleswap.v1.Query.Pools:output_type -> dysonprotocol.whaleswap.v1.QueryPoolsResponse
-	7,  // 35: dysonprotocol.whaleswap.v1.Query.Offer:output_type -> dysonprotocol.whaleswap.v1.QueryOfferResponse
-	9,  // 36: dysonprotocol.whaleswap.v1.Query.OffersByOwner:output_type -> dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse
-	11, // 37: dysonprotocol.whaleswap.v1.Query.Offers:output_type -> dysonprotocol.whaleswap.v1.QueryOffersResponse
-	13, // 38: dysonprotocol.whaleswap.v1.Query.TradesByOffer:output_type -> dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse
-	15, // 39: dysonprotocol.whaleswap.v1.Query.TradesByTaker:output_type -> dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse
-	17, // 40: dysonprotocol.whaleswap.v1.Query.Auction:output_type -> dysonprotocol.whaleswap.v1.QueryAuctionResponse
-	19, // 41: dysonprotocol.whaleswap.v1.Query.Auctions:output_type -> dysonprotocol.whaleswap.v1.QueryAuctionsResponse
-	32, // [32:42] is the sub-list for method output_type
-	22, // [22:32] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	31, // 0: dysonprotocol.whaleswap.v1.QueryParamsResponse.params:type_name -> dysonprotocol.whaleswap.v1.Params
+	32, // 1: dysonprotocol.whaleswap.v1.QueryPoolResponse.pool:type_name -> dysonprotocol.whaleswap.v1.Pool
+	33, // 2: dysonprotocol.whaleswap.v1.QueryPoolsRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	32, // 3: dysonprotocol.whaleswap.v1.QueryPoolsResponse.pools:type_name -> dysonprotocol.whaleswap.v1.Pool
+	34, // 4: dysonprotocol.whaleswap.v1.QueryPoolsResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
+	33, // 5: dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	33, // 6: dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	33, // 7: dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	35, // 8: dysonprotocol.whaleswap.v1.QueryOfferResponse.offer:type_name -> dysonprotocol.whaleswap.v1.OfferData
+	33, // 9: dysonprotocol.whaleswap.v1.QueryOffersByOwnerRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	35, // 10: dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse.offers:type_name -> dysonprotocol.whaleswap.v1.OfferData
+	34, // 11: dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
+	33, // 12: dysonprotocol.whaleswap.v1.QueryOffersRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	35, // 13: dysonprotocol.whaleswap.v1.QueryOffersResponse.offers:type_name -> dysonprotocol.whaleswap.v1.OfferData
+	34, // 14: dysonprotocol.whaleswap.v1.QueryOffersResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
+	33, // 15: dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	33, // 16: dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	33, // 17: dysonprotocol.whaleswap.v1.QueryTradesByOfferRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	36, // 18: dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse.trades:type_name -> dysonprotocol.whaleswap.v1.Trade
+	34, // 19: dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
+	33, // 20: dysonprotocol.whaleswap.v1.QueryTradesByTakerRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	36, // 21: dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse.trades:type_name -> dysonprotocol.whaleswap.v1.Trade
+	34, // 22: dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
+	37, // 23: dysonprotocol.whaleswap.v1.QueryAuctionResponse.auction:type_name -> dysonprotocol.whaleswap.v1.AuctionRecord
+	33, // 24: dysonprotocol.whaleswap.v1.QueryAuctionsRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	37, // 25: dysonprotocol.whaleswap.v1.QueryAuctionsResponse.auctions:type_name -> dysonprotocol.whaleswap.v1.AuctionRecord
+	34, // 26: dysonprotocol.whaleswap.v1.QueryAuctionsResponse.pagination:type_name -> cosmos.base.query.v1beta1.PageResponse
+	33, // 27: dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	33, // 28: dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest.pagination:type_name -> cosmos.base.query.v1beta1.PageRequest
+	0,  // 29: dysonprotocol.whaleswap.v1.Query.Params:input_type -> dysonprotocol.whaleswap.v1.QueryParamsRequest
+	2,  // 30: dysonprotocol.whaleswap.v1.Query.Pool:input_type -> dysonprotocol.whaleswap.v1.QueryPoolRequest
+	4,  // 31: dysonprotocol.whaleswap.v1.Query.Pools:input_type -> dysonprotocol.whaleswap.v1.QueryPoolsRequest
+	6,  // 32: dysonprotocol.whaleswap.v1.Query.PoolByPair:input_type -> dysonprotocol.whaleswap.v1.QueryPoolByPairRequest
+	7,  // 33: dysonprotocol.whaleswap.v1.Query.PoolsByDenom:input_type -> dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest
+	8,  // 34: dysonprotocol.whaleswap.v1.Query.PoolBySharesDenom:input_type -> dysonprotocol.whaleswap.v1.QueryPoolBySharesDenomRequest
+	9,  // 35: dysonprotocol.whaleswap.v1.Query.PoolsByPairPriceRange:input_type -> dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest
+	10, // 36: dysonprotocol.whaleswap.v1.Query.PoolsByOwner:input_type -> dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest
+	11, // 37: dysonprotocol.whaleswap.v1.Query.Offer:input_type -> dysonprotocol.whaleswap.v1.QueryOfferRequest
+	13, // 38: dysonprotocol.whaleswap.v1.Query.OffersByOwner:input_type -> dysonprotocol.whaleswap.v1.QueryOffersByOwnerRequest
+	15, // 39: dysonprotocol.whaleswap.v1.Query.Offers:input_type -> dysonprotocol.whaleswap.v1.QueryOffersRequest
+	17, // 40: dysonprotocol.whaleswap.v1.Query.OffersByDenom:input_type -> dysonprotocol.whaleswap.v1.QueryOffersByDenomRequest
+	18, // 41: dysonprotocol.whaleswap.v1.Query.OffersByPairPriceRange:input_type -> dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest
+	19, // 42: dysonprotocol.whaleswap.v1.Query.OffersBest:input_type -> dysonprotocol.whaleswap.v1.QueryOffersBestRequest
+	20, // 43: dysonprotocol.whaleswap.v1.Query.TradesByOffer:input_type -> dysonprotocol.whaleswap.v1.QueryTradesByOfferRequest
+	22, // 44: dysonprotocol.whaleswap.v1.Query.TradesByTaker:input_type -> dysonprotocol.whaleswap.v1.QueryTradesByTakerRequest
+	24, // 45: dysonprotocol.whaleswap.v1.Query.Auction:input_type -> dysonprotocol.whaleswap.v1.QueryAuctionRequest
+	26, // 46: dysonprotocol.whaleswap.v1.Query.Auctions:input_type -> dysonprotocol.whaleswap.v1.QueryAuctionsRequest
+	28, // 47: dysonprotocol.whaleswap.v1.Query.AuctionsBySeller:input_type -> dysonprotocol.whaleswap.v1.QueryAuctionsBySellerRequest
+	29, // 48: dysonprotocol.whaleswap.v1.Query.AuctionByNFT:input_type -> dysonprotocol.whaleswap.v1.QueryAuctionByNFTRequest
+	30, // 49: dysonprotocol.whaleswap.v1.Query.AuctionsByPairPriceRange:input_type -> dysonprotocol.whaleswap.v1.QueryAuctionsByPairPriceRangeRequest
+	1,  // 50: dysonprotocol.whaleswap.v1.Query.Params:output_type -> dysonprotocol.whaleswap.v1.QueryParamsResponse
+	3,  // 51: dysonprotocol.whaleswap.v1.Query.Pool:output_type -> dysonprotocol.whaleswap.v1.QueryPoolResponse
+	5,  // 52: dysonprotocol.whaleswap.v1.Query.Pools:output_type -> dysonprotocol.whaleswap.v1.QueryPoolsResponse
+	3,  // 53: dysonprotocol.whaleswap.v1.Query.PoolByPair:output_type -> dysonprotocol.whaleswap.v1.QueryPoolResponse
+	5,  // 54: dysonprotocol.whaleswap.v1.Query.PoolsByDenom:output_type -> dysonprotocol.whaleswap.v1.QueryPoolsResponse
+	3,  // 55: dysonprotocol.whaleswap.v1.Query.PoolBySharesDenom:output_type -> dysonprotocol.whaleswap.v1.QueryPoolResponse
+	5,  // 56: dysonprotocol.whaleswap.v1.Query.PoolsByPairPriceRange:output_type -> dysonprotocol.whaleswap.v1.QueryPoolsResponse
+	5,  // 57: dysonprotocol.whaleswap.v1.Query.PoolsByOwner:output_type -> dysonprotocol.whaleswap.v1.QueryPoolsResponse
+	12, // 58: dysonprotocol.whaleswap.v1.Query.Offer:output_type -> dysonprotocol.whaleswap.v1.QueryOfferResponse
+	14, // 59: dysonprotocol.whaleswap.v1.Query.OffersByOwner:output_type -> dysonprotocol.whaleswap.v1.QueryOffersByOwnerResponse
+	16, // 60: dysonprotocol.whaleswap.v1.Query.Offers:output_type -> dysonprotocol.whaleswap.v1.QueryOffersResponse
+	16, // 61: dysonprotocol.whaleswap.v1.Query.OffersByDenom:output_type -> dysonprotocol.whaleswap.v1.QueryOffersResponse
+	16, // 62: dysonprotocol.whaleswap.v1.Query.OffersByPairPriceRange:output_type -> dysonprotocol.whaleswap.v1.QueryOffersResponse
+	16, // 63: dysonprotocol.whaleswap.v1.Query.OffersBest:output_type -> dysonprotocol.whaleswap.v1.QueryOffersResponse
+	21, // 64: dysonprotocol.whaleswap.v1.Query.TradesByOffer:output_type -> dysonprotocol.whaleswap.v1.QueryTradesByOfferResponse
+	23, // 65: dysonprotocol.whaleswap.v1.Query.TradesByTaker:output_type -> dysonprotocol.whaleswap.v1.QueryTradesByTakerResponse
+	25, // 66: dysonprotocol.whaleswap.v1.Query.Auction:output_type -> dysonprotocol.whaleswap.v1.QueryAuctionResponse
+	27, // 67: dysonprotocol.whaleswap.v1.Query.Auctions:output_type -> dysonprotocol.whaleswap.v1.QueryAuctionsResponse
+	27, // 68: dysonprotocol.whaleswap.v1.Query.AuctionsBySeller:output_type -> dysonprotocol.whaleswap.v1.QueryAuctionsResponse
+	25, // 69: dysonprotocol.whaleswap.v1.Query.AuctionByNFT:output_type -> dysonprotocol.whaleswap.v1.QueryAuctionResponse
+	27, // 70: dysonprotocol.whaleswap.v1.Query.AuctionsByPairPriceRange:output_type -> dysonprotocol.whaleswap.v1.QueryAuctionsResponse
+	50, // [50:71] is the sub-list for method output_type
+	29, // [29:50] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_dysonprotocol_whaleswap_v1_query_proto_init() }
@@ -11139,7 +18038,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryOfferRequest); i {
+			switch v := v.(*QueryPoolByPairRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11151,7 +18050,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryOfferResponse); i {
+			switch v := v.(*QueryPoolsByDenomRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11163,7 +18062,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryOffersByOwnerRequest); i {
+			switch v := v.(*QueryPoolBySharesDenomRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11175,7 +18074,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryOffersByOwnerResponse); i {
+			switch v := v.(*QueryPoolsByPairPriceRangeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11187,7 +18086,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryOffersRequest); i {
+			switch v := v.(*QueryPoolsByOwnerRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11199,7 +18098,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryOffersResponse); i {
+			switch v := v.(*QueryOfferRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11211,7 +18110,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryTradesByOfferRequest); i {
+			switch v := v.(*QueryOfferResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11223,7 +18122,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryTradesByOfferResponse); i {
+			switch v := v.(*QueryOffersByOwnerRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11235,7 +18134,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryTradesByTakerRequest); i {
+			switch v := v.(*QueryOffersByOwnerResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11247,7 +18146,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryTradesByTakerResponse); i {
+			switch v := v.(*QueryOffersRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11259,7 +18158,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryAuctionRequest); i {
+			switch v := v.(*QueryOffersResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11271,7 +18170,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryAuctionResponse); i {
+			switch v := v.(*QueryOffersByDenomRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11283,7 +18182,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*QueryAuctionsRequest); i {
+			switch v := v.(*QueryOffersByPairPriceRangeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11295,7 +18194,139 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			}
 		}
 		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryOffersBestRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryTradesByOfferRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryTradesByOfferResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryTradesByTakerRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryTradesByTakerResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryAuctionRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryAuctionResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryAuctionsRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*QueryAuctionsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryAuctionsBySellerRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryAuctionByNFTRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_whaleswap_v1_query_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryAuctionsByPairPriceRangeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -11313,7 +18344,7 @@ func file_dysonprotocol_whaleswap_v1_query_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dysonprotocol_whaleswap_v1_query_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   20,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

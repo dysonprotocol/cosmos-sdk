@@ -20,7 +20,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Msg Open Auction",
-                "description": "Open an auction by escrowing exactly one solid denom amount."
+                "description": "Open an auction by escrowing exactly one solid denom amount. - The escrowed `sell` coin is transferred from seller to module and marked by   an NFT for redemption logic. `bid_denom` defines the quote asset."
             },
             "cosmos.base.v1beta1.Coin": {
                 "properties": {

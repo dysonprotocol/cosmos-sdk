@@ -22,7 +22,7 @@ func (k Keeper) OffersByOwner(ctx context.Context, req *whaleswapv1.QueryOffersB
 	}
 	// If status provided, validate it and use owner+status index; else fall back to filtered scan
 	if owner != "" && status != "" {
-		if status != "open" && status != "closed" && status != "cancelled" {
+		if status != whaleswapv1.OfferStatusOpen && status != whaleswapv1.OfferStatusClosed && status != whaleswapv1.OfferStatusCancelled {
 			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid status: %s", status)
 		}
 		results, pageRes, err := query.CollectionPaginate(

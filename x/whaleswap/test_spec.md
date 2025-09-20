@@ -1,5 +1,12 @@
 ## Whaleswap test plan (CLI, Swagger API, Dyslang)
 
+### Migration delta (scripts → module)
+
+- Tests must stop attaching MsgSend for fees; module minting to itself skips nameservice fees in wrapping/LP flows.
+- Use single-pool `swap --pool-id` everywhere; multi-hop = multiple msgs.
+- Liquid denom shape is `whaleswap.dys/coins/<solid>`; update string asserts accordingly.
+- Module account owns `whaleswap.dys` root; tests can assert authority by querying nameservice owner to be the module address.
+
 ### Scope
 
 - Validate x/whaleswap end-to-end for three feature areas:
@@ -360,7 +367,7 @@ def open_auc(seller, bid_denom, sell_denom, sell_amt):
 - `tests/whaleswap/auction/test_auction_script.py`
 
 ### Run examples
-- CLI-focused single test: make test PYTEST_ARGS="tests/whaleswap/amm/test_amm_cli.py::test_pool_swap_v2_single_pool --ff --nf -x -s"
+- CLI-focused single test: make test PYTEST_ARGS="tests/whaleswap/amm/test_amm_cli.py::test_pool_swap_v2_single_pool"
 - Full AMM suite: make test PYTEST_ARGS="tests/whaleswap/amm -x -s"
 - Auction smoke: make test PYTEST_ARGS="tests/whaleswap/auction/test_auction_cli.py -x -s"
 

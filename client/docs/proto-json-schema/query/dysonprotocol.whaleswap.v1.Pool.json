@@ -105,7 +105,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Pool",
-                "description": "Pool describes AMM pool state. Notes: - coin_a.denom < coin_b.denom lexicographically (canonical order) - fee_pct is a decimal string in [0,1) - min_price/max_price are optional decimal strings defining a price band over   P = coin_b.amount/coin_a.amount. If unset (or effectively [0, +\u221e)) the pool   behaves as constant-product (v2). If set, concentrated-liquidity math   applies. - coin_a.amount/coin_b.amount are sdk.Int strings."
+                "description": "Pool describes AMM pool state. Notes: - coin_a.denom < coin_b.denom lexicographically (canonical order) - fee_pct is a decimal string in [0,1) - min_price/max_price are optional decimal strings defining a price band over   P = coin_b.amount/coin_a.amount. If unset (or effectively [0, +\u221e)) the pool   behaves as constant-product (v2). If set, concentrated-liquidity math   applies. - coin_a.amount/coin_b.amount are sdk.Int strings. - The instantaneous price used by price-based queries is derived from   reserves as P = coin_b / coin_a, consistent with the notes above."
             }
         }
     }

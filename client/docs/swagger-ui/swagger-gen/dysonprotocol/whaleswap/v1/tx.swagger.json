@@ -485,7 +485,7 @@
           "format": "uint64"
         }
       },
-      "description": "Cancel an offer (maker or eligible third-party for liquid offers)."
+      "description": "Cancel an offer (maker or eligible third-party for liquid offers).\n\n- Maker may always cancel open offers.\n- For liquid-have offers, a third party is eligible if the maker's balance of\n  the liquid have denom drops below one unit_have, enabling recovery via\n  PFAND."
     },
     "dysonprotocol.whaleswap.v1.MsgCancelOfferResponse": {
       "type": "object"
@@ -545,18 +545,19 @@
         "creator": {
           "type": "string"
         },
-        "coin_a": {
-          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
-        },
-        "coin_b": {
-          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        "coins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          },
+          "description": "Two initial reserves as coins; order will be canonicalized internally (by\ndenom lexicographic order)."
         },
         "min_price": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
           },
-          "description": "Optional price band expressed as ratios coin2/coin1 using two coins.\nEach must either be empty (unset) or contain exactly two coins whose\ndenoms match coin_a and coin_b."
+          "description": "Optional price band expressed as ratios coin2/coin1 using two coins.\nEach must either be empty (unset) or contain exactly two coins whose\ndenoms match the two pool reserve denoms."
         },
         "max_price": {
           "type": "array",
@@ -568,7 +569,7 @@
           "type": "string"
         }
       },
-      "description": "Create a pool. If min/max price are unset (or represent [0,+\u221e)), pool behaves\nas v2 (constant product)."
+      "description": "Create a pool.\n\nBehavior:\n- If min_price/max_price are both unset (or effectively encode [0, +\u221e)), the\n  pool behaves as constant product (v2).\n- If a finite band is provided, concentrated-liquidity math applies within\n  [min_price, max_price] where price is coin_b / coin_a (see conventions)."
     },
     "dysonprotocol.whaleswap.v1.MsgCreatePoolResponse": {
       "type": "object",
@@ -592,7 +593,7 @@
           "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
         }
       },
-      "description": "Make an orderbook offer."
+      "description": "Make an orderbook offer.\n\nConstraints and semantics:\n- have and want must be different denoms and strictly positive.\n- want denom must be a solid denom; liquid want is disallowed.\n- If have denom is liquid, the transaction locks PFAND per module params.\n- The keeper computes GCD(have.amount, want.amount) to establish integral\n  units for partial fills: unit_have = have/gcd, unit_want = want/gcd.\n- RemainingUnits starts at gcd and decreases as fills occur."
     },
     "dysonprotocol.whaleswap.v1.MsgMakeOfferResponse": {
       "type": "object",
@@ -617,7 +618,7 @@
           "description": "Explicit solid sell coin to escrow from seller \u2192 module."
         }
       },
-      "description": "Open an auction by escrowing exactly one solid denom amount."
+      "description": "Open an auction by escrowing exactly one solid denom amount.\n\n- The escrowed `sell` coin is transferred from seller to module and marked by\n  an NFT for redemption logic. `bid_denom` defines the quote asset."
     },
     "dysonprotocol.whaleswap.v1.MsgOpenAuctionResponse": {
       "type": "object",
@@ -649,7 +650,7 @@
           "type": "string"
         }
       },
-      "description": "Single-pool swap."
+      "description": "Single-pool swap.\n\n- `input` denom must be one of the pool reserves; `out_denom` must be the\n  other.\n- `minimum_out_amount` is an sdk.Int string; the swap fails if the computed\n  output is less than this value after fees."
     },
     "dysonprotocol.whaleswap.v1.MsgPoolSwapResponse": {
       "type": "object",
@@ -717,7 +718,7 @@
           }
         }
       },
-      "description": "Take one or more offers (batch)."
+      "description": "Take one or more offers (batch).\n\n- Each TakeItem specifies an offer and optional take_units (sdk.Int string).\n  If unset, the action attempts to fully fill the remaining units.\n- The taker must provide payment in base want; any remainder may be provided\n  via liquid want, which is burned on receipt. The module then pays base have\n  (or base of liquid have) to the taker."
     },
     "dysonprotocol.whaleswap.v1.MsgTakeOfferResponse": {
       "type": "object",
@@ -769,7 +770,7 @@
           }
         }
       },
-      "description": "Update pool config (owner-only: majority of shares > 50%)."
+      "description": "Update pool config (owner-only: majority of shares > 50%).\n\nNotes:\n- Empty string/empty arrays indicate no change for that field.\n- Price bands follow the same two-coin ratio rules as in MsgCreatePool."
     },
     "dysonprotocol.whaleswap.v1.MsgUpdatePoolConfigResponse": {
       "type": "object"

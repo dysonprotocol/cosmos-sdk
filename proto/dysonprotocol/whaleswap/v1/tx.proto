@@ -11,6 +11,30 @@ import "dysonprotocol/whaleswap/v1/params.proto";
 
 option go_package = "dysonprotocol.com/x/whaleswap/types";
 
+//
+// Conventions used across whaleswap messages:
+//
+// - Denom pair canonicalization: Internally, any denom pair is ordered
+//   lexicographically as pairKey = min(denom1, denom2) | max(denom1, denom2).
+//   Callers may provide denoms in any order; the keeper normalizes.
+//
+// - Price orientation: Unless otherwise stated, price is expressed as
+//   want-per-have in the high-per-low orientation relative to the canonical
+//   pair: P = (amount of high denom) / (amount of low denom). This choice makes
+//   lexicographic ordering of fixed-precision decimal strings align with
+//   numeric ordering for indexes and range scans.
+//
+// - Decimal fields: cosmos.Dec are encoded as strings; callers MUST provide
+//   syntactically valid decimal strings, and the keeper validates ranges.
+//
+// - Coins arrays in price bands: When used to express a ratio, the field must
+//   be either empty (unset) or contain exactly two coins whose denoms match the
+//   pool's reserve denoms, representing coin_b / coin_a.
+//
+// - Liquid denoms: The module uses a liquid wrapper L(denom) to represent
+//   tokenized credit balances. Some operations disallow liquid denoms on
+//   certain sides (e.g., offers.want).
+//
 // Msg defines the whaleswap Msg service.
 service Msg {
   option (cosmos.msg.v1.service) = true;
@@ -40,35 +64,48 @@ service Msg {
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 }
 
-// Create a pool. If min/max price are unset (or represent [0,+∞)), pool behaves
-// as v2 (constant product).
+// Create a pool.
+//
+// Behavior:
+// - If min_price/max_price are both unset (or effectively encode [0, +∞)), the
+//   pool behaves as constant product (v2).
+// - If a finite band is provided, concentrated-liquidity math applies within
+//   [min_price, max_price] where price is coin_b / coin_a (see conventions).
 message MsgCreatePool {
   option (cosmos.msg.v1.signer) = "creator";
   string creator = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
-  cosmos.base.v1beta1.Coin coin_a = 2
-      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-  cosmos.base.v1beta1.Coin coin_b = 3
-      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
+  // Two initial reserves as coins; order will be canonicalized internally (by
+  // denom lexicographic order).
+  repeated cosmos.base.v1beta1.Coin coins = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins"
+  ];
   // Optional price band expressed as ratios coin2/coin1 using two coins.
   // Each must either be empty (unset) or contain exactly two coins whose
-  // denoms match coin_a and coin_b.
-  repeated cosmos.base.v1beta1.Coin min_price = 4 [
+  // denoms match the two pool reserve denoms.
+  repeated cosmos.base.v1beta1.Coin min_price = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (amino.dont_omitempty) = true,
     (amino.encoding) = "legacy_coins"
   ];
-  repeated cosmos.base.v1beta1.Coin max_price = 5 [
+  repeated cosmos.base.v1beta1.Coin max_price = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (amino.dont_omitempty) = true,
     (amino.encoding) = "legacy_coins"
   ];
-  string fee_pct = 6; // cosmos.Dec string in [0,1)
+  string fee_pct = 5; // cosmos.Dec string in [0,1)
 }
 message MsgCreatePoolResponse { uint64 pool_id = 1; }
 
 // Update pool config (owner-only: majority of shares > 50%).
+//
+// Notes:
+// - Empty string/empty arrays indicate no change for that field.
+// - Price bands follow the same two-coin ratio rules as in MsgCreatePool.
 message MsgUpdatePoolConfig {
   option (cosmos.msg.v1.signer) = "signer";
   string signer = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
@@ -125,6 +162,11 @@ message MsgRemoveLiquidityResponse {
 }
 
 // Single-pool swap.
+//
+// - `input` denom must be one of the pool reserves; `out_denom` must be the
+//   other.
+// - `minimum_out_amount` is an sdk.Int string; the swap fails if the computed
+//   output is less than this value after fees.
 message MsgPoolSwap {
   option (cosmos.msg.v1.signer) = "trader";
   string trader = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
@@ -163,6 +205,14 @@ message MsgConvertToSolidResponse {
 }
 
 // Make an orderbook offer.
+//
+// Constraints and semantics:
+// - have and want must be different denoms and strictly positive.
+// - want denom must be a solid denom; liquid want is disallowed.
+// - If have denom is liquid, the transaction locks PFAND per module params.
+// - The keeper computes GCD(have.amount, want.amount) to establish integral
+//   units for partial fills: unit_have = have/gcd, unit_want = want/gcd.
+// - RemainingUnits starts at gcd and decreases as fills occur.
 message MsgMakeOffer {
   option (cosmos.msg.v1.signer) = "maker";
   string maker = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
@@ -172,6 +222,12 @@ message MsgMakeOffer {
 message MsgMakeOfferResponse { uint64 offer_id = 1; }
 
 // Take one or more offers (batch).
+//
+// - Each TakeItem specifies an offer and optional take_units (sdk.Int string).
+//   If unset, the action attempts to fully fill the remaining units.
+// - The taker must provide payment in base want; any remainder may be provided
+//   via liquid want, which is burned on receipt. The module then pays base have
+//   (or base of liquid have) to the taker.
 message MsgTakeOffer {
   option (cosmos.msg.v1.signer) = "taker";
   string taker = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
@@ -185,6 +241,11 @@ message TakeItem {
 message MsgTakeOfferResponse { bool ok = 1; }
 
 // Cancel an offer (maker or eligible third-party for liquid offers).
+//
+// - Maker may always cancel open offers.
+// - For liquid-have offers, a third party is eligible if the maker's balance of
+//   the liquid have denom drops below one unit_have, enabling recovery via
+//   PFAND.
 message MsgCancelOffer {
   option (cosmos.msg.v1.signer) = "closer";
   string closer = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
@@ -193,6 +254,9 @@ message MsgCancelOffer {
 message MsgCancelOfferResponse {}
 
 // Open an auction by escrowing exactly one solid denom amount.
+//
+// - The escrowed `sell` coin is transferred from seller to module and marked by
+//   an NFT for redemption logic. `bid_denom` defines the quote asset.
 message MsgOpenAuction {
   option (cosmos.msg.v1.signer) = "seller";
   string seller = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];

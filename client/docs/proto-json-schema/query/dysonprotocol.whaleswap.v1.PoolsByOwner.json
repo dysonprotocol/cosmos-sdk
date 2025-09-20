@@ -1,10 +1,13 @@
 {
     "request": {
         "$schema": "http://json-schema.org/draft-04/schema#",
-        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsRequest",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest",
         "definitions": {
-            "dysonprotocol.whaleswap.v1.QueryPoolsRequest": {
+            "dysonprotocol.whaleswap.v1.QueryPoolsByOwnerRequest": {
                 "properties": {
+                    "owner": {
+                        "type": "string"
+                    },
                     "pagination": {
                         "$ref": "#/definitions/cosmos.base.query.v1beta1.PageRequest",
                         "additionalProperties": false
@@ -12,7 +15,8 @@
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Query Pools Request"
+                "title": "Query Pools By Owner Request",
+                "description": "QueryPoolsByOwnerRequest returns pools where the owner holds non-zero shares."
             },
             "cosmos.base.query.v1beta1.PageRequest": {
                 "properties": {

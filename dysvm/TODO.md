@@ -112,7 +112,7 @@
 ### Testing notes
 - Existing tests under `tests/script/` should pass unchanged.
 - Command to run a focused subset:
-  - `make test PYTEST_ARGS="tests/script/test_script.py --ff --nf -x -s"`
+  - `make test PYTEST_ARGS="tests/script/test_script.py"`
 
 ### Open questions
 - Packaging: confirm `uvicorn` + deps availability in the embedded Python environment.

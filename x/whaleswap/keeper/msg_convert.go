@@ -30,11 +30,11 @@ func (k Keeper) ConvertToLiquid(ctx context.Context, msg *whaleswapv1.MsgConvert
 	if err := k.bank.SendCoinsFromAccountToModule(ctx, caller, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(msg.Denom, amt))); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to escrow solid %s from %s", sdk.NewCoin(msg.Denom, amt).String(), msg.Caller)
 	}
-	liquidDenom := liquidPrefix + msg.Denom
+	liquidDenom := whaleswapv1.LiquidDenom(msg.Denom)
 	mintMsg := &nameservicev1.MsgMintCoins{
 		NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
 		Amount:          sdk.NewCoins(sdk.NewCoin(liquidDenom, amt)),
-		MintFee:         sdk.NewCoin("udys", math.NewInt(0)),
+		MintFee:         sdk.NewCoin(whaleswapv1.MintFeeDenom, math.NewInt(0)),
 	}
 	if _, err := k.nameSvc.MintCoins(ctx, mintMsg); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to mint liquid %s", sdk.NewCoin(liquidDenom, amt).String())

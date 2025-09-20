@@ -15,9 +15,12 @@ import (
 )
 
 func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) (*whaleswapv1.MsgCreatePoolResponse, error) {
-	// Canonical denom ordering (coin1 < coin2 lexicographically)
-	coinA := msg.CoinA
-	coinB := msg.CoinB
+	// Expect exactly two coins; canonical denom ordering (coin1 < coin2 lexicographically)
+	if len(msg.Coins) != 2 {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "coins must contain exactly 2 entries, got %d", len(msg.Coins))
+	}
+	coinA := sdk.Coin{Denom: msg.Coins[0].Denom, Amount: msg.Coins[0].Amount}
+	coinB := sdk.Coin{Denom: msg.Coins[1].Denom, Amount: msg.Coins[1].Amount}
 	if strings.Compare(coinA.Denom, coinB.Denom) > 0 {
 		coinA, coinB = coinB, coinA
 	}
@@ -43,11 +46,11 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 	}
 
 	if len(minBand) == 2 && len(maxBand) == 2 {
-		// Ensure max >= min
+		// Ensure strict band width: max > min
 		minRatio := math.LegacyNewDecFromInt(minBand.AmountOf(coinB.Denom)).Quo(math.LegacyNewDecFromInt(minBand.AmountOf(coinA.Denom)))
 		maxRatio := math.LegacyNewDecFromInt(maxBand.AmountOf(coinB.Denom)).Quo(math.LegacyNewDecFromInt(maxBand.AmountOf(coinA.Denom)))
-		if maxRatio.LT(minRatio) {
-			return nil, fmt.Errorf("max_price must be >= min_price")
+		if !maxRatio.GT(minRatio) {
+			return nil, fmt.Errorf("max_price must be > min_price")
 		}
 	} else if len(minBand) != 0 || len(maxBand) != 0 {
 		return nil, fmt.Errorf("min_price [%s] and max_price [%s] must be both set or both unset", minBand.String(), maxBand.String())
@@ -69,7 +72,7 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 	if err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to allocate new pool id")
 	}
-	sharesDenom := fmt.Sprintf("whaleswap.dys/pools/%d", id)
+	sharesDenom := whaleswapv1.PoolSharesDenom(id)
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	// Enforce initial price within band if band is set
@@ -135,7 +138,7 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 	mintMsg := &nameservicev1.MsgMintCoins{
 		NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
 		Amount:          sdk.NewCoins(sdk.NewCoin(sharesDenom, initialShares)),
-		MintFee:         sdk.NewCoin("udys", math.NewInt(0)),
+		MintFee:         sdk.NewCoin(whaleswapv1.MintFeeDenom, math.NewInt(0)),
 	}
 	if _, err := k.nameSvc.MintCoins(ctx, mintMsg); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "mint shares failed")

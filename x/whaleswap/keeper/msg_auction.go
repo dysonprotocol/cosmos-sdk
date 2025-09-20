@@ -22,6 +22,11 @@ func (k Keeper) OpenAuction(ctx context.Context, msg *whaleswapv1.MsgOpenAuction
 	}
 	seller := sdk.AccAddress(sellerBz)
 
+	// Ensure whaleswap root name is present and resolves to module before class ops
+	if err := k.ensureWhaleswapRootName(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed ensuring whaleswap.dys root before open auction")
+	}
+
 	// Validate sell coin (explicit in msg): solid denom, amount > 0, denom != bid_denom
 	if !msg.Sell.Amount.IsPositive() {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sell amount must be > 0")
@@ -48,13 +53,13 @@ func (k Keeper) OpenAuction(ctx context.Context, msg *whaleswapv1.MsgOpenAuction
 	}
 
 	// Prepare class id based on bid denom (one class per bid denom)
-	classID := fmt.Sprintf("whaleswap.dys/auction/%s", msg.BidDenom)
+	classID := whaleswapv1.AuctionClassID(msg.BidDenom)
 	// Upsert class basic info
 	if _, err := k.nameSvc.SaveClass(ctx, &nameservicev1.MsgSaveClass{
 		NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
 		ClassId:         classID,
-		Name:            "Whaleswap Auction",
-		Symbol:          "WSA",
+		Name:            whaleswapv1.AuctionClassName,
+		Symbol:          whaleswapv1.AuctionClassSymbol,
 		Description:     "Auction class for escrowed solid coins",
 	}); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to save class")

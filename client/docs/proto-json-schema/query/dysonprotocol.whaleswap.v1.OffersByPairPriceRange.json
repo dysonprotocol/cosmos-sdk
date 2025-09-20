@@ -1,10 +1,22 @@
 {
     "request": {
         "$schema": "http://json-schema.org/draft-04/schema#",
-        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsRequest",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest",
         "definitions": {
-            "dysonprotocol.whaleswap.v1.QueryPoolsRequest": {
+            "dysonprotocol.whaleswap.v1.QueryOffersByPairPriceRangeRequest": {
                 "properties": {
+                    "have_denom": {
+                        "type": "string"
+                    },
+                    "want_denom": {
+                        "type": "string"
+                    },
+                    "min_price": {
+                        "type": "string"
+                    },
+                    "max_price": {
+                        "type": "string"
+                    },
                     "pagination": {
                         "$ref": "#/definitions/cosmos.base.query.v1beta1.PageRequest",
                         "additionalProperties": false
@@ -12,7 +24,8 @@
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Query Pools Request"
+                "title": "Query Offers By Pair Price Range Request",
+                "description": "QueryOffersByPairPriceRangeRequest filters offers for a pair by price range. Prices are expressed as want-per-have (high-per-low orientation) cosmos.Dec strings."
             },
             "cosmos.base.query.v1beta1.PageRequest": {
                 "properties": {
@@ -48,13 +61,13 @@
     },
     "response": {
         "$schema": "http://json-schema.org/draft-04/schema#",
-        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsResponse",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryOffersResponse",
         "definitions": {
-            "dysonprotocol.whaleswap.v1.QueryPoolsResponse": {
+            "dysonprotocol.whaleswap.v1.QueryOffersResponse": {
                 "properties": {
-                    "pools": {
+                    "offers": {
                         "items": {
-                            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Pool"
+                            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.OfferData"
                         },
                         "additionalProperties": false,
                         "type": "array"
@@ -66,7 +79,7 @@
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Query Pools Response"
+                "title": "Query Offers Response"
             },
             "cosmos.base.query.v1beta1.PageResponse": {
                 "properties": {
@@ -100,68 +113,63 @@
                 "title": "Coin",
                 "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
             },
-            "dysonprotocol.whaleswap.v1.Pool": {
+            "dysonprotocol.whaleswap.v1.OfferData": {
                 "properties": {
-                    "pool_id": {
+                    "offer_id": {
                         "type": "string"
                     },
-                    "coin_a": {
-                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
-                        "additionalProperties": false
-                    },
-                    "coin_b": {
-                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
-                        "additionalProperties": false
-                    },
-                    "shares_denom": {
-                        "type": "string"
-                    },
-                    "fee_pct": {
+                    "status": {
                         "type": "string",
-                        "description": "fee_pct is the pool swap fee percentage (cosmos.Dec string in [0,1))."
+                        "description": "\"open\" | \"closed\" | \"cancelled\""
                     },
-                    "min_price": {
-                        "items": {
-                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
-                        },
-                        "additionalProperties": false,
-                        "type": "array",
-                        "description": "min_price/max_price optionally set a price band for concentrated liquidity. Each is expressed as exactly two coins representing the ratio coin_b/coin_a. For example, [{amount: 1, denom: coin_a}, {amount: 2, denom: coin_b}] means min P = 2/1 of coin2 per coin1. Empty means unset."
-                    },
-                    "max_price": {
-                        "items": {
-                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
-                        },
-                        "additionalProperties": false,
-                        "type": "array"
-                    },
-                    "block_height": {
+                    "maker": {
                         "type": "string"
                     },
-                    "created": {
+                    "updated_height": {
+                        "type": "string"
+                    },
+                    "updated_timestamp": {
                         "type": "string",
                         "format": "date-time"
                     },
-                    "updated": {
+                    "initial_have": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "initial_want": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "remaining_have": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "remaining_want": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "unit_have_int": {
                         "type": "string",
-                        "format": "date-time"
+                        "description": "sdk.Int string"
                     },
-                    "num_trades": {
-                        "type": "string"
+                    "unit_want_int": {
+                        "type": "string",
+                        "description": "sdk.Int string"
                     },
-                    "fees_earned": {
-                        "items": {
-                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
-                        },
+                    "remaining_units": {
+                        "type": "string",
+                        "description": "sdk.Int string"
+                    },
+                    "pfand_locked": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
                         "additionalProperties": false,
-                        "type": "array",
-                        "description": "cumulative swap fees retained by the pool (accrue to LPs)"
+                        "description": "pfand_locked is the PFAND coin locked for liquid-mode offers."
                     }
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Pool",
-                "description": "Pool describes AMM pool state. Notes: - coin_a.denom < coin_b.denom lexicographically (canonical order) - fee_pct is a decimal string in [0,1) - min_price/max_price are optional decimal strings defining a price band over   P = coin_b.amount/coin_a.amount. If unset (or effectively [0, +\u221e)) the pool   behaves as constant-product (v2). If set, concentrated-liquidity math   applies. - coin_a.amount/coin_b.amount are sdk.Int strings. - The instantaneous price used by price-based queries is derived from   reserves as P = coin_b / coin_a, consistent with the notes above."
+                "title": "Offer Data",
+                "description": "OfferData mirrors orderbook offer state. Status values: \"open\" | \"closed\" | \"cancelled\"."
             }
         }
     }

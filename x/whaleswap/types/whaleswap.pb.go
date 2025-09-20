@@ -40,6 +40,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 //     behaves as constant-product (v2). If set, concentrated-liquidity math
 //     applies.
 //   - coin_a.amount/coin_b.amount are sdk.Int strings.
+//   - The instantaneous price used by price-based queries is derived from
+//     reserves as P = coin_b / coin_a, consistent with the notes above.
 type Pool struct {
 	PoolId      uint64     `protobuf:"varint,1,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
 	CoinA       types.Coin `protobuf:"bytes,2,opt,name=coin_a,json=coinA,proto3" json:"coin_a"`
@@ -323,6 +325,9 @@ func (m *OfferData) GetPfandLocked() types.Coin {
 }
 
 // Trade captures a single fill of an offer.
+//
+//   - `sent` is the coin paid by the taker (want-denom), and `received` is the
+//     coin delivered by the module (have-denom or base of liquid-have).
 type Trade struct {
 	TradeId   uint64     `protobuf:"varint,1,opt,name=trade_id,json=tradeId,proto3" json:"trade_id,omitempty"`
 	OfferId   uint64     `protobuf:"varint,2,opt,name=offer_id,json=offerId,proto3" json:"offer_id,omitempty"`

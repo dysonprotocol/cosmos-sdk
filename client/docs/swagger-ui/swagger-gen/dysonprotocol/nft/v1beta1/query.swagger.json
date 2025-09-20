@@ -402,7 +402,7 @@
           "title": "data is the app specific metadata of the NFT class. Optional"
         }
       },
-      "description": "Class defines the class of the nft type."
+      "description": "Class defines the class of the nft type.\n\nWhaleswap notes:\n- Auction escrows may be represented by NFTs whose (class_id, id) pair is\n  referenced by auction records. Query endpoints such as AuctionByNFT use\n  this identity to locate the escrow state."
     },
     "dysonprotocol.nft.v1beta1.NFT": {
       "type": "object",
@@ -428,7 +428,7 @@
           "title": "data is an app specific data of the NFT. Optional"
         }
       },
-      "description": "NFT defines the NFT."
+      "description": "NFT defines the NFT.\n\n- When used with whaleswap auctions, the (class_id, id) uniquely identifies\n  the escrow marker that controls redemption of the locked sell coin."
     },
     "dysonprotocol.nft.v1beta1.QueryBalanceResponse": {
       "type": "object",

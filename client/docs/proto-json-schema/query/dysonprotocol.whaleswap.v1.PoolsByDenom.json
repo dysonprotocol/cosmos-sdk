@@ -1,10 +1,14 @@
 {
     "request": {
         "$schema": "http://json-schema.org/draft-04/schema#",
-        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsRequest",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest",
         "definitions": {
-            "dysonprotocol.whaleswap.v1.QueryPoolsRequest": {
+            "dysonprotocol.whaleswap.v1.QueryPoolsByDenomRequest": {
                 "properties": {
+                    "denom": {
+                        "type": "string",
+                        "description": "any pool where coin_a==denom or coin_b==denom"
+                    },
                     "pagination": {
                         "$ref": "#/definitions/cosmos.base.query.v1beta1.PageRequest",
                         "additionalProperties": false
@@ -12,7 +16,8 @@
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Query Pools Request"
+                "title": "Query Pools By Denom Request",
+                "description": "QueryPoolsByDenomRequest lists pools containing the provided denom on either side."
             },
             "cosmos.base.query.v1beta1.PageRequest": {
                 "properties": {

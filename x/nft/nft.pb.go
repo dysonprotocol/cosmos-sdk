@@ -24,6 +24,11 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Class defines the class of the nft type.
+//
+// Whaleswap notes:
+//   - Auction escrows may be represented by NFTs whose (class_id, id) pair is
+//     referenced by auction records. Query endpoints such as AuctionByNFT use
+//     this identity to locate the escrow state.
 type Class struct {
 	// id defines the unique identifier of the NFT classification, similar to the
 	// contract address of ERC721
@@ -126,6 +131,9 @@ func (m *Class) GetData() *any.Any {
 }
 
 // NFT defines the NFT.
+//
+//   - When used with whaleswap auctions, the (class_id, id) uniquely identifies
+//     the escrow marker that controls redemption of the locked sell coin.
 type NFT struct {
 	// class_id associated with the NFT, similar to the contract address of ERC721
 	ClassId string `protobuf:"bytes,1,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`

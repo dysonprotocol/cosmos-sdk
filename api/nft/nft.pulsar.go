@@ -1537,6 +1537,11 @@ const (
 )
 
 // Class defines the class of the nft type.
+//
+// Whaleswap notes:
+//   - Auction escrows may be represented by NFTs whose (class_id, id) pair is
+//     referenced by auction records. Query endpoints such as AuctionByNFT use
+//     this identity to locate the escrow state.
 type Class struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1630,6 +1635,9 @@ func (x *Class) GetData() *anypb.Any {
 }
 
 // NFT defines the NFT.
+//
+//   - When used with whaleswap auctions, the (class_id, id) uniquely identifies
+//     the escrow marker that controls redemption of the locked sell coin.
 type NFT struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

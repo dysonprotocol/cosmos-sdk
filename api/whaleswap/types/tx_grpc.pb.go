@@ -38,6 +38,29 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
+// Conventions used across whaleswap messages:
+//
+//   - Denom pair canonicalization: Internally, any denom pair is ordered
+//     lexicographically as pairKey = min(denom1, denom2) | max(denom1, denom2).
+//     Callers may provide denoms in any order; the keeper normalizes.
+//
+//   - Price orientation: Unless otherwise stated, price is expressed as
+//     want-per-have in the high-per-low orientation relative to the canonical
+//     pair: P = (amount of high denom) / (amount of low denom). This choice makes
+//     lexicographic ordering of fixed-precision decimal strings align with
+//     numeric ordering for indexes and range scans.
+//
+//   - Decimal fields: cosmos.Dec are encoded as strings; callers MUST provide
+//     syntactically valid decimal strings, and the keeper validates ranges.
+//
+//   - Coins arrays in price bands: When used to express a ratio, the field must
+//     be either empty (unset) or contain exactly two coins whose denoms match the
+//     pool's reserve denoms, representing coin_b / coin_a.
+//
+//   - Liquid denoms: The module uses a liquid wrapper L(denom) to represent
+//     tokenized credit balances. Some operations disallow liquid denoms on
+//     certain sides (e.g., offers.want).
+//
 // Msg defines the whaleswap Msg service.
 type MsgClient interface {
 	// AMM
@@ -201,6 +224,29 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts 
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility.
+//
+// Conventions used across whaleswap messages:
+//
+//   - Denom pair canonicalization: Internally, any denom pair is ordered
+//     lexicographically as pairKey = min(denom1, denom2) | max(denom1, denom2).
+//     Callers may provide denoms in any order; the keeper normalizes.
+//
+//   - Price orientation: Unless otherwise stated, price is expressed as
+//     want-per-have in the high-per-low orientation relative to the canonical
+//     pair: P = (amount of high denom) / (amount of low denom). This choice makes
+//     lexicographic ordering of fixed-precision decimal strings align with
+//     numeric ordering for indexes and range scans.
+//
+//   - Decimal fields: cosmos.Dec are encoded as strings; callers MUST provide
+//     syntactically valid decimal strings, and the keeper validates ranges.
+//
+//   - Coins arrays in price bands: When used to express a ratio, the field must
+//     be either empty (unset) or contain exactly two coins whose denoms match the
+//     pool's reserve denoms, representing coin_b / coin_a.
+//
+//   - Liquid denoms: The module uses a liquid wrapper L(denom) to represent
+//     tokenized credit balances. Some operations disallow liquid denoms on
+//     certain sides (e.g., offers.want).
 //
 // Msg defines the whaleswap Msg service.
 type MsgServer interface {

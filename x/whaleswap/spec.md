@@ -8,6 +8,14 @@
 
 Non-goals (initial cut): on-chain scripting hooks, cross-chain.
 
+### Migration delta (scripts → module)
+
+- No attachments: module handlers move funds via bank keeper. Script-style attached MsgSend is not used.
+- Mint fee semantics: nameservice skips fees when destination is the module account; module mints to itself then forwards. Direct user mints (if any) still owe fees.
+- Liquid denom format: `whaleswap.dys/coins/<solid>` (no base64). Shares: `whaleswap.dys/pools/{pool_id}`.
+- Single-pool swaps only. Multi-hop is achieved by multiple messages in one tx.
+- Authority: module account must control `whaleswap.dys` root for mint/burn/class ops.
+
 
 ### 2. External dependencies and authorities
 
@@ -97,7 +105,9 @@ Pool creation
   - Caller becomes owner.
   - Canonicalize: coin1_denom < coin2_denom; reorder amounts accordingly.
   - Move both coin amounts caller → module; initialize reserves.
-  - total_shares = initial_shares (e.g., 100000) minted to owner; shares denom `whaleswap.dys/pools/{pool_id}`.
+  - total_shares = initial_shares minted to owner; shares denom `whaleswap.dys/pools/{pool_id}`.
+    - v2 (no band): initial_shares = floor(sqrt(R1*R2)).
+    - v3 (band set): initial_shares = floor(L) from liquidity within [sa,sb].
   - Validate 0 ≤ fee_pct < 1 and 0 ≤ min_price ≤ max_price; initial P within [min,max].
 
 Owner adds/removes liquidity (only owner)
@@ -457,7 +467,7 @@ Here’s what remains to implement to meet the spec.
 - CLI/REST
   - tx and query commands mirroring msgs/queries (like other modules). Files: `x/whaleswap/module/module.go` and client cmd scaffolding.
 - Tests
-  - Port `tests/whaleswap/*` to module txs/queries; add e2e for AMM bands, orderbook liquid paths, auctions, conversions. Use `make test PYTEST_ARGS=" --ff --nf -x -s"` as usual.
+  - Port `tests/whaleswap/*` to module txs/queries; add e2e for AMM bands, orderbook liquid paths, auctions, conversions. Use `make test PYTEST_ARGS=" ... "` as usual.
 - Docs
   - Update `x/whaleswap/spec.md` and README with finalized behaviors and parameters.
 
@@ -940,7 +950,7 @@ All changes lint clean.
     - Redeem by current owner; fail if non-owner; fail if current_bidder set.
     - Escrow deficit simulated (state tweak) → redeem fails with clear error.
     - Reverse index presence and cleanup on redeem.
-  - Files: `tests/whaleswap/test_auction.py` (expand), run with `make test PYTEST_ARGS="tests/whaleswap/test_auction.py --ff --nf -x -s"`.
+  - Files: `tests/whaleswap/test_auction.py` (expand), run with `make test PYTEST_ARGS="tests/whaleswap/test_auction.py`.
 
 - Docs/spec
   - Update `x/whaleswap/spec.md`:

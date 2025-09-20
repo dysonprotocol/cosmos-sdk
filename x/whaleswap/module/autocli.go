@@ -108,39 +108,51 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
 					RpcMethod: "CreatePool",
-					Use:       "create-pool --coin-a=<amountdenom> --coin-b=<amountdenom> [--fee-pct=<dec>] [--min-price=<coins>] [--max-price=<coins>]",
+					Use:       "create-pool --coins <coin> --coins <coin> [--fee-pct=<dec>] [--min-price <coin>] [--min-price <coin>] [--max-price <coin>] [--max-price <coin>]",
 					Short:     "Create a new AMM pool",
-					Long:      "Create a new AMM pool. If no price band is set, the pool behaves as constant product (v2). If a band is set, concentrated liquidity (v3) math is used.",
-					Example: "dysond tx whaleswap create-pool --coin-a=1000udys --coin-b=500ufoo --fee-pct=0.003\n" +
-						"dysond tx whaleswap create-pool --coin-a=1000udys --coin-b=500ufoo --min-price=1udys,2ufoo --max-price=1udys,3ufoo",
+					Long: "Create a new AMM pool. If no price band is set, the pool behaves as constant product (v2). If a band is set, concentrated liquidity (v3) math is used.\n\n" +
+						"Initial reserves are provided via repeated --coins flags (exactly two), one coin per flag. Order doesn't matter; the module canonicalizes by denom.\n" +
+						"Price band flags (--min-price/--max-price) each represent a ratio coin_b/coin_a at the band edge and must be provided as TWO separate flags, one coin per flag (no commas, no space-separated pairs).\n" +
+						"Example with reserves udys/ufoo: --min-price 1udys --min-price 2ufoo encodes Pmin = 2 ufoo per 1 udys.\n" +
+						"Similarly: --max-price 1udys --max-price 3ufoo encodes Pmax = 3 ufoo per 1 udys.\n" +
+						"Note: zero-width bands are rejected (max must be strictly greater than min).",
+					Example: "dysond tx whaleswap create-pool --coins 1000udys --coins 500ufoo --fee-pct=0.003\n" +
+						"dysond tx whaleswap create-pool --coins 1000udys --coins 500ufoo --min-price 1udys --min-price 2ufoo --max-price 1udys --max-price 3ufoo",
 				},
 				{
 					RpcMethod: "UpdatePoolConfig",
-					Use:       "update-pool-config --pool-id=<id> [--fee-pct=<dec>] [--min-price=<coins>] [--max-price=<coins>]",
+					Use:       "update-pool-config --pool-id=<id> [--fee-pct=<dec>] [--min-price <coin>] [--min-price <coin>] [--max-price <coin>] [--max-price <coin>]",
 					Short:     "Update pool fee or price band",
-					Long:      "Update an existing pool's fee percent and/or price band. Only the majority owner (>50% shares) may update.",
-					Example:   "dysond tx whaleswap update-pool-config --pool-id=1 --fee-pct=0.0025",
+					Long: "Update an existing pool's fee percent and/or price band. Only the majority owner (>50% shares) may update.\n\n" +
+						"When setting bands, repeat the flag and provide one coin per flag to encode coin_b/coin_a at the edge. Example: --min-price 1udys --min-price 2ufoo.",
+					Example: "dysond tx whaleswap update-pool-config --pool-id=1 --fee-pct=0.0025 --min-price 1udys --min-price 2ufoo --max-price 1udys --max-price 3ufoo",
 				},
 				{
 					RpcMethod: "AddLiquidity",
 					Use:       "add-liquidity --pool-id=<id> --amount1=<amountdenom> --amount2=<amountdenom>",
 					Short:     "Add liquidity to a pool (owner-only)",
-					Long:      "Provide both coins to add liquidity to the pool. Excess is refunded to maintain the pool ratio.",
-					Example:   "dysond tx whaleswap add-liquidity --pool-id=1 --amount1=1000udys --amount2=600ufoo",
+					Long: "Provide both coins to add liquidity to the pool.\n\n" +
+						"v2 (no band): the pool refunds excess to preserve the current R2/R1 ratio; shares minted are min(pro_rata_by_coin1, pro_rata_by_coin2).\n" +
+						"v3 (band set): liquidity math uses sqrt-price band [Pmin,Pmax]; only the side that contributes to ΔL is consumed, the other is refunded.",
+					Example: "dysond tx whaleswap add-liquidity --pool-id=1 --amount1=1000udys --amount2=600ufoo",
 				},
 				{
 					RpcMethod: "RemoveLiquidity",
 					Use:       "remove-liquidity --pool-id=<id> --shares=<amount>",
 					Short:     "Remove liquidity and burn shares",
-					Long:      "Burn the specified number of shares and receive the underlying coins proportionally (v2) or using band-aware math (v3).",
-					Example:   "dysond tx whaleswap remove-liquidity --pool-id=1 --shares=100",
+					Long: "Burn the specified number of shares and receive the underlying coins proportionally (v2) or using band-aware math (v3).\n\n" +
+						"Partial exits must keep both reserves positive; a full exit (burning all shares) pays out all reserves and deletes the pool.",
+					Example: "dysond tx whaleswap remove-liquidity --pool-id=1 --shares=100",
 				},
 				{
 					RpcMethod: "PoolSwap",
 					Use:       "swap --pool-id=<id> --input=<amountdenom> --minimum-out-amount=<amount> --out-denom=<denom>",
 					Short:     "Swap against a single pool",
-					Long:      "Execute a single-pool swap. To route across multiple pools, include multiple swap messages in the same tx or call the module multiple times from a script.",
-					Example:   "dysond tx whaleswap swap --pool-id=1 --input=100udys --minimum-out-amount=90 --out-denom=ufoo",
+					Long: "Execute a single-pool swap.\n\n" +
+						"Fees: the pool accrues swap fees to FeesEarned (LPs).\n" +
+						"v3 (band set) uses sqrt-price integration within [Pmin,Pmax]; out is truncated to integers; post-swap price must remain within the band.\n" +
+						"To route across multiple pools, include multiple swap messages in the same tx or call the module multiple times from a script.",
+					Example: "dysond tx whaleswap swap --pool-id=1 --input=100udys --minimum-out-amount=90 --out-denom=ufoo",
 				},
 				{
 					RpcMethod: "ConvertToLiquid",

@@ -20,7 +20,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Msg Make Offer",
-                "description": "Make an orderbook offer."
+                "description": "Make an orderbook offer. Constraints and semantics: - have and want must be different denoms and strictly positive. - want denom must be a solid denom; liquid want is disallowed. - If have denom is liquid, the transaction locks PFAND per module params. - The keeper computes GCD(have.amount, want.amount) to establish integral   units for partial fills: unit_have = have/gcd, unit_want = want/gcd. - RemainingUnits starts at gcd and decreases as fills occur."
             },
             "cosmos.base.v1beta1.Coin": {
                 "properties": {

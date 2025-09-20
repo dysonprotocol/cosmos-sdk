@@ -133,7 +133,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Trade",
-                "description": "Trade captures a single fill of an offer."
+                "description": "Trade captures a single fill of an offer. - `sent` is the coin paid by the taker (want-denom), and `received` is the   coin delivered by the module (have-denom or base of liquid-have)."
             }
         }
     }

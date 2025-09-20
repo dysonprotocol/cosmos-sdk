@@ -2970,7 +2970,16 @@ paths:
                       title: >-
                         data is the app specific metadata of the NFT class.
                         Optional
-                  description: Class defines the class of the nft type.
+                  description: >-
+                    Class defines the class of the nft type.
+
+
+                    Whaleswap notes:
+
+                    - Auction escrows may be represented by NFTs whose
+                    (class_id, id) pair is
+                      referenced by auction records. Query endpoints such as AuctionByNFT use
+                      this identity to locate the escrow state.
                 description: class defines the class of the nft type.
               pagination:
                 description: pagination defines the pagination in the response.
@@ -3085,7 +3094,13 @@ paths:
                           Must be a valid serialized protocol buffer of the
                           above specified type.
                     title: data is an app specific data of the NFT. Optional
-                description: NFT defines the NFT.
+                description: >-
+                  NFT defines the NFT.
+
+
+                  - When used with whaleswap auctions, the (class_id, id)
+                  uniquely identifies
+                    the escrow marker that controls redemption of the locked sell coin.
             title: QueryNFTResponse is the response type for the Query/NFT RPC method
         default:
           description: An unexpected error response.
@@ -3170,7 +3185,13 @@ paths:
                             Must be a valid serialized protocol buffer of the
                             above specified type.
                       title: data is an app specific data of the NFT. Optional
-                  description: NFT defines the NFT.
+                  description: >-
+                    NFT defines the NFT.
+
+
+                    - When used with whaleswap auctions, the (class_id, id)
+                    uniquely identifies
+                      the escrow marker that controls redemption of the locked sell coin.
                 title: NFT defines the NFT
               pagination:
                 description: pagination defines the pagination in the response.
@@ -29788,7 +29809,13 @@ definitions:
               Must be a valid serialized protocol buffer of the above specified
               type.
         title: data is the app specific metadata of the NFT class. Optional
-    description: Class defines the class of the nft type.
+    description: |-
+      Class defines the class of the nft type.
+
+      Whaleswap notes:
+      - Auction escrows may be represented by NFTs whose (class_id, id) pair is
+        referenced by auction records. Query endpoints such as AuctionByNFT use
+        this identity to locate the escrow state.
   dysonprotocol.nft.v1beta1.NFT:
     type: object
     properties:
@@ -29818,7 +29845,13 @@ definitions:
               Must be a valid serialized protocol buffer of the above specified
               type.
         title: data is an app specific data of the NFT. Optional
-    description: NFT defines the NFT.
+    description: >-
+      NFT defines the NFT.
+
+
+      - When used with whaleswap auctions, the (class_id, id) uniquely
+      identifies
+        the escrow marker that controls redemption of the locked sell coin.
   dysonprotocol.nft.v1beta1.QueryBalanceResponse:
     type: object
     properties:
@@ -29925,7 +29958,16 @@ definitions:
                     Must be a valid serialized protocol buffer of the above
                     specified type.
               title: data is the app specific metadata of the NFT class. Optional
-          description: Class defines the class of the nft type.
+          description: >-
+            Class defines the class of the nft type.
+
+
+            Whaleswap notes:
+
+            - Auction escrows may be represented by NFTs whose (class_id, id)
+            pair is
+              referenced by auction records. Query endpoints such as AuctionByNFT use
+              this identity to locate the escrow state.
         description: class defines the class of the nft type.
       pagination:
         description: pagination defines the pagination in the response.
@@ -29980,7 +30022,13 @@ definitions:
                   Must be a valid serialized protocol buffer of the above
                   specified type.
             title: data is an app specific data of the NFT. Optional
-        description: NFT defines the NFT.
+        description: >-
+          NFT defines the NFT.
+
+
+          - When used with whaleswap auctions, the (class_id, id) uniquely
+          identifies
+            the escrow marker that controls redemption of the locked sell coin.
     title: QueryNFTResponse is the response type for the Query/NFT RPC method
   dysonprotocol.nft.v1beta1.QueryNFTsResponse:
     type: object
@@ -30016,7 +30064,13 @@ definitions:
                     Must be a valid serialized protocol buffer of the above
                     specified type.
               title: data is an app specific data of the NFT. Optional
-          description: NFT defines the NFT.
+          description: >-
+            NFT defines the NFT.
+
+
+            - When used with whaleswap auctions, the (class_id, id) uniquely
+            identifies
+              the escrow marker that controls redemption of the locked sell coin.
         title: NFT defines the NFT
       pagination:
         description: pagination defines the pagination in the response.

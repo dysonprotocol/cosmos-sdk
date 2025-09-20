@@ -6,6 +6,11 @@ import "google/protobuf/any.proto";
 option go_package = "dysonprotocol.com/x/nft";
 
 // Class defines the class of the nft type.
+//
+// Whaleswap notes:
+// - Auction escrows may be represented by NFTs whose (class_id, id) pair is
+//   referenced by auction records. Query endpoints such as AuctionByNFT use
+//   this identity to locate the escrow state.
 message Class {
   // id defines the unique identifier of the NFT classification, similar to the
   // contract address of ERC721
@@ -32,6 +37,9 @@ message Class {
 }
 
 // NFT defines the NFT.
+//
+// - When used with whaleswap auctions, the (class_id, id) uniquely identifies
+//   the escrow marker that controls redemption of the locked sell coin.
 message NFT {
   // class_id associated with the NFT, similar to the contract address of ERC721
   string class_id = 1;

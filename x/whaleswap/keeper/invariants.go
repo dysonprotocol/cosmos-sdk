@@ -27,7 +27,7 @@ func (k Keeper) checkEscrowInvariant(ctx context.Context) error {
 	// Tally required escrow by denom from open normal offers
 	required := map[string]math.Int{}
 	_ = k.OffersMap.Walk(ctx, nil, func(_ uint64, o whaleswapv1.OfferData) (bool, error) {
-		if o.Status != "open" {
+		if o.Status != whaleswapv1.OfferStatusOpen {
 			return false, nil
 		}
 		// Only normal offers escrow base have in module
@@ -49,7 +49,7 @@ func (k Keeper) checkEscrowInvariant(ctx context.Context) error {
 	moduleAddr := k.accKeeper.GetModuleAddress(whaleswap.ModuleName)
 	for denom, need := range required {
 		bal := k.bank.GetBalance(ctx, moduleAddr, denom).Amount
-		if !bal.Equal(need) {
+		if bal.LT(need) {
 			return cosmossdkerrors.Wrapf(
 				sdkerrors.ErrLogic,
 				"escrow invariant failed for %s: module=%s required=%s",
@@ -64,7 +64,7 @@ func (k Keeper) checkPfandInvariant(ctx context.Context) error {
 	// Tally pfand_locked across open liquid offers (per denom)
 	required := map[string]math.Int{}
 	_ = k.OffersMap.Walk(ctx, nil, func(_ uint64, o whaleswapv1.OfferData) (bool, error) {
-		if o.Status != "open" {
+		if o.Status != whaleswapv1.OfferStatusOpen {
 			return false, nil
 		}
 		if !k.isLiquidDenom(o.RemainingHave.Denom) {

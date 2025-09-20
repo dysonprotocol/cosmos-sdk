@@ -9,6 +9,7 @@ def _nft_owner(dysond_bin, class_id: str, nft_id: str) -> str:
 
 # ----------------------------- TESTS -----------------------------------
 
+
 def test_move_nft_success(chainnet, generate_account, faucet, register_name):
     dysond_bin = chainnet[0]
 
@@ -33,7 +34,10 @@ def test_move_nft_success(chainnet, generate_account, faucet, register_name):
     assert save_resp["code"] == 0, save_resp.get("raw_log")
 
     # verify EventClassSaved emitted
-    assert any(ev.get("type", "").endswith("EventClassSaved") for ev in save_resp.get("events", [])), "EventClassSaved event missing"
+    assert any(
+        ev.get("type", "").endswith("EventClassSaved")
+        for ev in save_resp.get("events", [])
+    ), "EventClassSaved event missing"
 
     # mint nft
     nft_id = "nft1"
@@ -75,7 +79,9 @@ def test_move_nft_success(chainnet, generate_account, faucet, register_name):
     assert _nft_owner(dysond_bin, class_id, nft_id) == recipient_addr
 
 
-def test_move_nft_non_destination_fails(chainnet, generate_account, faucet, register_name):
+def test_move_nft_non_destination_fails(
+    chainnet, generate_account, faucet, register_name
+):
     dysond_bin = chainnet[0]
 
     destination_name, destination_addr = generate_account("nft_destination")
@@ -127,7 +133,9 @@ def test_move_nft_non_destination_fails(chainnet, generate_account, faucet, regi
     assert tx_resp["code"] != 0, "non-destination signer should not be able to move NFT"
 
 
-def test_move_nft_module_account_fails(chainnet, generate_account, faucet, register_name):
+def test_move_nft_module_account_fails(
+    chainnet, generate_account, faucet, register_name
+):
     dysond_bin = chainnet[0]
 
     destination_name, destination_addr = generate_account("nft_destination")
@@ -177,4 +185,4 @@ def test_move_nft_module_account_fails(chainnet, generate_account, faucet, regis
         "--from",
         destination_name,
     )
-    assert tx_resp["code"] != 0, "move to module account should fail" 
+    assert tx_resp["code"] != 0, "move to module account should fail"

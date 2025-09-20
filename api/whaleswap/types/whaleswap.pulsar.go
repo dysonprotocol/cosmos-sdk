@@ -4183,6 +4183,8 @@ const (
 //     behaves as constant-product (v2). If set, concentrated-liquidity math
 //     applies.
 //   - coin_a.amount/coin_b.amount are sdk.Int strings.
+//   - The instantaneous price used by price-based queries is derived from
+//     reserves as P = coin_b / coin_a, consistent with the notes above.
 type Pool struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -4448,6 +4450,9 @@ func (x *OfferData) GetPfandLocked() *v1beta1.Coin {
 }
 
 // Trade captures a single fill of an offer.
+//
+//   - `sent` is the coin paid by the taker (want-denom), and `received` is the
+//     coin delivered by the module (have-denom or base of liquid-have).
 type Trade struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

@@ -193,7 +193,16 @@ def get_genesis_defaults():
             "quorum": "0.00001",
             "threshold": "0.00001",
         },
-        # nameservice module no longer sets old global bidding params by default
+        "nameservice_params": {
+            "min_valuation_period": "1s",
+            "max_valuation_period": "24h",
+            "min_valuation_fee_pct": "0.0",
+            "max_valuation_fee_pct": "1.0",
+            "min_minimum_bid_percent_increase": "0.0",
+            "max_minimum_bid_percent_increase": "1.0",
+            "min_reject_bid_valuation_fee_percent": "0.0",
+            "max_reject_bid_valuation_fee_percent": "1.0",
+        },
     }
 
 

@@ -33,7 +33,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Msg Update Pool Config",
-                "description": "Update pool config (owner-only: majority of shares > 50%)."
+                "description": "Update pool config (owner-only: majority of shares > 50%). Notes: - Empty string/empty arrays indicate no change for that field. - Price bands follow the same two-coin ratio rules as in MsgCreatePool."
             },
             "cosmos.base.v1beta1.Coin": {
                 "properties": {

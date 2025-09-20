@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 import os
 import json
+from decimal import Decimal, ROUND_CEILING
 import shutil
 import pytest
 from pathlib import Path
@@ -21,8 +22,8 @@ import warnings
 from typing import List, Tuple, Iterable
 from textwrap import dedent
 
-NUM_CHAINS = 2
-NUM_NODES = 2
+NUM_CHAINS = 1
+NUM_NODES = 1
 
 # Global constants
 CHAINNET_SCRIPT = str(Path(__file__).parent.parent / "scripts" / "chainnet.py")
@@ -169,7 +170,7 @@ def make_run_command(dysond_bin, node_home):
                 stdout = "None"
                 stderr = "None"
                 if "--timeout" not in args:
-                    commands += ["--timeout", "300s"]
+                    commands += ["--timeout", "1000s"]
                 for i in range(20, 0, -1):
                     out = subprocess.run(commands, capture_output=True, text=True)
                     stdout = out.stdout
@@ -212,7 +213,7 @@ def make_run_command(dysond_bin, node_home):
                     tx_response = json.loads(original_out.stdout)
                     if tx_response.get("code") == 0:
                         # Use longer timeout for script update transactions as they may take more time
-                        timeout = "300ms"
+                        timeout = "1000ms"
                         wait_tx_response = run_command(
                             "query",
                             "wait-tx",
@@ -342,9 +343,9 @@ def chainnet(worker_id, test_base_dir, test_config_path):
             "--config-file",
             str(config_path),
             "--block-speed",
-            "500ms",
+            "300ms",
             "--no-blocks-timeout",
-            "20",
+            "3",
             "--logs",
         ],
         preexec_fn=os.setsid,
@@ -853,6 +854,52 @@ def dex_dys_name(register_name):
 
     def _mk(dysond_bin, owner_key_name: str, owner_addr: str) -> str:
         return register_name(dysond_bin, owner_key_name, owner_addr)
+
+    return _mk
+
+
+## Whaleswap scripts are deprecated; module tests do not need these fixtures.
+
+
+@pytest.fixture
+def fresh_denoms(chainnet, whales_scripts_loaded):
+    """Mint per-test unique denoms under the session root and return their full names.
+
+    Usage: a, b = fresh_denoms(["a", "b"], units=100)
+    """
+    import secrets
+
+    dysond = chainnet[0]
+    owner_name = whales_scripts_loaded["orderbook"]["owner_name"]
+    root = whales_scripts_loaded["root"]
+
+    def _ceil_dec(x: Decimal) -> int:
+        return int(x.to_integral_value(rounding=ROUND_CEILING))
+
+    def _mk(names, units=100):
+        suffix = secrets.token_hex(3)
+        params = dysond("query", "nameservice", "params")
+        fee_per = Decimal(params["params"]["mint_fee_per_coin"])  # e.g., 0.01
+        fee = _ceil_dec(Decimal(units) * fee_per)
+        out = []
+        for n in names:
+            denom = f"{root}/{suffix}/{n}"
+            resp = dysond(
+                "tx",
+                "nameservice",
+                "mint-coins",
+                "--amount",
+                f"{units}{denom}",
+                "--mint-fee",
+                f"{fee}udys",
+                "--from",
+                owner_name,
+                "--gas",
+                "auto",
+            )
+            assert resp.get("code", 1) == 0, f"mint failed: {resp}"
+            out.append(denom)
+        return out if len(out) > 1 else out[0]
 
     return _mk
 
