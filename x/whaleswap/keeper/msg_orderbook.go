@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	"cosmossdk.io/collections"
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
@@ -13,6 +12,7 @@ import (
 	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
 func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*whaleswapv1.MsgMakeOfferResponse, error) {
@@ -36,6 +36,10 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 	}
 	if !have.Amount.IsPositive() || !want.Amount.IsPositive() {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "amounts must be > 0")
+	}
+
+	if k.bank.GetSupply(ctx, want.Denom).Amount.IsZero() {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "want denom has no supply: %s", want.Denom)
 	}
 	if k.isLiquidDenom(want.Denom) {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "want denom is liquid: %s", want.Denom)
@@ -104,36 +108,8 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 	if err := k.OffersMap.Set(ctx, id, offer); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to save offer %d", id)
 	}
-	// Reverse indexes
-	// have, id -> id
-	if err := k.OffersByHave.Set(ctx, collections.Join(offer.RemainingHave.Denom, offer.OfferId), offer.OfferId); err != nil {
-		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d by have", id)
-	}
-	// want, id -> id
-	if err := k.OffersByWant.Set(ctx, collections.Join(offer.RemainingWant.Denom, offer.OfferId), offer.OfferId); err != nil {
-		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d by want", id)
-	}
-	// Price index normalized by sorted pair key: low|high, price = (high per low)
-	haveDenom := offer.RemainingHave.Denom
-	wantDenom := offer.RemainingWant.Denom
-	low, high := haveDenom, wantDenom
-	if low > high {
-		low, high = high, low
-	}
-	pairKey := low + "|" + high
-	priceHavePerWant := math.LegacyNewDecFromInt(offer.RemainingHave.Amount).Quo(math.LegacyNewDecFromInt(offer.RemainingWant.Amount))
-	priceWantPerHave := math.LegacyNewDecFromInt(offer.RemainingWant.Amount).Quo(math.LegacyNewDecFromInt(offer.RemainingHave.Amount))
-	priceDec := priceWantPerHave
-	if low == wantDenom && high == haveDenom {
-		priceDec = priceHavePerWant
-	}
-	priceKey := priceDec.String()
-	if err := k.OffersByPairPrice.Set(ctx, collections.Join3(pairKey, priceKey, offer.OfferId), offer.OfferId); err != nil {
-		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d by price", id)
-	}
-	// owner+status index
-	if err := k.OffersByOwnerStatus.Set(ctx, collections.Join3(offer.Maker, offer.Status, offer.OfferId), offer.OfferId); err != nil {
-		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d by owner/status", id)
+	if err := k.indexOfferOpen(ctx, offer); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to index offer %d", id)
 	}
 	// Emit EventOfferCreated with plain numeric string (no extra quotes) for offer_id
 	sdkCtx.EventManager().EmitEvent(
@@ -160,9 +136,18 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 	if len(msg.Trades) == 0 {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "trades list must be non-empty")
 	}
+
 	seen := map[uint64]struct{}{}
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	t := sdkCtx.BlockTime()
+
+	outputsByAddr := map[string]sdk.Coins{}
+	inputsByAddr := map[string]sdk.Coins{}
+	totalSent := sdk.NewCoins()
+	totalRecv := sdk.NewCoins()
+
+	moduleAddr := k.accKeeper.GetModuleAddress(whaleswap.ModuleName)
+	moduleBech := moduleAddr.String()
 
 	for _, it := range msg.Trades {
 		if _, dup := seen[it.OfferId]; dup {
@@ -178,21 +163,13 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "offer %d not open", it.OfferId)
 		}
 		remainingUnits, ok := math.NewIntFromString(offer.RemainingUnits)
-		if !ok || remainingUnits.IsZero() {
+		if !ok || !remainingUnits.IsPositive() {
 			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid remaining units")
 		}
-		takeUnits := remainingUnits
-		if strings.TrimSpace(it.TakeUnits) != "" {
-			u, ok := math.NewIntFromString(it.TakeUnits)
-			if !ok || !u.IsPositive() {
-				return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid take_units")
-			}
-			takeUnits = u
+		takeUnits, perr := k.parseTakeUnits(remainingUnits, strings.TrimSpace(it.TakeUnits))
+		if perr != nil {
+			return nil, perr
 		}
-		if takeUnits.GT(remainingUnits) {
-			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "take_units exceeds remaining: %s > %s", takeUnits.String(), remainingUnits.String())
-		}
-
 		unitWant, _ := math.NewIntFromString(offer.UnitWantInt)
 		unitHave, _ := math.NewIntFromString(offer.UnitHaveInt)
 		requiredWant := takeUnits.Mul(unitWant)
@@ -200,89 +177,49 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 
 		wantDenom := offer.RemainingWant.Denom
 		haveDenom := offer.RemainingHave.Denom
-		makerBz, err := k.accKeeper.AddressCodec().StringToBytes(offer.Maker)
-		if err != nil {
-			return nil, cosmossdkerrors.Wrapf(err, "invalid maker address: %s", offer.Maker)
-		}
-		maker := sdk.AccAddress(makerBz)
+		maker := offer.Maker
 
-		baseBal := k.bank.GetBalance(ctx, taker, wantDenom).Amount
-		basePay := requiredWant
-		if baseBal.LT(basePay) {
-			basePay = baseBal
-		}
-		remainder := requiredWant.Sub(basePay)
-		if basePay.IsPositive() {
-			if err := k.bank.SendCoinsFromAccountToModule(ctx, taker, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(wantDenom, basePay))); err != nil {
-				return nil, err
-			}
-		}
-		if remainder.IsPositive() {
-			liquidWant := whaleswapv1.LiquidDenom(wantDenom)
-			liqBal := k.bank.GetBalance(ctx, taker, liquidWant).Amount
-			if liqBal.LT(remainder) {
-				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient liquid remainder: %s < %s", liqBal.String(), remainder.String())
-			}
-			if err := k.bank.SendCoinsFromAccountToModule(ctx, taker, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(liquidWant, remainder))); err != nil {
-				return nil, cosmossdkerrors.Wrapf(err, "failed to escrow liquid want remainder %s from taker %s", sdk.NewCoin(liquidWant, remainder).String(), msg.Taker)
-			}
-			if _, err := k.nameSvc.BurnCoins(ctx, &nameservicev1.MsgBurnCoins{
-				NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
-				Amount:          sdk.NewCoins(sdk.NewCoin(liquidWant, remainder)),
-			}); err != nil {
-				return nil, cosmossdkerrors.Wrapf(err, "failed to burn liquid want %s", sdk.NewCoin(liquidWant, remainder).String())
-			}
-		}
-		// Ensure module has enough base want to pay maker
-		moduleAddr := k.accKeeper.GetModuleAddress(whaleswap.ModuleName)
-		wantBal := k.bank.GetBalance(ctx, moduleAddr, wantDenom).Amount
-		if wantBal.LT(requiredWant) {
-			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "module want backing insufficient: have=%s need=%s", wantBal.String(), requiredWant.String())
-		}
-		if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, maker, sdk.NewCoins(sdk.NewCoin(wantDenom, requiredWant))); err != nil {
-			return nil, cosmossdkerrors.Wrapf(err, "failed to pay maker %s %s", requiredWant.String(), wantDenom)
-		}
-
+		// Aggregate outputs: pay maker solid want; pay taker solid have
+		outputsByAddr[maker] = outputsByAddr[maker].Add(sdk.NewCoin(wantDenom, requiredWant))
 		if k.isLiquidDenom(haveDenom) {
-			makerBal := k.bank.GetBalance(ctx, maker, haveDenom).Amount
-			if makerBal.LT(deliverHave) {
-				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "maker insufficient liquid have: %s < %s", makerBal.String(), deliverHave.String())
+			baseHave, derr := k.decodeLiquidDenom(haveDenom)
+			if derr != nil {
+				return nil, derr
 			}
-			if err := k.bank.SendCoinsFromAccountToModule(ctx, maker, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(haveDenom, deliverHave))); err != nil {
-				return nil, cosmossdkerrors.Wrapf(err, "failed to escrow liquid have %s from maker %s", sdk.NewCoin(haveDenom, deliverHave).String(), offer.Maker)
-			}
-			if _, err := k.nameSvc.BurnCoins(ctx, &nameservicev1.MsgBurnCoins{
-				NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
-				Amount:          sdk.NewCoins(sdk.NewCoin(haveDenom, deliverHave)),
-			}); err != nil {
-				return nil, cosmossdkerrors.Wrapf(err, "failed to burn liquid have %s", sdk.NewCoin(haveDenom, deliverHave).String())
-			}
-			baseHave, err := k.decodeLiquidDenom(haveDenom)
-			if err != nil {
-				return nil, err
-			}
-			backing := k.bank.GetBalance(ctx, k.accKeeper.GetModuleAddress(whaleswap.ModuleName), baseHave).Amount
-			if backing.LT(deliverHave) {
-				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient backing for have: %s < %s", backing.String(), deliverHave.String())
-			}
-			if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, taker, sdk.NewCoins(sdk.NewCoin(baseHave, deliverHave))); err != nil {
-				return nil, cosmossdkerrors.Wrapf(err, "failed to send base have %s to taker %s", sdk.NewCoin(baseHave, deliverHave).String(), msg.Taker)
+			outputsByAddr[msg.Taker] = outputsByAddr[msg.Taker].Add(sdk.NewCoin(baseHave, deliverHave))
+			// Aggregate inputs: maker supplies liquid have to be burned
+			inputsByAddr[maker] = inputsByAddr[maker].Add(sdk.NewCoin(haveDenom, deliverHave))
+		} else {
+			outputsByAddr[msg.Taker] = outputsByAddr[msg.Taker].Add(sdk.NewCoin(haveDenom, deliverHave))
+		}
+
+		// Update offer state; include pfand release as output to taker
+		newUnits := remainingUnits.Sub(takeUnits)
+		offer.UpdatedHeight = uint64(sdkCtx.BlockHeight())
+		offer.UpdatedTimestamp = &t
+		if newUnits.IsZero() {
+			offer.Status = whaleswapv1.OfferStatusClosed
+			offer.RemainingUnits = newUnits.String()
+			offer.RemainingHave.Amount = math.NewInt(0)
+			offer.RemainingWant.Amount = math.NewInt(0)
+			if offer.PfandLocked.Amount.IsPositive() {
+				outputsByAddr[msg.Taker] = outputsByAddr[msg.Taker].Add(offer.PfandLocked)
+				_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandReleased{Amount: offer.PfandLocked})
 			}
 		} else {
-			if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, taker, sdk.NewCoins(sdk.NewCoin(haveDenom, deliverHave))); err != nil {
-				return nil, cosmossdkerrors.Wrapf(err, "failed to send have %s to taker %s", sdk.NewCoin(haveDenom, deliverHave).String(), msg.Taker)
-			}
+			offer.RemainingUnits = newUnits.String()
+			offer.RemainingHave.Amount = newUnits.Mul(unitHave)
+			offer.RemainingWant.Amount = newUnits.Mul(unitWant)
 		}
 
-		tradeId, err := k.tradeSeq.Next(ctx)
-		if err != nil {
-			return nil, cosmossdkerrors.Wrap(err, "failed to allocate trade id")
+		// Persist trade and offer; emit taken event (optimistic)
+		tradeId, terr := k.tradeSeq.Next(ctx)
+		if terr != nil {
+			return nil, cosmossdkerrors.Wrap(terr, "failed to allocate trade id")
 		}
-		// Use base denom in Received when have is liquid
 		recDenom := haveDenom
 		if k.isLiquidDenom(haveDenom) {
-			baseHave, berr := k.decodeLiquidDenom(haveDenom)
-			if berr == nil {
+			if baseHave, derr := k.decodeLiquidDenom(haveDenom); derr == nil {
 				recDenom = baseHave
 			}
 		}
@@ -298,60 +235,171 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 		if err := k.TradesMap.Set(ctx, tradeId, trade); err != nil {
 			return nil, cosmossdkerrors.Wrap(err, "failed to save trade")
 		}
-
-		newUnits := remainingUnits.Sub(takeUnits)
-		offer.UpdatedHeight = uint64(sdkCtx.BlockHeight())
-		offer.UpdatedTimestamp = &t
-		if newUnits.IsZero() {
-			offer.Status = whaleswapv1.OfferStatusClosed
-			offer.RemainingUnits = newUnits.String()
-			offer.RemainingHave.Amount = math.NewInt(0)
-			offer.RemainingWant.Amount = math.NewInt(0)
-			// Remove reverse index entries on close
-			_ = k.OffersByHave.Remove(ctx, collections.Join(offer.RemainingHave.Denom, offer.OfferId))
-			_ = k.OffersByWant.Remove(ctx, collections.Join(offer.RemainingWant.Denom, offer.OfferId))
-			uh, _ := math.NewIntFromString(offer.UnitHaveInt)
-			uw, _ := math.NewIntFromString(offer.UnitWantInt)
-			if uh.IsPositive() && uw.IsPositive() {
-				haveDenom := offer.RemainingHave.Denom
-				wantDenom := offer.RemainingWant.Denom
-				low, high := haveDenom, wantDenom
-				if low > high {
-					low, high = high, low
-				}
-				pairKey := low + "|" + high
-				priceHavePerWant := math.LegacyNewDecFromInt(uh).Quo(math.LegacyNewDecFromInt(uw))
-				priceWantPerHave := math.LegacyNewDecFromInt(uw).Quo(math.LegacyNewDecFromInt(uh))
-				priceDec := priceWantPerHave
-				if low == wantDenom && high == haveDenom {
-					priceDec = priceHavePerWant
-				}
-				priceKey := priceDec.String()
-				_ = k.OffersByPairPrice.Remove(ctx, collections.Join3(pairKey, priceKey, offer.OfferId))
-			}
-			_ = k.OffersByOwnerStatus.Remove(ctx, collections.Join3(offer.Maker, whaleswapv1.OfferStatusOpen, offer.OfferId))
-			_ = k.OffersByOwnerStatus.Set(ctx, collections.Join3(offer.Maker, offer.Status, offer.OfferId), offer.OfferId)
-			if offer.PfandLocked.Amount.IsPositive() {
-				if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, taker, sdk.NewCoins(offer.PfandLocked)); err != nil {
-					return nil, err
-				}
-				_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandReleased{Amount: offer.PfandLocked})
-			}
-		} else {
-			offer.RemainingUnits = newUnits.String()
-			offer.RemainingHave.Amount = newUnits.Mul(unitHave)
-			offer.RemainingWant.Amount = newUnits.Mul(unitWant)
-		}
+		prev, _ := k.OffersMap.Get(ctx, offer.OfferId)
 		if err := k.OffersMap.Set(ctx, offer.OfferId, offer); err != nil {
 			return nil, cosmossdkerrors.Wrapf(err, "failed to update offer %d", offer.OfferId)
 		}
-
+		_ = k.reindexOfferOnStatusChange(ctx, prev, offer)
 		_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventOfferTaken{OfferId: offer.OfferId, TradeId: tradeId})
+
+		totalSent = totalSent.Add(trade.Sent)
+		totalRecv = totalRecv.Add(trade.Received)
 	}
+
+	// Compute taker deficits per solid denom from outputs only (makers get wants; taker gets credits)
+	makerWants := sdk.NewCoins()
+	for addr, coins := range outputsByAddr {
+		if addr == msg.Taker || addr == moduleBech {
+			continue
+		}
+		for _, c := range coins {
+			if k.isLiquidDenom(c.Denom) {
+				continue
+			}
+			makerWants = makerWants.Add(c)
+		}
+	}
+	takerCredits := sdk.NewCoins()
+	if tcoins, ok := outputsByAddr[msg.Taker]; ok {
+		for _, c := range tcoins {
+			if k.isLiquidDenom(c.Denom) {
+				continue
+			}
+			takerCredits = takerCredits.Add(c)
+		}
+	}
+
+	// Net taker same-denom credits against maker wants, then add taker inputs: base first, then liquid L(denom)
+	for _, wantCoin := range makerWants {
+		denom := wantCoin.Denom
+		wantAmt := wantCoin.Amount
+		credit := takerCredits.AmountOf(denom)
+
+		// Reduce taker outputs by the nettable portion min(credit, wantAmt)
+		nettable := credit
+		if wantAmt.LT(credit) {
+			nettable = wantAmt
+		}
+		if nettable.IsPositive() {
+			if coins, ok := outputsByAddr[msg.Taker]; ok {
+				outputsByAddr[msg.Taker] = coins.Sub(sdk.NewCoin(denom, nettable))
+				if outputsByAddr[msg.Taker].IsZero() {
+					delete(outputsByAddr, msg.Taker)
+				}
+			}
+		}
+
+		if credit.GTE(wantAmt) {
+			continue
+		}
+		deficit := wantAmt.Sub(credit)
+		baseBal := k.bank.GetBalance(ctx, taker, denom).Amount
+		basePart := baseBal
+		if basePart.GT(deficit) {
+			basePart = deficit
+		}
+		if basePart.IsPositive() {
+			inputsByAddr[msg.Taker] = inputsByAddr[msg.Taker].Add(sdk.NewCoin(denom, basePart))
+		}
+		rem := deficit.Sub(basePart)
+		if rem.IsPositive() {
+			ldenom := whaleswapv1.LiquidDenom(denom)
+			liqBal := k.bank.GetBalance(ctx, taker, ldenom).Amount
+			if liqBal.LT(rem) {
+				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "taker insufficient %s: %s < %s", ldenom, liqBal.String(), rem.String())
+			}
+			inputsByAddr[msg.Taker] = inputsByAddr[msg.Taker].Add(sdk.NewCoin(ldenom, rem))
+		}
+	}
+
+	// Module receives all liquid inputs to burn; add as outputs to module
+	liquidToModule := sdk.NewCoins()
+	for _, coins := range inputsByAddr {
+		for _, c := range coins {
+			if k.isLiquidDenom(c.Denom) && c.Amount.IsPositive() {
+				liquidToModule = liquidToModule.Add(c)
+			}
+		}
+	}
+	if !liquidToModule.IsZero() {
+		outputsByAddr[moduleBech] = outputsByAddr[moduleBech].Add(liquidToModule...)
+	}
+
+	// Module solid inputs to cover remaining solid outputs not funded by taker base
+	outputsSolidCoins := sdk.NewCoins()
+	for _, coins := range outputsByAddr {
+		for _, c := range coins {
+			if k.isLiquidDenom(c.Denom) {
+				continue
+			}
+			outputsSolidCoins = outputsSolidCoins.Add(c)
+		}
+	}
+	inputsSolidCoins := sdk.NewCoins()
+	for _, coins := range inputsByAddr {
+		for _, c := range coins {
+			if k.isLiquidDenom(c.Denom) {
+				continue
+			}
+			inputsSolidCoins = inputsSolidCoins.Add(c)
+		}
+	}
+	for _, out := range outputsSolidCoins {
+		denom := out.Denom
+		outAmt := out.Amount
+		inAmt := inputsSolidCoins.AmountOf(denom)
+		need := outAmt.Sub(inAmt)
+		if need.IsPositive() {
+			bal := k.bank.GetBalance(ctx, moduleAddr, denom).Amount
+			if bal.LT(need) {
+				return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "module backing insufficient %s: %s < %s", denom, bal.String(), need.String())
+			}
+			inputsByAddr[moduleBech] = inputsByAddr[moduleBech].Add(sdk.NewCoin(denom, need))
+		}
+	}
+
+	var inputs []banktypes.Input
+	for addr, coins := range inputsByAddr {
+		if coins.IsZero() {
+			continue
+		}
+		inputs = append(inputs, banktypes.Input{Address: addr, Coins: coins})
+	}
+	var outputs []banktypes.Output
+	for addr, coins := range outputsByAddr {
+		if coins.IsZero() {
+			continue
+		}
+		outputs = append(outputs, banktypes.Output{Address: addr, Coins: coins})
+	}
+	if len(inputs) == 0 || len(outputs) == 0 {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "no inputs or outputs for batch move")
+	}
+
+	if err := k.wsMoveCoins(ctx, inputs, outputs); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "move coins failed")
+	}
+
+	toBurn := sdk.NewCoins()
+	if mcoins, ok := outputsByAddr[moduleBech]; ok {
+		for _, c := range mcoins {
+			if k.isLiquidDenom(c.Denom) && c.Amount.IsPositive() {
+				toBurn = toBurn.Add(c)
+			}
+		}
+	}
+	if !toBurn.IsZero() {
+		if _, err := k.nameSvc.BurnCoins(ctx, &nameservicev1.MsgBurnCoins{NameDestination: moduleBech, Amount: toBurn}); err != nil {
+			return nil, cosmossdkerrors.Wrap(err, "burn liquid failed")
+		}
+	}
+
+	// totalSent/Recv already accumulated
+
 	if err := k.AssertInvariants(ctx); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "invariant failed after TakeOffer")
 	}
-	return &whaleswapv1.MsgTakeOfferResponse{Ok: true}, nil
+	return &whaleswapv1.MsgTakeOfferResponse{Sent: totalSent, Received: totalRecv}, nil
 }
 
 func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer) (*whaleswapv1.MsgCancelOfferResponse, error) {
@@ -395,29 +443,9 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 	if err := k.OffersMap.Set(ctx, offer.OfferId, offer); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to update offer %d", offer.OfferId)
 	}
-	// Remove reverse index entries on cancel
-	_ = k.OffersByHave.Remove(ctx, collections.Join(offer.RemainingHave.Denom, offer.OfferId))
-	_ = k.OffersByWant.Remove(ctx, collections.Join(offer.RemainingWant.Denom, offer.OfferId))
-	uh, _ := math.NewIntFromString(offer.UnitHaveInt)
-	uw, _ := math.NewIntFromString(offer.UnitWantInt)
-	if uh.IsPositive() && uw.IsPositive() {
-		haveDenom := offer.RemainingHave.Denom
-		wantDenom := offer.RemainingWant.Denom
-		low, high := haveDenom, wantDenom
-		if low > high {
-			low, high = high, low
-		}
-		pairKey := low + "|" + high
-		priceHavePerWant := math.LegacyNewDecFromInt(uh).Quo(math.LegacyNewDecFromInt(uw))
-		priceWantPerHave := math.LegacyNewDecFromInt(uw).Quo(math.LegacyNewDecFromInt(uh))
-		priceDec := priceWantPerHave
-		if low == wantDenom && high == haveDenom {
-			priceDec = priceHavePerWant
-		}
-		_ = k.OffersByPairPrice.Remove(ctx, collections.Join3(pairKey, priceDec.String(), offer.OfferId))
-	}
-	_ = k.OffersByOwnerStatus.Remove(ctx, collections.Join3(offer.Maker, whaleswapv1.OfferStatusOpen, offer.OfferId))
-	_ = k.OffersByOwnerStatus.Set(ctx, collections.Join3(offer.Maker, offer.Status, offer.OfferId), offer.OfferId)
+	// Remove reverse index entries and update owner/status via helper
+	prev := offer
+	_ = k.reindexOfferOnStatusChange(ctx, prev, offer)
 	// Refund escrowed base have for normal offers
 	if !k.isLiquidDenom(offer.RemainingHave.Denom) && offer.RemainingHave.Amount.IsPositive() {
 		if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, maker, sdk.NewCoins(offer.RemainingHave)); err != nil {

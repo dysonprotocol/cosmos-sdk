@@ -221,13 +221,6 @@ message MsgMakeOffer {
 }
 message MsgMakeOfferResponse { uint64 offer_id = 1; }
 
-// Take one or more offers (batch).
-//
-// - Each TakeItem specifies an offer and optional take_units (sdk.Int string).
-//   If unset, the action attempts to fully fill the remaining units.
-// - The taker must provide payment in base want; any remainder may be provided
-//   via liquid want, which is burned on receipt. The module then pays base have
-//   (or base of liquid have) to the taker.
 message MsgTakeOffer {
   option (cosmos.msg.v1.signer) = "taker";
   string taker = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
@@ -238,7 +231,24 @@ message TakeItem {
   // units to take (sdk.Int string). If empty, take full remaining.
   string take_units = 2;
 }
-message MsgTakeOfferResponse { bool ok = 1; }
+message MsgTakeOfferResponse {
+
+  // Total coins the taker sent across executed trades (usually want denom).
+  repeated cosmos.base.v1beta1.Coin sent = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins"
+  ];
+  // Total coins the taker received across executed trades (usually have denom,
+  // base denom when offers use liquid have).
+  repeated cosmos.base.v1beta1.Coin received = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty) = true,
+    (amino.encoding) = "legacy_coins"
+  ];
+}
 
 // Cancel an offer (maker or eligible third-party for liquid offers).
 //

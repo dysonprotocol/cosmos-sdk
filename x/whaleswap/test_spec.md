@@ -158,11 +158,15 @@ def amm_create(denom_a, amt_a, denom_b, amt_b):
   - have is liquid L(S); optionally update params.pfand_per_offer > 0 via UpdateParams (authority)
   - locks pfand; EventPfandLocked emitted
 
-- TakeOffer (batch):
+- TakeOffer (batch with modes):
   - settle base want first, then liquid want burn if needed
   - maker-have liquid: require maker provides L(have) to burn; pfand released on close (EventPfandReleased)
   - maker-have normal: release escrowed base have to taker
   - Offer status transitions to closed when remaining_units == 0; reverse indexes removed
+  - Modes via `--take` flag: `first|any|all` (default: `all`)
+    - first: commit only the first feasible trade, error if none
+    - any: commit any feasible trades, error if none succeed
+    - all: require all trades to succeed atomically
 
 - CancelOffer:
   - maker can cancel open; third-party can cancel liquid offer if maker lacks ≥1 unit liquid have; pfand released to closer
@@ -172,7 +176,7 @@ Example CLI:
 dysond tx whaleswap make-offer --have=100udys --want=50ufoo --from alice
 dysond tx whaleswap convert-to-liquid --denom=udys --amount=100 --from alice
 dysond tx whaleswap make-offer --have=100whaleswap.dys/coins/udys --want=50ufoo --from alice
-dysond tx whaleswap take-offer --trades='[{"offer_id":1,"take_units":"10"}]' --from bob
+dysond tx whaleswap take-offer --trades offer_id=1,take_units=10 --trades offer_id=2 --take any --from bob
 dysond tx whaleswap cancel-offer --offer-id=2 --from bob
 ```
 

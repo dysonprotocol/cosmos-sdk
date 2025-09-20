@@ -18,6 +18,7 @@ type AccountKeeper interface {
 type BankKeeper interface {
 	SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
 	SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoins(ctx context.Context, from, to sdk.AccAddress, amt sdk.Coins) error
 	MintCoins(ctx context.Context, moduleName string, amounts sdk.Coins) error
 	BurnCoins(ctx context.Context, moduleName string, amounts sdk.Coins) error
 	GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin
@@ -30,6 +31,7 @@ type NameserviceKeeper interface {
 	GetParams(ctx context.Context) nameservicev1.Params
 	MintCoins(ctx context.Context, msg *nameservicev1.MsgMintCoins) (*nameservicev1.MsgMintCoinsResponse, error)
 	BurnCoins(ctx context.Context, msg *nameservicev1.MsgBurnCoins) (*nameservicev1.MsgBurnCoinsResponse, error)
+	MoveCoins(ctx context.Context, msg *nameservicev1.MsgMoveCoins) (*nameservicev1.MsgMoveCoinsResponse, error)
 	// Name administration
 	ResolveNameOrAddress(ctx context.Context, nameOrAddress string) (string, error)
 	SetDestination(ctx context.Context, msg *nameservicev1.MsgSetDestination) (*nameservicev1.MsgSetDestinationResponse, error)

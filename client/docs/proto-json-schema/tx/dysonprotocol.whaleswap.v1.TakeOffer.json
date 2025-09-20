@@ -18,8 +18,7 @@
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Msg Take Offer",
-                "description": "Take one or more offers (batch). - Each TakeItem specifies an offer and optional take_units (sdk.Int string).   If unset, the action attempts to fully fill the remaining units. - The taker must provide payment in base want; any remainder may be provided   via liquid want, which is burned on receipt. The module then pays base have   (or base of liquid have) to the taker."
+                "title": "Msg Take Offer"
             },
             "dysonprotocol.whaleswap.v1.TakeItem": {
                 "properties": {
@@ -43,13 +42,40 @@
         "definitions": {
             "dysonprotocol.whaleswap.v1.MsgTakeOfferResponse": {
                 "properties": {
-                    "ok": {
-                        "type": "boolean"
+                    "sent": {
+                        "items": {
+                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+                        },
+                        "additionalProperties": false,
+                        "type": "array",
+                        "description": "Total coins the taker sent across executed trades (usually want denom)."
+                    },
+                    "received": {
+                        "items": {
+                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+                        },
+                        "additionalProperties": false,
+                        "type": "array",
+                        "description": "Total coins the taker received across executed trades (usually have denom, base denom when offers use liquid have)."
                     }
                 },
                 "additionalProperties": false,
                 "type": "object",
                 "title": "Msg Take Offer Response"
+            },
+            "cosmos.base.v1beta1.Coin": {
+                "properties": {
+                    "denom": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Coin",
+                "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
             }
         }
     }

@@ -255,3 +255,266 @@ def test_create_pool_reject_zero_width_band(
     assert (
         tx.get("code", 0) != 0
     ), f"expected failure for zero-width band, got: {json.dumps(tx, indent=2)}"
+
+
+def test_update_pool_config_owner_only(
+    chainnet, generate_account, faucet, register_name
+):
+    dysond = chainnet[0]
+    [creator_name, creator_addr] = generate_account("amm_owner")
+    faucet(creator_addr, amount=2_000_000)
+
+    # second denom and mint
+    name = register_name(dysond, creator_name, creator_addr, "1000udys")
+    params = dysond("query", "nameservice", "params")
+    fee_per_unit = float(params["params"]["mint_fee_per_coin"])  # e.g., 0.01
+    units = 1000
+    required_fee = int(units * fee_per_unit)
+    mint = dysond(
+        "tx",
+        "nameservice",
+        "mint-coins",
+        "--amount",
+        f"{units}{name}",
+        "--mint-fee",
+        f"{required_fee}udys",
+        "--from",
+        creator_name,
+    )
+    assert mint.get("code", 1) == 0, f"mint-coins failed: {json.dumps(mint, indent=2)}"
+
+    # create v2 pool
+    tx = dysond(
+        "tx",
+        "whaleswap",
+        "create-pool",
+        "--coins",
+        "1000udys",
+        "--coins",
+        f"500{name}",
+        "--from",
+        creator_name,
+    )
+    assert tx.get("code", 1) == 0, f"create-pool failed: {json.dumps(tx, indent=2)}"
+    evs = [
+        e
+        for e in tx.get("events", [])
+        if e.get("type") == "dysonprotocol.whaleswap.v1.EventPoolCreated"
+    ]
+    pool_attrs = evs[0].get("attributes", [])
+    pool_id = int(
+        str([a for a in pool_attrs if a.get("key") == "pool_id"][0]["value"]).strip('"')
+    )
+
+    # non-owner tries to update config → should fail
+    [stranger_name, stranger_addr] = generate_account("amm_stranger")
+    faucet(stranger_addr, amount=500_000)
+    bad = dysond(
+        "tx",
+        "whaleswap",
+        "update-pool-config",
+        "--pool-id",
+        str(pool_id),
+        "--fee-pct",
+        "0.001",
+        "--from",
+        stranger_name,
+    )
+    assert (
+        bad.get("code", 0) != 0
+    ), f"expected owner-only failure: {json.dumps(bad, indent=2)}"
+
+    # owner updates fee and adds a band that includes current price
+    ok = dysond(
+        "tx",
+        "whaleswap",
+        "update-pool-config",
+        "--pool-id",
+        str(pool_id),
+        "--fee-pct",
+        "0.002",
+        "--min-price",
+        "1udys",
+        "--min-price",
+        f"1{name}",
+        "--max-price",
+        "3udys",
+        "--max-price",
+        f"3{name}",
+        "--from",
+        creator_name,
+    )
+    assert ok.get("code", 1) == 0, f"owner update failed: {json.dumps(ok, indent=2)}"
+
+
+def test_add_liquidity_v2_with_refunds(
+    chainnet, generate_account, faucet, register_name
+):
+    dysond = chainnet[0]
+    [owner_name, owner_addr] = generate_account("amm_owner2")
+    faucet(owner_addr, amount=2_000_000)
+    name = register_name(dysond, owner_name, owner_addr, "1000udys")
+    params = dysond("query", "nameservice", "params")
+    fee_per_unit = float(params["params"]["mint_fee_per_coin"])  # e.g., 0.01
+    units = 1000
+    required_fee = int(units * fee_per_unit)
+    mint = dysond(
+        "tx",
+        "nameservice",
+        "mint-coins",
+        "--amount",
+        f"{units}{name}",
+        "--mint-fee",
+        f"{required_fee}udys",
+        "--from",
+        owner_name,
+    )
+    assert mint.get("code", 1) == 0, f"mint-coins failed: {json.dumps(mint, indent=2)}"
+
+    # create pool
+    tx = dysond(
+        "tx",
+        "whaleswap",
+        "create-pool",
+        "--coins",
+        "1000udys",
+        "--coins",
+        f"500{name}",
+        "--from",
+        owner_name,
+    )
+    assert tx.get("code", 1) == 0, f"create-pool failed: {json.dumps(tx, indent=2)}"
+    pid = int(
+        str(
+            [
+                a
+                for e in tx["events"]
+                if e["type"] == "dysonprotocol.whaleswap.v1.EventPoolCreated"
+                for a in e["attributes"]
+                if a["key"] == "pool_id"
+            ][0]["value"]
+        ).strip('"')
+    )
+
+    # add misproportional amounts → expect liquidity added event and positive shares
+    add = dysond(
+        "tx",
+        "whaleswap",
+        "add-liquidity",
+        "--pool-id",
+        str(pid),
+        "--amount1",
+        "300udys",
+        "--amount2",
+        f"50{name}",
+        "--from",
+        owner_name,
+    )
+    assert add.get("code", 1) == 0, f"add-liquidity failed: {json.dumps(add, indent=2)}"
+    evs = [
+        e
+        for e in add.get("events", [])
+        if e.get("type") == "dysonprotocol.whaleswap.v1.EventPoolLiquidityAdded"
+    ]
+    assert evs, f"liquidity-added event missing: {json.dumps(add, indent=2)}"
+    shares_attr = [a for a in evs[0].get("attributes", []) if a.get("key") == "shares"]
+    assert (
+        shares_attr and int(str(shares_attr[0]["value"]).strip('"')) > 0
+    ), f"no shares minted: {json.dumps(add, indent=2)}"
+
+
+def test_remove_liquidity_full_exit_deletes_pool(
+    chainnet, generate_account, faucet, register_name
+):
+    dysond = chainnet[0]
+    [owner_name, owner_addr] = generate_account("amm_owner3")
+    faucet(owner_addr, amount=2_000_000)
+    name = register_name(dysond, owner_name, owner_addr, "1000udys")
+    params = dysond("query", "nameservice", "params")
+    fee_per_unit = float(params["params"]["mint_fee_per_coin"])  # e.g., 0.01
+    units = 1000
+    required_fee = int(units * fee_per_unit)
+    mint = dysond(
+        "tx",
+        "nameservice",
+        "mint-coins",
+        "--amount",
+        f"{units}{name}",
+        "--mint-fee",
+        f"{required_fee}udys",
+        "--from",
+        owner_name,
+    )
+    assert mint.get("code", 1) == 0, f"mint-coins failed: {json.dumps(mint, indent=2)}"
+
+    # create pool
+    tx = dysond(
+        "tx",
+        "whaleswap",
+        "create-pool",
+        "--coins",
+        "1000udys",
+        "--coins",
+        f"500{name}",
+        "--from",
+        owner_name,
+    )
+    assert tx.get("code", 1) == 0, f"create-pool failed: {json.dumps(tx, indent=2)}"
+    pool_id = int(
+        str(
+            [
+                a
+                for e in tx["events"]
+                if e["type"] == "dysonprotocol.whaleswap.v1.EventPoolCreated"
+                for a in e["attributes"]
+                if a["key"] == "pool_id"
+            ][0]["value"]
+        ).strip('"')
+    )
+
+    # add some liquidity first so owner holds majority shares
+    add = dysond(
+        "tx",
+        "whaleswap",
+        "add-liquidity",
+        "--pool-id",
+        str(pool_id),
+        "--amount1",
+        "200udys",
+        "--amount2",
+        f"100{name}",
+        "--from",
+        owner_name,
+    )
+    assert add.get("code", 1) == 0, f"add-liquidity failed: {json.dumps(add, indent=2)}"
+
+    # query pool to get shares_denom
+    p = dysond("query", "whaleswap", "pool", str(pool_id))["pool"]
+    shares = p["shares_denom"]
+
+    # query owner's balance of shares
+    bals = dysond("query", "bank", "balances", owner_addr)
+    all_bal = bals.get("balances", [])
+    share_bal = [b for b in all_bal if b.get("denom") == shares]
+    assert share_bal, f"owner has no shares balance: {json.dumps(bals, indent=2)}"
+    amt = share_bal[0]["amount"]
+
+    # full exit: remove exactly all shares → pool deleted
+    rem = dysond(
+        "tx",
+        "whaleswap",
+        "remove-liquidity",
+        "--pool-id",
+        str(pool_id),
+        "--shares",
+        amt,
+        "--from",
+        owner_name,
+    )
+    assert (
+        rem.get("code", 1) == 0
+    ), f"remove-liquidity failed: {json.dumps(rem, indent=2)}"
+    q = dysond("query", "whaleswap", "pool", str(pool_id))
+    assert (
+        q.get("pool") is None or q.get("pool") == {}
+    ), f"pool should be deleted: {json.dumps(q, indent=2)}"

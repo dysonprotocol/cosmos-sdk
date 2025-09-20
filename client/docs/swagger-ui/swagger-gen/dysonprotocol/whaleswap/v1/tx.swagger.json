@@ -717,14 +717,24 @@
             "$ref": "#/definitions/dysonprotocol.whaleswap.v1.TakeItem"
           }
         }
-      },
-      "description": "Take one or more offers (batch).\n\n- Each TakeItem specifies an offer and optional take_units (sdk.Int string).\n  If unset, the action attempts to fully fill the remaining units.\n- The taker must provide payment in base want; any remainder may be provided\n  via liquid want, which is burned on receipt. The module then pays base have\n  (or base of liquid have) to the taker."
+      }
     },
     "dysonprotocol.whaleswap.v1.MsgTakeOfferResponse": {
       "type": "object",
       "properties": {
-        "ok": {
-          "type": "boolean"
+        "sent": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          },
+          "description": "Total coins the taker sent across executed trades (usually want denom)."
+        },
+        "received": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          },
+          "description": "Total coins the taker received across executed trades (usually have denom,\nbase denom when offers use liquid have)."
         }
       }
     },

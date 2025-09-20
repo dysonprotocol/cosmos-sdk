@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	whaleswap "dysonprotocol.com/x/whaleswap"
+	whaleswapcli "dysonprotocol.com/x/whaleswap/client/cli"
 	"dysonprotocol.com/x/whaleswap/keeper"
 	whaleswaptypes "dysonprotocol.com/x/whaleswap/types"
 
@@ -56,7 +57,12 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx sdkclient.Context, mux
 		panic(err)
 	}
 }
-func (am AppModule) GetTxCmd() *cobra.Command    { return &cobra.Command{Use: whaleswap.ModuleName} }
+func (am AppModule) GetTxCmd() *cobra.Command {
+	root := &cobra.Command{Use: whaleswap.ModuleName}
+	// Attach custom CLI where we need richer flag parsing than autocli supports
+	root.AddCommand(whaleswapcli.CmdTakeOffer())
+	return root
+}
 func (am AppModule) GetQueryCmd() *cobra.Command { return &cobra.Command{Use: whaleswap.ModuleName} }
 
 type AppModule struct {

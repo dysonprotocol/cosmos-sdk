@@ -27,6 +27,11 @@ func (k Keeper) ConvertToLiquid(ctx context.Context, msg *whaleswapv1.MsgConvert
 	if !ok || !amt.IsPositive() {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid amount")
 	}
+	// Ensure whaleswap root name exists and resolves to the module address so
+	// nameservice minting under whaleswap.dys/* is authorized.
+	if err := k.ensureWhaleswapRootName(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to ensure whaleswap root name")
+	}
 	if err := k.bank.SendCoinsFromAccountToModule(ctx, caller, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(msg.Denom, amt))); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to escrow solid %s from %s", sdk.NewCoin(msg.Denom, amt).String(), msg.Caller)
 	}

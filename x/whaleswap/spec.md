@@ -206,12 +206,17 @@ Msgs
   - Normal: have is solid; escrow have in module (bank send user→module). No pfand.
   - Liquid: have is liquid L(S); require maker holds ≥ pfand_per_offer; move pfand maker→module; no have attachments.
 
-- TakeOffer(trades[])
-  - Batch settlement; for each trade:
-    - Taker pays solid want first (escrow), remainder via L(want) moved to module and burned.
-    - Maker-have liquid: burn L(have) moved from maker; send solid have to taker; release pfand to taker on close.
+- TakeOffer(trades[], take)
+  - Batch settlement with explicit mode control.
+  - Per-trade settlement:
+    - Taker pays solid want first (escrow), then optional liquid want remainder which is burned.
+    - Maker-have liquid: maker provides L(have) to burn; base-have sent to taker; pfand released on close.
     - Maker-have normal: send solid have from module escrow to taker.
-  - Update offer remaining, status; record trades; emit events.
+  - Update offer remaining/status; record Trade; emit EventOfferTaken; remove reverse indexes on close.
+  - Take modes (enum TakeMode):
+    - TAKE_ALL (default): all trades must succeed; aborts on first failure (atomic all-or-nothing).
+    - TAKE_FIRST: attempts trades in order using cached contexts; commits the first that succeeds; if none succeed, error.
+    - TAKE_ANY: attempts each trade in its own cached context; commits all that succeed; succeeds if at least one succeeds; errors if none succeed.
 
 - CancelOffer(offer_id)
   - Maker can cancel open; third-party may cancel liquid offers if maker lacks ≥ 1 unit of L(have); pfand sent to closer.
@@ -299,7 +304,7 @@ This section was removed. The module will not implement composed execution in th
 ### 15. Events (selected)
 
 - pool_created(pool_id), poolupdate(pool_id), pool_swap(pool_id), pool_liquidity_added(pool_id), pool_liquidity_removed(pool_id), pool_owner_changed(pool_id)
-- offer_created(offer_id), offer_taken(offer_id), offer_cancelled(offer_id), pfand_locked(amount), pfand_released(amount)
+- offer_created(offer_id), offer_taken(offer_id, trade_id), offer_cancelled(offer_id), pfand_locked(amount), pfand_released(amount)
 - auction_created(auction_id), auction_redeemed(auction_id)
 
 
@@ -970,3 +975,83 @@ Acceptance criteria:
 - Queries wrap errors with context; filtered pagination works with indexes.
 - Genesis optional check enforces escrow ≥ sum of sells.
 - Tests cover happy and failure paths and pass locally.
+==================================================
+
+## New refactor: TAKE_ALL netting with one MoveCoins
+
+I'll open the nameservice move coins helper to confirm how MoveCoins works and whether we can route the whaleswap batch settlement through a single MoveCoins call, and to see how burning integrates. Then I'll update the plan accordingly.
+
+[2 tools called]
+
+I looked at `nameservice` MoveCoins: it pulls all inputs into the nameservice module, then pays all outputs; totals must match per total sum and no negatives. That’s perfect for one-shot settlement with the module itself listed as an input and/or output.
+
+### TAKE_ALL netting with one MoveCoins
+- Remove TAKE_FIRST/TAKE_ANY; only TAKE_ALL path remains.
+- Change per-leg to plan-only (no sends). It returns “deltas” the batch aggregator will merge.
+
+### Leg planning (applyOnePlan)
+For each `TakeItem`:
+- Load offer, compute `takeUnits`, `requiredWant` (solid want denom), and `deliverHave` (solid base-have denom; if have is liquid, decode to base).
+- Record:
+  - outputs[maker] += requiredWant (solid)
+  - outputs[taker] += deliverHave (solid)
+  - if have is liquid: inputs[maker] += L(have)(deliverHave)
+  - if this leg closes the offer: outputs[taker] += offer.PfandLocked (solid)
+- Return also the updated offer state (remaining units, status) for batch persistence.
+
+No address-to-module moves here; just who pays/receives what.
+
+### Aggregate and net
+- Sum all leg deltas into:
+  - outputsByAddr: map[address]Coins
+  - makerLiquidInByAddr: map[maker]Coins (only liquid L(have))
+  - takerGrossPayByDenom: Σ requiredWant per denom
+  - takerSolidRecvByDenom: Σ deliverHave per denom
+  - pfandToTakerByDenom
+- Compute taker net per solid denom d:
+  - takerOutSolid[d] = takerSolidRecv[d] + pfandToTaker[d]
+  - takerNet[d] = takerOutSolid[d] - takerGrossPay[d]
+  - If takerNet[d] < 0 (deficit):
+    - basePart[d] = min(-takerNet[d], taker base balance of d)
+    - liquidPart[d] = -takerNet[d] - basePart[d] (in L(d))
+  - Else zero.
+- Add taker inputs:
+  - inputs[taker] += basePart[d] (solid d) and, if needed, L(d) for liquidPart[d].
+- Add maker liquid inputs:
+  - for each maker: inputs[maker] += makerLiquidInByAddr[maker] (their L(have) totals).
+- Compute whaleswap module base input needed per solid denom d so totals balance:
+  - outputsSolid[d] = Σ outputsByAddr[*][d] (makers + taker)
+  - inputsSolidFromTaker[d] = basePart[d]
+  - inputs[whaleswapModule][d] = outputsSolid[d] - inputsSolidFromTaker[d]
+- Add outputs to whaleswap module for liquid inflows (to be burned):
+  - outputs[whaleswapModule] += Σ L(d) from taker + Σ L(have) from makers
+
+Now totals match per denom:
+- Solid d: inputs = basePart[d] + moduleIn[d] = outputsSolid[d]
+- Liquid L(x): inputs = taker L(x) + makers L(x) = outputs to whaleswap module L(x)
+
+### Validation
+- Taker has balances ≥ basePart[d] and ≥ liquidPart[d] for all d.
+- Each maker has balances ≥ their L(have) totals.
+- Whaleswap module has solid balances ≥ moduleIn[d] for all d (escrow/backing/pfand combined).
+- Offers’ unit math and close transitions are valid.
+
+### One-shot settlement
+- Build []banktypes.Input from inputs map and []banktypes.Output from outputs map.
+- Call nameservice MoveCoins once:
+  - nameSvc.MoveCoins(ctx, { name_destination: whaleswap module address, inputs, outputs })
+- Burn aggregated liquid denoms now held by whaleswap module:
+  - For each L(x) in outputs[whaleswapModule], call burnLiquid(ctx, L(x)).
+- Persist all trades and offer updates, reindex status changes.
+- Emit per-trade events and pfand events; assert invariants.
+
+### Notes
+- We treat liquid/solid uniformly as Coins; the only special action is burning whatever L(…) ends up at the whaleswap module.
+- The whaleswap module appears in both inputs (solid d it contributes) and outputs (liquid it receives to burn).
+- No leg-level cache contexts; the entire Msg handler remains atomic at the app level.
+
+If you want, I’ll implement:
+- `applyOnePlan` (pure planning)
+- the batch aggregator (inputs/outputs maps)
+- the single `MoveCoins` call and subsequent `burnLiquid`
+- removal of TAKE_FIRST/TAKE_ANY and doc tweak for TAKE_ALL behavior.

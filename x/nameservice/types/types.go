@@ -26,7 +26,7 @@ var (
 var ValidDenomRegexString = func() string {
 	// embed NameRegexString without start/end anchors
 	core := strings.TrimSuffix(strings.TrimPrefix(NameRegexString, "^"), "$")
-	return "^" + core + `(?:/[0-9A-Za-z:_-]+)*$`
+	return "^" + core + `(?:/[0-9A-Za-z:_.-]+)*$`
 }()
 
 // ValidDenomRegex is the compiled regex for validating nameservice coin denoms
