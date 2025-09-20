@@ -15,6 +15,7 @@ Non-goals (initial cut): on-chain scripting hooks, cross-chain.
 - Liquid denom format: `whaleswap.dys/coins/<solid>` (no base64). Shares: `whaleswap.dys/pools/{pool_id}`.
 - Single-pool swaps only. Multi-hop is achieved by multiple messages in one tx.
 - Authority: module account must control `whaleswap.dys` root for mint/burn/class ops.
+- Orderbook settlement uses TAKE_ALL-only with a single aggregated multi-send via an internal whaleswap helper (`wsMoveCoins`); liquid inputs collected at the module are burned post-settlement.
 
 
 ### 2. External dependencies and authorities
@@ -206,17 +207,13 @@ Msgs
   - Normal: have is solid; escrow have in module (bank send user→module). No pfand.
   - Liquid: have is liquid L(S); require maker holds ≥ pfand_per_offer; move pfand maker→module; no have attachments.
 
-- TakeOffer(trades[], take)
-  - Batch settlement with explicit mode control.
-  - Per-trade settlement:
-    - Taker pays solid want first (escrow), then optional liquid want remainder which is burned.
-    - Maker-have liquid: maker provides L(have) to burn; base-have sent to taker; pfand released on close.
-    - Maker-have normal: send solid have from module escrow to taker.
-  - Update offer remaining/status; record Trade; emit EventOfferTaken; remove reverse indexes on close.
-  - Take modes (enum TakeMode):
-    - TAKE_ALL (default): all trades must succeed; aborts on first failure (atomic all-or-nothing).
-    - TAKE_FIRST: attempts trades in order using cached contexts; commits the first that succeeds; if none succeed, error.
-    - TAKE_ANY: attempts each trade in its own cached context; commits all that succeed; succeeds if at least one succeeds; errors if none succeed.
+- TakeOffer(trades[])
+  - Atomic TAKE_ALL-only settlement. Any infeasible leg aborts the entire batch.
+  - Planning: iterate legs, compute `take_units`, aggregate maker wants (solid), taker credits (solid base-have; liquid-have decoded to base), and include pfand to taker on close. Emit `offer_taken` and `pfand_released` during planning; events roll back on failure.
+  - Netting: reduce the taker’s output for each solid denom by min(credits, maker wants) before computing the taker’s deficit. Fund deficits from taker base first, then taker liquid L(denom) (to be burned).
+  - Aggregation: build bank inputs/outputs across all participants. The whaleswap module contributes solid backing and receives liquid inflows to burn.
+  - Settlement: call internal `wsMoveCoins` once to pull all inputs into the module and fan out outputs; then burn all liquid denoms now held by the module. Persist trades, update offers, and remove reverse indexes on close.
+  - Constraints: want must be solid; liquid wants are rejected at MakeOffer.
 
 - CancelOffer(offer_id)
   - Maker can cancel open; third-party may cancel liquid offers if maker lacks ≥ 1 unit of L(have); pfand sent to closer.
@@ -305,6 +302,7 @@ This section was removed. The module will not implement composed execution in th
 
 - pool_created(pool_id), poolupdate(pool_id), pool_swap(pool_id), pool_liquidity_added(pool_id), pool_liquidity_removed(pool_id), pool_owner_changed(pool_id)
 - offer_created(offer_id), offer_taken(offer_id, trade_id), offer_cancelled(offer_id), pfand_locked(amount), pfand_released(amount)
+  - Note: orderbook take emits events during planning; Cosmos SDK rolls them back if the tx fails.
 - auction_created(auction_id), auction_redeemed(auction_id)
 
 

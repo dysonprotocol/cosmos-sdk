@@ -6,6 +6,7 @@
 - Use single-pool `swap --pool-id` everywhere; multi-hop = multiple msgs.
 - Liquid denom shape is `whaleswap.dys/coins/<solid>`; update string asserts accordingly.
 - Module account owns `whaleswap.dys` root; tests can assert authority by querying nameservice owner to be the module address.
+- Orderbook TakeOffer is TAKE_ALL only (no modes, no `--take` flag). All legs are planned, netted, and settled via one aggregated multi-send from the whaleswap module helper, followed by burning any liquid inputs at the module. Liquid wants are disallowed at MakeOffer.
 
 ### Scope
 
@@ -158,15 +159,15 @@ def amm_create(denom_a, amt_a, denom_b, amt_b):
   - have is liquid L(S); optionally update params.pfand_per_offer > 0 via UpdateParams (authority)
   - locks pfand; EventPfandLocked emitted
 
-- TakeOffer (batch with modes):
-  - settle base want first, then liquid want burn if needed
-  - maker-have liquid: require maker provides L(have) to burn; pfand released on close (EventPfandReleased)
-  - maker-have normal: release escrowed base have to taker
-  - Offer status transitions to closed when remaining_units == 0; reverse indexes removed
-  - Modes via `--take` flag: `first|any|all` (default: `all`)
-    - first: commit only the first feasible trade, error if none
-    - any: commit any feasible trades, error if none succeed
-    - all: require all trades to succeed atomically
+- TakeOffer (atomic batch netting):
+  - Only TAKE_ALL semantics; no `--take` flag. If any leg is infeasible, the entire batch fails and no state changes persist.
+  - The keeper aggregates all inputs/outputs across legs and performs a single multi-send via whaleswap’s internal helper. Events are emitted per leg during planning and are rolled back on failure.
+  - Same-denom netting: if the taker both pays and receives the same solid denom across legs, reduce the taker’s output by the nettable amount before computing deficits.
+  - Taker funding priority: base balance first, then liquid L(denom) for the remainder (which is burned after settlement).
+  - Maker-have liquid: makers supply L(have), which is routed to the module and burned; the taker receives the solid base-have.
+  - Maker-have normal: taker receives solid have from module escrow/backing.
+  - Pfand: locked on liquid-have offers at make; released to the taker on close and included in outputs.
+  - Offer status transitions to closed when `remaining_units == 0`; reverse indexes are removed on close/cancel.
 
 - CancelOffer:
   - maker can cancel open; third-party can cancel liquid offer if maker lacks ≥1 unit liquid have; pfand released to closer
@@ -176,7 +177,7 @@ Example CLI:
 dysond tx whaleswap make-offer --have=100udys --want=50ufoo --from alice
 dysond tx whaleswap convert-to-liquid --denom=udys --amount=100 --from alice
 dysond tx whaleswap make-offer --have=100whaleswap.dys/coins/udys --want=50ufoo --from alice
-dysond tx whaleswap take-offer --trades offer_id=1,take_units=10 --trades offer_id=2 --take any --from bob
+dysond tx whaleswap take-offer --trades offer_id=1,take_units=10 --trades offer_id=2 --from bob
 dysond tx whaleswap cancel-offer --offer-id=2 --from bob
 ```
 
