@@ -18,13 +18,18 @@ func (k Keeper) PoolsByPair(ctx context.Context, req *whaleswapv1.QueryPoolsByPa
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "base_denom and quote_denom required")
 	}
 	base, quote := req.BaseDenom, req.QuoteDenom
-	results, pageRes, err := query.CollectionPaginate(ctx, k.PoolsMap, req.Pagination, func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
-		if len(value.Coins) == 2 && ((value.Coins[0].Denom == base && value.Coins[1].Denom == quote) || (value.Coins[0].Denom == quote && value.Coins[1].Denom == base)) {
+	results, pageRes, err := query.CollectionFilteredPaginate(ctx, k.PoolsMap, req.Pagination,
+		func(key uint64, value whaleswapv1.Pool) (bool, error) {
+			if len(value.Coins) != 2 {
+				return false, nil
+			}
+			return (value.Coins[0].Denom == base && value.Coins[1].Denom == quote) || (value.Coins[0].Denom == quote && value.Coins[1].Denom == base), nil
+		},
+		func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
 			v := value
 			return &v, nil
-		}
-		return nil, nil
-	})
+		},
+	)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "PoolsByPair paginate failed")
 	}
@@ -38,13 +43,18 @@ func (k Keeper) PoolsByDenom(ctx context.Context, req *whaleswapv1.QueryPoolsByD
 	if req.Denom == "" {
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "denom required")
 	}
-	results, pageRes, err := query.CollectionPaginate(ctx, k.PoolsMap, req.Pagination, func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
-		if len(value.Coins) != 2 || (value.Coins[0].Denom != req.Denom && value.Coins[1].Denom != req.Denom) {
-			return nil, nil
-		}
-		v := value
-		return &v, nil
-	})
+	results, pageRes, err := query.CollectionFilteredPaginate(ctx, k.PoolsMap, req.Pagination,
+		func(key uint64, value whaleswapv1.Pool) (bool, error) {
+			if len(value.Coins) != 2 {
+				return false, nil
+			}
+			return value.Coins[0].Denom == req.Denom || value.Coins[1].Denom == req.Denom, nil
+		},
+		func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
+			v := value
+			return &v, nil
+		},
+	)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "PoolsByDenom paginate failed")
 	}
@@ -97,34 +107,35 @@ func (k Keeper) PoolsByPairPriceRange(ctx context.Context, req *whaleswapv1.Quer
 			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid max_price: %s", req.MaxPrice)
 		}
 	}
-	results, pageRes, perr := query.CollectionPaginate(ctx, k.PoolsMap, req.Pagination, func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
-		// match pair using denom presence regardless of order
-		if len(value.Coins) != 2 {
-			return nil, nil
-		}
-		rBase := value.Coins.AmountOf(req.BaseDenom)
-		rQuote := value.Coins.AmountOf(req.QuoteDenom)
-		if rBase.IsZero() || rQuote.IsZero() {
-			return nil, nil
-		}
-		// price = quote/base; compare via cross-multiplication with Dec*Int
-		if req.MinPrice != "" {
-			// require rQuote >= ceil(minDec * rBase)
-			minThresh := minDec.MulInt(rBase).Ceil().TruncateInt()
-			if rQuote.LT(minThresh) {
-				return nil, nil
+	results, pageRes, perr := query.CollectionFilteredPaginate(ctx, k.PoolsMap, req.Pagination,
+		func(key uint64, value whaleswapv1.Pool) (bool, error) {
+			if len(value.Coins) != 2 {
+				return false, nil
 			}
-		}
-		if req.MaxPrice != "" {
-			// require rQuote <= floor(maxDec * rBase)
-			maxThresh := maxDec.MulInt(rBase).TruncateInt()
-			if rQuote.GT(maxThresh) {
-				return nil, nil
+			rBase := value.Coins.AmountOf(req.BaseDenom)
+			rQuote := value.Coins.AmountOf(req.QuoteDenom)
+			if rBase.IsZero() || rQuote.IsZero() {
+				return false, nil
 			}
-		}
-		v := value
-		return &v, nil
-	})
+			if req.MinPrice != "" {
+				minThresh := minDec.MulInt(rBase).Ceil().TruncateInt()
+				if rQuote.LT(minThresh) {
+					return false, nil
+				}
+			}
+			if req.MaxPrice != "" {
+				maxThresh := maxDec.MulInt(rBase).TruncateInt()
+				if rQuote.GT(maxThresh) {
+					return false, nil
+				}
+			}
+			return true, nil
+		},
+		func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
+			v := value
+			return &v, nil
+		},
+	)
 	if perr != nil {
 		return nil, cosmossdkerrors.Wrap(perr, "PoolsByPairPriceRange paginate failed")
 	}
@@ -142,14 +153,16 @@ func (k Keeper) PoolsByOwner(ctx context.Context, req *whaleswapv1.QueryPoolsByO
 	if err != nil {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner: %s", req.Owner)
 	}
-	results, pageRes, perr := query.CollectionPaginate(ctx, k.PoolsMap, req.Pagination, func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
-		bal := k.bank.GetBalance(ctx, addrBz, value.SharesDenom).Amount
-		if !bal.IsPositive() {
-			return nil, nil
-		}
-		v := value
-		return &v, nil
-	})
+	results, pageRes, perr := query.CollectionFilteredPaginate(ctx, k.PoolsMap, req.Pagination,
+		func(key uint64, value whaleswapv1.Pool) (bool, error) {
+			bal := k.bank.GetBalance(ctx, addrBz, value.SharesDenom).Amount
+			return bal.IsPositive(), nil
+		},
+		func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
+			v := value
+			return &v, nil
+		},
+	)
 	if perr != nil {
 		return nil, cosmossdkerrors.Wrap(perr, "PoolsByOwner paginate failed")
 	}

@@ -122,12 +122,22 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 		if !outAmt.IsPositive() {
 			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "swap output too small")
 		}
-		// Update integer reserves approximately
+		// Update integer reserves approximately; prevent zeroing any reserve
 		if currentDenom == pool.Coins[0].Denom {
-			pool.Coins = sdk.NewCoins(sdk.NewCoin(pool.Coins[0].Denom, pool.Coins[0].Amount.Add(currentAmount)), sdk.NewCoin(pool.Coins[1].Denom, pool.Coins[1].Amount.Sub(outAmt)))
+			new0 := pool.Coins[0].Amount.Add(currentAmount)
+			new1 := pool.Coins[1].Amount.Sub(outAmt)
+			if !new1.IsPositive() {
+				return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "swap would deplete quote reserve to zero")
+			}
+			pool.Coins = sdk.NewCoins(sdk.NewCoin(pool.Coins[0].Denom, new0), sdk.NewCoin(pool.Coins[1].Denom, new1))
 			outDenom = pool.Coins[1].Denom
 		} else {
-			pool.Coins = sdk.NewCoins(sdk.NewCoin(pool.Coins[0].Denom, pool.Coins[0].Amount.Sub(outAmt)), sdk.NewCoin(pool.Coins[1].Denom, pool.Coins[1].Amount.Add(currentAmount)))
+			new0 := pool.Coins[0].Amount.Sub(outAmt)
+			new1 := pool.Coins[1].Amount.Add(currentAmount)
+			if !new0.IsPositive() {
+				return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "swap would deplete base reserve to zero")
+			}
+			pool.Coins = sdk.NewCoins(sdk.NewCoin(pool.Coins[0].Denom, new0), sdk.NewCoin(pool.Coins[1].Denom, new1))
 			outDenom = pool.Coins[0].Denom
 		}
 		// Sanity band check post-swap
@@ -170,9 +180,12 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 		if !outAmt.IsPositive() {
 			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "swap output too small")
 		}
-		// Update reserves: add input, subtract output
+		// Update reserves: add input, subtract output; prevent zeroing any reserve
 		newIn := pool.Coins[inputIdx].Amount.Add(currentAmount)
 		newOut := pool.Coins[outputIdx].Amount.Sub(outAmt)
+		if !newOut.IsPositive() {
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "swap would deplete output reserve to zero")
+		}
 		if inputIdx == 0 {
 			pool.Coins = sdk.NewCoins(
 				sdk.NewCoin(pool.Coins[0].Denom, newIn),
