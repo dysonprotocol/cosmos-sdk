@@ -52,9 +52,9 @@ def test_create_pool_v2_success(chainnet, generate_account, faucet, register_nam
     q = dysond("query", "whaleswap", "pool", str(pool_id))
     pool = q.get("pool")
     assert pool, f"pool not found: {q}"
-    assert (
-        pool["coin_a"]["denom"] < pool["coin_b"]["denom"]
-    ), f"denom order not canonical: {pool}"
+    coins = pool.get("coins", [])
+    assert isinstance(coins, list) and len(coins) == 2, f"invalid coins shape: {pool}"
+    assert coins[0]["denom"] < coins[1]["denom"], f"denom order not canonical: {pool}"
     assert pool["shares_denom"].startswith(
         "whaleswap.dys/pools/"
     ), f"invalid shares denom: {pool['shares_denom']}"

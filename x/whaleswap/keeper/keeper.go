@@ -10,6 +10,7 @@ import (
 	"cosmossdk.io/log"
 	cosmossdk_math "cosmossdk.io/math"
 
+	cosmossdkerrors "cosmossdk.io/errors"
 	nameservicekeeper "dysonprotocol.com/x/nameservice/keeper"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
 	whaleswap "dysonprotocol.com/x/whaleswap"
@@ -38,6 +39,9 @@ var (
 	OffersByWantPrefix        = collections.NewPrefix(12)
 	OffersByPairPricePrefix   = collections.NewPrefix(13)
 	OffersByOwnerStatusPrefix = collections.NewPrefix(14)
+	// Trades reverse indexes
+	TradesByPoolPrefix  = collections.NewPrefix(15)
+	TradesByTakerPrefix = collections.NewPrefix(16)
 )
 
 type Keeper struct {
@@ -60,6 +64,9 @@ type Keeper struct {
 	OffersMap collections.Map[uint64, whaleswapv1.OfferData]
 	tradeSeq  collections.Sequence
 	TradesMap collections.Map[uint64, whaleswapv1.Trade]
+	// Trades reverse indexes
+	TradesByPoolIndex  collections.Map[collections.Pair[uint64, uint64], uint64]
+	TradesByTakerIndex collections.Map[collections.Pair[string, uint64], uint64]
 	// Offer reverse indexes
 	OffersByHave        collections.Map[collections.Pair[string, uint64], uint64]
 	OffersByWant        collections.Map[collections.Pair[string, uint64], uint64]
@@ -153,6 +160,20 @@ func NewKeeper(
 		collections.Uint64Key,
 		codec.CollValue[whaleswapv1.Trade](cdc),
 	)
+	k.TradesByPoolIndex = collections.NewMap(
+		sb,
+		TradesByPoolPrefix,
+		"trades_by_pool",
+		collections.PairKeyCodec(collections.Uint64Key, collections.Uint64Key),
+		collections.Uint64Value,
+	)
+	k.TradesByTakerIndex = collections.NewMap(
+		sb,
+		TradesByTakerPrefix,
+		"trades_by_taker",
+		collections.PairKeyCodec(collections.StringKey, collections.Uint64Key),
+		collections.Uint64Value,
+	)
 	// Auctions collections (sequence only for now)
 	k.auctionSeq = collections.NewSequence(sb, AuctionSeqKey, "auction_seq")
 	k.AuctionsMap = collections.NewMap(
@@ -210,42 +231,33 @@ func (k Keeper) addr(_ context.Context, bech32 string) (sdk.AccAddress, error) {
 	return sdk.AccAddressFromBech32(bech32)
 }
 
-func (k Keeper) normalizeBand(band sdk.Coins, denom1, denom2 string) (sdk.Coins, error) {
-	if len(band) == 0 {
-		return nil, nil
-	}
-	if len(band) != 2 {
-		return nil, fmt.Errorf("price band must contain exactly two coins or be empty")
-	}
-	// Build canonical two-coin set in requested denom order and rely on SDK validation
-	c1 := band.AmountOf(denom1)
-	c2 := band.AmountOf(denom2)
-	coins := sdk.NewCoins(
-		sdk.NewCoin(denom1, c1),
-		sdk.NewCoin(denom2, c2),
-	)
-	if err := coins.Validate(); err != nil {
-		return nil, fmt.Errorf("invalid price band: %w", err)
-	}
-	return coins, nil
-}
+// normalizeBand removed: we use direct sdk.Coins operations in callers.
 
 func (k Keeper) bandRatio(band sdk.Coins, denom1, denom2 string) (cosmossdk_math.LegacyDec, error) {
-	if len(band) != 2 {
-		return cosmossdk_math.LegacyDec{}, fmt.Errorf("band must have 2 coins")
-	}
 	a := band.AmountOf(denom1)
 	b := band.AmountOf(denom2)
-	return cosmossdk_math.LegacyNewDecFromInt(b).Quo(cosmossdk_math.LegacyNewDecFromInt(a)), nil
+	if !a.IsPositive() || !b.IsPositive() {
+		return cosmossdk_math.LegacyDec{}, fmt.Errorf("band amounts must be > 0 and include both denoms")
+	}
+	// Use DecCoin conversions to avoid direct Legacy NewDec usage from ints
+	num := sdk.NewDecCoinFromCoin(sdk.NewCoin(denom2, b)).Amount
+	den := sdk.NewDecCoinFromCoin(sdk.NewCoin(denom1, a)).Amount
+	return num.Quo(den), nil
 }
 
-func (k Keeper) currentPrice(pool whaleswapv1.Pool) (cosmossdk_math.LegacyDec, error) {
-	r1 := cosmossdk_math.LegacyNewDecFromInt(pool.CoinA.Amount)
-	r2 := cosmossdk_math.LegacyNewDecFromInt(pool.CoinB.Amount)
-	if r1.IsZero() {
-		return cosmossdk_math.LegacyDec{}, fmt.Errorf("reserve1 is zero")
+// currentPrice returns price as (quoteDenom/baseDenom).
+func (k Keeper) currentPrice(pool whaleswapv1.Pool, baseDenom, quoteDenom string) (cosmossdk_math.LegacyDec, error) {
+	if len(pool.Coins) != 2 {
+		return cosmossdk_math.LegacyDec{}, fmt.Errorf("invalid pool state")
 	}
-	return r2.Quo(r1), nil
+	baseAmt := pool.Coins.AmountOf(baseDenom)
+	quoteAmt := pool.Coins.AmountOf(quoteDenom)
+	if baseAmt.IsZero() {
+		return cosmossdk_math.LegacyDec{}, fmt.Errorf("base reserve is zero")
+	}
+	num := sdk.NewDecCoinFromCoin(sdk.NewCoin(quoteDenom, quoteAmt)).Amount
+	den := sdk.NewDecCoinFromCoin(sdk.NewCoin(baseDenom, baseAmt)).Amount
+	return num.Quo(den), nil
 }
 
 // ---- Concentrated liquidity helpers ----
@@ -260,12 +272,12 @@ func (k Keeper) bandSqrt(pool whaleswapv1.Pool) (cosmossdk_math.LegacyDec, cosmo
 	if len(pool.MinPrice) != 2 || len(pool.MaxPrice) != 2 {
 		return cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, fmt.Errorf("band not set")
 	}
-	minRatio := cosmossdk_math.LegacyNewDecFromInt(pool.MinPrice.AmountOf(pool.CoinB.Denom)).Quo(
-		cosmossdk_math.LegacyNewDecFromInt(pool.MinPrice.AmountOf(pool.CoinA.Denom)),
-	)
-	maxRatio := cosmossdk_math.LegacyNewDecFromInt(pool.MaxPrice.AmountOf(pool.CoinB.Denom)).Quo(
-		cosmossdk_math.LegacyNewDecFromInt(pool.MaxPrice.AmountOf(pool.CoinA.Denom)),
-	)
+	minNum := sdk.NewDecCoinFromCoin(sdk.NewCoin(pool.MinPrice[1].Denom, pool.MinPrice.AmountOf(pool.MinPrice[1].Denom))).Amount
+	minDen := sdk.NewDecCoinFromCoin(sdk.NewCoin(pool.MinPrice[0].Denom, pool.MinPrice.AmountOf(pool.MinPrice[0].Denom))).Amount
+	maxNum := sdk.NewDecCoinFromCoin(sdk.NewCoin(pool.MaxPrice[1].Denom, pool.MaxPrice.AmountOf(pool.MaxPrice[1].Denom))).Amount
+	maxDen := sdk.NewDecCoinFromCoin(sdk.NewCoin(pool.MaxPrice[0].Denom, pool.MaxPrice.AmountOf(pool.MaxPrice[0].Denom))).Amount
+	minRatio := minNum.Quo(minDen)
+	maxRatio := maxNum.Quo(maxDen)
 	sa, err := k.sqrtPrice(minRatio)
 	if err != nil {
 		return cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, err
@@ -278,8 +290,8 @@ func (k Keeper) bandSqrt(pool whaleswapv1.Pool) (cosmossdk_math.LegacyDec, cosmo
 }
 
 // poolSqrtPrice returns current sqrt price sp
-func (k Keeper) poolSqrtPrice(pool whaleswapv1.Pool) (cosmossdk_math.LegacyDec, error) {
-	p, err := k.currentPrice(pool)
+func (k Keeper) poolSqrtPrice(pool whaleswapv1.Pool, baseDenom, quoteDenom string) (cosmossdk_math.LegacyDec, error) {
+	p, err := k.currentPrice(pool, baseDenom, quoteDenom)
 	if err != nil {
 		return cosmossdk_math.LegacyDec{}, err
 	}
@@ -292,19 +304,25 @@ func (k Keeper) liquidityForReserves(pool whaleswapv1.Pool) (cosmossdk_math.Lega
 	if err != nil {
 		return cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, err
 	}
-	sp, err := k.poolSqrtPrice(pool)
+	sp, err := k.poolSqrtPrice(pool, pool.Coins[0].Denom, pool.Coins[1].Denom)
 	if err != nil {
 		return cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, err
 	}
 	if sp.LT(sa) || sp.GT(sb) {
 		return cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, fmt.Errorf("price outside band")
 	}
-	r1 := cosmossdk_math.LegacyNewDecFromInt(pool.CoinA.Amount)
-	r2 := cosmossdk_math.LegacyNewDecFromInt(pool.CoinB.Amount)
+	r1 := sdk.NewDecCoinFromCoin(sdk.NewCoin(pool.Coins[0].Denom, pool.Coins.AmountOf(pool.Coins[0].Denom))).Amount
+	r2 := sdk.NewDecCoinFromCoin(sdk.NewCoin(pool.Coins[1].Denom, pool.Coins.AmountOf(pool.Coins[1].Denom))).Amount
 	// L candidates
 	// L0 = R1 * sp * sb / (sb - sp)
+	if sb.Equal(sp) {
+		return cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, fmt.Errorf("invalid band: sb equals current sqrt price")
+	}
 	L0 := r1.Mul(sp).Mul(sb).Quo(sb.Sub(sp))
 	// L1 = R2 / (sp - sa)
+	if sp.Equal(sa) {
+		return cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, cosmossdk_math.LegacyDec{}, fmt.Errorf("invalid band: sa equals current sqrt price")
+	}
 	L1 := r2.Quo(sp.Sub(sa))
 	L := cosmossdk_math.LegacyMinDec(L0, L1)
 	return L, sa, sb, nil
@@ -327,9 +345,11 @@ func (k Keeper) updatePool(ctx context.Context, pool *whaleswapv1.Pool) error {
 	t := sdkCtx.BlockTime()
 	pool.Updated = &t
 	if err := k.PoolsMap.Set(ctx, pool.PoolId, *pool); err != nil {
-		return err
+		return cosmossdkerrors.Wrapf(err, "failed to set pool %d", pool.PoolId)
 	}
-	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolUpdate{PoolId: pool.PoolId})
+	if err := sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolUpdate{PoolId: pool.PoolId}); err != nil {
+		return cosmossdkerrors.Wrapf(err, "failed to emit EventPoolUpdate")
+	}
 	return nil
 }
 

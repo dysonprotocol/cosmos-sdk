@@ -49,14 +49,16 @@ def test_remove_liquidity_full_exit_deletes_pool(
         ).strip('"')
     )
 
-    # Respect canonical pool denom order (coin_a, coin_b)
+    # Respect canonical pool denom order using Pool.coins (sorted by denom)
     p_pre = dysond("query", "whaleswap", "pool", str(pool_id))["pool"]
-    denom_a = p_pre["coin_a"]["denom"]
-    denom_b = p_pre["coin_b"]["denom"]
+    coins = p_pre.get("coins", [])
+    assert isinstance(coins, list) and len(coins) == 2, f"invalid pool coins: {p_pre}"
+    denom0 = coins[0]["denom"]
+    denom1 = coins[1]["denom"]
     amt_udys = "200udys"
     amt_name = f"100{name}"
-    amount1 = amt_udys if denom_a == "udys" else amt_name
-    amount2 = amt_udys if denom_b == "udys" else amt_name
+    amount1 = amt_udys if denom0 == "udys" else amt_name
+    amount2 = amt_udys if denom1 == "udys" else amt_name
     add = dysond(
         "tx",
         "whaleswap",
@@ -94,6 +96,10 @@ def test_remove_liquidity_full_exit_deletes_pool(
         rem.get("code", 1) == 0
     ), f"remove-liquidity failed: {json.dumps(rem, indent=2)}"
     q = dysond("query", "whaleswap", "pool", str(pool_id))
+    # After full exit, querying the pool must return a deterministic not-found error string
+    assert isinstance(
+        q, str
+    ), f"expected error string on deleted pool: {json.dumps(q, indent=2)}"
     assert (
-        q.get("pool") is None or q.get("pool") == {}
-    ), f"pool should be deleted: {json.dumps(q, indent=2)}"
+        "pool not found" in q.lower()
+    ), f"unexpected response for deleted pool: {json.dumps(q, indent=2)}"

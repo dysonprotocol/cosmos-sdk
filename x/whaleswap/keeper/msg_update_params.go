@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	cosmossdkerrors "cosmossdk.io/errors"
 	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
 )
 
@@ -11,7 +12,7 @@ func (k Keeper) UpdateParams(ctx context.Context, msg *whaleswapv1.MsgUpdatePara
 		return nil, whaleswapv1.ErrInvalidAuthority
 	}
 	if err := k.SetParams(ctx, msg.Params); err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "failed to set params")
 	}
 	return &whaleswapv1.MsgUpdateParamsResponse{}, nil
 }

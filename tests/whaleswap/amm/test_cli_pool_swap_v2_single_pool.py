@@ -68,16 +68,12 @@ def test_pool_swap_v2_single_pool(chainnet, generate_account, faucet, register_n
 
     after = dysond("query", "whaleswap", "pool", str(pool_id))["pool"]
     assert int(after["num_trades"]) >= 1, f"num_trades not incremented: {after}"
-    r1 = (
-        int(after["coin_a"]["amount"])
-        if after["coin_a"]["denom"] == "udys"
-        else int(after["coin_b"]["amount"])
-    )
-    r2 = (
-        int(after["coin_b"]["amount"])
-        if after["coin_b"]["denom"] == name
-        else int(after["coin_a"]["amount"])
-    )
+    # coins is an array in canonical order; find reserves by denom
+    coins = after["coins"]
+    udys = [c for c in coins if c["denom"] == "udys"][0]
+    other = [c for c in coins if c["denom"] == name][0]
+    r1 = int(udys["amount"])
+    r2 = int(other["amount"])
     assert (
         r1 > 0 and r2 > 0
     ), f"reserves not positive after swap: {json.dumps(after, indent=2)}"

@@ -47,12 +47,16 @@ def test_add_liquidity_v2(chainnet, generate_account, faucet, register_name):
         ).strip('"')
     )
 
-    # Ensure amounts align with pool's (coin_a, coin_b) order
+    # Ensure amounts align with pool's canonical coin order using Pool.coins
     p_pre = dysond("query", "whaleswap", "pool", str(pid))["pool"]
-    denom_a = p_pre["coin_a"]["denom"]
-    denom_b = p_pre["coin_b"]["denom"]
-    a1 = "300udys" if denom_a == "udys" else f"50{name}"
-    a2 = "300udys" if denom_b == "udys" else f"50{name}"
+    coins = p_pre.get("coins", [])
+    assert (
+        isinstance(coins, list) and len(coins) == 2
+    ), f"invalid pool coins: {json.dumps(p_pre, indent=2)}"
+    denom0 = coins[0]["denom"]
+    denom1 = coins[1]["denom"]
+    a1 = "300udys" if denom0 == "udys" else f"50{name}"
+    a2 = "300udys" if denom1 == "udys" else f"50{name}"
     # First, intentionally misproportional amounts – expect failure (serves as guard)
     bad = dysond(
         "tx",
@@ -71,9 +75,9 @@ def test_add_liquidity_v2(chainnet, generate_account, faucet, register_name):
         bad.get("code", 0) != 0
     ), f"expected misproportional add-liquidity failure: {json.dumps(bad, indent=2)}"
 
-    # Now add proportionally to current reserves (coin_a:coin_b = 1:2)
-    prop_a = f"50{name}" if denom_a == name else "100udys"
-    prop_b = f"50{name}" if denom_b == name else "100udys"
+    # Now add proportionally to current reserves (coins[0]:coins[1] = 1:2)
+    prop_a = f"50{name}" if denom0 == name else "100udys"
+    prop_b = f"50{name}" if denom1 == name else "100udys"
     add_ok = dysond(
         "tx",
         "whaleswap",

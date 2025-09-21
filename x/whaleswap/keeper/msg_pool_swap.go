@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/collections"
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	whaleswap "dysonprotocol.com/x/whaleswap"
@@ -39,11 +40,14 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 		return nil, cosmossdkerrors.Wrapf(gerr, "pool not found: %d", msg.PoolId)
 	}
 
-	r1Int := pool.CoinA.Amount
-	r2Int := pool.CoinB.Amount
-	r1 := math.LegacyNewDecFromInt(r1Int)
-	r2 := math.LegacyNewDecFromInt(r2Int)
+	if len(pool.Coins) != 2 {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid pool reserves")
+	}
+	// two-coin pool in canonical order
+	// reserves used inline below; avoid precomputing
+	// legacy r1/r2 no longer used in v2 path; concentrated path recomputes from bands
 
+	// Parse fee once; default 0
 	fee := math.LegacyNewDec(0)
 	if pool.FeePct != "" {
 		f, ferr := math.LegacyNewDecFromStr(pool.FeePct)
@@ -57,7 +61,7 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 	var outAmt math.Int
 	var outDenom string
 
-	if currentDenom != pool.CoinA.Denom && currentDenom != pool.CoinB.Denom {
+	if currentDenom != pool.Coins[0].Denom && currentDenom != pool.Coins[1].Denom {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "input denom %s not in pool %d", currentDenom, msg.PoolId)
 	}
 
@@ -67,7 +71,7 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 		if err != nil {
 			return nil, cosmossdkerrors.Wrap(err, "failed to compute band sqrt prices")
 		}
-		sp, err := k.poolSqrtPrice(pool)
+		sp, err := k.poolSqrtPrice(pool, pool.Coins[0].Denom, pool.Coins[1].Denom)
 		if err != nil {
 			return nil, cosmossdkerrors.Wrap(err, "failed to compute current sqrt price")
 		}
@@ -85,9 +89,9 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 			fees := sdk.NewCoins(pool.FeesEarned...).Add(sdk.NewCoin(currentDenom, feeInt))
 			pool.FeesEarned = fees
 		}
-		// use current liquidity once
+		// use current liquidity Lcur directly
 		L := Lcur
-		if currentDenom == pool.CoinA.Denom {
+		if currentDenom == pool.Coins[0].Denom {
 			// token0 (coin A) in: price moves DOWN within band
 			// 1/sp' = 1/sp + dX/L  => sp' = 1 / (1/sp + dX/L)
 			invSpPrime := math.LegacyOneDec().Quo(sp).Add(effIn.Quo(L))
@@ -119,64 +123,68 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "swap output too small")
 		}
 		// Update integer reserves approximately
-		if currentDenom == pool.CoinA.Denom {
-			pool.CoinA.Amount = pool.CoinA.Amount.Add(currentAmount)
-			pool.CoinB.Amount = pool.CoinB.Amount.Sub(outAmt)
-			outDenom = pool.CoinB.Denom
+		if currentDenom == pool.Coins[0].Denom {
+			pool.Coins = sdk.NewCoins(sdk.NewCoin(pool.Coins[0].Denom, pool.Coins[0].Amount.Add(currentAmount)), sdk.NewCoin(pool.Coins[1].Denom, pool.Coins[1].Amount.Sub(outAmt)))
+			outDenom = pool.Coins[1].Denom
 		} else {
-			pool.CoinB.Amount = pool.CoinB.Amount.Add(currentAmount)
-			pool.CoinA.Amount = pool.CoinA.Amount.Sub(outAmt)
-			outDenom = pool.CoinA.Denom
+			pool.Coins = sdk.NewCoins(sdk.NewCoin(pool.Coins[0].Denom, pool.Coins[0].Amount.Sub(outAmt)), sdk.NewCoin(pool.Coins[1].Denom, pool.Coins[1].Amount.Add(currentAmount)))
+			outDenom = pool.Coins[0].Denom
 		}
 		// Sanity band check post-swap
-		newR1 := math.LegacyNewDecFromInt(pool.CoinA.Amount)
-		newR2 := math.LegacyNewDecFromInt(pool.CoinB.Amount)
-		p := newR2.Quo(newR1)
-		minRatio := math.LegacyNewDecFromInt(pool.MinPrice.AmountOf(pool.CoinB.Denom)).Quo(math.LegacyNewDecFromInt(pool.MinPrice.AmountOf(pool.CoinA.Denom)))
-		maxRatio := math.LegacyNewDecFromInt(pool.MaxPrice.AmountOf(pool.CoinB.Denom)).Quo(math.LegacyNewDecFromInt(pool.MaxPrice.AmountOf(pool.CoinA.Denom)))
-		if p.LT(minRatio) {
-			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "resulting price [%s] below band after swap: minRatio [%s]", p.String(), minRatio.String())
+		// Cross-multiplication band checks: rQuote/rBase within [minQuote/minBase, maxQuote/maxBase]
+		rBase := pool.Coins[0].Amount
+		rQuote := pool.Coins[1].Amount
+		denomA, denomB := pool.Coins[0].Denom, pool.Coins[1].Denom
+		minBase := pool.MinPrice.AmountOf(denomA)
+		minQuote := pool.MinPrice.AmountOf(denomB)
+		maxBase := pool.MaxPrice.AmountOf(denomA)
+		maxQuote := pool.MaxPrice.AmountOf(denomB)
+		if rQuote.Mul(minBase).LT(rBase.Mul(minQuote)) {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "resulting price below band after swap")
 		}
-		if p.GT(maxRatio) {
-			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "resulting price [%s] above band after swap: maxRatio [%s]", p.String(), maxRatio.String())
+		if rQuote.Mul(maxBase).GT(rBase.Mul(maxQuote)) {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "resulting price above band after swap")
 		}
 	} else {
 		// v2 constant product path
-		if currentDenom == pool.CoinA.Denom {
-			effIn := math.LegacyNewDecFromInt(currentAmount).Mul(one.Sub(fee))
-			feeInt := currentAmount.Sub(effIn.TruncateInt())
-			if feeInt.IsPositive() {
-				fees := sdk.NewCoins(pool.FeesEarned...).Add(sdk.NewCoin(currentDenom, feeInt))
-				pool.FeesEarned = fees
-			}
-			kDec := r1.Mul(r2)
-			q := kDec.Quo(r1.Add(effIn)).Ceil()
-			outDec := r2.Sub(q)
-			outAmt = outDec.TruncateInt()
-			if !outAmt.IsPositive() {
-				return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "swap output too small")
-			}
-			pool.CoinA.Amount = pool.CoinA.Amount.Add(currentAmount)
-			pool.CoinB.Amount = pool.CoinB.Amount.Sub(outAmt)
-			outDenom = pool.CoinB.Denom
-		} else {
-			effIn := math.LegacyNewDecFromInt(currentAmount).Mul(one.Sub(fee))
-			feeInt := currentAmount.Sub(effIn.TruncateInt())
-			if feeInt.IsPositive() {
-				fees := sdk.NewCoins(pool.FeesEarned...).Add(sdk.NewCoin(currentDenom, feeInt))
-				pool.FeesEarned = fees
-			}
-			kDec := r1.Mul(r2)
-			q := kDec.Quo(r2.Add(effIn)).Ceil()
-			outDec := r1.Sub(q)
-			outAmt = outDec.TruncateInt()
-			if !outAmt.IsPositive() {
-				return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "swap output too small")
-			}
-			pool.CoinB.Amount = pool.CoinB.Amount.Add(currentAmount)
-			pool.CoinA.Amount = pool.CoinA.Amount.Sub(outAmt)
-			outDenom = pool.CoinA.Denom
+		inputIdx := 0
+		if currentDenom != pool.Coins[0].Denom {
+			inputIdx = 1
 		}
+		outputIdx := 1 - inputIdx
+
+		rIn := math.LegacyNewDecFromInt(pool.Coins[inputIdx].Amount)
+		rOut := math.LegacyNewDecFromInt(pool.Coins[outputIdx].Amount)
+
+		effIn := math.LegacyNewDecFromInt(currentAmount).Mul(one.Sub(fee))
+		feeInt := currentAmount.Sub(effIn.TruncateInt())
+		if feeInt.IsPositive() {
+			fees := sdk.NewCoins(pool.FeesEarned...).Add(sdk.NewCoin(currentDenom, feeInt))
+			pool.FeesEarned = fees
+		}
+		// out = rOut - K / (rIn + effIn)
+		kDec := rIn.Mul(rOut)
+		q := kDec.Quo(rIn.Add(effIn)).Ceil()
+		outDec := rOut.Sub(q)
+		outAmt = outDec.TruncateInt()
+		if !outAmt.IsPositive() {
+			return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "swap output too small")
+		}
+		// Update reserves: add input, subtract output
+		newIn := pool.Coins[inputIdx].Amount.Add(currentAmount)
+		newOut := pool.Coins[outputIdx].Amount.Sub(outAmt)
+		if inputIdx == 0 {
+			pool.Coins = sdk.NewCoins(
+				sdk.NewCoin(pool.Coins[0].Denom, newIn),
+				sdk.NewCoin(pool.Coins[1].Denom, newOut),
+			)
+		} else {
+			pool.Coins = sdk.NewCoins(
+				sdk.NewCoin(pool.Coins[0].Denom, newOut),
+				sdk.NewCoin(pool.Coins[1].Denom, newIn),
+			)
+		}
+		outDenom = pool.Coins[outputIdx].Denom
 	}
 
 	// persist and emit pool update
@@ -185,7 +193,9 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 		return nil, cosmossdkerrors.Wrapf(err, "failed to update pool %d after swap", pool.PoolId)
 	}
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolSwap{PoolId: pool.PoolId})
+	if err := sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolSwap{PoolId: pool.PoolId}); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to emit EventPoolSwap")
+	}
 
 	currentDenom = outDenom
 	currentAmount = outAmt
@@ -210,9 +220,39 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 			pool.PoolId,
 			sdk.NewCoin(msg.Input.Denom, msg.Input.Amount).String(),
 			sdk.NewCoin(currentDenom, currentAmount).String(),
-			sdk.NewCoin(pool.CoinA.Denom, pool.CoinA.Amount).String(),
-			sdk.NewCoin(pool.CoinB.Denom, pool.CoinB.Amount).String(),
+			sdk.NewCoin(pool.Coins[0].Denom, pool.Coins[0].Amount).String(),
+			sdk.NewCoin(pool.Coins[1].Denom, pool.Coins[1].Amount).String(),
 		)
+	}
+	// After successful settlement and invariants: record Trade and emit event
+	tradeId, terr := k.tradeSeq.Next(ctx)
+	if terr != nil {
+		return nil, cosmossdkerrors.Wrap(terr, "failed to allocate trade id")
+	}
+	sdkCtx = sdk.UnwrapSDKContext(ctx)
+	t := sdkCtx.BlockTime()
+	trade := whaleswapv1.Trade{
+		TradeId:   tradeId,
+		OfferId:   0,
+		Taker:     msg.Trader,
+		Height:    uint64(sdkCtx.BlockHeight()),
+		Timestamp: &t,
+		Sent:      msg.Input,
+		Received:  sdk.NewCoin(currentDenom, currentAmount),
+		PoolId:    pool.PoolId,
+		AuctionId: 0,
+	}
+	if err := k.TradesMap.Set(ctx, tradeId, trade); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to save trade")
+	}
+	if err := k.TradesByPoolIndex.Set(ctx, collections.Join(pool.PoolId, tradeId), tradeId); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to index trade by pool")
+	}
+	if err := k.TradesByTakerIndex.Set(ctx, collections.Join(msg.Trader, tradeId), tradeId); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to index trade by taker")
+	}
+	if err := sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventTradeRecorded{TradeId: tradeId, OfferId: 0, PoolId: pool.PoolId, AuctionId: 0}); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to emit EventTradeRecorded")
 	}
 	return &whaleswapv1.MsgPoolSwapResponse{AmountOut: sdk.NewCoin(currentDenom, currentAmount)}, nil
 }

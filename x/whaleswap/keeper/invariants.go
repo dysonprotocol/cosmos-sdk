@@ -15,10 +15,10 @@ import (
 // - Sum(pfand_locked by open liquid offers) == module pfand balance (per denom)
 func (k Keeper) AssertInvariants(ctx context.Context) error {
 	if err := k.checkEscrowInvariant(ctx); err != nil {
-		return err
+		return cosmossdkerrors.Wrap(err, "escrow invariant failed")
 	}
 	if err := k.checkPfandInvariant(ctx); err != nil {
-		return err
+		return cosmossdkerrors.Wrap(err, "pfand invariant failed")
 	}
 	return nil
 }
@@ -26,7 +26,7 @@ func (k Keeper) AssertInvariants(ctx context.Context) error {
 func (k Keeper) checkEscrowInvariant(ctx context.Context) error {
 	// Tally required escrow by denom from open normal offers
 	required := map[string]math.Int{}
-	_ = k.OffersMap.Walk(ctx, nil, func(_ uint64, o whaleswapv1.OfferData) (bool, error) {
+	if err := k.OffersMap.Walk(ctx, nil, func(_ uint64, o whaleswapv1.OfferData) (bool, error) {
 		if o.Status != whaleswapv1.OfferStatusOpen {
 			return false, nil
 		}
@@ -44,7 +44,9 @@ func (k Keeper) checkEscrowInvariant(ctx context.Context) error {
 			required[denom] = o.RemainingHave.Amount
 		}
 		return false, nil
-	})
+	}); err != nil {
+		return cosmossdkerrors.Wrap(err, "walk offers for escrow invariant failed")
+	}
 
 	moduleAddr := k.accKeeper.GetModuleAddress(whaleswap.ModuleName)
 	for denom, need := range required {
@@ -63,7 +65,7 @@ func (k Keeper) checkEscrowInvariant(ctx context.Context) error {
 func (k Keeper) checkPfandInvariant(ctx context.Context) error {
 	// Tally pfand_locked across open liquid offers (per denom)
 	required := map[string]math.Int{}
-	_ = k.OffersMap.Walk(ctx, nil, func(_ uint64, o whaleswapv1.OfferData) (bool, error) {
+	if err := k.OffersMap.Walk(ctx, nil, func(_ uint64, o whaleswapv1.OfferData) (bool, error) {
 		if o.Status != whaleswapv1.OfferStatusOpen {
 			return false, nil
 		}
@@ -80,7 +82,9 @@ func (k Keeper) checkPfandInvariant(ctx context.Context) error {
 			required[denom] = o.PfandLocked.Amount
 		}
 		return false, nil
-	})
+	}); err != nil {
+		return cosmossdkerrors.Wrap(err, "walk offers for pfand invariant failed")
+	}
 
 	moduleAddr := k.accKeeper.GetModuleAddress(whaleswap.ModuleName)
 	for denom, need := range required {
@@ -109,15 +113,12 @@ func (k Keeper) AssertAMMInvariants(ctx context.Context) error {
 	if err := k.PoolsMap.Walk(ctx, nil, func(_ uint64, p whaleswapv1.Pool) (bool, error) {
 		poolCount++
 		// Sum reserves by denom
-		if cur, ok := required[p.CoinA.Denom]; ok {
-			required[p.CoinA.Denom] = cur.Add(p.CoinA.Amount)
-		} else {
-			required[p.CoinA.Denom] = p.CoinA.Amount
-		}
-		if cur, ok := required[p.CoinB.Denom]; ok {
-			required[p.CoinB.Denom] = cur.Add(p.CoinB.Amount)
-		} else {
-			required[p.CoinB.Denom] = p.CoinB.Amount
+		for _, c := range p.Coins {
+			if cur, ok := required[c.Denom]; ok {
+				required[c.Denom] = cur.Add(c.Amount)
+			} else {
+				required[c.Denom] = c.Amount
+			}
 		}
 
 		// Shares supply must be positive
@@ -127,6 +128,9 @@ func (k Keeper) AssertAMMInvariants(ctx context.Context) error {
 		}
 		// If band set, liquidity must be positive
 		if len(p.MinPrice) == 2 {
+			if len(p.Coins) != 2 {
+				return true, cosmossdkerrors.Wrapf(sdkerrors.ErrLogic, "invalid pool coins: pool_id=%d", p.PoolId)
+			}
 			Lcur, _, _, err := k.liquidityForReserves(p)
 			if err != nil {
 				return true, cosmossdkerrors.Wrapf(err, "failed liquidity calc: pool_id=%d", p.PoolId)
@@ -143,7 +147,7 @@ func (k Keeper) AssertAMMInvariants(ctx context.Context) error {
 		shareDenoms[p.SharesDenom] = struct{}{}
 		return false, nil
 	}); err != nil {
-		return err
+		return cosmossdkerrors.Wrap(err, "walk pools failed")
 	}
 
 	if len(shareDenoms) != poolCount {

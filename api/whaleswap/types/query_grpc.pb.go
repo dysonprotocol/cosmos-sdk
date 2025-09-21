@@ -22,7 +22,7 @@ const (
 	Query_Params_FullMethodName                   = "/dysonprotocol.whaleswap.v1.Query/Params"
 	Query_Pool_FullMethodName                     = "/dysonprotocol.whaleswap.v1.Query/Pool"
 	Query_Pools_FullMethodName                    = "/dysonprotocol.whaleswap.v1.Query/Pools"
-	Query_PoolByPair_FullMethodName               = "/dysonprotocol.whaleswap.v1.Query/PoolByPair"
+	Query_PoolsByPair_FullMethodName              = "/dysonprotocol.whaleswap.v1.Query/PoolsByPair"
 	Query_PoolsByDenom_FullMethodName             = "/dysonprotocol.whaleswap.v1.Query/PoolsByDenom"
 	Query_PoolBySharesDenom_FullMethodName        = "/dysonprotocol.whaleswap.v1.Query/PoolBySharesDenom"
 	Query_PoolsByPairPriceRange_FullMethodName    = "/dysonprotocol.whaleswap.v1.Query/PoolsByPairPriceRange"
@@ -33,8 +33,10 @@ const (
 	Query_OffersByDenom_FullMethodName            = "/dysonprotocol.whaleswap.v1.Query/OffersByDenom"
 	Query_OffersByPairPriceRange_FullMethodName   = "/dysonprotocol.whaleswap.v1.Query/OffersByPairPriceRange"
 	Query_OffersBest_FullMethodName               = "/dysonprotocol.whaleswap.v1.Query/OffersBest"
+	Query_Trade_FullMethodName                    = "/dysonprotocol.whaleswap.v1.Query/Trade"
 	Query_TradesByOffer_FullMethodName            = "/dysonprotocol.whaleswap.v1.Query/TradesByOffer"
 	Query_TradesByTaker_FullMethodName            = "/dysonprotocol.whaleswap.v1.Query/TradesByTaker"
+	Query_TradesByPool_FullMethodName             = "/dysonprotocol.whaleswap.v1.Query/TradesByPool"
 	Query_Auction_FullMethodName                  = "/dysonprotocol.whaleswap.v1.Query/Auction"
 	Query_Auctions_FullMethodName                 = "/dysonprotocol.whaleswap.v1.Query/Auctions"
 	Query_AuctionsBySeller_FullMethodName         = "/dysonprotocol.whaleswap.v1.Query/AuctionsBySeller"
@@ -53,10 +55,9 @@ type QueryClient interface {
 	// Pools
 	Pool(ctx context.Context, in *QueryPoolRequest, opts ...grpc.CallOption) (*QueryPoolResponse, error)
 	Pools(ctx context.Context, in *QueryPoolsRequest, opts ...grpc.CallOption) (*QueryPoolsResponse, error)
-	// PoolByPair returns the unique pool (if it exists) matching the provided
-	// denom pair. Denom order in the request is irrelevant; the implementation
-	// canonicalizes to pairKey = min(denom1,denom2)|max(denom1,denom2).
-	PoolByPair(ctx context.Context, in *QueryPoolByPairRequest, opts ...grpc.CallOption) (*QueryPoolResponse, error)
+	// PoolsByPair returns all pools matching the provided denom pair with
+	// pagination. Denom order in the request is irrelevant.
+	PoolsByPair(ctx context.Context, in *QueryPoolsByPairRequest, opts ...grpc.CallOption) (*QueryPoolsResponse, error)
 	// PoolsByDenom returns all pools that include the provided denom on either
 	// side of the pair. This leverages a reverse index keyed by denom.
 	PoolsByDenom(ctx context.Context, in *QueryPoolsByDenomRequest, opts ...grpc.CallOption) (*QueryPoolsResponse, error)
@@ -91,8 +92,12 @@ type QueryClient interface {
 	// endpoint for top-of-book queries.
 	OffersBest(ctx context.Context, in *QueryOffersBestRequest, opts ...grpc.CallOption) (*QueryOffersResponse, error)
 	// Trades
+	// Get a single trade by id
+	Trade(ctx context.Context, in *QueryTradeRequest, opts ...grpc.CallOption) (*QueryTradeResponse, error)
 	TradesByOffer(ctx context.Context, in *QueryTradesByOfferRequest, opts ...grpc.CallOption) (*QueryTradesByOfferResponse, error)
 	TradesByTaker(ctx context.Context, in *QueryTradesByTakerRequest, opts ...grpc.CallOption) (*QueryTradesByTakerResponse, error)
+	// TradesByPool lists trades for an AMM pool
+	TradesByPool(ctx context.Context, in *QueryTradesByPoolRequest, opts ...grpc.CallOption) (*QueryTradesByPoolResponse, error)
 	// Auctions
 	Auction(ctx context.Context, in *QueryAuctionRequest, opts ...grpc.CallOption) (*QueryAuctionResponse, error)
 	// List auctions with optional filters and pagination
@@ -149,10 +154,10 @@ func (c *queryClient) Pools(ctx context.Context, in *QueryPoolsRequest, opts ...
 	return out, nil
 }
 
-func (c *queryClient) PoolByPair(ctx context.Context, in *QueryPoolByPairRequest, opts ...grpc.CallOption) (*QueryPoolResponse, error) {
+func (c *queryClient) PoolsByPair(ctx context.Context, in *QueryPoolsByPairRequest, opts ...grpc.CallOption) (*QueryPoolsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(QueryPoolResponse)
-	err := c.cc.Invoke(ctx, Query_PoolByPair_FullMethodName, in, out, cOpts...)
+	out := new(QueryPoolsResponse)
+	err := c.cc.Invoke(ctx, Query_PoolsByPair_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -259,6 +264,16 @@ func (c *queryClient) OffersBest(ctx context.Context, in *QueryOffersBestRequest
 	return out, nil
 }
 
+func (c *queryClient) Trade(ctx context.Context, in *QueryTradeRequest, opts ...grpc.CallOption) (*QueryTradeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryTradeResponse)
+	err := c.cc.Invoke(ctx, Query_Trade_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *queryClient) TradesByOffer(ctx context.Context, in *QueryTradesByOfferRequest, opts ...grpc.CallOption) (*QueryTradesByOfferResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(QueryTradesByOfferResponse)
@@ -273,6 +288,16 @@ func (c *queryClient) TradesByTaker(ctx context.Context, in *QueryTradesByTakerR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(QueryTradesByTakerResponse)
 	err := c.cc.Invoke(ctx, Query_TradesByTaker_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) TradesByPool(ctx context.Context, in *QueryTradesByPoolRequest, opts ...grpc.CallOption) (*QueryTradesByPoolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryTradesByPoolResponse)
+	err := c.cc.Invoke(ctx, Query_TradesByPool_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -340,10 +365,9 @@ type QueryServer interface {
 	// Pools
 	Pool(context.Context, *QueryPoolRequest) (*QueryPoolResponse, error)
 	Pools(context.Context, *QueryPoolsRequest) (*QueryPoolsResponse, error)
-	// PoolByPair returns the unique pool (if it exists) matching the provided
-	// denom pair. Denom order in the request is irrelevant; the implementation
-	// canonicalizes to pairKey = min(denom1,denom2)|max(denom1,denom2).
-	PoolByPair(context.Context, *QueryPoolByPairRequest) (*QueryPoolResponse, error)
+	// PoolsByPair returns all pools matching the provided denom pair with
+	// pagination. Denom order in the request is irrelevant.
+	PoolsByPair(context.Context, *QueryPoolsByPairRequest) (*QueryPoolsResponse, error)
 	// PoolsByDenom returns all pools that include the provided denom on either
 	// side of the pair. This leverages a reverse index keyed by denom.
 	PoolsByDenom(context.Context, *QueryPoolsByDenomRequest) (*QueryPoolsResponse, error)
@@ -378,8 +402,12 @@ type QueryServer interface {
 	// endpoint for top-of-book queries.
 	OffersBest(context.Context, *QueryOffersBestRequest) (*QueryOffersResponse, error)
 	// Trades
+	// Get a single trade by id
+	Trade(context.Context, *QueryTradeRequest) (*QueryTradeResponse, error)
 	TradesByOffer(context.Context, *QueryTradesByOfferRequest) (*QueryTradesByOfferResponse, error)
 	TradesByTaker(context.Context, *QueryTradesByTakerRequest) (*QueryTradesByTakerResponse, error)
+	// TradesByPool lists trades for an AMM pool
+	TradesByPool(context.Context, *QueryTradesByPoolRequest) (*QueryTradesByPoolResponse, error)
 	// Auctions
 	Auction(context.Context, *QueryAuctionRequest) (*QueryAuctionResponse, error)
 	// List auctions with optional filters and pagination
@@ -415,8 +443,8 @@ func (UnimplementedQueryServer) Pool(context.Context, *QueryPoolRequest) (*Query
 func (UnimplementedQueryServer) Pools(context.Context, *QueryPoolsRequest) (*QueryPoolsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Pools not implemented")
 }
-func (UnimplementedQueryServer) PoolByPair(context.Context, *QueryPoolByPairRequest) (*QueryPoolResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PoolByPair not implemented")
+func (UnimplementedQueryServer) PoolsByPair(context.Context, *QueryPoolsByPairRequest) (*QueryPoolsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PoolsByPair not implemented")
 }
 func (UnimplementedQueryServer) PoolsByDenom(context.Context, *QueryPoolsByDenomRequest) (*QueryPoolsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PoolsByDenom not implemented")
@@ -448,11 +476,17 @@ func (UnimplementedQueryServer) OffersByPairPriceRange(context.Context, *QueryOf
 func (UnimplementedQueryServer) OffersBest(context.Context, *QueryOffersBestRequest) (*QueryOffersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OffersBest not implemented")
 }
+func (UnimplementedQueryServer) Trade(context.Context, *QueryTradeRequest) (*QueryTradeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Trade not implemented")
+}
 func (UnimplementedQueryServer) TradesByOffer(context.Context, *QueryTradesByOfferRequest) (*QueryTradesByOfferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TradesByOffer not implemented")
 }
 func (UnimplementedQueryServer) TradesByTaker(context.Context, *QueryTradesByTakerRequest) (*QueryTradesByTakerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TradesByTaker not implemented")
+}
+func (UnimplementedQueryServer) TradesByPool(context.Context, *QueryTradesByPoolRequest) (*QueryTradesByPoolResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TradesByPool not implemented")
 }
 func (UnimplementedQueryServer) Auction(context.Context, *QueryAuctionRequest) (*QueryAuctionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Auction not implemented")
@@ -544,20 +578,20 @@ func _Query_Pools_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_PoolByPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryPoolByPairRequest)
+func _Query_PoolsByPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPoolsByPairRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).PoolByPair(ctx, in)
+		return srv.(QueryServer).PoolsByPair(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Query_PoolByPair_FullMethodName,
+		FullMethod: Query_PoolsByPair_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).PoolByPair(ctx, req.(*QueryPoolByPairRequest))
+		return srv.(QueryServer).PoolsByPair(ctx, req.(*QueryPoolsByPairRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -742,6 +776,24 @@ func _Query_OffersBest_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Trade_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryTradeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Trade(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Trade_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Trade(ctx, req.(*QueryTradeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Query_TradesByOffer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryTradesByOfferRequest)
 	if err := dec(in); err != nil {
@@ -774,6 +826,24 @@ func _Query_TradesByTaker_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).TradesByTaker(ctx, req.(*QueryTradesByTakerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_TradesByPool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryTradesByPoolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).TradesByPool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_TradesByPool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).TradesByPool(ctx, req.(*QueryTradesByPoolRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -888,8 +958,8 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Pools_Handler,
 		},
 		{
-			MethodName: "PoolByPair",
-			Handler:    _Query_PoolByPair_Handler,
+			MethodName: "PoolsByPair",
+			Handler:    _Query_PoolsByPair_Handler,
 		},
 		{
 			MethodName: "PoolsByDenom",
@@ -932,12 +1002,20 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Query_OffersBest_Handler,
 		},
 		{
+			MethodName: "Trade",
+			Handler:    _Query_Trade_Handler,
+		},
+		{
 			MethodName: "TradesByOffer",
 			Handler:    _Query_TradesByOffer_Handler,
 		},
 		{
 			MethodName: "TradesByTaker",
 			Handler:    _Query_TradesByTaker_Handler,
+		},
+		{
+			MethodName: "TradesByPool",
+			Handler:    _Query_TradesByPool_Handler,
 		},
 		{
 			MethodName: "Auction",

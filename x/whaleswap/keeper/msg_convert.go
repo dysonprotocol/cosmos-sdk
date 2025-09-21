@@ -65,7 +65,7 @@ func (k Keeper) ConvertToSolid(ctx context.Context, msg *whaleswapv1.MsgConvertT
 	}
 	solid, err := k.decodeLiquidDenom(msg.LiquidDenom)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrapf(err, "invalid liquid denom: %s", msg.LiquidDenom)
 	}
 	if err := k.bank.SendCoinsFromAccountToModule(ctx, caller, whaleswap.ModuleName, sdk.NewCoins(sdk.NewCoin(msg.LiquidDenom, amt))); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to escrow liquid %s from %s", sdk.NewCoin(msg.LiquidDenom, amt).String(), msg.Caller)

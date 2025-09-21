@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	whaleswaptypes "dysonprotocol.com/x/whaleswap/types"
 )
@@ -102,4 +103,144 @@ func parseUintOrPanic(s string) uint64 {
 		u = u*10 + uint64(s[i]-'0')
 	}
 	return u
+}
+
+// --- Custom commands to handle repeated flags that must map to arrays ---
+
+func parseCoinList(name string, vals []string) ([]sdk.Coin, error) {
+	coins := sdk.NewCoins()
+	for _, v := range vals {
+		c, err := sdk.ParseCoinNormalized(strings.TrimSpace(v))
+		if err != nil {
+			return nil, fmt.Errorf("invalid %s coin '%s': %w", name, v, err)
+		}
+		coins = coins.Add(c)
+	}
+	return coins, nil
+}
+
+// CmdCreatePool provides custom parsing for repeated --coins/--min-price/--max-price flags.
+func CmdCreatePool() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create-pool",
+		Short: "Create a new AMM pool",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			coinsFlags, err := cmd.Flags().GetStringArray("coins")
+			if err != nil {
+				return fmt.Errorf("failed to read --coins flags: %w", err)
+			}
+			if len(coinsFlags) != 2 {
+				return fmt.Errorf("exactly two --coins flags are required (one coin per flag)")
+			}
+			coinList, err := parseCoinList("coins", coinsFlags)
+			if err != nil {
+				return err
+			}
+			feePct, err := cmd.Flags().GetString("fee-pct")
+			if err != nil {
+				return fmt.Errorf("failed to read --fee-pct: %w", err)
+			}
+			minFlags, err := cmd.Flags().GetStringArray("min-price")
+			if err != nil {
+				return fmt.Errorf("failed to read --min-price flags: %w", err)
+			}
+			maxFlags, err := cmd.Flags().GetStringArray("max-price")
+			if err != nil {
+				return fmt.Errorf("failed to read --max-price flags: %w", err)
+			}
+
+			var minPrice, maxPrice []sdk.Coin
+			if len(minFlags) > 0 || len(maxFlags) > 0 {
+				if len(minFlags) != 2 || len(maxFlags) != 2 {
+					return fmt.Errorf("when setting bands, provide exactly two --min-price and two --max-price flags (one coin per flag)")
+				}
+				if minPrice, err = parseCoinList("min-price", minFlags); err != nil {
+					return err
+				}
+				if maxPrice, err = parseCoinList("max-price", maxFlags); err != nil {
+					return err
+				}
+			}
+
+			msg := &whaleswaptypes.MsgCreatePool{
+				Creator:  clientCtx.GetFromAddress().String(),
+				Coins:    coinList,
+				MinPrice: minPrice,
+				MaxPrice: maxPrice,
+				FeePct:   feePct,
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	cmd.Flags().StringArray("coins", nil, "Repeatable; provide exactly two flags, one per coin (e.g., 1000udys)")
+	cmd.Flags().String("fee-pct", "", "Optional swap fee percent (decimal in [0,1))")
+	cmd.Flags().StringArray("min-price", nil, "Repeatable; provide two flags to encode band min as coin_b/coin_a")
+	cmd.Flags().StringArray("max-price", nil, "Repeatable; provide two flags to encode band max as coin_b/coin_a")
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+// CmdUpdatePoolConfig provides custom parsing for repeated band flags.
+func CmdUpdatePoolConfig() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-pool-config",
+		Short: "Update pool fee or price band",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			poolID, err := cmd.Flags().GetUint64("pool-id")
+			if err != nil {
+				return err
+			}
+			feePct, err := cmd.Flags().GetString("fee-pct")
+			if err != nil {
+				return fmt.Errorf("failed to read --fee-pct: %w", err)
+			}
+			minFlags, err := cmd.Flags().GetStringArray("min-price")
+			if err != nil {
+				return fmt.Errorf("failed to read --min-price flags: %w", err)
+			}
+			maxFlags, err := cmd.Flags().GetStringArray("max-price")
+			if err != nil {
+				return fmt.Errorf("failed to read --max-price flags: %w", err)
+			}
+
+			var minPrice, maxPrice []sdk.Coin
+			if len(minFlags) > 0 || len(maxFlags) > 0 {
+				if len(minFlags) != 2 || len(maxFlags) != 2 {
+					return fmt.Errorf("when setting bands, provide exactly two --min-price and two --max-price flags (one coin per flag)")
+				}
+				if minPrice, err = parseCoinList("min-price", minFlags); err != nil {
+					return err
+				}
+				if maxPrice, err = parseCoinList("max-price", maxFlags); err != nil {
+					return err
+				}
+			}
+
+			msg := &whaleswaptypes.MsgUpdatePoolConfig{
+				Signer:   clientCtx.GetFromAddress().String(),
+				PoolId:   poolID,
+				FeePct:   feePct,
+				MinPrice: minPrice,
+				MaxPrice: maxPrice,
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	cmd.Flags().Uint64("pool-id", 0, "Pool ID")
+	if err := cmd.MarkFlagRequired("pool-id"); err != nil {
+		panic(fmt.Errorf("failed to mark --pool-id required: %w", err))
+	}
+	cmd.Flags().String("fee-pct", "", "Optional swap fee percent (decimal in [0,1))")
+	cmd.Flags().StringArray("min-price", nil, "Repeatable; provide two flags to encode band min as coin_b/coin_a")
+	cmd.Flags().StringArray("max-price", nil, "Repeatable; provide two flags to encode band max as coin_b/coin_a")
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
 }

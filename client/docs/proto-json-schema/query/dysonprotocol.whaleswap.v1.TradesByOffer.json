@@ -128,6 +128,14 @@
                     "received": {
                         "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
                         "additionalProperties": false
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "pool_id is non-zero for AMM swaps; zero otherwise"
+                    },
+                    "auction_id": {
+                        "type": "string",
+                        "description": "auction_id is non-zero for auction escrow release trades (redeem); zero otherwise"
                     }
                 },
                 "additionalProperties": false,

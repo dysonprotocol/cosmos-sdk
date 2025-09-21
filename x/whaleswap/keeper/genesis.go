@@ -13,7 +13,9 @@ import (
 // InitGenesis initializes state from genesis
 func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 	// params
-	_ = k.SetParams(ctx, gs.Params)
+	if err := k.SetParams(ctx, gs.Params); err != nil {
+		panic(err)
+	}
 
 	// Pools
 	var maxPoolID uint64
@@ -46,11 +48,17 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 		}
 		// rebuild indexes
 		// have, id
-		_ = k.OffersByHave.Set(ctx, collections.Join(o.RemainingHave.Denom, o.OfferId), o.OfferId)
+		if err := k.OffersByHave.Set(ctx, collections.Join(o.RemainingHave.Denom, o.OfferId), o.OfferId); err != nil {
+			panic(err)
+		}
 		// want, id
-		_ = k.OffersByWant.Set(ctx, collections.Join(o.RemainingWant.Denom, o.OfferId), o.OfferId)
+		if err := k.OffersByWant.Set(ctx, collections.Join(o.RemainingWant.Denom, o.OfferId), o.OfferId); err != nil {
+			panic(err)
+		}
 		// owner+status
-		_ = k.OffersByOwnerStatus.Set(ctx, collections.Join3(o.Maker, o.Status, o.OfferId), o.OfferId)
+		if err := k.OffersByOwnerStatus.Set(ctx, collections.Join3(o.Maker, o.Status, o.OfferId), o.OfferId); err != nil {
+			panic(err)
+		}
 		// price index only for open offers
 		if o.Status == types.OfferStatusOpen {
 			haveDenom := o.RemainingHave.Denom
@@ -66,7 +74,9 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 			if low == wantDenom && high == haveDenom {
 				priceDec = priceHavePerWant
 			}
-			_ = k.OffersByPairPrice.Set(ctx, collections.Join3(pairKey, priceDec.String(), o.OfferId), o.OfferId)
+			if err := k.OffersByPairPrice.Set(ctx, collections.Join3(pairKey, priceDec.String(), o.OfferId), o.OfferId); err != nil {
+				panic(err)
+			}
 		}
 	}
 	if maxOfferID > 0 {
@@ -87,6 +97,17 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 		}
 		if err := k.TradesMap.Set(ctx, t.TradeId, *t); err != nil {
 			panic(err)
+		}
+		// rebuild reverse indexes
+		if t.PoolId > 0 {
+			if err := k.TradesByPoolIndex.Set(ctx, collections.Join(t.PoolId, t.TradeId), t.TradeId); err != nil {
+				panic(err)
+			}
+		}
+		if t.Taker != "" {
+			if err := k.TradesByTakerIndex.Set(ctx, collections.Join(t.Taker, t.TradeId), t.TradeId); err != nil {
+				panic(err)
+			}
 		}
 	}
 	if maxTradeID > 0 {
@@ -111,8 +132,12 @@ func (k Keeper) InitGenesis(ctx sdk.Context, gs *types.GenesisState) {
 			panic(err)
 		}
 		// Reverse indexes
-		_ = k.AuctionsBySellBid.Set(ctx, collections.Join3(a.Sell.Denom, a.BidDenom, a.AuctionId), a.AuctionId)
-		_ = k.AuctionsByBidSell.Set(ctx, collections.Join3(a.BidDenom, a.Sell.Denom, a.AuctionId), a.AuctionId)
+		if err := k.AuctionsBySellBid.Set(ctx, collections.Join3(a.Sell.Denom, a.BidDenom, a.AuctionId), a.AuctionId); err != nil {
+			panic(err)
+		}
+		if err := k.AuctionsByBidSell.Set(ctx, collections.Join3(a.BidDenom, a.Sell.Denom, a.AuctionId), a.AuctionId); err != nil {
+			panic(err)
+		}
 		// Tally escrow requirement
 		if ex, ok := requiredEscrow[a.Sell.Denom]; ok {
 			sum := ex

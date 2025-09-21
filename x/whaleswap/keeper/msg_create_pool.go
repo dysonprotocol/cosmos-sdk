@@ -2,8 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
@@ -15,15 +13,29 @@ import (
 )
 
 func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) (*whaleswapv1.MsgCreatePoolResponse, error) {
-	// Expect exactly two coins; canonical denom ordering (coin1 < coin2 lexicographically)
 	if len(msg.Coins) != 2 {
 		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "coins must contain exactly 2 entries, got %d", len(msg.Coins))
 	}
-	coinA := sdk.Coin{Denom: msg.Coins[0].Denom, Amount: msg.Coins[0].Amount}
-	coinB := sdk.Coin{Denom: msg.Coins[1].Denom, Amount: msg.Coins[1].Amount}
-	if strings.Compare(coinA.Denom, coinB.Denom) > 0 {
-		coinA, coinB = coinB, coinA
+
+	msg.Coins.Sort()
+	msg.MinPrice.Sort()
+	msg.MaxPrice.Sort()
+	err := msg.Coins.Validate()
+	if err != nil {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid coins: %v", err)
 	}
+	// Bands are optional; validate only when provided
+	if len(msg.MinPrice) > 0 {
+		if err = msg.MinPrice.Validate(); err != nil {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid min_price: %v", err)
+		}
+	}
+	if len(msg.MaxPrice) > 0 {
+		if err = msg.MaxPrice.Validate(); err != nil {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid max_price: %v", err)
+		}
+	}
+	denom1, denom2 := msg.Coins[0].Denom, msg.Coins[1].Denom
 
 	if msg.FeePct != "" {
 		fee, err := math.LegacyNewDecFromStr(msg.FeePct)
@@ -35,126 +47,131 @@ func (k Keeper) CreatePool(ctx context.Context, msg *whaleswapv1.MsgCreatePool) 
 		}
 	}
 
-	// Normalize bands against canonical denom order
-	minBand, err := k.normalizeBand(msg.MinPrice, coinA.Denom, coinB.Denom)
-	if err != nil {
-		return nil, fmt.Errorf("invalid min_price: %w", err)
-	}
-	maxBand, err := k.normalizeBand(msg.MaxPrice, coinA.Denom, coinB.Denom)
-	if err != nil {
-		return nil, fmt.Errorf("invalid max_price: %w", err)
+	hasBounds := len(msg.MinPrice) > 0 || len(msg.MaxPrice) > 0
+	if hasBounds != (len(msg.MinPrice) > 0 && len(msg.MaxPrice) > 0) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "min_price and max_price must both be set or both unset")
 	}
 
-	if len(minBand) == 2 && len(maxBand) == 2 {
-		// Ensure strict band width: max > min
-		minRatio := math.LegacyNewDecFromInt(minBand.AmountOf(coinB.Denom)).Quo(math.LegacyNewDecFromInt(minBand.AmountOf(coinA.Denom)))
-		maxRatio := math.LegacyNewDecFromInt(maxBand.AmountOf(coinB.Denom)).Quo(math.LegacyNewDecFromInt(maxBand.AmountOf(coinA.Denom)))
-		if !maxRatio.GT(minRatio) {
-			return nil, fmt.Errorf("max_price must be > min_price")
+	if len(msg.Coins) != 2 {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "coins must have exactly 2 coins")
+	}
+
+	if msg.Coins[0].Amount.IsZero() || msg.Coins[1].Amount.IsZero() {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "initial reserves must be positive: msg: %+v coins: %+v", msg, msg.Coins)
+	}
+
+	if hasBounds {
+		if len(msg.MinPrice) != 2 || len(msg.MaxPrice) != 2 {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "min_price and max_price must each have exactly two coins")
 		}
-	} else if len(minBand) != 0 || len(maxBand) != 0 {
-		return nil, fmt.Errorf("min_price [%s] and max_price [%s] must be both set or both unset", minBand.String(), maxBand.String())
+		// the denoms must be the same as the coins and each other (canonical order)
+		if msg.MinPrice[0].Denom != denom1 || msg.MinPrice[1].Denom != denom2 || msg.MaxPrice[0].Denom != denom1 || msg.MaxPrice[1].Denom != denom2 {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "min_price and max_price must have the same denoms as coins")
+		}
+		// integer cross-multiplication comparisons (avoid Decs):
+		// price = R_quote / R_base; min = minQuote/minBase; max = maxQuote/maxBase
+		minBase := msg.MinPrice[0].Amount
+		minQuote := msg.MinPrice[1].Amount
+		maxBase := msg.MaxPrice[0].Amount
+		maxQuote := msg.MaxPrice[1].Amount
+		// disallow equality; if user swapped, normalize by swapping
+		if maxQuote.Mul(minBase).Equal(minQuote.Mul(maxBase)) {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "max_price must be greater than min_price")
+		}
+		// Normalize order so that min <= max
+		if minQuote.Mul(maxBase).GT(maxQuote.Mul(minBase)) {
+			msg.MinPrice, msg.MaxPrice = msg.MaxPrice, msg.MinPrice
+			minBase = msg.MinPrice[0].Amount
+			minQuote = msg.MinPrice[1].Amount
+			maxBase = msg.MaxPrice[0].Amount
+			maxQuote = msg.MaxPrice[1].Amount
+		}
+		// Initial price must be strictly within (min, max)
+		rBase := msg.Coins[0].Amount
+		rQuote := msg.Coins[1].Amount
+		if rQuote.Mul(minBase).LTE(rBase.Mul(minQuote)) || rQuote.Mul(maxBase).GTE(rBase.Mul(maxQuote)) {
+			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "initial price must be within min and max bounds: coins=%s min=%s max=%s", msg.Coins.String(), msg.MinPrice.String(), msg.MaxPrice.String())
+		}
 	}
 
-	// Move funds from creator to module
 	from, err := k.addr(ctx, msg.Creator)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to get creator address: %s", msg.Creator)
 	}
 
-	coins := sdk.NewCoins(coinA, coinB)
-	if err := k.sendToModule(ctx, from, coins); err != nil {
-		return nil, cosmossdkerrors.Wrapf(err, "failed to send funds to module: %s", from.String())
+	if err := k.sendToModule(ctx, from, msg.Coins); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to send funds to module: %s: %+v", from.String(), msg)
 	}
 
-	// Allocate new pool id and construct pool (we'll compute initial shares proportionally)
 	id, err := k.poolSeq.Next(ctx)
 	if err != nil {
-		return nil, cosmossdkerrors.Wrapf(err, "failed to allocate new pool id")
+		return nil, cosmossdkerrors.Wrapf(err, "failed to allocate new pool id: %+v", msg)
 	}
 	sharesDenom := whaleswapv1.PoolSharesDenom(id)
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	// Enforce initial price within band if band is set
-	if len(minBand) == 2 {
-		// P = reserve2/reserve1 using initial reserves
-		if coinA.Amount.IsZero() || coinB.Amount.IsZero() {
-			return nil, fmt.Errorf("initial reserves must be > 0")
-		}
-		p := math.LegacyNewDecFromInt(coinB.Amount).Quo(math.LegacyNewDecFromInt(coinA.Amount))
-		minRatio := math.LegacyNewDecFromInt(minBand.AmountOf(coinB.Denom)).Quo(math.LegacyNewDecFromInt(minBand.AmountOf(coinA.Denom)))
-		maxRatio := math.LegacyNewDecFromInt(maxBand.AmountOf(coinB.Denom)).Quo(math.LegacyNewDecFromInt(maxBand.AmountOf(coinA.Denom)))
-		if p.LT(minRatio) || p.GT(maxRatio) {
-			return nil, fmt.Errorf("initial price %s outside band [%s, %s]", p.String(), minRatio.String(), maxRatio.String())
-		}
-	}
-
 	t := sdkCtx.BlockTime()
 	pool := whaleswapv1.Pool{
 		PoolId:      id,
-		CoinA:       coinA,
-		CoinB:       coinB,
+		Coins:       msg.Coins,
 		SharesDenom: sharesDenom,
 		FeePct:      msg.FeePct,
-		MinPrice:    minBand,
-		MaxPrice:    maxBand,
+		MinPrice:    msg.MinPrice,
+		MaxPrice:    msg.MaxPrice,
 		BlockHeight: uint64(sdkCtx.BlockHeight()),
 		Created:     &t,
 		Updated:     &t,
 		NumTrades:   0,
 	}
-	// Compute initial shares proportional to liquidity
+
 	var initialShares math.Int
-	if len(minBand) == 2 {
+	if hasBounds {
 		L, _, _, err := k.liquidityForReserves(pool)
 		if err != nil {
-			return nil, cosmossdkerrors.Wrap(err, "failed to compute initial liquidity")
+			return nil, cosmossdkerrors.Wrapf(err, "failed to compute initial liquidity: %+v", msg)
 		}
 		initialShares = L.TruncateInt()
 	} else {
-		// v2: initial shares = floor(sqrt(R1*R2))
-		prod := math.LegacyNewDecFromInt(coinA.Amount).Mul(math.LegacyNewDecFromInt(coinB.Amount))
+		prod := math.LegacyNewDecFromInt(msg.Coins[0].Amount).Mul(math.LegacyNewDecFromInt(msg.Coins[1].Amount))
 		sqrt, err := prod.ApproxSqrt()
 		if err != nil {
-			return nil, cosmossdkerrors.Wrap(err, "failed to sqrt initial product")
+			return nil, cosmossdkerrors.Wrapf(err, "failed to compute sqrt of initial product: %+v", msg)
 		}
 		initialShares = sqrt.TruncateInt()
 	}
 	if !initialShares.IsPositive() {
 		initialShares = math.NewInt(1)
 	}
+
 	if err := k.PoolsMap.Set(ctx, id, pool); err != nil {
-		return nil, cosmossdkerrors.Wrap(err, "failed to set pool")
+		return nil, cosmossdkerrors.Wrapf(err, "failed to set pool: %+v", msg)
 	}
 
-	// Mint initial shares to creator via nameservice (no fee when destination is module)
-	// Ensure whaleswap root name exists and resolves to the module address so nameservice
-	// mint verification passes for shares denom whaleswap.dys/pools/<id>.
 	if err := k.ensureWhaleswapRootName(ctx); err != nil {
-		return nil, cosmossdkerrors.Wrapf(err, "failed ensuring whaleswap.dys root before minting shares for pool %d", id)
+		return nil, cosmossdkerrors.Wrapf(err, "failed ensuring whaleswap.dys root before minting shares for pool %d: %+v", id, msg)
 	}
 
-	// Build mint request with zero udys fee; nameservice skips fee for module destinations
 	mintMsg := &nameservicev1.MsgMintCoins{
 		NameDestination: k.accKeeper.GetModuleAddress(whaleswap.ModuleName).String(),
 		Amount:          sdk.NewCoins(sdk.NewCoin(sharesDenom, initialShares)),
 		MintFee:         sdk.NewCoin(whaleswapv1.MintFeeDenom, math.NewInt(0)),
 	}
 	if _, err := k.nameSvc.MintCoins(ctx, mintMsg); err != nil {
-		return nil, cosmossdkerrors.Wrap(err, "mint shares failed")
-	}
-	if err := k.sendFromModule(ctx, from, sdk.NewCoins(sdk.NewCoin(sharesDenom, initialShares))); err != nil {
-		return nil, cosmossdkerrors.Wrap(err, "send minted shares failed")
+		return nil, cosmossdkerrors.Wrapf(err, "failed to mint shares: %+v", msg)
 	}
 
-	// Emit events
-	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolCreated{PoolId: id})
-	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPoolUpdate{PoolId: id})
-	if err := k.AssertAMMInvariants(ctx); err != nil {
-		return nil, cosmossdkerrors.Wrapf(err,
-			"AMM invariant after CreatePool: pool_id=%d coinA=%s coinB=%s shares_denom=%s",
-			id, coinA.String(), coinB.String(), sharesDenom,
-		)
+	if err := k.sendFromModule(ctx, from, sdk.NewCoins(sdk.NewCoin(sharesDenom, initialShares))); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to send minted shares: %+v", msg)
 	}
+
+	sdkCtx.EventManager().EmitTypedEvents(
+		&whaleswapv1.EventPoolCreated{PoolId: id},
+		&whaleswapv1.EventPoolUpdate{PoolId: id},
+	)
+
+	if err := k.AssertAMMInvariants(ctx); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "AMM invariant failed after CreatePool: pool_id=%d coins=%s shares_denom=%s", id, msg.Coins.String(), sharesDenom)
+	}
+
 	return &whaleswapv1.MsgCreatePoolResponse{PoolId: id}, nil
 }

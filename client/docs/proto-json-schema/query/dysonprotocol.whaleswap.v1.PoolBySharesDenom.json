@@ -50,13 +50,13 @@
                     "pool_id": {
                         "type": "string"
                     },
-                    "coin_a": {
-                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
-                        "additionalProperties": false
-                    },
-                    "coin_b": {
-                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
-                        "additionalProperties": false
+                    "coins": {
+                        "items": {
+                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+                        },
+                        "additionalProperties": false,
+                        "type": "array",
+                        "description": "coins holds exactly two coins in canonical denom order (denom[0] < denom[1]). All math derives price as P = coins[1].amount / coins[0].amount."
                     },
                     "shares_denom": {
                         "type": "string"
@@ -71,7 +71,7 @@
                         },
                         "additionalProperties": false,
                         "type": "array",
-                        "description": "min_price/max_price optionally set a price band for concentrated liquidity. Each is expressed as exactly two coins representing the ratio coin_b/coin_a. For example, [{amount: 1, denom: coin_a}, {amount: 2, denom: coin_b}] means min P = 2/1 of coin2 per coin1. Empty means unset."
+                        "description": "min_price/max_price optionally set a price band for concentrated liquidity. Each is expressed as exactly two coins representing the ratio coins[1]/coins[0]. For example, [{amount: 1, denom: coins[0].denom}, {amount: 2, denom: coins[1].denom}] means Pmin = 2/1. Empty means unset."
                     },
                     "max_price": {
                         "items": {

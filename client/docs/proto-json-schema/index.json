@@ -152,13 +152,15 @@
       {"type":"file","name":"dysonprotocol.whaleswap.v1.OffersByPairPriceRange.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Params.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Pool.json"},
-      {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolByPair.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolBySharesDenom.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.Pools.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolsByDenom.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolsByOwner.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolsByPair.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.PoolsByPairPriceRange.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.Trade.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.TradesByOffer.json"},
+      {"type":"file","name":"dysonprotocol.whaleswap.v1.TradesByPool.json"},
       {"type":"file","name":"dysonprotocol.whaleswap.v1.TradesByTaker.json"},
       {"type":"file","name":"ibc.applications.interchain_accounts.controller.v1.InterchainAccount.json"},
       {"type":"file","name":"ibc.applications.interchain_accounts.controller.v1.Params.json"},
@@ -366,5 +368,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":360}
+  {"type":"report","directories":3,"files":362}
 ]

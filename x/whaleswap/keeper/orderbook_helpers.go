@@ -89,7 +89,9 @@ func (k Keeper) unindexOfferAll(ctx context.Context, offer whaleswapv1.OfferData
 // reindexOfferOnStatusChange updates owner/status mapping and removes open indexes when leaving Open.
 func (k Keeper) reindexOfferOnStatusChange(ctx context.Context, prev whaleswapv1.OfferData, next whaleswapv1.OfferData) error {
 	if prev.Status != next.Status {
-		_ = k.OffersByOwnerStatus.Remove(ctx, collections.Join3(prev.Maker, prev.Status, prev.OfferId))
+		if err := k.OffersByOwnerStatus.Remove(ctx, collections.Join3(prev.Maker, prev.Status, prev.OfferId)); err != nil {
+			return err
+		}
 		if err := k.OffersByOwnerStatus.Set(ctx, collections.Join3(next.Maker, next.Status, next.OfferId), next.OfferId); err != nil {
 			return err
 		}

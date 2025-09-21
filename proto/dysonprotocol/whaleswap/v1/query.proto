@@ -26,10 +26,9 @@ service Query {
   rpc Pools(QueryPoolsRequest) returns (QueryPoolsResponse) {
     option (google.api.http).get = "/dysonprotocol/whaleswap/v1/pools";
   }
-  // PoolByPair returns the unique pool (if it exists) matching the provided
-  // denom pair. Denom order in the request is irrelevant; the implementation
-  // canonicalizes to pairKey = min(denom1,denom2)|max(denom1,denom2).
-  rpc PoolByPair(QueryPoolByPairRequest) returns (QueryPoolResponse) {
+  // PoolsByPair returns all pools matching the provided denom pair with
+  // pagination. Denom order in the request is irrelevant.
+  rpc PoolsByPair(QueryPoolsByPairRequest) returns (QueryPoolsResponse) {
     option (google.api.http).get = "/dysonprotocol/whaleswap/v1/pools/by_pair";
   }
   // PoolsByDenom returns all pools that include the provided denom on either
@@ -99,6 +98,11 @@ service Query {
   }
 
   // Trades
+  // Get a single trade by id
+  rpc Trade(QueryTradeRequest) returns (QueryTradeResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/trades/{trade_id}";
+  }
   rpc TradesByOffer(QueryTradesByOfferRequest)
       returns (QueryTradesByOfferResponse) {
     option (google.api.http).get =
@@ -108,6 +112,12 @@ service Query {
       returns (QueryTradesByTakerResponse) {
     option (google.api.http).get =
         "/dysonprotocol/whaleswap/v1/trades/taker/{taker}";
+  }
+  // TradesByPool lists trades for an AMM pool
+  rpc TradesByPool(QueryTradesByPoolRequest)
+      returns (QueryTradesByPoolResponse) {
+    option (google.api.http).get =
+        "/dysonprotocol/whaleswap/v1/trades/pool/{pool_id}";
   }
 
   // Auctions
@@ -164,9 +174,10 @@ message QueryPoolsResponse {
 
 // QueryPoolByPairRequest selects a pool by denom pair regardless of order.
 // The implementation canonicalizes the pair to a unique internal key.
-message QueryPoolByPairRequest {
-  string have_denom = 1; // first denom (order-insensitive)
-  string want_denom = 2; // second denom (order-insensitive)
+message QueryPoolsByPairRequest {
+  string base_denom = 1;  // base of the pair (price is quote/base)
+  string quote_denom = 2; // quote of the pair
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
 // QueryPoolsByDenomRequest lists pools containing the provided denom on either
@@ -184,8 +195,9 @@ message QueryPoolBySharesDenomRequest { string shares_denom = 1; }
 // price range. Prices are cosmos.Dec strings; bounds are optional and
 // inclusive.
 message QueryPoolsByPairPriceRangeRequest {
-  string have_denom = 1; // one side of the pair (order-insensitive)
-  string want_denom = 2; // the other side of the pair
+  // Price is interpreted as quote/base using these fields
+  string base_denom = 1;
+  string quote_denom = 2;
   string min_price = 3 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
   string max_price = 4 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
   cosmos.base.query.v1beta1.PageRequest pagination = 5;
@@ -267,6 +279,20 @@ message QueryTradesByTakerResponse {
   repeated Trade trades = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
+
+// QueryTradesByPoolRequest returns trades filtered by pool id
+message QueryTradesByPoolRequest {
+  uint64 pool_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryTradesByPoolResponse {
+  repeated Trade trades = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryTradeRequest { uint64 trade_id = 1; }
+message QueryTradeResponse { Trade trade = 1; }
 
 message QueryAuctionRequest { uint64 auction_id = 1; }
 message QueryAuctionResponse { AuctionRecord auction = 1; }

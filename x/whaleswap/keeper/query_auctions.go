@@ -43,6 +43,11 @@ func (k Keeper) Auctions(ctx context.Context, req *whaleswapv1.QueryAuctionsRequ
 				}
 				return nil, nil
 			},
+			// Prefix by (sell,bid) to ensure stable pagination and valid next_key
+			func(opt *query.CollectionsPaginateOptions[collections.Triple[string, string, uint64]]) {
+				p := collections.TripleSuperPrefix[string, string, uint64](sell, bid)
+				opt.Prefix = &p
+			},
 		)
 		if err != nil {
 			return nil, cosmossdkerrors.Wrapf(err, "Auctions query (sell=[%s],bid=[%s]) failed", sell, bid)
@@ -68,6 +73,11 @@ func (k Keeper) Auctions(ctx context.Context, req *whaleswapv1.QueryAuctionsRequ
 				}
 				return nil, nil
 			},
+			// Prefix by sell to iterate only that subset
+			func(opt *query.CollectionsPaginateOptions[collections.Triple[string, string, uint64]]) {
+				p := collections.TriplePrefix[string, string, uint64](sell)
+				opt.Prefix = &p
+			},
 		)
 		if err != nil {
 			return nil, cosmossdkerrors.Wrapf(err, "Auctions query (sell=[%s]) failed", sell)
@@ -92,6 +102,11 @@ func (k Keeper) Auctions(ctx context.Context, req *whaleswapv1.QueryAuctionsRequ
 					return &rec, nil
 				}
 				return nil, nil
+			},
+			// Prefix by bid to iterate only that subset
+			func(opt *query.CollectionsPaginateOptions[collections.Triple[string, string, uint64]]) {
+				p := collections.TriplePrefix[string, string, uint64](bid)
+				opt.Prefix = &p
 			},
 		)
 		if err != nil {

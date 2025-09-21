@@ -5101,6 +5101,554 @@ func (x *fastReflection_EventAuctionRedeemed) ProtoMethods() *protoiface.Methods
 	}
 }
 
+var (
+	md_EventTradeRecorded            protoreflect.MessageDescriptor
+	fd_EventTradeRecorded_trade_id   protoreflect.FieldDescriptor
+	fd_EventTradeRecorded_offer_id   protoreflect.FieldDescriptor
+	fd_EventTradeRecorded_pool_id    protoreflect.FieldDescriptor
+	fd_EventTradeRecorded_auction_id protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_whaleswap_v1_events_proto_init()
+	md_EventTradeRecorded = File_dysonprotocol_whaleswap_v1_events_proto.Messages().ByName("EventTradeRecorded")
+	fd_EventTradeRecorded_trade_id = md_EventTradeRecorded.Fields().ByName("trade_id")
+	fd_EventTradeRecorded_offer_id = md_EventTradeRecorded.Fields().ByName("offer_id")
+	fd_EventTradeRecorded_pool_id = md_EventTradeRecorded.Fields().ByName("pool_id")
+	fd_EventTradeRecorded_auction_id = md_EventTradeRecorded.Fields().ByName("auction_id")
+}
+
+var _ protoreflect.Message = (*fastReflection_EventTradeRecorded)(nil)
+
+type fastReflection_EventTradeRecorded EventTradeRecorded
+
+func (x *EventTradeRecorded) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_EventTradeRecorded)(x)
+}
+
+func (x *EventTradeRecorded) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_whaleswap_v1_events_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_EventTradeRecorded_messageType fastReflection_EventTradeRecorded_messageType
+var _ protoreflect.MessageType = fastReflection_EventTradeRecorded_messageType{}
+
+type fastReflection_EventTradeRecorded_messageType struct{}
+
+func (x fastReflection_EventTradeRecorded_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_EventTradeRecorded)(nil)
+}
+func (x fastReflection_EventTradeRecorded_messageType) New() protoreflect.Message {
+	return new(fastReflection_EventTradeRecorded)
+}
+func (x fastReflection_EventTradeRecorded_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventTradeRecorded
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_EventTradeRecorded) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventTradeRecorded
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_EventTradeRecorded) Type() protoreflect.MessageType {
+	return _fastReflection_EventTradeRecorded_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_EventTradeRecorded) New() protoreflect.Message {
+	return new(fastReflection_EventTradeRecorded)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_EventTradeRecorded) Interface() protoreflect.ProtoMessage {
+	return (*EventTradeRecorded)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_EventTradeRecorded) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.TradeId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.TradeId)
+		if !f(fd_EventTradeRecorded_trade_id, value) {
+			return
+		}
+	}
+	if x.OfferId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.OfferId)
+		if !f(fd_EventTradeRecorded_offer_id, value) {
+			return
+		}
+	}
+	if x.PoolId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.PoolId)
+		if !f(fd_EventTradeRecorded_pool_id, value) {
+			return
+		}
+	}
+	if x.AuctionId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.AuctionId)
+		if !f(fd_EventTradeRecorded_auction_id, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_EventTradeRecorded) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.trade_id":
+		return x.TradeId != uint64(0)
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.offer_id":
+		return x.OfferId != uint64(0)
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.pool_id":
+		return x.PoolId != uint64(0)
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.auction_id":
+		return x.AuctionId != uint64(0)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.EventTradeRecorded"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.EventTradeRecorded does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventTradeRecorded) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.trade_id":
+		x.TradeId = uint64(0)
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.offer_id":
+		x.OfferId = uint64(0)
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.pool_id":
+		x.PoolId = uint64(0)
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.auction_id":
+		x.AuctionId = uint64(0)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.EventTradeRecorded"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.EventTradeRecorded does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_EventTradeRecorded) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.trade_id":
+		value := x.TradeId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.offer_id":
+		value := x.OfferId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.pool_id":
+		value := x.PoolId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.auction_id":
+		value := x.AuctionId
+		return protoreflect.ValueOfUint64(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.EventTradeRecorded"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.EventTradeRecorded does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventTradeRecorded) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.trade_id":
+		x.TradeId = value.Uint()
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.offer_id":
+		x.OfferId = value.Uint()
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.pool_id":
+		x.PoolId = value.Uint()
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.auction_id":
+		x.AuctionId = value.Uint()
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.EventTradeRecorded"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.EventTradeRecorded does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventTradeRecorded) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.trade_id":
+		panic(fmt.Errorf("field trade_id of message dysonprotocol.whaleswap.v1.EventTradeRecorded is not mutable"))
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.offer_id":
+		panic(fmt.Errorf("field offer_id of message dysonprotocol.whaleswap.v1.EventTradeRecorded is not mutable"))
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.pool_id":
+		panic(fmt.Errorf("field pool_id of message dysonprotocol.whaleswap.v1.EventTradeRecorded is not mutable"))
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.auction_id":
+		panic(fmt.Errorf("field auction_id of message dysonprotocol.whaleswap.v1.EventTradeRecorded is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.EventTradeRecorded"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.EventTradeRecorded does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_EventTradeRecorded) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.trade_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.offer_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.pool_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.whaleswap.v1.EventTradeRecorded.auction_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.whaleswap.v1.EventTradeRecorded"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.whaleswap.v1.EventTradeRecorded does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_EventTradeRecorded) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.whaleswap.v1.EventTradeRecorded", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_EventTradeRecorded) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventTradeRecorded) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_EventTradeRecorded) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_EventTradeRecorded) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*EventTradeRecorded)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.TradeId != 0 {
+			n += 1 + runtime.Sov(uint64(x.TradeId))
+		}
+		if x.OfferId != 0 {
+			n += 1 + runtime.Sov(uint64(x.OfferId))
+		}
+		if x.PoolId != 0 {
+			n += 1 + runtime.Sov(uint64(x.PoolId))
+		}
+		if x.AuctionId != 0 {
+			n += 1 + runtime.Sov(uint64(x.AuctionId))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*EventTradeRecorded)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.AuctionId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.AuctionId))
+			i--
+			dAtA[i] = 0x20
+		}
+		if x.PoolId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.PoolId))
+			i--
+			dAtA[i] = 0x18
+		}
+		if x.OfferId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.OfferId))
+			i--
+			dAtA[i] = 0x10
+		}
+		if x.TradeId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.TradeId))
+			i--
+			dAtA[i] = 0x8
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*EventTradeRecorded)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventTradeRecorded: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventTradeRecorded: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field TradeId", wireType)
+				}
+				x.TradeId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.TradeId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field OfferId", wireType)
+				}
+				x.OfferId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.OfferId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 3:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
+				}
+				x.PoolId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.PoolId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 4:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AuctionId", wireType)
+				}
+				x.AuctionId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.AuctionId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -5558,6 +6106,66 @@ func (x *EventAuctionRedeemed) GetAuctionId() uint64 {
 	return 0
 }
 
+// Emitted whenever a Trade is recorded in state
+type EventTradeRecorded struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	TradeId   uint64 `protobuf:"varint,1,opt,name=trade_id,json=tradeId,proto3" json:"trade_id,omitempty"`
+	OfferId   uint64 `protobuf:"varint,2,opt,name=offer_id,json=offerId,proto3" json:"offer_id,omitempty"`
+	PoolId    uint64 `protobuf:"varint,3,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
+	AuctionId uint64 `protobuf:"varint,4,opt,name=auction_id,json=auctionId,proto3" json:"auction_id,omitempty"`
+}
+
+func (x *EventTradeRecorded) Reset() {
+	*x = EventTradeRecorded{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_whaleswap_v1_events_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EventTradeRecorded) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EventTradeRecorded) ProtoMessage() {}
+
+// Deprecated: Use EventTradeRecorded.ProtoReflect.Descriptor instead.
+func (*EventTradeRecorded) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_whaleswap_v1_events_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *EventTradeRecorded) GetTradeId() uint64 {
+	if x != nil {
+		return x.TradeId
+	}
+	return 0
+}
+
+func (x *EventTradeRecorded) GetOfferId() uint64 {
+	if x != nil {
+		return x.OfferId
+	}
+	return 0
+}
+
+func (x *EventTradeRecorded) GetPoolId() uint64 {
+	if x != nil {
+		return x.PoolId
+	}
+	return 0
+}
+
+func (x *EventTradeRecorded) GetAuctionId() uint64 {
+	if x != nil {
+		return x.AuctionId
+	}
+	return 0
+}
+
 var File_dysonprotocol_whaleswap_v1_events_proto protoreflect.FileDescriptor
 
 var file_dysonprotocol_whaleswap_v1_events_proto_rawDesc = []byte{
@@ -5614,10 +6222,19 @@ var file_dysonprotocol_whaleswap_v1_events_proto_rawDesc = []byte{
 	0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x35, 0x0a, 0x14, 0x45, 0x76, 0x65, 0x6e,
 	0x74, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x64, 0x65, 0x65, 0x6d, 0x65, 0x64,
 	0x12, 0x1d, 0x0a, 0x0a, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x42,
-	0x25, 0x5a, 0x23, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
-	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x77, 0x68, 0x61, 0x6c, 0x65, 0x73, 0x77, 0x61, 0x70,
-	0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22,
+	0x82, 0x01, 0x0a, 0x12, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x54, 0x72, 0x61, 0x64, 0x65, 0x52, 0x65,
+	0x63, 0x6f, 0x72, 0x64, 0x65, 0x64, 0x12, 0x19, 0x0a, 0x08, 0x74, 0x72, 0x61, 0x64, 0x65, 0x5f,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x74, 0x72, 0x61, 0x64, 0x65, 0x49,
+	0x64, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x04, 0x52, 0x07, 0x6f, 0x66, 0x66, 0x65, 0x72, 0x49, 0x64, 0x12, 0x17, 0x0a, 0x07,
+	0x70, 0x6f, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x70,
+	0x6f, 0x6f, 0x6c, 0x49, 0x64, 0x12, 0x1d, 0x0a, 0x0a, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x5f, 0x69, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x61, 0x75, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x49, 0x64, 0x42, 0x25, 0x5a, 0x23, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x77, 0x68, 0x61, 0x6c,
+	0x65, 0x73, 0x77, 0x61, 0x70, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -5632,7 +6249,7 @@ func file_dysonprotocol_whaleswap_v1_events_proto_rawDescGZIP() []byte {
 	return file_dysonprotocol_whaleswap_v1_events_proto_rawDescData
 }
 
-var file_dysonprotocol_whaleswap_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_dysonprotocol_whaleswap_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_dysonprotocol_whaleswap_v1_events_proto_goTypes = []interface{}{
 	(*EventPoolCreated)(nil),          // 0: dysonprotocol.whaleswap.v1.EventPoolCreated
 	(*EventPoolUpdate)(nil),           // 1: dysonprotocol.whaleswap.v1.EventPoolUpdate
@@ -5646,11 +6263,12 @@ var file_dysonprotocol_whaleswap_v1_events_proto_goTypes = []interface{}{
 	(*EventPfandReleased)(nil),        // 9: dysonprotocol.whaleswap.v1.EventPfandReleased
 	(*EventAuctionCreated)(nil),       // 10: dysonprotocol.whaleswap.v1.EventAuctionCreated
 	(*EventAuctionRedeemed)(nil),      // 11: dysonprotocol.whaleswap.v1.EventAuctionRedeemed
-	(*v1beta1.Coin)(nil),              // 12: cosmos.base.v1beta1.Coin
+	(*EventTradeRecorded)(nil),        // 12: dysonprotocol.whaleswap.v1.EventTradeRecorded
+	(*v1beta1.Coin)(nil),              // 13: cosmos.base.v1beta1.Coin
 }
 var file_dysonprotocol_whaleswap_v1_events_proto_depIdxs = []int32{
-	12, // 0: dysonprotocol.whaleswap.v1.EventPfandLocked.amount:type_name -> cosmos.base.v1beta1.Coin
-	12, // 1: dysonprotocol.whaleswap.v1.EventPfandReleased.amount:type_name -> cosmos.base.v1beta1.Coin
+	13, // 0: dysonprotocol.whaleswap.v1.EventPfandLocked.amount:type_name -> cosmos.base.v1beta1.Coin
+	13, // 1: dysonprotocol.whaleswap.v1.EventPfandReleased.amount:type_name -> cosmos.base.v1beta1.Coin
 	2,  // [2:2] is the sub-list for method output_type
 	2,  // [2:2] is the sub-list for method input_type
 	2,  // [2:2] is the sub-list for extension type_name
@@ -5808,6 +6426,18 @@ func file_dysonprotocol_whaleswap_v1_events_proto_init() {
 				return nil
 			}
 		}
+		file_dysonprotocol_whaleswap_v1_events_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EventTradeRecorded); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -5815,7 +6445,7 @@ func file_dysonprotocol_whaleswap_v1_events_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dysonprotocol_whaleswap_v1_events_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

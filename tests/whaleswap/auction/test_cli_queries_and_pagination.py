@@ -13,7 +13,12 @@ def test_auctions_query_filters_and_index_cleanup(
     params = dysond("query", "nameservice", "params")
     fee_per_unit = float(params["params"]["mint_fee_per_coin"])  # e.g., 0.01
     units = 42
-    required_fee = int(units * fee_per_unit)
+    # Use ceiling like other tests to avoid underpaying by truncation
+    required_fee = int(
+        (Decimal(units) * Decimal(str(fee_per_unit))).to_integral_value(
+            rounding=ROUND_CEILING
+        )
+    )
     mint = dysond(
         "tx",
         "nameservice",
@@ -243,24 +248,7 @@ def test_auctions_query_pagination_filters_strict(
         max(aid1, aid2)
     ], f"page2 ids mismatch: {json.dumps(second, indent=2)}"
 
-    third = dysond(
-        "query",
-        "whaleswap",
-        "auctions",
-        "--sell-denom",
-        denom_s,
-        "--bid-denom",
-        "udys",
-        "--page-limit",
-        "1",
-        "--page-key",
-        second.get("pagination", {}).get("next_key"),
-    )
-    ids_third = [
-        int(a.get("auction_id"))
-        for a in third.get("auctions", [])
-        if a.get("sell", {}).get("denom") == denom_s and a.get("bid_denom") == "udys"
-    ]
-    assert (
-        ids_third == []
-    ), f"unexpected extra results on page3: {json.dumps(third, indent=2)}"
+    # After consuming 2 items with limit=1, next_key should be absent
+    assert not second.get("pagination", {}).get(
+        "next_key"
+    ), f"expected no next_key after second page: {json.dumps(second, indent=2)}"

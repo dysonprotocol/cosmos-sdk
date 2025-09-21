@@ -176,7 +176,7 @@ var (
 		crontaskv1.ModuleName:                       nil,
 		ibctransfertypes.ModuleName:                 {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:                         nil,
-		whaleswapv1.ModuleName:                      nil,
+		whaleswapv1.ModuleName:                      {authtypes.Burner},
 	}
 )
 

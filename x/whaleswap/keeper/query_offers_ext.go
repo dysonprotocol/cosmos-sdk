@@ -26,7 +26,7 @@ func (k Keeper) OffersByDenom(ctx context.Context, req *whaleswapv1.QueryOffersB
 			}
 			v, err := k.OffersMap.Get(ctx, id)
 			if err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
 			}
 			return &v, nil
 		})
@@ -42,7 +42,7 @@ func (k Keeper) OffersByDenom(ctx context.Context, req *whaleswapv1.QueryOffersB
 			}
 			v, err := k.OffersMap.Get(ctx, id)
 			if err != nil {
-				return nil, err
+				return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
 			}
 			return &v, nil
 		})
@@ -145,7 +145,7 @@ func (k Keeper) OffersBest(ctx context.Context, req *whaleswapv1.QueryOffersBest
 		}
 		v, err := k.OffersMap.Get(ctx, id)
 		if err != nil {
-			return nil, err
+			return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
 		}
 		if v.RemainingHave.Denom != req.HaveDenom || v.RemainingWant.Denom != req.WantDenom {
 			return nil, nil

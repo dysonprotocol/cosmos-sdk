@@ -22,15 +22,19 @@ option go_package = "dysonprotocol.com/x/whaleswap/types";
 //   reserves as P = coin_b / coin_a, consistent with the notes above.
 message Pool {
   uint64 pool_id = 1;
-  cosmos.base.v1beta1.Coin coin_a = 2 [ (gogoproto.nullable) = false ];
-  cosmos.base.v1beta1.Coin coin_b = 3 [ (gogoproto.nullable) = false ];
+  // coins holds exactly two coins in canonical denom order (denom[0] <
+  // denom[1]). All math derives price as P = coins[1].amount / coins[0].amount.
+  repeated cosmos.base.v1beta1.Coin coins = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
   string shares_denom = 4;
   // fee_pct is the pool swap fee percentage (cosmos.Dec string in [0,1)).
   string fee_pct = 5 [ (cosmos_proto.scalar) = "cosmos.Dec" ];
   // min_price/max_price optionally set a price band for concentrated liquidity.
   // Each is expressed as exactly two coins representing the ratio
-  // coin_b/coin_a. For example, [{amount: 1, denom: coin_a}, {amount: 2, denom:
-  // coin_b}] means min P = 2/1 of coin2 per coin1. Empty means unset.
+  // coins[1]/coins[0]. For example, [{amount: 1, denom: coins[0].denom},
+  // {amount: 2, denom: coins[1].denom}] means Pmin = 2/1. Empty means unset.
   repeated cosmos.base.v1beta1.Coin min_price = 6 [
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
@@ -83,6 +87,11 @@ message Trade {
   google.protobuf.Timestamp timestamp = 5 [ (gogoproto.stdtime) = true ];
   cosmos.base.v1beta1.Coin sent = 6 [ (gogoproto.nullable) = false ];
   cosmos.base.v1beta1.Coin received = 7 [ (gogoproto.nullable) = false ];
+  // pool_id is non-zero for AMM swaps; zero otherwise
+  uint64 pool_id = 8;
+  // auction_id is non-zero for auction escrow release trades (redeem); zero
+  // otherwise
+  uint64 auction_id = 9;
 }
 
 // AuctionRecord stores metadata for a whaleswap-created auction escrow.

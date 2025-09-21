@@ -1,0 +1,89 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryTradeRequest",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.QueryTradeRequest": {
+                "properties": {
+                    "trade_id": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Trade Request"
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryTradeResponse",
+        "definitions": {
+            "dysonprotocol.whaleswap.v1.QueryTradeResponse": {
+                "properties": {
+                    "trade": {
+                        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Trade",
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Query Trade Response"
+            },
+            "cosmos.base.v1beta1.Coin": {
+                "properties": {
+                    "denom": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Coin",
+                "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
+            },
+            "dysonprotocol.whaleswap.v1.Trade": {
+                "properties": {
+                    "trade_id": {
+                        "type": "string"
+                    },
+                    "offer_id": {
+                        "type": "string"
+                    },
+                    "taker": {
+                        "type": "string"
+                    },
+                    "height": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "sent": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "received": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "pool_id": {
+                        "type": "string",
+                        "description": "pool_id is non-zero for AMM swaps; zero otherwise"
+                    },
+                    "auction_id": {
+                        "type": "string",
+                        "description": "auction_id is non-zero for auction escrow release trades (redeem); zero otherwise"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Trade",
+                "description": "Trade captures a single fill of an offer. - `sent` is the coin paid by the taker (want-denom), and `received` is the   coin delivered by the module (have-denom or base of liquid-have)."
+            }
+        }
+    }
+}

@@ -10,31 +10,25 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
-func (k Keeper) PoolByPair(ctx context.Context, req *whaleswapv1.QueryPoolByPairRequest) (*whaleswapv1.QueryPoolResponse, error) {
+func (k Keeper) PoolsByPair(ctx context.Context, req *whaleswapv1.QueryPoolsByPairRequest) (*whaleswapv1.QueryPoolsResponse, error) {
 	if req == nil {
-		req = &whaleswapv1.QueryPoolByPairRequest{}
+		req = &whaleswapv1.QueryPoolsByPairRequest{}
 	}
-	if req.HaveDenom == "" || req.WantDenom == "" {
-		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "have_denom and want_denom required")
+	if req.BaseDenom == "" || req.QuoteDenom == "" {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "base_denom and quote_denom required")
 	}
-	have, want := req.HaveDenom, req.WantDenom
-	var matched *whaleswapv1.Pool
-	_, _, err := query.CollectionPaginate(ctx, k.PoolsMap, nil, func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
-		// match regardless of order
-		if (value.CoinA.Denom == have && value.CoinB.Denom == want) || (value.CoinA.Denom == want && value.CoinB.Denom == have) {
+	base, quote := req.BaseDenom, req.QuoteDenom
+	results, pageRes, err := query.CollectionPaginate(ctx, k.PoolsMap, req.Pagination, func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
+		if len(value.Coins) == 2 && ((value.Coins[0].Denom == base && value.Coins[1].Denom == quote) || (value.Coins[0].Denom == quote && value.Coins[1].Denom == base)) {
 			v := value
-			matched = &v
 			return &v, nil
 		}
 		return nil, nil
 	})
 	if err != nil {
-		return nil, cosmossdkerrors.Wrap(err, "PoolByPair paginate failed")
+		return nil, cosmossdkerrors.Wrap(err, "PoolsByPair paginate failed")
 	}
-	if matched == nil {
-		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrNotFound, "pool not found for pair %s/%s", have, want)
-	}
-	return &whaleswapv1.QueryPoolResponse{Pool: matched}, nil
+	return &whaleswapv1.QueryPoolsResponse{Pools: results, Pagination: pageRes}, nil
 }
 
 func (k Keeper) PoolsByDenom(ctx context.Context, req *whaleswapv1.QueryPoolsByDenomRequest) (*whaleswapv1.QueryPoolsResponse, error) {
@@ -45,7 +39,7 @@ func (k Keeper) PoolsByDenom(ctx context.Context, req *whaleswapv1.QueryPoolsByD
 		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "denom required")
 	}
 	results, pageRes, err := query.CollectionPaginate(ctx, k.PoolsMap, req.Pagination, func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
-		if value.CoinA.Denom != req.Denom && value.CoinB.Denom != req.Denom {
+		if len(value.Coins) != 2 || (value.Coins[0].Denom != req.Denom && value.Coins[1].Denom != req.Denom) {
 			return nil, nil
 		}
 		v := value
@@ -86,8 +80,8 @@ func (k Keeper) PoolsByPairPriceRange(ctx context.Context, req *whaleswapv1.Quer
 	if req == nil {
 		req = &whaleswapv1.QueryPoolsByPairPriceRangeRequest{}
 	}
-	if req.HaveDenom == "" || req.WantDenom == "" {
-		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "have_denom and want_denom required")
+	if req.BaseDenom == "" || req.QuoteDenom == "" {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "base_denom and quote_denom required")
 	}
 	var minDec, maxDec cosmossdk_math.LegacyDec
 	var err error
@@ -103,25 +97,30 @@ func (k Keeper) PoolsByPairPriceRange(ctx context.Context, req *whaleswapv1.Quer
 			return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid max_price: %s", req.MaxPrice)
 		}
 	}
-	low, high := req.HaveDenom, req.WantDenom
-	if low > high {
-		low, high = high, low
-	}
 	results, pageRes, perr := query.CollectionPaginate(ctx, k.PoolsMap, req.Pagination, func(key uint64, value whaleswapv1.Pool) (*whaleswapv1.Pool, error) {
-		// match pair
-		if !((value.CoinA.Denom == low && value.CoinB.Denom == high) || (value.CoinA.Denom == high && value.CoinB.Denom == low)) {
+		// match pair using denom presence regardless of order
+		if len(value.Coins) != 2 {
 			return nil, nil
 		}
-		// compute price P = coin_b / coin_a (keeper.currentPrice uses canonical order)
-		p, err := k.currentPrice(value)
-		if err != nil {
+		rBase := value.Coins.AmountOf(req.BaseDenom)
+		rQuote := value.Coins.AmountOf(req.QuoteDenom)
+		if rBase.IsZero() || rQuote.IsZero() {
 			return nil, nil
 		}
-		if req.MinPrice != "" && p.LT(minDec) {
-			return nil, nil
+		// price = quote/base; compare via cross-multiplication with Dec*Int
+		if req.MinPrice != "" {
+			// require rQuote >= ceil(minDec * rBase)
+			minThresh := minDec.MulInt(rBase).Ceil().TruncateInt()
+			if rQuote.LT(minThresh) {
+				return nil, nil
+			}
 		}
-		if req.MaxPrice != "" && p.GT(maxDec) {
-			return nil, nil
+		if req.MaxPrice != "" {
+			// require rQuote <= floor(maxDec * rBase)
+			maxThresh := maxDec.MulInt(rBase).TruncateInt()
+			if rQuote.GT(maxThresh) {
+				return nil, nil
+			}
 		}
 		v := value
 		return &v, nil

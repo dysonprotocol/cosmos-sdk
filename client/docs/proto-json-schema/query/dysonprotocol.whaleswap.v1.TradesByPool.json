@@ -1,21 +1,11 @@
 {
     "request": {
         "$schema": "http://json-schema.org/draft-04/schema#",
-        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryTradesByPoolRequest",
         "definitions": {
-            "dysonprotocol.whaleswap.v1.QueryPoolsByPairPriceRangeRequest": {
+            "dysonprotocol.whaleswap.v1.QueryTradesByPoolRequest": {
                 "properties": {
-                    "base_denom": {
-                        "type": "string",
-                        "description": "Price is interpreted as quote/base using these fields"
-                    },
-                    "quote_denom": {
-                        "type": "string"
-                    },
-                    "min_price": {
-                        "type": "string"
-                    },
-                    "max_price": {
+                    "pool_id": {
                         "type": "string"
                     },
                     "pagination": {
@@ -25,8 +15,8 @@
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Query Pools By Pair Price Range Request",
-                "description": "QueryPoolsByPairPriceRangeRequest filters pools for the pair by instantaneous price range. Prices are cosmos.Dec strings; bounds are optional and inclusive."
+                "title": "Query Trades By Pool Request",
+                "description": "QueryTradesByPoolRequest returns trades filtered by pool id"
             },
             "cosmos.base.query.v1beta1.PageRequest": {
                 "properties": {
@@ -62,13 +52,13 @@
     },
     "response": {
         "$schema": "http://json-schema.org/draft-04/schema#",
-        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryPoolsResponse",
+        "$ref": "#/definitions/dysonprotocol.whaleswap.v1.QueryTradesByPoolResponse",
         "definitions": {
-            "dysonprotocol.whaleswap.v1.QueryPoolsResponse": {
+            "dysonprotocol.whaleswap.v1.QueryTradesByPoolResponse": {
                 "properties": {
-                    "pools": {
+                    "trades": {
                         "items": {
-                            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Pool"
+                            "$ref": "#/definitions/dysonprotocol.whaleswap.v1.Trade"
                         },
                         "additionalProperties": false,
                         "type": "array"
@@ -80,7 +70,7 @@
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Query Pools Response"
+                "title": "Query Trades By Pool Response"
             },
             "cosmos.base.query.v1beta1.PageResponse": {
                 "properties": {
@@ -114,68 +104,45 @@
                 "title": "Coin",
                 "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
             },
-            "dysonprotocol.whaleswap.v1.Pool": {
+            "dysonprotocol.whaleswap.v1.Trade": {
                 "properties": {
+                    "trade_id": {
+                        "type": "string"
+                    },
+                    "offer_id": {
+                        "type": "string"
+                    },
+                    "taker": {
+                        "type": "string"
+                    },
+                    "height": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "sent": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
+                    "received": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    },
                     "pool_id": {
-                        "type": "string"
-                    },
-                    "coins": {
-                        "items": {
-                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
-                        },
-                        "additionalProperties": false,
-                        "type": "array",
-                        "description": "coins holds exactly two coins in canonical denom order (denom[0] < denom[1]). All math derives price as P = coins[1].amount / coins[0].amount."
-                    },
-                    "shares_denom": {
-                        "type": "string"
-                    },
-                    "fee_pct": {
                         "type": "string",
-                        "description": "fee_pct is the pool swap fee percentage (cosmos.Dec string in [0,1))."
+                        "description": "pool_id is non-zero for AMM swaps; zero otherwise"
                     },
-                    "min_price": {
-                        "items": {
-                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
-                        },
-                        "additionalProperties": false,
-                        "type": "array",
-                        "description": "min_price/max_price optionally set a price band for concentrated liquidity. Each is expressed as exactly two coins representing the ratio coins[1]/coins[0]. For example, [{amount: 1, denom: coins[0].denom}, {amount: 2, denom: coins[1].denom}] means Pmin = 2/1. Empty means unset."
-                    },
-                    "max_price": {
-                        "items": {
-                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
-                        },
-                        "additionalProperties": false,
-                        "type": "array"
-                    },
-                    "block_height": {
-                        "type": "string"
-                    },
-                    "created": {
+                    "auction_id": {
                         "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "num_trades": {
-                        "type": "string"
-                    },
-                    "fees_earned": {
-                        "items": {
-                            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
-                        },
-                        "additionalProperties": false,
-                        "type": "array",
-                        "description": "cumulative swap fees retained by the pool (accrue to LPs)"
+                        "description": "auction_id is non-zero for auction escrow release trades (redeem); zero otherwise"
                     }
                 },
                 "additionalProperties": false,
                 "type": "object",
-                "title": "Pool",
-                "description": "Pool describes AMM pool state. Notes: - coin_a.denom < coin_b.denom lexicographically (canonical order) - fee_pct is a decimal string in [0,1) - min_price/max_price are optional decimal strings defining a price band over   P = coin_b.amount/coin_a.amount. If unset (or effectively [0, +\u221e)) the pool   behaves as constant-product (v2). If set, concentrated-liquidity math   applies. - coin_a.amount/coin_b.amount are sdk.Int strings. - The instantaneous price used by price-based queries is derived from   reserves as P = coin_b / coin_a, consistent with the notes above."
+                "title": "Trade",
+                "description": "Trade captures a single fill of an offer. - `sent` is the coin paid by the taker (want-denom), and `received` is the   coin delivered by the module (have-denom or base of liquid-have)."
             }
         }
     }

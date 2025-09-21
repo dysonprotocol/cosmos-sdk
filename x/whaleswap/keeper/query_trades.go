@@ -2,7 +2,10 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
+	"cosmossdk.io/collections"
+	cosmossdkerrors "cosmossdk.io/errors"
 	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
@@ -10,6 +13,10 @@ import (
 func (k Keeper) TradesByOffer(ctx context.Context, req *whaleswapv1.QueryTradesByOfferRequest) (*whaleswapv1.QueryTradesByOfferResponse, error) {
 	if req == nil {
 		req = &whaleswapv1.QueryTradesByOfferRequest{}
+	}
+	// Require offer_id (no scan-all behavior)
+	if req.OfferId == 0 {
+		return nil, fmt.Errorf("offer_id required")
 	}
 	offerID := req.OfferId
 	var trades []*whaleswapv1.Trade
@@ -26,7 +33,7 @@ func (k Keeper) TradesByOffer(ctx context.Context, req *whaleswapv1.QueryTradesB
 		},
 	)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrap(err, "paginate trades by offer failed")
 	}
 	trades = results
 	return &whaleswapv1.QueryTradesByOfferResponse{Trades: trades, Pagination: pageRes}, nil
@@ -36,23 +43,80 @@ func (k Keeper) TradesByTaker(ctx context.Context, req *whaleswapv1.QueryTradesB
 	if req == nil {
 		req = &whaleswapv1.QueryTradesByTakerRequest{}
 	}
+	if req.Taker == "" {
+		return nil, fmt.Errorf("taker required")
+	}
 	taker := req.Taker
 	var trades []*whaleswapv1.Trade
 	results, pageRes, err := query.CollectionPaginate(
 		ctx,
-		k.TradesMap,
+		k.TradesByTakerIndex,
 		req.Pagination,
-		func(key uint64, value whaleswapv1.Trade) (*whaleswapv1.Trade, error) {
-			if taker != "" && value.Taker != taker {
+		func(key collections.Pair[string, uint64], id uint64) (*whaleswapv1.Trade, error) {
+			k1, _ := key.K1(), key.K2()
+			if k1 != taker {
 				return nil, nil
 			}
-			v := value
-			return &v, nil
+			v, err := k.TradesMap.Get(ctx, id)
+			if err != nil {
+				return nil, cosmossdkerrors.Wrapf(err, "trade not found: %d", id)
+			}
+			vv := v
+			return &vv, nil
 		},
+		// Prefix by taker to ensure stable pagination keys and avoid scanning unrelated entries.
+		query.WithCollectionPaginationPairPrefix[string, uint64](taker),
 	)
 	if err != nil {
-		return nil, err
+		return nil, cosmossdkerrors.Wrap(err, "paginate trades by taker failed")
 	}
 	trades = results
 	return &whaleswapv1.QueryTradesByTakerResponse{Trades: trades, Pagination: pageRes}, nil
+}
+
+func (k Keeper) TradesByPool(ctx context.Context, req *whaleswapv1.QueryTradesByPoolRequest) (*whaleswapv1.QueryTradesByPoolResponse, error) {
+	if req == nil {
+		req = &whaleswapv1.QueryTradesByPoolRequest{}
+	}
+	if req.PoolId == 0 {
+		return nil, fmt.Errorf("pool_id required")
+	}
+	var trades []*whaleswapv1.Trade
+	results, pageRes, err := query.CollectionPaginate(
+		ctx,
+		k.TradesByPoolIndex,
+		req.Pagination,
+		func(key collections.Pair[uint64, uint64], id uint64) (*whaleswapv1.Trade, error) {
+			k1, _ := key.K1(), key.K2()
+			if k1 != req.PoolId {
+				return nil, nil
+			}
+			v, err := k.TradesMap.Get(ctx, id)
+			if err != nil {
+				return nil, cosmossdkerrors.Wrapf(err, "trade not found: %d", id)
+			}
+			vv := v
+			return &vv, nil
+		},
+		// Iterate only keys with pool_id prefix to avoid scanning unrelated pairs and to
+		// ensure next_key encodes a valid pair key for subsequent pages.
+		query.WithCollectionPaginationPairPrefix[uint64, uint64](req.PoolId),
+	)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "paginate trades by pool failed")
+	}
+	trades = results
+	return &whaleswapv1.QueryTradesByPoolResponse{Trades: trades, Pagination: pageRes}, nil
+}
+
+func (k Keeper) Trade(ctx context.Context, req *whaleswapv1.QueryTradeRequest) (*whaleswapv1.QueryTradeResponse, error) {
+	if req == nil || req.TradeId == 0 {
+		return nil, fmt.Errorf("trade_id required")
+	}
+	v, err := k.TradesMap.Get(ctx, req.TradeId)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "trade not found: %d", req.TradeId)
+	}
+	vv := v
+	return &whaleswapv1.QueryTradeResponse{Trade: &vv}, nil
 }

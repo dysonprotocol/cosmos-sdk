@@ -64,6 +64,16 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Example:   "dysond query whaleswap offers --have-denom=udys --want-denom=ufoo --limit 100",
 				},
 				{
+					RpcMethod: "Trade",
+					Use:       "trade <trade-id>",
+					Short:     "Get a trade by ID",
+					Long:      "Fetch a single trade by its numeric ID.",
+					Example:   "dysond query whaleswap trade 1",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{
+						ProtoField: "trade_id",
+					}},
+				},
+				{
 					RpcMethod: "TradesByOffer",
 					Use:       "trades-by-offer <offer-id>",
 					Short:     "List trades for an offer",
@@ -81,6 +91,16 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Example:   "dysond query whaleswap trades-by-taker $(dysond keys show bob -a)",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{
 						ProtoField: "taker",
+					}},
+				},
+				{
+					RpcMethod: "TradesByPool",
+					Use:       "trades-by-pool <pool-id>",
+					Short:     "List trades by pool id",
+					Long:      "List all trades executed against the specified pool.",
+					Example:   "dysond query whaleswap trades-by-pool 1",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{
+						ProtoField: "pool_id",
 					}},
 				},
 				{

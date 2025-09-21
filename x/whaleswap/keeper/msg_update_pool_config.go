@@ -32,40 +32,44 @@ func (k Keeper) UpdatePoolConfig(ctx context.Context, msg *whaleswapv1.MsgUpdate
 		}
 		pool.FeePct = msg.FeePct
 	}
-	// Normalize bands
+	// Bands: compare prices using cross-multiplication on ints; avoid Decs
 	if len(msg.MinPrice) > 0 || len(msg.MaxPrice) > 0 {
-		minBand, merr := k.normalizeBand(msg.MinPrice, pool.CoinA.Denom, pool.CoinB.Denom)
-		if merr != nil {
-			return nil, cosmossdkerrors.Wrapf(err, "invalid min_price: %s", msg.MinPrice)
+		if len(pool.Coins) != 2 {
+			return nil, cosmossdkerrors.Wrapf(err, "invalid pool coins")
 		}
-		maxBand, xerr := k.normalizeBand(msg.MaxPrice, pool.CoinA.Denom, pool.CoinB.Denom)
-		if xerr != nil {
-			return nil, cosmossdkerrors.Wrapf(err, "invalid max_price: %s", msg.MaxPrice)
-		}
-		if len(minBand) == 0 || len(maxBand) == 0 {
+		baseDenom, quoteDenom := pool.Coins[0].Denom, pool.Coins[1].Denom
+		// Require both bands set
+		if len(msg.MinPrice) == 0 || len(msg.MaxPrice) == 0 {
 			return nil, cosmossdkerrors.Wrapf(err, "must set both min_price and max_price or neither")
 		}
-		minRatio, err := k.bandRatio(minBand, pool.CoinA.Denom, pool.CoinB.Denom)
-		if err != nil {
-			return nil, cosmossdkerrors.Wrapf(err, "failed to compute min_price ratio")
+		// Sort for canonical order then extract amounts for pool pair
+		msg.MinPrice.Sort()
+		msg.MaxPrice.Sort()
+		minBase := msg.MinPrice.AmountOf(baseDenom)
+		minQuote := msg.MinPrice.AmountOf(quoteDenom)
+		maxBase := msg.MaxPrice.AmountOf(baseDenom)
+		maxQuote := msg.MaxPrice.AmountOf(quoteDenom)
+		if !minBase.IsPositive() || !minQuote.IsPositive() || !maxBase.IsPositive() || !maxQuote.IsPositive() {
+			return nil, cosmossdkerrors.Wrapf(err, "band amounts must be > 0 for both denoms")
 		}
-		maxRatio, err := k.bandRatio(maxBand, pool.CoinA.Denom, pool.CoinB.Denom)
-		if err != nil {
-			return nil, cosmossdkerrors.Wrapf(err, "failed to compute max_price ratio")
-		}
-		if maxRatio.LT(minRatio) {
+		// Enforce max >= min: maxQuote/maxBase >= minQuote/minBase => maxQuote*minBase >= minQuote*maxBase
+		if maxQuote.Mul(minBase).LT(minQuote.Mul(maxBase)) {
 			return nil, cosmossdkerrors.Wrapf(err, "max_price must be >= min_price")
 		}
-		// Current price must be within the new band
-		p, err := k.currentPrice(pool)
-		if err != nil {
-			return nil, cosmossdkerrors.Wrapf(err, "failed to compute current price")
+		// Current price within [min, max]
+		rBase := pool.Coins[0].Amount
+		rQuote := pool.Coins[1].Amount
+		// P >= min => rQuote*minBase >= rBase*minQuote
+		if rQuote.Mul(minBase).LT(rBase.Mul(minQuote)) {
+			return nil, cosmossdkerrors.Wrapf(err, "current price below min band")
 		}
-		if p.LT(minRatio) || p.GT(maxRatio) {
-			return nil, cosmossdkerrors.Wrapf(err, "current price outside new band")
+		// P <= max => rQuote*maxBase <= rBase*maxQuote
+		if rQuote.Mul(maxBase).GT(rBase.Mul(maxQuote)) {
+			return nil, cosmossdkerrors.Wrapf(err, "current price above max band")
 		}
-		pool.MinPrice = minBand
-		pool.MaxPrice = maxBand
+		// Store only the two relevant coins in canonical pool order
+		pool.MinPrice = sdk.NewCoins(sdk.NewCoin(baseDenom, minBase), sdk.NewCoin(quoteDenom, minQuote))
+		pool.MaxPrice = sdk.NewCoins(sdk.NewCoin(baseDenom, maxBase), sdk.NewCoin(quoteDenom, maxQuote))
 	}
 
 	// Save and emit

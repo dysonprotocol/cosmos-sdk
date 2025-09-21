@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"cosmossdk.io/collections"
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	nameservicev1 "dysonprotocol.com/x/nameservice/types"
@@ -119,7 +120,9 @@ func (k Keeper) MakeOffer(ctx context.Context, msg *whaleswapv1.MsgMakeOffer) (*
 		),
 	)
 	if pfandCoin.Amount.IsPositive() {
-		_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandLocked{Amount: pfandCoin})
+		if err := sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandLocked{Amount: pfandCoin}); err != nil {
+			return nil, cosmossdkerrors.Wrapf(err, "failed to emit EventPfandLocked")
+		}
 	}
 	if err := k.AssertInvariants(ctx); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "invariant failed after MakeOffer")
@@ -204,7 +207,9 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 			offer.RemainingWant.Amount = math.NewInt(0)
 			if offer.PfandLocked.Amount.IsPositive() {
 				outputsByAddr[msg.Taker] = outputsByAddr[msg.Taker].Add(offer.PfandLocked)
-				_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandReleased{Amount: offer.PfandLocked})
+				if err := sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandReleased{Amount: offer.PfandLocked}); err != nil {
+					return nil, cosmossdkerrors.Wrapf(err, "failed to emit EventPfandReleased")
+				}
 			}
 		} else {
 			offer.RemainingUnits = newUnits.String()
@@ -231,16 +236,28 @@ func (k Keeper) TakeOffer(ctx context.Context, msg *whaleswapv1.MsgTakeOffer) (*
 			Timestamp: &t,
 			Sent:      sdk.NewCoin(wantDenom, requiredWant),
 			Received:  sdk.NewCoin(recDenom, deliverHave),
+			PoolId:    0,
+			AuctionId: 0,
 		}
 		if err := k.TradesMap.Set(ctx, tradeId, trade); err != nil {
 			return nil, cosmossdkerrors.Wrap(err, "failed to save trade")
+		}
+		if err := k.TradesByTakerIndex.Set(ctx, collections.Join(msg.Taker, tradeId), tradeId); err != nil {
+			return nil, cosmossdkerrors.Wrapf(err, "failed to index trade by taker")
+		}
+		if err := sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventTradeRecorded{TradeId: tradeId, OfferId: offer.OfferId, PoolId: 0, AuctionId: 0}); err != nil {
+			return nil, cosmossdkerrors.Wrapf(err, "failed to emit EventTradeRecorded")
 		}
 		prev, _ := k.OffersMap.Get(ctx, offer.OfferId)
 		if err := k.OffersMap.Set(ctx, offer.OfferId, offer); err != nil {
 			return nil, cosmossdkerrors.Wrapf(err, "failed to update offer %d", offer.OfferId)
 		}
-		_ = k.reindexOfferOnStatusChange(ctx, prev, offer)
-		_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventOfferTaken{OfferId: offer.OfferId, TradeId: tradeId})
+		if err := k.reindexOfferOnStatusChange(ctx, prev, offer); err != nil {
+			return nil, cosmossdkerrors.Wrapf(err, "failed to reindex offer after take")
+		}
+		if err := sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventOfferTaken{OfferId: offer.OfferId, TradeId: tradeId}); err != nil {
+			return nil, cosmossdkerrors.Wrapf(err, "failed to emit EventOfferTaken")
+		}
 
 		totalSent = totalSent.Add(trade.Sent)
 		totalRecv = totalRecv.Add(trade.Received)
@@ -445,7 +462,9 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 	}
 	// Remove reverse index entries and update owner/status via helper
 	prev := offer
-	_ = k.reindexOfferOnStatusChange(ctx, prev, offer)
+	if err := k.reindexOfferOnStatusChange(ctx, prev, offer); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to reindex offer after cancel")
+	}
 	// Refund escrowed base have for normal offers
 	if !k.isLiquidDenom(offer.RemainingHave.Denom) && offer.RemainingHave.Amount.IsPositive() {
 		if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, maker, sdk.NewCoins(offer.RemainingHave)); err != nil {
@@ -460,9 +479,13 @@ func (k Keeper) CancelOffer(ctx context.Context, msg *whaleswapv1.MsgCancelOffer
 
 	// Emit events
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
-	_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventOfferCancelled{OfferId: offer.OfferId})
+	if err := sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventOfferCancelled{OfferId: offer.OfferId}); err != nil {
+		return nil, cosmossdkerrors.Wrapf(err, "failed to emit EventOfferCancelled")
+	}
 	if pfandLocked.Amount.IsPositive() {
-		_ = sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandReleased{Amount: pfandLocked})
+		if err := sdkCtx.EventManager().EmitTypedEvent(&whaleswapv1.EventPfandReleased{Amount: pfandLocked}); err != nil {
+			return nil, cosmossdkerrors.Wrapf(err, "failed to emit EventPfandReleased")
+		}
 	}
 	if err := k.AssertInvariants(ctx); err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "invariant failed after CancelOffer")
