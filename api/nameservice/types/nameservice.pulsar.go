@@ -2575,6 +2575,1722 @@ func (x *fastReflection_NFTData) ProtoMethods() *protoiface.Methods {
 	}
 }
 
+var _ protoreflect.List = (*_BidRecord_11_list)(nil)
+
+type _BidRecord_11_list struct {
+	list *[]*v1beta1.Coin
+}
+
+func (x *_BidRecord_11_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_BidRecord_11_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_BidRecord_11_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*v1beta1.Coin)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_BidRecord_11_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*v1beta1.Coin)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_BidRecord_11_list) AppendMutable() protoreflect.Value {
+	v := new(v1beta1.Coin)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_BidRecord_11_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_BidRecord_11_list) NewElement() protoreflect.Value {
+	v := new(v1beta1.Coin)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_BidRecord_11_list) IsValid() bool {
+	return x.list != nil
+}
+
+var (
+	md_BidRecord                    protoreflect.MessageDescriptor
+	fd_BidRecord_bid_id             protoreflect.FieldDescriptor
+	fd_BidRecord_class_id           protoreflect.FieldDescriptor
+	fd_BidRecord_nft_id             protoreflect.FieldDescriptor
+	fd_BidRecord_bidder             protoreflect.FieldDescriptor
+	fd_BidRecord_amount             protoreflect.FieldDescriptor
+	fd_BidRecord_status             protoreflect.FieldDescriptor
+	fd_BidRecord_timestamp          protoreflect.FieldDescriptor
+	fd_BidRecord_height             protoreflect.FieldDescriptor
+	fd_BidRecord_replaces_bid_id    protoreflect.FieldDescriptor
+	fd_BidRecord_replaced_by_bid_id protoreflect.FieldDescriptor
+	fd_BidRecord_rejection_fee      protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_nameservice_proto_init()
+	md_BidRecord = File_dysonprotocol_nameservice_v1_nameservice_proto.Messages().ByName("BidRecord")
+	fd_BidRecord_bid_id = md_BidRecord.Fields().ByName("bid_id")
+	fd_BidRecord_class_id = md_BidRecord.Fields().ByName("class_id")
+	fd_BidRecord_nft_id = md_BidRecord.Fields().ByName("nft_id")
+	fd_BidRecord_bidder = md_BidRecord.Fields().ByName("bidder")
+	fd_BidRecord_amount = md_BidRecord.Fields().ByName("amount")
+	fd_BidRecord_status = md_BidRecord.Fields().ByName("status")
+	fd_BidRecord_timestamp = md_BidRecord.Fields().ByName("timestamp")
+	fd_BidRecord_height = md_BidRecord.Fields().ByName("height")
+	fd_BidRecord_replaces_bid_id = md_BidRecord.Fields().ByName("replaces_bid_id")
+	fd_BidRecord_replaced_by_bid_id = md_BidRecord.Fields().ByName("replaced_by_bid_id")
+	fd_BidRecord_rejection_fee = md_BidRecord.Fields().ByName("rejection_fee")
+}
+
+var _ protoreflect.Message = (*fastReflection_BidRecord)(nil)
+
+type fastReflection_BidRecord BidRecord
+
+func (x *BidRecord) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_BidRecord)(x)
+}
+
+func (x *BidRecord) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_nameservice_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_BidRecord_messageType fastReflection_BidRecord_messageType
+var _ protoreflect.MessageType = fastReflection_BidRecord_messageType{}
+
+type fastReflection_BidRecord_messageType struct{}
+
+func (x fastReflection_BidRecord_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_BidRecord)(nil)
+}
+func (x fastReflection_BidRecord_messageType) New() protoreflect.Message {
+	return new(fastReflection_BidRecord)
+}
+func (x fastReflection_BidRecord_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_BidRecord
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_BidRecord) Descriptor() protoreflect.MessageDescriptor {
+	return md_BidRecord
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_BidRecord) Type() protoreflect.MessageType {
+	return _fastReflection_BidRecord_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_BidRecord) New() protoreflect.Message {
+	return new(fastReflection_BidRecord)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_BidRecord) Interface() protoreflect.ProtoMessage {
+	return (*BidRecord)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_BidRecord) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.BidId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.BidId)
+		if !f(fd_BidRecord_bid_id, value) {
+			return
+		}
+	}
+	if x.ClassId != "" {
+		value := protoreflect.ValueOfString(x.ClassId)
+		if !f(fd_BidRecord_class_id, value) {
+			return
+		}
+	}
+	if x.NftId != "" {
+		value := protoreflect.ValueOfString(x.NftId)
+		if !f(fd_BidRecord_nft_id, value) {
+			return
+		}
+	}
+	if x.Bidder != "" {
+		value := protoreflect.ValueOfString(x.Bidder)
+		if !f(fd_BidRecord_bidder, value) {
+			return
+		}
+	}
+	if x.Amount != nil {
+		value := protoreflect.ValueOfMessage(x.Amount.ProtoReflect())
+		if !f(fd_BidRecord_amount, value) {
+			return
+		}
+	}
+	if x.Status != 0 {
+		value := protoreflect.ValueOfEnum((protoreflect.EnumNumber)(x.Status))
+		if !f(fd_BidRecord_status, value) {
+			return
+		}
+	}
+	if x.Timestamp != nil {
+		value := protoreflect.ValueOfMessage(x.Timestamp.ProtoReflect())
+		if !f(fd_BidRecord_timestamp, value) {
+			return
+		}
+	}
+	if x.Height != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.Height)
+		if !f(fd_BidRecord_height, value) {
+			return
+		}
+	}
+	if x.ReplacesBidId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ReplacesBidId)
+		if !f(fd_BidRecord_replaces_bid_id, value) {
+			return
+		}
+	}
+	if x.ReplacedByBidId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.ReplacedByBidId)
+		if !f(fd_BidRecord_replaced_by_bid_id, value) {
+			return
+		}
+	}
+	if len(x.RejectionFee) != 0 {
+		value := protoreflect.ValueOfList(&_BidRecord_11_list{list: &x.RejectionFee})
+		if !f(fd_BidRecord_rejection_fee, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_BidRecord) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidRecord.bid_id":
+		return x.BidId != uint64(0)
+	case "dysonprotocol.nameservice.v1.BidRecord.class_id":
+		return x.ClassId != ""
+	case "dysonprotocol.nameservice.v1.BidRecord.nft_id":
+		return x.NftId != ""
+	case "dysonprotocol.nameservice.v1.BidRecord.bidder":
+		return x.Bidder != ""
+	case "dysonprotocol.nameservice.v1.BidRecord.amount":
+		return x.Amount != nil
+	case "dysonprotocol.nameservice.v1.BidRecord.status":
+		return x.Status != 0
+	case "dysonprotocol.nameservice.v1.BidRecord.timestamp":
+		return x.Timestamp != nil
+	case "dysonprotocol.nameservice.v1.BidRecord.height":
+		return x.Height != uint64(0)
+	case "dysonprotocol.nameservice.v1.BidRecord.replaces_bid_id":
+		return x.ReplacesBidId != uint64(0)
+	case "dysonprotocol.nameservice.v1.BidRecord.replaced_by_bid_id":
+		return x.ReplacedByBidId != uint64(0)
+	case "dysonprotocol.nameservice.v1.BidRecord.rejection_fee":
+		return len(x.RejectionFee) != 0
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidRecord"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidRecord does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_BidRecord) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidRecord.bid_id":
+		x.BidId = uint64(0)
+	case "dysonprotocol.nameservice.v1.BidRecord.class_id":
+		x.ClassId = ""
+	case "dysonprotocol.nameservice.v1.BidRecord.nft_id":
+		x.NftId = ""
+	case "dysonprotocol.nameservice.v1.BidRecord.bidder":
+		x.Bidder = ""
+	case "dysonprotocol.nameservice.v1.BidRecord.amount":
+		x.Amount = nil
+	case "dysonprotocol.nameservice.v1.BidRecord.status":
+		x.Status = 0
+	case "dysonprotocol.nameservice.v1.BidRecord.timestamp":
+		x.Timestamp = nil
+	case "dysonprotocol.nameservice.v1.BidRecord.height":
+		x.Height = uint64(0)
+	case "dysonprotocol.nameservice.v1.BidRecord.replaces_bid_id":
+		x.ReplacesBidId = uint64(0)
+	case "dysonprotocol.nameservice.v1.BidRecord.replaced_by_bid_id":
+		x.ReplacedByBidId = uint64(0)
+	case "dysonprotocol.nameservice.v1.BidRecord.rejection_fee":
+		x.RejectionFee = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidRecord"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidRecord does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_BidRecord) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.nameservice.v1.BidRecord.bid_id":
+		value := x.BidId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.nameservice.v1.BidRecord.class_id":
+		value := x.ClassId
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.BidRecord.nft_id":
+		value := x.NftId
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.BidRecord.bidder":
+		value := x.Bidder
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.BidRecord.amount":
+		value := x.Amount
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidRecord.status":
+		value := x.Status
+		return protoreflect.ValueOfEnum((protoreflect.EnumNumber)(value))
+	case "dysonprotocol.nameservice.v1.BidRecord.timestamp":
+		value := x.Timestamp
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidRecord.height":
+		value := x.Height
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.nameservice.v1.BidRecord.replaces_bid_id":
+		value := x.ReplacesBidId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.nameservice.v1.BidRecord.replaced_by_bid_id":
+		value := x.ReplacedByBidId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.nameservice.v1.BidRecord.rejection_fee":
+		if len(x.RejectionFee) == 0 {
+			return protoreflect.ValueOfList(&_BidRecord_11_list{})
+		}
+		listValue := &_BidRecord_11_list{list: &x.RejectionFee}
+		return protoreflect.ValueOfList(listValue)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidRecord"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidRecord does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_BidRecord) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidRecord.bid_id":
+		x.BidId = value.Uint()
+	case "dysonprotocol.nameservice.v1.BidRecord.class_id":
+		x.ClassId = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.BidRecord.nft_id":
+		x.NftId = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.BidRecord.bidder":
+		x.Bidder = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.BidRecord.amount":
+		x.Amount = value.Message().Interface().(*v1beta1.Coin)
+	case "dysonprotocol.nameservice.v1.BidRecord.status":
+		x.Status = (BidStatus)(value.Enum())
+	case "dysonprotocol.nameservice.v1.BidRecord.timestamp":
+		x.Timestamp = value.Message().Interface().(*timestamppb.Timestamp)
+	case "dysonprotocol.nameservice.v1.BidRecord.height":
+		x.Height = value.Uint()
+	case "dysonprotocol.nameservice.v1.BidRecord.replaces_bid_id":
+		x.ReplacesBidId = value.Uint()
+	case "dysonprotocol.nameservice.v1.BidRecord.replaced_by_bid_id":
+		x.ReplacedByBidId = value.Uint()
+	case "dysonprotocol.nameservice.v1.BidRecord.rejection_fee":
+		lv := value.List()
+		clv := lv.(*_BidRecord_11_list)
+		x.RejectionFee = *clv.list
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidRecord"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidRecord does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_BidRecord) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidRecord.amount":
+		if x.Amount == nil {
+			x.Amount = new(v1beta1.Coin)
+		}
+		return protoreflect.ValueOfMessage(x.Amount.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidRecord.timestamp":
+		if x.Timestamp == nil {
+			x.Timestamp = new(timestamppb.Timestamp)
+		}
+		return protoreflect.ValueOfMessage(x.Timestamp.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidRecord.rejection_fee":
+		if x.RejectionFee == nil {
+			x.RejectionFee = []*v1beta1.Coin{}
+		}
+		value := &_BidRecord_11_list{list: &x.RejectionFee}
+		return protoreflect.ValueOfList(value)
+	case "dysonprotocol.nameservice.v1.BidRecord.bid_id":
+		panic(fmt.Errorf("field bid_id of message dysonprotocol.nameservice.v1.BidRecord is not mutable"))
+	case "dysonprotocol.nameservice.v1.BidRecord.class_id":
+		panic(fmt.Errorf("field class_id of message dysonprotocol.nameservice.v1.BidRecord is not mutable"))
+	case "dysonprotocol.nameservice.v1.BidRecord.nft_id":
+		panic(fmt.Errorf("field nft_id of message dysonprotocol.nameservice.v1.BidRecord is not mutable"))
+	case "dysonprotocol.nameservice.v1.BidRecord.bidder":
+		panic(fmt.Errorf("field bidder of message dysonprotocol.nameservice.v1.BidRecord is not mutable"))
+	case "dysonprotocol.nameservice.v1.BidRecord.status":
+		panic(fmt.Errorf("field status of message dysonprotocol.nameservice.v1.BidRecord is not mutable"))
+	case "dysonprotocol.nameservice.v1.BidRecord.height":
+		panic(fmt.Errorf("field height of message dysonprotocol.nameservice.v1.BidRecord is not mutable"))
+	case "dysonprotocol.nameservice.v1.BidRecord.replaces_bid_id":
+		panic(fmt.Errorf("field replaces_bid_id of message dysonprotocol.nameservice.v1.BidRecord is not mutable"))
+	case "dysonprotocol.nameservice.v1.BidRecord.replaced_by_bid_id":
+		panic(fmt.Errorf("field replaced_by_bid_id of message dysonprotocol.nameservice.v1.BidRecord is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidRecord"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidRecord does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_BidRecord) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidRecord.bid_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.nameservice.v1.BidRecord.class_id":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.BidRecord.nft_id":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.BidRecord.bidder":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.BidRecord.amount":
+		m := new(v1beta1.Coin)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidRecord.status":
+		return protoreflect.ValueOfEnum(0)
+	case "dysonprotocol.nameservice.v1.BidRecord.timestamp":
+		m := new(timestamppb.Timestamp)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidRecord.height":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.nameservice.v1.BidRecord.replaces_bid_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.nameservice.v1.BidRecord.replaced_by_bid_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.nameservice.v1.BidRecord.rejection_fee":
+		list := []*v1beta1.Coin{}
+		return protoreflect.ValueOfList(&_BidRecord_11_list{list: &list})
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidRecord"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidRecord does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_BidRecord) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.BidRecord", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_BidRecord) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_BidRecord) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_BidRecord) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_BidRecord) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*BidRecord)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.BidId != 0 {
+			n += 1 + runtime.Sov(uint64(x.BidId))
+		}
+		l = len(x.ClassId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.NftId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.Bidder)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Amount != nil {
+			l = options.Size(x.Amount)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Status != 0 {
+			n += 1 + runtime.Sov(uint64(x.Status))
+		}
+		if x.Timestamp != nil {
+			l = options.Size(x.Timestamp)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Height != 0 {
+			n += 1 + runtime.Sov(uint64(x.Height))
+		}
+		if x.ReplacesBidId != 0 {
+			n += 1 + runtime.Sov(uint64(x.ReplacesBidId))
+		}
+		if x.ReplacedByBidId != 0 {
+			n += 1 + runtime.Sov(uint64(x.ReplacedByBidId))
+		}
+		if len(x.RejectionFee) > 0 {
+			for _, e := range x.RejectionFee {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*BidRecord)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.RejectionFee) > 0 {
+			for iNdEx := len(x.RejectionFee) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.RejectionFee[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x5a
+			}
+		}
+		if x.ReplacedByBidId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ReplacedByBidId))
+			i--
+			dAtA[i] = 0x50
+		}
+		if x.ReplacesBidId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.ReplacesBidId))
+			i--
+			dAtA[i] = 0x48
+		}
+		if x.Height != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Height))
+			i--
+			dAtA[i] = 0x40
+		}
+		if x.Timestamp != nil {
+			encoded, err := options.Marshal(x.Timestamp)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x3a
+		}
+		if x.Status != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Status))
+			i--
+			dAtA[i] = 0x30
+		}
+		if x.Amount != nil {
+			encoded, err := options.Marshal(x.Amount)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x2a
+		}
+		if len(x.Bidder) > 0 {
+			i -= len(x.Bidder)
+			copy(dAtA[i:], x.Bidder)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Bidder)))
+			i--
+			dAtA[i] = 0x22
+		}
+		if len(x.NftId) > 0 {
+			i -= len(x.NftId)
+			copy(dAtA[i:], x.NftId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.NftId)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.ClassId) > 0 {
+			i -= len(x.ClassId)
+			copy(dAtA[i:], x.ClassId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ClassId)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if x.BidId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.BidId))
+			i--
+			dAtA[i] = 0x8
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*BidRecord)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: BidRecord: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: BidRecord: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field BidId", wireType)
+				}
+				x.BidId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.BidId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ClassId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ClassId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field NftId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.NftId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Bidder", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Bidder = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 5:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Amount == nil {
+					x.Amount = &v1beta1.Coin{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Amount); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 6:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+				}
+				x.Status = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.Status |= BidStatus(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 7:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Timestamp == nil {
+					x.Timestamp = &timestamppb.Timestamp{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Timestamp); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 8:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Height", wireType)
+				}
+				x.Height = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.Height |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 9:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ReplacesBidId", wireType)
+				}
+				x.ReplacesBidId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ReplacesBidId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 10:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ReplacedByBidId", wireType)
+				}
+				x.ReplacedByBidId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.ReplacedByBidId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 11:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field RejectionFee", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.RejectionFee = append(x.RejectionFee, &v1beta1.Coin{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.RejectionFee[len(x.RejectionFee)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_BidWithNFTStatus                    protoreflect.MessageDescriptor
+	fd_BidWithNFTStatus_bid                protoreflect.FieldDescriptor
+	fd_BidWithNFTStatus_nft_owner          protoreflect.FieldDescriptor
+	fd_BidWithNFTStatus_nft                protoreflect.FieldDescriptor
+	fd_BidWithNFTStatus_is_current_highest protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_nameservice_v1_nameservice_proto_init()
+	md_BidWithNFTStatus = File_dysonprotocol_nameservice_v1_nameservice_proto.Messages().ByName("BidWithNFTStatus")
+	fd_BidWithNFTStatus_bid = md_BidWithNFTStatus.Fields().ByName("bid")
+	fd_BidWithNFTStatus_nft_owner = md_BidWithNFTStatus.Fields().ByName("nft_owner")
+	fd_BidWithNFTStatus_nft = md_BidWithNFTStatus.Fields().ByName("nft")
+	fd_BidWithNFTStatus_is_current_highest = md_BidWithNFTStatus.Fields().ByName("is_current_highest")
+}
+
+var _ protoreflect.Message = (*fastReflection_BidWithNFTStatus)(nil)
+
+type fastReflection_BidWithNFTStatus BidWithNFTStatus
+
+func (x *BidWithNFTStatus) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_BidWithNFTStatus)(x)
+}
+
+func (x *BidWithNFTStatus) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_nameservice_v1_nameservice_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_BidWithNFTStatus_messageType fastReflection_BidWithNFTStatus_messageType
+var _ protoreflect.MessageType = fastReflection_BidWithNFTStatus_messageType{}
+
+type fastReflection_BidWithNFTStatus_messageType struct{}
+
+func (x fastReflection_BidWithNFTStatus_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_BidWithNFTStatus)(nil)
+}
+func (x fastReflection_BidWithNFTStatus_messageType) New() protoreflect.Message {
+	return new(fastReflection_BidWithNFTStatus)
+}
+func (x fastReflection_BidWithNFTStatus_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_BidWithNFTStatus
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_BidWithNFTStatus) Descriptor() protoreflect.MessageDescriptor {
+	return md_BidWithNFTStatus
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_BidWithNFTStatus) Type() protoreflect.MessageType {
+	return _fastReflection_BidWithNFTStatus_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_BidWithNFTStatus) New() protoreflect.Message {
+	return new(fastReflection_BidWithNFTStatus)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_BidWithNFTStatus) Interface() protoreflect.ProtoMessage {
+	return (*BidWithNFTStatus)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_BidWithNFTStatus) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Bid != nil {
+		value := protoreflect.ValueOfMessage(x.Bid.ProtoReflect())
+		if !f(fd_BidWithNFTStatus_bid, value) {
+			return
+		}
+	}
+	if x.NftOwner != "" {
+		value := protoreflect.ValueOfString(x.NftOwner)
+		if !f(fd_BidWithNFTStatus_nft_owner, value) {
+			return
+		}
+	}
+	if x.Nft != nil {
+		value := protoreflect.ValueOfMessage(x.Nft.ProtoReflect())
+		if !f(fd_BidWithNFTStatus_nft, value) {
+			return
+		}
+	}
+	if x.IsCurrentHighest != false {
+		value := protoreflect.ValueOfBool(x.IsCurrentHighest)
+		if !f(fd_BidWithNFTStatus_is_current_highest, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_BidWithNFTStatus) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.bid":
+		return x.Bid != nil
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft_owner":
+		return x.NftOwner != ""
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft":
+		return x.Nft != nil
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.is_current_highest":
+		return x.IsCurrentHighest != false
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidWithNFTStatus"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidWithNFTStatus does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_BidWithNFTStatus) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.bid":
+		x.Bid = nil
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft_owner":
+		x.NftOwner = ""
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft":
+		x.Nft = nil
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.is_current_highest":
+		x.IsCurrentHighest = false
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidWithNFTStatus"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidWithNFTStatus does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_BidWithNFTStatus) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.bid":
+		value := x.Bid
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft_owner":
+		value := x.NftOwner
+		return protoreflect.ValueOfString(value)
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft":
+		value := x.Nft
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.is_current_highest":
+		value := x.IsCurrentHighest
+		return protoreflect.ValueOfBool(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidWithNFTStatus"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidWithNFTStatus does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_BidWithNFTStatus) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.bid":
+		x.Bid = value.Message().Interface().(*BidRecord)
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft_owner":
+		x.NftOwner = value.Interface().(string)
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft":
+		x.Nft = value.Message().Interface().(*NFTData)
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.is_current_highest":
+		x.IsCurrentHighest = value.Bool()
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidWithNFTStatus"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidWithNFTStatus does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_BidWithNFTStatus) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.bid":
+		if x.Bid == nil {
+			x.Bid = new(BidRecord)
+		}
+		return protoreflect.ValueOfMessage(x.Bid.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft":
+		if x.Nft == nil {
+			x.Nft = new(NFTData)
+		}
+		return protoreflect.ValueOfMessage(x.Nft.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft_owner":
+		panic(fmt.Errorf("field nft_owner of message dysonprotocol.nameservice.v1.BidWithNFTStatus is not mutable"))
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.is_current_highest":
+		panic(fmt.Errorf("field is_current_highest of message dysonprotocol.nameservice.v1.BidWithNFTStatus is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidWithNFTStatus"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidWithNFTStatus does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_BidWithNFTStatus) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.bid":
+		m := new(BidRecord)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft_owner":
+		return protoreflect.ValueOfString("")
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.nft":
+		m := new(NFTData)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "dysonprotocol.nameservice.v1.BidWithNFTStatus.is_current_highest":
+		return protoreflect.ValueOfBool(false)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.nameservice.v1.BidWithNFTStatus"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.nameservice.v1.BidWithNFTStatus does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_BidWithNFTStatus) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.nameservice.v1.BidWithNFTStatus", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_BidWithNFTStatus) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_BidWithNFTStatus) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_BidWithNFTStatus) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_BidWithNFTStatus) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*BidWithNFTStatus)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.Bid != nil {
+			l = options.Size(x.Bid)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.NftOwner)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Nft != nil {
+			l = options.Size(x.Nft)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.IsCurrentHighest {
+			n += 2
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*BidWithNFTStatus)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.IsCurrentHighest {
+			i--
+			if x.IsCurrentHighest {
+				dAtA[i] = 1
+			} else {
+				dAtA[i] = 0
+			}
+			i--
+			dAtA[i] = 0x20
+		}
+		if x.Nft != nil {
+			encoded, err := options.Marshal(x.Nft)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if len(x.NftOwner) > 0 {
+			i -= len(x.NftOwner)
+			copy(dAtA[i:], x.NftOwner)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.NftOwner)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if x.Bid != nil {
+			encoded, err := options.Marshal(x.Bid)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*BidWithNFTStatus)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: BidWithNFTStatus: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: BidWithNFTStatus: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Bid", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Bid == nil {
+					x.Bid = &BidRecord{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Bid); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field NftOwner", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.NftOwner = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Nft", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Nft == nil {
+					x.Nft = &NFTData{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Nft); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 4:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field IsCurrentHighest", wireType)
+				}
+				var v int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				x.IsCurrentHighest = bool(v != 0)
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -2587,6 +4303,65 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+// BidStatus indicates the lifecycle state of a bid
+type BidStatus int32
+
+const (
+	BidStatus_BID_STATUS_UNSPECIFIED BidStatus = 0
+	BidStatus_BID_ACTIVE             BidStatus = 1 // currently the active highest bid
+	BidStatus_BID_OUTBID             BidStatus = 2 // superseded by a later higher bid
+	BidStatus_BID_ACCEPTED           BidStatus = 3 // owner accepted; NFT transferred
+	BidStatus_BID_REJECTED           BidStatus = 4 // owner rejected and set new valuation
+	BidStatus_BID_CLAIMED            BidStatus = 5 // bidder claimed after timeout
+)
+
+// Enum value maps for BidStatus.
+var (
+	BidStatus_name = map[int32]string{
+		0: "BID_STATUS_UNSPECIFIED",
+		1: "BID_ACTIVE",
+		2: "BID_OUTBID",
+		3: "BID_ACCEPTED",
+		4: "BID_REJECTED",
+		5: "BID_CLAIMED",
+	}
+	BidStatus_value = map[string]int32{
+		"BID_STATUS_UNSPECIFIED": 0,
+		"BID_ACTIVE":             1,
+		"BID_OUTBID":             2,
+		"BID_ACCEPTED":           3,
+		"BID_REJECTED":           4,
+		"BID_CLAIMED":            5,
+	}
+)
+
+func (x BidStatus) Enum() *BidStatus {
+	p := new(BidStatus)
+	*p = x
+	return p
+}
+
+func (x BidStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (BidStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_dysonprotocol_nameservice_v1_nameservice_proto_enumTypes[0].Descriptor()
+}
+
+func (BidStatus) Type() protoreflect.EnumType {
+	return &file_dysonprotocol_nameservice_v1_nameservice_proto_enumTypes[0]
+}
+
+func (x BidStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use BidStatus.Descriptor instead.
+func (BidStatus) EnumDescriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_nameservice_proto_rawDescGZIP(), []int{0}
+}
 
 // Commitment represents a commitment to register a name
 type Commitment struct {
@@ -2888,6 +4663,182 @@ func (x *NFTData) GetMetadata() string {
 	return ""
 }
 
+// BidRecord stores a single bid and its lifecycle
+type BidRecord struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	BidId           uint64                 `protobuf:"varint,1,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
+	ClassId         string                 `protobuf:"bytes,2,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	NftId           string                 `protobuf:"bytes,3,opt,name=nft_id,json=nftId,proto3" json:"nft_id,omitempty"`
+	Bidder          string                 `protobuf:"bytes,4,opt,name=bidder,proto3" json:"bidder,omitempty"`
+	Amount          *v1beta1.Coin          `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`
+	Status          BidStatus              `protobuf:"varint,6,opt,name=status,proto3,enum=dysonprotocol.nameservice.v1.BidStatus" json:"status,omitempty"`
+	Timestamp       *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Height          uint64                 `protobuf:"varint,8,opt,name=height,proto3" json:"height,omitempty"`
+	ReplacesBidId   uint64                 `protobuf:"varint,9,opt,name=replaces_bid_id,json=replacesBidId,proto3" json:"replaces_bid_id,omitempty"`          // previous active bid replaced by this one
+	ReplacedByBidId uint64                 `protobuf:"varint,10,opt,name=replaced_by_bid_id,json=replacedByBidId,proto3" json:"replaced_by_bid_id,omitempty"` // next bid that replaced this one (if any)
+	RejectionFee    []*v1beta1.Coin        `protobuf:"bytes,11,rep,name=rejection_fee,json=rejectionFee,proto3" json:"rejection_fee,omitempty"`
+}
+
+func (x *BidRecord) Reset() {
+	*x = BidRecord{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_nameservice_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BidRecord) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BidRecord) ProtoMessage() {}
+
+// Deprecated: Use BidRecord.ProtoReflect.Descriptor instead.
+func (*BidRecord) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_nameservice_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *BidRecord) GetBidId() uint64 {
+	if x != nil {
+		return x.BidId
+	}
+	return 0
+}
+
+func (x *BidRecord) GetClassId() string {
+	if x != nil {
+		return x.ClassId
+	}
+	return ""
+}
+
+func (x *BidRecord) GetNftId() string {
+	if x != nil {
+		return x.NftId
+	}
+	return ""
+}
+
+func (x *BidRecord) GetBidder() string {
+	if x != nil {
+		return x.Bidder
+	}
+	return ""
+}
+
+func (x *BidRecord) GetAmount() *v1beta1.Coin {
+	if x != nil {
+		return x.Amount
+	}
+	return nil
+}
+
+func (x *BidRecord) GetStatus() BidStatus {
+	if x != nil {
+		return x.Status
+	}
+	return BidStatus_BID_STATUS_UNSPECIFIED
+}
+
+func (x *BidRecord) GetTimestamp() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Timestamp
+	}
+	return nil
+}
+
+func (x *BidRecord) GetHeight() uint64 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *BidRecord) GetReplacesBidId() uint64 {
+	if x != nil {
+		return x.ReplacesBidId
+	}
+	return 0
+}
+
+func (x *BidRecord) GetReplacedByBidId() uint64 {
+	if x != nil {
+		return x.ReplacedByBidId
+	}
+	return 0
+}
+
+func (x *BidRecord) GetRejectionFee() []*v1beta1.Coin {
+	if x != nil {
+		return x.RejectionFee
+	}
+	return nil
+}
+
+// BidWithNFTStatus augments a BidRecord with current on-chain NFT status
+type BidWithNFTStatus struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Bid              *BidRecord `protobuf:"bytes,1,opt,name=bid,proto3" json:"bid,omitempty"`
+	NftOwner         string     `protobuf:"bytes,2,opt,name=nft_owner,json=nftOwner,proto3" json:"nft_owner,omitempty"` // current owner address
+	Nft              *NFTData   `protobuf:"bytes,3,opt,name=nft,proto3" json:"nft,omitempty"`
+	IsCurrentHighest bool       `protobuf:"varint,4,opt,name=is_current_highest,json=isCurrentHighest,proto3" json:"is_current_highest,omitempty"` // convenience: bidder == nft.current_bidder
+}
+
+func (x *BidWithNFTStatus) Reset() {
+	*x = BidWithNFTStatus{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_nameservice_v1_nameservice_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BidWithNFTStatus) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BidWithNFTStatus) ProtoMessage() {}
+
+// Deprecated: Use BidWithNFTStatus.ProtoReflect.Descriptor instead.
+func (*BidWithNFTStatus) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_nameservice_v1_nameservice_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *BidWithNFTStatus) GetBid() *BidRecord {
+	if x != nil {
+		return x.Bid
+	}
+	return nil
+}
+
+func (x *BidWithNFTStatus) GetNftOwner() string {
+	if x != nil {
+		return x.NftOwner
+	}
+	return ""
+}
+
+func (x *BidWithNFTStatus) GetNft() *NFTData {
+	if x != nil {
+		return x.Nft
+	}
+	return nil
+}
+
+func (x *BidWithNFTStatus) GetIsCurrentHighest() bool {
+	if x != nil {
+		return x.IsCurrentHighest
+	}
+	return false
+}
+
 var File_dysonprotocol_nameservice_v1_nameservice_proto protoreflect.FileDescriptor
 
 var file_dysonprotocol_nameservice_v1_nameservice_proto_rawDesc = []byte{
@@ -2975,10 +4926,65 @@ var file_dysonprotocol_nameservice_v1_nameservice_proto_rawDesc = []byte{
 	0x70, 0x12, 0x1d, 0x0a, 0x0a, 0x62, 0x69, 0x64, 0x5f, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18,
 	0x07, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x62, 0x69, 0x64, 0x48, 0x65, 0x69, 0x67, 0x68, 0x74,
 	0x12, 0x1a, 0x0a, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x08, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x42, 0x27, 0x5a, 0x25,
-	0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f,
-	0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f,
-	0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x28, 0x09, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x22, 0x89, 0x04, 0x0a,
+	0x09, 0x42, 0x69, 0x64, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x62, 0x69,
+	0x64, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x05, 0x62, 0x69, 0x64, 0x49,
+	0x64, 0x12, 0x19, 0x0a, 0x08, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x49, 0x64, 0x12, 0x15, 0x0a, 0x06,
+	0x6e, 0x66, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6e, 0x66,
+	0x74, 0x49, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x06, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x12, 0x37, 0x0a, 0x06, 0x61,
+	0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f,
+	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61,
+	0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x06, 0x61, 0x6d,
+	0x6f, 0x75, 0x6e, 0x74, 0x12, 0x3f, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x06,
+	0x20, 0x01, 0x28, 0x0e, 0x32, 0x27, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x76, 0x31, 0x2e, 0x42, 0x69, 0x64, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x42, 0x0a, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61,
+	0x6d, 0x70, 0x18, 0x07, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c,
+	0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73,
+	0x74, 0x61, 0x6d, 0x70, 0x42, 0x08, 0xc8, 0xde, 0x1f, 0x00, 0x90, 0xdf, 0x1f, 0x01, 0x52, 0x09,
+	0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x12, 0x16, 0x0a, 0x06, 0x68, 0x65, 0x69,
+	0x67, 0x68, 0x74, 0x18, 0x08, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x68, 0x65, 0x69, 0x67, 0x68,
+	0x74, 0x12, 0x26, 0x0a, 0x0f, 0x72, 0x65, 0x70, 0x6c, 0x61, 0x63, 0x65, 0x73, 0x5f, 0x62, 0x69,
+	0x64, 0x5f, 0x69, 0x64, 0x18, 0x09, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0d, 0x72, 0x65, 0x70, 0x6c,
+	0x61, 0x63, 0x65, 0x73, 0x42, 0x69, 0x64, 0x49, 0x64, 0x12, 0x2b, 0x0a, 0x12, 0x72, 0x65, 0x70,
+	0x6c, 0x61, 0x63, 0x65, 0x64, 0x5f, 0x62, 0x79, 0x5f, 0x62, 0x69, 0x64, 0x5f, 0x69, 0x64, 0x18,
+	0x0a, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0f, 0x72, 0x65, 0x70, 0x6c, 0x61, 0x63, 0x65, 0x64, 0x42,
+	0x79, 0x42, 0x69, 0x64, 0x49, 0x64, 0x12, 0x70, 0x0a, 0x0d, 0x72, 0x65, 0x6a, 0x65, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x5f, 0x66, 0x65, 0x65, 0x18, 0x0b, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65,
+	0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x30, 0xc8, 0xde, 0x1f, 0x00, 0xaa, 0xdf,
+	0x1f, 0x28, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6f, 0x73,
+	0x6d, 0x6f, 0x73, 0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2d, 0x73, 0x64, 0x6b, 0x2f, 0x74,
+	0x79, 0x70, 0x65, 0x73, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x73, 0x52, 0x0c, 0x72, 0x65, 0x6a, 0x65,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x46, 0x65, 0x65, 0x22, 0xdd, 0x01, 0x0a, 0x10, 0x42, 0x69, 0x64,
+	0x57, 0x69, 0x74, 0x68, 0x4e, 0x46, 0x54, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x3f, 0x0a,
+	0x03, 0x62, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x64, 0x79, 0x73,
+	0x6f, 0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x42, 0x69, 0x64, 0x52, 0x65, 0x63,
+	0x6f, 0x72, 0x64, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x03, 0x62, 0x69, 0x64, 0x12, 0x1b,
+	0x0a, 0x09, 0x6e, 0x66, 0x74, 0x5f, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x6e, 0x66, 0x74, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x12, 0x3d, 0x0a, 0x03, 0x6e,
+	0x66, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x25, 0x2e, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4e, 0x46, 0x54, 0x44, 0x61, 0x74, 0x61, 0x42,
+	0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x03, 0x6e, 0x66, 0x74, 0x12, 0x2c, 0x0a, 0x12, 0x69, 0x73,
+	0x5f, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x5f, 0x68, 0x69, 0x67, 0x68, 0x65, 0x73, 0x74,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x10, 0x69, 0x73, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6e,
+	0x74, 0x48, 0x69, 0x67, 0x68, 0x65, 0x73, 0x74, 0x2a, 0x7c, 0x0a, 0x09, 0x42, 0x69, 0x64, 0x53,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x1a, 0x0a, 0x16, 0x42, 0x49, 0x44, 0x5f, 0x53, 0x54, 0x41,
+	0x54, 0x55, 0x53, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10,
+	0x00, 0x12, 0x0e, 0x0a, 0x0a, 0x42, 0x49, 0x44, 0x5f, 0x41, 0x43, 0x54, 0x49, 0x56, 0x45, 0x10,
+	0x01, 0x12, 0x0e, 0x0a, 0x0a, 0x42, 0x49, 0x44, 0x5f, 0x4f, 0x55, 0x54, 0x42, 0x49, 0x44, 0x10,
+	0x02, 0x12, 0x10, 0x0a, 0x0c, 0x42, 0x49, 0x44, 0x5f, 0x41, 0x43, 0x43, 0x45, 0x50, 0x54, 0x45,
+	0x44, 0x10, 0x03, 0x12, 0x10, 0x0a, 0x0c, 0x42, 0x49, 0x44, 0x5f, 0x52, 0x45, 0x4a, 0x45, 0x43,
+	0x54, 0x45, 0x44, 0x10, 0x04, 0x12, 0x0f, 0x0a, 0x0b, 0x42, 0x49, 0x44, 0x5f, 0x43, 0x4c, 0x41,
+	0x49, 0x4d, 0x45, 0x44, 0x10, 0x05, 0x42, 0x27, 0x5a, 0x25, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x6e, 0x61,
+	0x6d, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2993,29 +4999,39 @@ func file_dysonprotocol_nameservice_v1_nameservice_proto_rawDescGZIP() []byte {
 	return file_dysonprotocol_nameservice_v1_nameservice_proto_rawDescData
 }
 
-var file_dysonprotocol_nameservice_v1_nameservice_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_dysonprotocol_nameservice_v1_nameservice_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_dysonprotocol_nameservice_v1_nameservice_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_dysonprotocol_nameservice_v1_nameservice_proto_goTypes = []interface{}{
-	(*Commitment)(nil),            // 0: dysonprotocol.nameservice.v1.Commitment
-	(*NFTClassData)(nil),          // 1: dysonprotocol.nameservice.v1.NFTClassData
-	(*NFTData)(nil),               // 2: dysonprotocol.nameservice.v1.NFTData
-	(*timestamppb.Timestamp)(nil), // 3: google.protobuf.Timestamp
-	(*v1beta1.Coin)(nil),          // 4: cosmos.base.v1beta1.Coin
-	(*durationpb.Duration)(nil),   // 5: google.protobuf.Duration
+	(BidStatus)(0),                // 0: dysonprotocol.nameservice.v1.BidStatus
+	(*Commitment)(nil),            // 1: dysonprotocol.nameservice.v1.Commitment
+	(*NFTClassData)(nil),          // 2: dysonprotocol.nameservice.v1.NFTClassData
+	(*NFTData)(nil),               // 3: dysonprotocol.nameservice.v1.NFTData
+	(*BidRecord)(nil),             // 4: dysonprotocol.nameservice.v1.BidRecord
+	(*BidWithNFTStatus)(nil),      // 5: dysonprotocol.nameservice.v1.BidWithNFTStatus
+	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
+	(*v1beta1.Coin)(nil),          // 7: cosmos.base.v1beta1.Coin
+	(*durationpb.Duration)(nil),   // 8: google.protobuf.Duration
 }
 var file_dysonprotocol_nameservice_v1_nameservice_proto_depIdxs = []int32{
-	3, // 0: dysonprotocol.nameservice.v1.Commitment.timestamp:type_name -> google.protobuf.Timestamp
-	4, // 1: dysonprotocol.nameservice.v1.Commitment.valuation:type_name -> cosmos.base.v1beta1.Coin
-	5, // 2: dysonprotocol.nameservice.v1.NFTClassData.valuation_period:type_name -> google.protobuf.Duration
-	5, // 3: dysonprotocol.nameservice.v1.NFTClassData.bid_timeout:type_name -> google.protobuf.Duration
-	4, // 4: dysonprotocol.nameservice.v1.NFTData.valuation:type_name -> cosmos.base.v1beta1.Coin
-	3, // 5: dysonprotocol.nameservice.v1.NFTData.valuation_expiry:type_name -> google.protobuf.Timestamp
-	4, // 6: dysonprotocol.nameservice.v1.NFTData.current_bid:type_name -> cosmos.base.v1beta1.Coin
-	3, // 7: dysonprotocol.nameservice.v1.NFTData.bid_timestamp:type_name -> google.protobuf.Timestamp
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	6,  // 0: dysonprotocol.nameservice.v1.Commitment.timestamp:type_name -> google.protobuf.Timestamp
+	7,  // 1: dysonprotocol.nameservice.v1.Commitment.valuation:type_name -> cosmos.base.v1beta1.Coin
+	8,  // 2: dysonprotocol.nameservice.v1.NFTClassData.valuation_period:type_name -> google.protobuf.Duration
+	8,  // 3: dysonprotocol.nameservice.v1.NFTClassData.bid_timeout:type_name -> google.protobuf.Duration
+	7,  // 4: dysonprotocol.nameservice.v1.NFTData.valuation:type_name -> cosmos.base.v1beta1.Coin
+	6,  // 5: dysonprotocol.nameservice.v1.NFTData.valuation_expiry:type_name -> google.protobuf.Timestamp
+	7,  // 6: dysonprotocol.nameservice.v1.NFTData.current_bid:type_name -> cosmos.base.v1beta1.Coin
+	6,  // 7: dysonprotocol.nameservice.v1.NFTData.bid_timestamp:type_name -> google.protobuf.Timestamp
+	7,  // 8: dysonprotocol.nameservice.v1.BidRecord.amount:type_name -> cosmos.base.v1beta1.Coin
+	0,  // 9: dysonprotocol.nameservice.v1.BidRecord.status:type_name -> dysonprotocol.nameservice.v1.BidStatus
+	6,  // 10: dysonprotocol.nameservice.v1.BidRecord.timestamp:type_name -> google.protobuf.Timestamp
+	7,  // 11: dysonprotocol.nameservice.v1.BidRecord.rejection_fee:type_name -> cosmos.base.v1beta1.Coin
+	4,  // 12: dysonprotocol.nameservice.v1.BidWithNFTStatus.bid:type_name -> dysonprotocol.nameservice.v1.BidRecord
+	3,  // 13: dysonprotocol.nameservice.v1.BidWithNFTStatus.nft:type_name -> dysonprotocol.nameservice.v1.NFTData
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_dysonprotocol_nameservice_v1_nameservice_proto_init() }
@@ -3060,19 +5076,44 @@ func file_dysonprotocol_nameservice_v1_nameservice_proto_init() {
 				return nil
 			}
 		}
+		file_dysonprotocol_nameservice_v1_nameservice_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BidRecord); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_nameservice_v1_nameservice_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BidWithNFTStatus); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dysonprotocol_nameservice_v1_nameservice_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   3,
+			NumEnums:      1,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_dysonprotocol_nameservice_v1_nameservice_proto_goTypes,
 		DependencyIndexes: file_dysonprotocol_nameservice_v1_nameservice_proto_depIdxs,
+		EnumInfos:         file_dysonprotocol_nameservice_v1_nameservice_proto_enumTypes,
 		MessageInfos:      file_dysonprotocol_nameservice_v1_nameservice_proto_msgTypes,
 	}.Build()
 	File_dysonprotocol_nameservice_v1_nameservice_proto = out.File

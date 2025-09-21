@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"cosmossdk.io/collections"
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	nameservice "dysonprotocol.com/x/nameservice"
@@ -199,6 +200,17 @@ func (k Keeper) RejectBid(ctx context.Context, msg *nameservicev1.MsgRejectBid) 
 	if err := k.SetNFTData(ctx, msg.NftClassId, msg.NftId, nftData); err != nil {
 		k.Logger.Error("RejectBid: Failed to update NFT data", "error", err)
 		return nil, cosmossdkerrors.Wrapf(err, "failed to update NFT data")
+	}
+
+	// --- Bid ledger update: mark active bid as REJECTED, record fee, clear active index ---
+	if bidID, err := k.activeBidForNFT.Get(ctx, collections.Join(msg.NftClassId, msg.NftId)); err == nil {
+		rec, gErr := k.bids.Get(ctx, bidID)
+		if gErr == nil {
+			rec.Status = nameservicev1.BidStatus_BID_REJECTED
+			rec.RejectionFee = totalFeeCoins
+			_ = k.bids.Set(ctx, bidID, rec)
+		}
+		_ = k.activeBidForNFT.Remove(ctx, collections.Join(msg.NftClassId, msg.NftId))
 	}
 
 	// Emit an event

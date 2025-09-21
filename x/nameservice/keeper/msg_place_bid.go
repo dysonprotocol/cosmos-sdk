@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"cosmossdk.io/collections"
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	nameservice "dysonprotocol.com/x/nameservice"
@@ -229,6 +230,56 @@ func (k Keeper) PlaceBid(ctx context.Context, msg *nameservicev1.MsgPlaceBid) (*
 	k.Logger.Info("PlaceBid: Successfully escrowed bid amount", "bidder", msg.Bidder, "amount", msg.BidAmount)
 
 	// ---- State Update Phase ----
+
+	// --- Bid ledger write ---
+	// Determine previous active bid for this NFT, if any
+	var (
+		prevActiveBidID uint64
+		hadPrev         bool
+	)
+	if bidID, err := k.activeBidForNFT.Get(ctx, collections.Join(msg.NftClassId, msg.NftId)); err == nil {
+		prevActiveBidID = bidID
+		hadPrev = true
+	}
+
+	// Allocate new bid ID
+	newBidID, err := k.bidSeq.Next(ctx)
+	if err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to allocate bid id")
+	}
+
+	// Create bid record
+	bidRecord := nameservicev1.BidRecord{
+		BidId:     newBidID,
+		ClassId:   msg.NftClassId,
+		NftId:     msg.NftId,
+		Bidder:    msg.Bidder,
+		Amount:    msg.BidAmount,
+		Status:    nameservicev1.BidStatus_BID_ACTIVE,
+		Timestamp: sdkCtx.BlockTime(),
+		Height:    uint64(sdkCtx.BlockHeight()),
+	}
+	if prevActiveBidID != 0 {
+		bidRecord.ReplacesBidId = prevActiveBidID
+	}
+
+	// Persist new record and secondary indexes
+	if err := k.bids.Set(ctx, newBidID, bidRecord); err != nil {
+		return nil, cosmossdkerrors.Wrap(err, "failed to store bid record")
+	}
+	_ = k.bidsByBidder.Set(ctx, collections.Join(msg.Bidder, newBidID), newBidID)
+	_ = k.bidsByNFT.Set(ctx, collections.Join3(msg.NftClassId, msg.NftId, newBidID), newBidID)
+	_ = k.activeBidForNFT.Set(ctx, collections.Join(msg.NftClassId, msg.NftId), newBidID)
+
+	// If there was a previous active bid for this NFT, mark it as outbid and link
+	if hadPrev {
+		prev, err := k.bids.Get(ctx, prevActiveBidID)
+		if err == nil {
+			prev.Status = nameservicev1.BidStatus_BID_OUTBID
+			prev.ReplacedByBidId = newBidID
+			_ = k.bids.Set(ctx, prevActiveBidID, prev)
+		}
+	}
 
 	// Update the NFT bid information
 	nftData.CurrentBidder = msg.Bidder

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"cosmossdk.io/collections"
 	cosmossdkerrors "cosmossdk.io/errors"
 	"cosmossdk.io/math"
 	nameservice "dysonprotocol.com/x/nameservice"
@@ -118,6 +119,16 @@ func (k Keeper) ClaimBid(ctx context.Context, msg *nameservicev1.MsgClaimBid) (*
 	// Reset NFT data for the new owner
 	if err := k.SetNFTData(ctx, msg.NftClassId, msg.NftId, nftData); err != nil {
 		return nil, cosmossdkerrors.Wrapf(err, "failed to update NFT data")
+	}
+
+	// --- Bid ledger update: mark active bid as CLAIMED and clear active index ---
+	if bidID, err := k.activeBidForNFT.Get(ctx, collections.Join(msg.NftClassId, msg.NftId)); err == nil {
+		rec, gErr := k.bids.Get(ctx, bidID)
+		if gErr == nil {
+			rec.Status = nameservicev1.BidStatus_BID_CLAIMED
+			_ = k.bids.Set(ctx, bidID, rec)
+		}
+		_ = k.activeBidForNFT.Remove(ctx, collections.Join(msg.NftClassId, msg.NftId))
 	}
 
 	// Transfer the NFT to the bidder

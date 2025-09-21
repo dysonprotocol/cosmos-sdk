@@ -113,6 +113,8 @@
       {"type":"file","name":"dysonprotocol.crontask.v1.TasksByStatusTimestamp.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.ComputeHash.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.Params.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.QueryBidsByBidder.json"},
+      {"type":"file","name":"dysonprotocol.nameservice.v1.QueryBidsForNFT.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.QueryDenomByName.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.QueryNFTClassesByName.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.QueryNamesByDestination.json"},
@@ -364,5 +366,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":358}
+  {"type":"report","directories":3,"files":360}
 ]

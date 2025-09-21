@@ -108,3 +108,40 @@ message NFTData {
   // Additional metadata
   string metadata = 8;
 }
+
+// BidStatus indicates the lifecycle state of a bid
+enum BidStatus {
+  BID_STATUS_UNSPECIFIED = 0;
+  BID_ACTIVE = 1;   // currently the active highest bid
+  BID_OUTBID = 2;   // superseded by a later higher bid
+  BID_ACCEPTED = 3; // owner accepted; NFT transferred
+  BID_REJECTED = 4; // owner rejected and set new valuation
+  BID_CLAIMED = 5;  // bidder claimed after timeout
+}
+
+// BidRecord stores a single bid and its lifecycle
+message BidRecord {
+  uint64 bid_id = 1;
+  string class_id = 2;
+  string nft_id = 3;
+  string bidder = 4;
+  cosmos.base.v1beta1.Coin amount = 5 [ (gogoproto.nullable) = false ];
+  BidStatus status = 6;
+  google.protobuf.Timestamp timestamp = 7
+      [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
+  uint64 height = 8;
+  uint64 replaces_bid_id = 9;     // previous active bid replaced by this one
+  uint64 replaced_by_bid_id = 10; // next bid that replaced this one (if any)
+  repeated cosmos.base.v1beta1.Coin rejection_fee = 11 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+// BidWithNFTStatus augments a BidRecord with current on-chain NFT status
+message BidWithNFTStatus {
+  BidRecord bid = 1 [ (gogoproto.nullable) = false ];
+  string nft_owner = 2; // current owner address
+  NFTData nft = 3 [ (gogoproto.nullable) = false ];
+  bool is_current_highest = 4; // convenience: bidder == nft.current_bidder
+}

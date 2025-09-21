@@ -11,6 +11,164 @@
     "application/json"
   ],
   "paths": {
+    "/dysonprotocol/nameservice/v1/bids/by_bidder/{bidder}": {
+      "get": {
+        "summary": "QueryBidsByBidder lists bids placed by a bidder across NFTs",
+        "operationId": "dysonprotocol.nameservice.v1.QueryQueryBidsByBidderRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.QueryBidsByBidderResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bidder",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "status_filter",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "BID_STATUS_UNSPECIFIED",
+                "BID_ACTIVE",
+                "BID_OUTBID",
+                "BID_ACCEPTED",
+                "BID_REJECTED",
+                "BID_CLAIMED"
+              ]
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "include_nft_status",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/nameservice/v1/bids/for_nft/{class_id}/{nft_id}": {
+      "get": {
+        "summary": "QueryBidsForNFT lists all bids for a given NFT",
+        "operationId": "dysonprotocol.nameservice.v1.QueryQueryBidsForNFTRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.nameservice.v1.QueryBidsForNFTResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "class_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "nft_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
     "/dysonprotocol/nameservice/v1/compute_hash": {
       "get": {
         "summary": "ComputeHash computes the hash for a name, salt, and committer address",
@@ -369,6 +527,96 @@
       },
       "description": "PageResponse is to be embedded in gRPC response messages where the\ncorresponding request message has used PageRequest.\n\n message SomeResponse {\n         repeated Bar results = 1;\n         PageResponse page = 2;\n }"
     },
+    "cosmos.base.v1beta1.Coin": {
+      "type": "object",
+      "properties": {
+        "denom": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        }
+      },
+      "description": "Coin defines a token with a denomination and an amount.\n\nNOTE: The amount field is an Int which implements the custom method\nsignatures required by gogoproto."
+    },
+    "dysonprotocol.nameservice.v1.BidRecord": {
+      "type": "object",
+      "properties": {
+        "bid_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "class_id": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": "string"
+        },
+        "bidder": {
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "status": {
+          "$ref": "#/definitions/dysonprotocol.nameservice.v1.BidStatus"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "height": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "replaces_bid_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "replaced_by_bid_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "rejection_fee": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+          }
+        }
+      },
+      "title": "BidRecord stores a single bid and its lifecycle"
+    },
+    "dysonprotocol.nameservice.v1.BidStatus": {
+      "type": "string",
+      "enum": [
+        "BID_STATUS_UNSPECIFIED",
+        "BID_ACTIVE",
+        "BID_OUTBID",
+        "BID_ACCEPTED",
+        "BID_REJECTED",
+        "BID_CLAIMED"
+      ],
+      "default": "BID_STATUS_UNSPECIFIED",
+      "title": "BidStatus indicates the lifecycle state of a bid"
+    },
+    "dysonprotocol.nameservice.v1.BidWithNFTStatus": {
+      "type": "object",
+      "properties": {
+        "bid": {
+          "$ref": "#/definitions/dysonprotocol.nameservice.v1.BidRecord"
+        },
+        "nft_owner": {
+          "type": "string"
+        },
+        "nft": {
+          "$ref": "#/definitions/dysonprotocol.nameservice.v1.NFTData"
+        },
+        "is_current_highest": {
+          "type": "boolean"
+        }
+      },
+      "title": "BidWithNFTStatus augments a BidRecord with current on-chain NFT status"
+    },
     "dysonprotocol.nameservice.v1.ComputeHashResponse": {
       "type": "object",
       "properties": {
@@ -388,6 +636,42 @@
         }
       },
       "title": "DenomDetails provides basic information about a custom denom"
+    },
+    "dysonprotocol.nameservice.v1.NFTData": {
+      "type": "object",
+      "properties": {
+        "listed": {
+          "type": "boolean"
+        },
+        "valuation": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "valuation_expiry": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "current_bidder": {
+          "type": "string",
+          "title": "Bid information"
+        },
+        "current_bid": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        },
+        "bid_timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "bid_height": {
+          "type": "string",
+          "format": "uint64",
+          "title": "Block height when the current bid was placed"
+        },
+        "metadata": {
+          "type": "string",
+          "title": "Additional metadata"
+        }
+      },
+      "title": "NFTData represents metadata for an individual NFT"
     },
     "dysonprotocol.nameservice.v1.Params": {
       "type": "object",
@@ -433,6 +717,34 @@
         }
       },
       "description": "Params defines the parameters for the nameservice module."
+    },
+    "dysonprotocol.nameservice.v1.QueryBidsByBidderResponse": {
+      "type": "object",
+      "properties": {
+        "bids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.nameservice.v1.BidWithNFTStatus"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse"
+        }
+      }
+    },
+    "dysonprotocol.nameservice.v1.QueryBidsForNFTResponse": {
+      "type": "object",
+      "properties": {
+        "bids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.nameservice.v1.BidRecord"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse"
+        }
+      }
     },
     "dysonprotocol.nameservice.v1.QueryDenomByNameResponse": {
       "type": "object",

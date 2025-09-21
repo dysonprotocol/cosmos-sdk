@@ -33,6 +33,13 @@ var (
 
 	// DenomsByRootNameKey is the key for reverse root-name -> denom mappings
 	DenomsByRootNameKey = collections.NewPrefix(7)
+
+	// Bid ledger and indexes
+	BidSeqKey          = collections.NewPrefix(8)
+	BidsKey            = collections.NewPrefix(9)
+	BidsByBidderKey    = collections.NewPrefix(10)
+	BidsByNFTKey       = collections.NewPrefix(11)
+	ActiveBidForNFTKey = collections.NewPrefix(12)
 )
 
 // Keeper defines the nameservice keeper
@@ -64,6 +71,13 @@ type Keeper struct {
 	// denomsByRootName stores reverse mappings: (root_name, denom) -> empty string
 	// Enables listing all denoms that belong to a root name; supply is read from bank if needed
 	denomsByRootName collections.Map[collections.Pair[string, string], string]
+
+	// Bid ledger
+	bidSeq          collections.Sequence
+	bids            collections.Map[uint64, nameservicev1.BidRecord]
+	bidsByBidder    collections.Map[collections.Pair[string, uint64], uint64]
+	bidsByNFT       collections.Map[collections.Triple[string, string, uint64], uint64]
+	activeBidForNFT collections.Map[collections.Pair[string, string], uint64]
 
 	authority string // the address that is authorized to update module parameters
 }
@@ -97,6 +111,31 @@ func NewKeeper(
 		classesByRootName:   collections.NewMap(sb, ClassesByRootNameKey, "classes_by_root_name", collections.PairKeyCodec(collections.StringKey, collections.StringKey), collections.StringValue),
 		denomsByRootName:    collections.NewMap(sb, DenomsByRootNameKey, "denoms_by_root_name", collections.PairKeyCodec(collections.StringKey, collections.StringKey), collections.StringValue),
 	}
+
+	// Bid ledger collections
+	k.bidSeq = collections.NewSequence(sb, BidSeqKey, "bid_seq")
+	k.bids = collections.NewMap(sb, BidsKey, "bids", collections.Uint64Key, codec.CollValue[nameservicev1.BidRecord](cdc))
+	k.bidsByBidder = collections.NewMap(
+		sb,
+		BidsByBidderKey,
+		"bids_by_bidder",
+		collections.PairKeyCodec(collections.StringKey, collections.Uint64Key),
+		collections.Uint64Value,
+	)
+	k.bidsByNFT = collections.NewMap(
+		sb,
+		BidsByNFTKey,
+		"bids_by_nft",
+		collections.TripleKeyCodec(collections.StringKey, collections.StringKey, collections.Uint64Key),
+		collections.Uint64Value,
+	)
+	k.activeBidForNFT = collections.NewMap(
+		sb,
+		ActiveBidForNFTKey,
+		"active_bid_for_nft",
+		collections.PairKeyCodec(collections.StringKey, collections.StringKey),
+		collections.Uint64Value,
+	)
 
 	schema, err := sb.Build()
 	if err != nil {
