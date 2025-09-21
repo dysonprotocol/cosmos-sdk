@@ -20,45 +20,62 @@ func (k Keeper) OffersByDenom(ctx context.Context, req *whaleswapv1.QueryOffersB
 	}
 	role := req.Role
 	if role == "have" {
-		results, pageRes, err := query.CollectionPaginate(ctx, k.OffersByHave, req.Pagination, func(key collections.Pair[string, uint64], id uint64) (*whaleswapv1.OfferData, error) {
-			if k1, _ := key.K1(), key.K2(); k1 != req.Denom {
-				return nil, nil
-			}
-			v, err := k.OffersMap.Get(ctx, id)
-			if err != nil {
-				return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
-			}
-			return &v, nil
-		})
+		results, pageRes, err := query.CollectionFilteredPaginate(
+			ctx,
+			k.OffersByHave,
+			req.Pagination,
+			func(key collections.Pair[string, uint64], _ uint64) (bool, error) {
+				k1, _ := key.K1(), key.K2()
+				return k1 == req.Denom, nil
+			},
+			func(_ collections.Pair[string, uint64], id uint64) (*whaleswapv1.OfferData, error) {
+				v, err := k.OffersMap.Get(ctx, id)
+				if err != nil {
+					return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
+				}
+				return &v, nil
+			},
+		)
 		if err != nil {
 			return nil, cosmossdkerrors.Wrap(err, "paginate offers by have failed")
 		}
 		return &whaleswapv1.QueryOffersResponse{Offers: results, Pagination: pageRes}, nil
 	}
 	if role == "want" {
-		results, pageRes, err := query.CollectionPaginate(ctx, k.OffersByWant, req.Pagination, func(key collections.Pair[string, uint64], id uint64) (*whaleswapv1.OfferData, error) {
-			if k1, _ := key.K1(), key.K2(); k1 != req.Denom {
-				return nil, nil
-			}
-			v, err := k.OffersMap.Get(ctx, id)
-			if err != nil {
-				return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
-			}
-			return &v, nil
-		})
+		results, pageRes, err := query.CollectionFilteredPaginate(
+			ctx,
+			k.OffersByWant,
+			req.Pagination,
+			func(key collections.Pair[string, uint64], _ uint64) (bool, error) {
+				k1, _ := key.K1(), key.K2()
+				return k1 == req.Denom, nil
+			},
+			func(_ collections.Pair[string, uint64], id uint64) (*whaleswapv1.OfferData, error) {
+				v, err := k.OffersMap.Get(ctx, id)
+				if err != nil {
+					return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
+				}
+				return &v, nil
+			},
+		)
 		if err != nil {
 			return nil, cosmossdkerrors.Wrap(err, "paginate offers by want failed")
 		}
 		return &whaleswapv1.QueryOffersResponse{Offers: results, Pagination: pageRes}, nil
 	}
-	// role empty -> either side: fallback to scan
-	results, pageRes, err := query.CollectionPaginate(ctx, k.OffersMap, req.Pagination, func(key uint64, value whaleswapv1.OfferData) (*whaleswapv1.OfferData, error) {
-		if value.RemainingHave.Denom != req.Denom && value.RemainingWant.Denom != req.Denom {
-			return nil, nil
-		}
-		v := value
-		return &v, nil
-	})
+	// role empty -> either side: fallback to filtered scan
+	results, pageRes, err := query.CollectionFilteredPaginate(
+		ctx,
+		k.OffersMap,
+		req.Pagination,
+		func(_ uint64, value whaleswapv1.OfferData) (bool, error) {
+			return value.RemainingHave.Denom == req.Denom || value.RemainingWant.Denom == req.Denom, nil
+		},
+		func(_ uint64, value whaleswapv1.OfferData) (*whaleswapv1.OfferData, error) {
+			v := value
+			return &v, nil
+		},
+	)
 	if err != nil {
 		return nil, cosmossdkerrors.Wrap(err, "paginate offers by denom failed")
 	}
@@ -92,29 +109,39 @@ func (k Keeper) OffersByPairPriceRange(ctx context.Context, req *whaleswapv1.Que
 		low, high = high, low
 	}
 	pairKey := low + "|" + high
-	results, pageRes, perr := query.CollectionPaginate(ctx, k.OffersByPairPrice, req.Pagination, func(key collections.Triple[string, string, uint64], id uint64) (*whaleswapv1.OfferData, error) {
-		k1, _, _ := key.K1(), key.K2(), key.K3()
-		if k1 != pairKey {
-			return nil, nil
-		}
-		v, err := k.OffersMap.Get(ctx, id)
-		if err != nil {
-			return nil, err
-		}
-		// ensure exact direction match
-		if v.RemainingHave.Denom != req.HaveDenom || v.RemainingWant.Denom != req.WantDenom {
-			return nil, nil
-		}
-		price := cosmossdk_math.LegacyNewDecFromInt(v.RemainingWant.Amount).Quo(cosmossdk_math.LegacyNewDecFromInt(v.RemainingHave.Amount))
-		if req.MinPrice != "" && price.LT(minDec) {
-			return nil, nil
-		}
-		if req.MaxPrice != "" && price.GT(maxDec) {
-			return nil, nil
-		}
-		vv := v
-		return &vv, nil
-	})
+	results, pageRes, perr := query.CollectionFilteredPaginate(
+		ctx,
+		k.OffersByPairPrice,
+		req.Pagination,
+		func(key collections.Triple[string, string, uint64], id uint64) (bool, error) {
+			k1, _, _ := key.K1(), key.K2(), key.K3()
+			if k1 != pairKey {
+				return false, nil
+			}
+			v, err := k.OffersMap.Get(ctx, id)
+			if err != nil {
+				return false, err
+			}
+			if v.RemainingHave.Denom != req.HaveDenom || v.RemainingWant.Denom != req.WantDenom {
+				return false, nil
+			}
+			price := cosmossdk_math.LegacyNewDecFromInt(v.RemainingWant.Amount).Quo(cosmossdk_math.LegacyNewDecFromInt(v.RemainingHave.Amount))
+			if req.MinPrice != "" && price.LT(minDec) {
+				return false, nil
+			}
+			if req.MaxPrice != "" && price.GT(maxDec) {
+				return false, nil
+			}
+			return true, nil
+		},
+		func(_ collections.Triple[string, string, uint64], id uint64) (*whaleswapv1.OfferData, error) {
+			v, err := k.OffersMap.Get(ctx, id)
+			if err != nil {
+				return nil, err
+			}
+			return &v, nil
+		},
+	)
 	if perr != nil {
 		return nil, cosmossdkerrors.Wrap(perr, "OffersByPairPriceRange paginate failed")
 	}
@@ -137,27 +164,33 @@ func (k Keeper) OffersBest(ctx context.Context, req *whaleswapv1.QueryOffersBest
 		low, high = high, low
 	}
 	pairKey := low + "|" + high
-	collected := make([]*whaleswapv1.OfferData, 0, limit)
-	_, _, err := query.CollectionPaginate(ctx, k.OffersByPairPrice, nil, func(key collections.Triple[string, string, uint64], id uint64) (*whaleswapv1.OfferData, error) {
-		k1, _, _ := key.K1(), key.K2(), key.K3()
-		if k1 != pairKey {
-			return nil, nil
-		}
-		v, err := k.OffersMap.Get(ctx, id)
-		if err != nil {
-			return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
-		}
-		if v.RemainingHave.Denom != req.HaveDenom || v.RemainingWant.Denom != req.WantDenom {
-			return nil, nil
-		}
-		if len(collected) < limit {
-			vv := v
-			collected = append(collected, &vv)
-		}
-		return nil, nil
-	})
+	// Use filtered paginate with limit via PageRequest
+	pageReq := &query.PageRequest{Limit: uint64(limit)}
+	offers, _, err := query.CollectionFilteredPaginate(
+		ctx,
+		k.OffersByPairPrice,
+		pageReq,
+		func(key collections.Triple[string, string, uint64], id uint64) (bool, error) {
+			k1, _, _ := key.K1(), key.K2(), key.K3()
+			if k1 != pairKey {
+				return false, nil
+			}
+			v, err := k.OffersMap.Get(ctx, id)
+			if err != nil {
+				return false, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
+			}
+			return v.RemainingHave.Denom == req.HaveDenom && v.RemainingWant.Denom == req.WantDenom, nil
+		},
+		func(_ collections.Triple[string, string, uint64], id uint64) (*whaleswapv1.OfferData, error) {
+			v, err := k.OffersMap.Get(ctx, id)
+			if err != nil {
+				return nil, cosmossdkerrors.Wrapf(err, "offer not found: %d", id)
+			}
+			return &v, nil
+		},
+	)
 	if err != nil {
-		return nil, cosmossdkerrors.Wrap(err, "OffersBest iteration failed")
+		return nil, cosmossdkerrors.Wrap(err, "OffersBest paginate failed")
 	}
-	return &whaleswapv1.QueryOffersResponse{Offers: collected}, nil
+	return &whaleswapv1.QueryOffersResponse{Offers: offers}, nil
 }

@@ -57,10 +57,8 @@ def test_pool_swap_v2_single_pool(chainnet, generate_account, faucet, register_n
         str(pool_id),
         "--input",
         "100udys",
-        "--minimum-out-amount",
-        "1",
-        "--out-denom",
-        name,
+        "--minimum-output",
+        f"1{name}",
         "--from",
         trader_name,
     )

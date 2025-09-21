@@ -643,11 +643,9 @@
         "input": {
           "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
         },
-        "minimum_out_amount": {
-          "type": "string"
-        },
-        "out_denom": {
-          "type": "string"
+        "minimum_output": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "description": "Minimum output coin (denom and amount). The swap fails if the computed\noutput coin's denom differs or its amount is less than this value."
         }
       },
       "description": "Single-pool swap.\n\n- `input` denom must be one of the pool reserves; `out_denom` must be the\n  other.\n- `minimum_out_amount` is an sdk.Int string; the swap fails if the computed\n  output is less than this value after fees."

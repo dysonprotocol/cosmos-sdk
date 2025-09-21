@@ -16,12 +16,10 @@
                         "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
                         "additionalProperties": false
                     },
-                    "minimum_out_amount": {
-                        "type": "string",
-                        "description": "sdk.Int string"
-                    },
-                    "out_denom": {
-                        "type": "string"
+                    "minimum_output": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false,
+                        "description": "Minimum output coin (denom and amount). The swap fails if the computed output coin's denom differs or its amount is less than this value."
                     }
                 },
                 "additionalProperties": false,

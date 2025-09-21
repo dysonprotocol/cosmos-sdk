@@ -200,15 +200,18 @@ func (k Keeper) PoolSwap(ctx context.Context, msg *whaleswapv1.MsgPoolSwap) (*wh
 	currentDenom = outDenom
 	currentAmount = outAmt
 
-	if currentDenom != msg.OutDenom {
-		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "output denom %s != expected %s", currentDenom, msg.OutDenom)
+	// Validate minimum_output
+	if msg.MinimumOutput.Denom == "" {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "minimum_output.denom required")
 	}
-	minOut, ok := math.NewIntFromString(msg.MinimumOutAmount)
-	if !ok {
-		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid minimum_out_amount")
+	if currentDenom != msg.MinimumOutput.Denom {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "output denom %s != expected %s", currentDenom, msg.MinimumOutput.Denom)
 	}
-	if currentAmount.LT(minOut) {
-		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "output %s below minimum %s", currentAmount.String(), minOut.String())
+	if msg.MinimumOutput.Amount.IsNegative() {
+		return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "minimum_output.amount must be >= 0")
+	}
+	if currentAmount.LT(msg.MinimumOutput.Amount) {
+		return nil, cosmossdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "output %s below minimum %s", currentAmount.String(), msg.MinimumOutput.Amount.String())
 	}
 
 	if err := k.bank.SendCoinsFromModuleToAccount(ctx, whaleswap.ModuleName, trader, sdk.NewCoins(sdk.NewCoin(currentDenom, currentAmount))); err != nil {

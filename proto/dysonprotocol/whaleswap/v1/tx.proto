@@ -174,8 +174,10 @@ message MsgPoolSwap {
   uint64 pool_id = 2;
   cosmos.base.v1beta1.Coin input = 3
       [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
-  string minimum_out_amount = 4; // sdk.Int string
-  string out_denom = 5;
+  // Minimum output coin (denom and amount). The swap fails if the computed
+  // output coin's denom differs or its amount is less than this value.
+  cosmos.base.v1beta1.Coin minimum_output = 4
+      [ (gogoproto.nullable) = false, (amino.dont_omitempty) = true ];
 }
 message MsgPoolSwapResponse {
   cosmos.base.v1beta1.Coin amount_out = 1 [ (gogoproto.nullable) = false ];
