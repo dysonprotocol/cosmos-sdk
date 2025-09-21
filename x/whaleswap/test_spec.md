@@ -373,7 +373,7 @@ def open_auc(seller, bid_denom, sell_denom, sell_amt):
 
 ### Run examples
 - CLI-focused single test: make test PYTEST_ARGS="tests/whaleswap/amm/test_amm_cli.py::test_pool_swap_v2_single_pool"
-- Full AMM suite: make test PYTEST_ARGS="tests/whaleswap/amm -x -s"
-- Auction smoke: make test PYTEST_ARGS="tests/whaleswap/auction/test_auction_cli.py -x -s"
+- Full AMM suite: make test PYTEST_ARGS="tests/whaleswap/amm"
+- Auction smoke: make test PYTEST_ARGS="tests/whaleswap/auction/test_auction_cli.py"
 
 - I’ll start by scaffolding the CLI tests for AMM, then orderbook, then auctions, following `test_nameservice_e2e.py` patterns and using the `conftest.py` helpers.

@@ -487,7 +487,7 @@ def faucet(chainnet):
         # Get initial balance
         out = dysond_bin("query", "bank", "balances", address)
         before = int(out["balances"][0]["amount"]) if out["balances"] else 0
-        # Send tx from alice
+        # Send tx from alice (run_command already waits for tx internally)
         for attempt in range(10):
             tx_out = dysond_bin(
                 "tx",
@@ -501,14 +501,12 @@ def faucet(chainnet):
                 "--yes",
                 **kwargs,
             )
-            txhash = tx_out["txhash"]
-            wait_result = dysond_bin("query", "wait-tx", txhash, "--timeout", "300s")
-            if wait_result.get("code") == 0:
+            if tx_out.get("code") == 0:
                 break
             else:
-                print(f"===== Faucet tx failed: {wait_result}")
+                print(f"===== Faucet tx failed: {tx_out}")
         else:
-            raise Exception(f"Faucet tx failed after {attempt} attempts: {wait_result}")
+            raise Exception(f"Faucet tx failed after {attempt} attempts: {tx_out}")
 
     return _faucet
 
@@ -965,6 +963,18 @@ def _check_file_for_ast_rules(path):
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_finish(session):
+    """
+    Check for forbidden constructs in pytest test files.
+    Forbidden constructs:
+    - try/except
+    - if
+    - time.sleep
+    - wait_for_timeout
+    - sleep
+
+    For any of these constructs, the test will fail with a clear error message.
+    Utility functions and fixtures (like this one) are exempt from this check.
+    """
     # Only consider .py test files collected by pytest
     seen_files = {
         Path(item.fspath) for item in session.items if Path(item.fspath).suffix == ".py"

@@ -2,39 +2,22 @@ import json
 
 
 def _extract_exec_result(tx):
-    """
-    Extract the script execution result payload from EventExecScript.
-    Returns the deserialized 'result' object.
-    """
     events_by_type = {e.get("type"): e for e in tx.get("events", [])}
-    assert (
-        "dysonprotocol.script.v1.EventExecScript" in events_by_type
-    ), f"No EventExecScript found: {json.dumps(tx, indent=2)}"
     ev = events_by_type["dysonprotocol.script.v1.EventExecScript"]
     attrs = {a.get("key"): a.get("value") for a in ev.get("attributes", [])}
-    resp_json = attrs.get("response", "{}")
-    resp = json.loads(resp_json)
+    resp = json.loads(attrs.get("response", "{}"))
     return json.loads(resp.get("result", "{}")).get("result")
 
 
 def _script_update(dysond, owner_name: str, code: str):
     res = dysond(
-        "tx",
-        "script",
-        "update",
-        "--code",
-        code,
-        "--from",
-        owner_name,
-        "--gas",
-        "auto",
+        "tx", "script", "update", "--code", code, "--from", owner_name, "--gas", "auto"
     )
     assert res.get("code", 1) == 0, f"script update failed: {json.dumps(res, indent=2)}"
 
 
 def test_ob_script_take_ring_solid(chainnet, generate_account, faucet, register_name):
     dysond = chainnet[0]
-    # Makers and taker/script owner
     [ma_name, ma_addr] = generate_account("ob_scr_mA")
     [mb_name, mb_addr] = generate_account("ob_scr_mB")
     [mc_name, mc_addr] = generate_account("ob_scr_mC")
@@ -44,7 +27,6 @@ def test_ob_script_take_ring_solid(chainnet, generate_account, faucet, register_
     faucet(mc_addr, amount=2_000_000)
     faucet(taker_addr, amount=1_000_000)
 
-    # Denoms and mint supply
     coin_a = register_name(dysond, ma_name, ma_addr, "1000udys")
     coin_b = register_name(dysond, mb_name, mb_addr, "1000udys")
     coin_c = register_name(dysond, mc_name, mc_addr, "1000udys")
@@ -95,7 +77,6 @@ def test_ob_script_take_ring_solid(chainnet, generate_account, faucet, register_
         == 0
     )
 
-    # Make three offers: A: 2A->1B, B: 2B->1C, C: 2C->1A
     tx_a = dysond(
         "tx",
         "whaleswap",
@@ -149,12 +130,10 @@ def test_ob_script_take_ring_solid(chainnet, generate_account, faucet, register_
     offer_b = _oid(tx_b)
     offer_c = _oid(tx_c)
 
-    # Install script with an ob_take function using dys._msg
     script_code = """
 from dys import _msg, _query, get_script_address
 
 def ob_take(trades):
-    # trades = [{"offer_id": <int>}, ...] or with take_units
     msg = {
         "@type": "/dysonprotocol.whaleswap.v1.MsgTakeOffer",
         "taker": get_script_address(),
@@ -168,7 +147,6 @@ def ob_query_offer(offer_id):
 """
     _script_update(dysond, taker_name, script_code)
 
-    # Execute take via script
     args = json.dumps(
         [[{"offer_id": offer_a}, {"offer_id": offer_b}, {"offer_id": offer_c}]]
     )
@@ -189,13 +167,12 @@ def ob_query_offer(offer_id):
     )
     assert take.get("code", 1) == 0, f"script take failed: {json.dumps(take, indent=2)}"
 
-    # Offers should be closed
     qa = dysond("query", "whaleswap", "offer", str(offer_a))
     qb = dysond("query", "whaleswap", "offer", str(offer_b))
     qc = dysond("query", "whaleswap", "offer", str(offer_c))
-    assert qa.get("offer", {}).get("status") == "closed", json.dumps(qa, indent=2)
-    assert qb.get("offer", {}).get("status") == "closed", json.dumps(qb, indent=2)
-    assert qc.get("offer", {}).get("status") == "closed", json.dumps(qc, indent=2)
+    assert qa.get("offer", {}).get("status") == "closed"
+    assert qb.get("offer", {}).get("status") == "closed"
+    assert qc.get("offer", {}).get("status") == "closed"
 
 
 def test_ob_script_partial_take_and_query(
@@ -207,7 +184,6 @@ def test_ob_script_partial_take_and_query(
     faucet(maker_addr, amount=2_000_000)
     faucet(taker_addr, amount=1_000_000)
 
-    # Mint a custom denom and open a normal offer
     coin_x = register_name(dysond, maker_name, maker_addr, "1000udys")
     params = dysond("query", "nameservice", "params")
     fee_per_unit = float(params["params"]["mint_fee_per_coin"])  # e.g. 0.01
@@ -250,18 +226,15 @@ def test_ob_script_partial_take_and_query(
         ]
     )
 
-    # Install script with partial take + query
     script_code = """
 from dys import _msg, _query, get_script_address
 
 def ob_take_partial_and_query(offer_id, take_units, have_denom):
-    # Execute partial take
     _msg({
         "@type": "/dysonprotocol.whaleswap.v1.MsgTakeOffer",
         "taker": get_script_address(),
         "trades": [{"offer_id": int(offer_id), "take_units": str(int(take_units))}],
     })
-    # Return taker's balance for have_denom using bank query to demonstrate dys._query
     bal = _query({
         "@type": "/cosmos.bank.v1beta1.QueryBalanceRequest",
         "address": get_script_address(),
@@ -291,12 +264,9 @@ def ob_take_partial_and_query(offer_id, take_units, have_denom):
         take.get("code", 1) == 0
     ), f"script partial take failed: {json.dumps(take, indent=2)}"
     result = _extract_exec_result(take)
-    # Expect bank balance response shape
     assert (
         isinstance(result, dict)
         and result.get("@type") == "/cosmos.bank.v1beta1.QueryBalanceResponse"
-    ), f"unexpected bank query result: {json.dumps(result, indent=2)}"
+    )
     amount = int(result.get("balance", {}).get("amount", "0"))
-    assert (
-        amount >= 4
-    ), f"taker {coin_x} balance < 4 after partial take: {json.dumps(result, indent=2)}"
+    assert amount >= 4
