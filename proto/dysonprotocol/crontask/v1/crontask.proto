@@ -78,6 +78,9 @@ message Params {
 
   // Retention period for completed/failed/expired tasks (seconds)
   int64 clean_up_time = 4;
+
+  // Maximum allowed delta for subscription expiry renewal (default 7 days)
+  int64 max_expiry_delta = 5;
 }
 
 // Metrics tracks aggregate statistics for crontask executions

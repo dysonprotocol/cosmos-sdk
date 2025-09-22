@@ -71,6 +71,30 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:     "Query module parameters",
 					Long:      "Query the current crontask module parameters",
 				},
+				{
+					RpcMethod: "SubscriptionByID",
+					Use:       "subscription-by-id --subscription-id <id>",
+					Short:     "Query a subscription by ID",
+					Long:      "Query a subscription by its unique identifier",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"subscription_id": {Name: "subscription-id", Usage: "The ID of the subscription to query"},
+					},
+				},
+				{
+					RpcMethod: "SubscriptionsByCreator",
+					Use:       "subscriptions-by-creator --creator <creator-address>",
+					Short:     "Query subscriptions by creator address",
+					Long:      "Query all subscriptions created by a specific address",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"creator": {Name: "creator", Usage: "Creator address to filter subscriptions by"},
+					},
+				},
+				{
+					RpcMethod: "SubscriptionsAll",
+					Use:       "subscriptions-all",
+					Short:     "Query all subscriptions",
+					Long:      "Query all subscriptions",
+				},
 			},
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{
@@ -124,6 +148,41 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					FlagOptions: map[string]*autocliv1.FlagOptions{
 						"authority": {Name: "authority", Usage: "authority address (defaults to gov module account)"},
 						"params":    {Name: "params", Usage: "JSON-encoded Params object"},
+					},
+				},
+				{
+					RpcMethod: "CreateSubscription",
+					Use:       "create-subscription --event-type <type> --filter <gjson> --script-address <addr> --function <name> --args <json> --kwargs <json> --task-gas-limit <limit> --task-gas-fee <fee>",
+					Short:     "Create a new event subscription",
+					Long:      "Register a new event-triggered subscription that schedules a task when matching events occur",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"event_type":     {Name: "event-type", Usage: "ABCI event type to match"},
+						"filter":         {Name: "filter", Usage: "GJSON filter applied to normalized event"},
+						"script_address": {Name: "script-address", Usage: "Target script address"},
+						"function":       {Name: "function", Usage: "Function name to invoke"},
+						"args":           {Name: "args", Usage: "JSON list for positional args"},
+						"kwargs":         {Name: "kwargs", Usage: "JSON object for keyword args"},
+						"task_gas_limit": {Name: "task-gas-limit", Usage: "Gas limit for created task"},
+						"task_gas_fee":   {Name: "task-gas-fee", Usage: "Fee for created task (and upfront anti-spam)"},
+					},
+				},
+				{
+					RpcMethod: "DeleteSubscription",
+					Use:       "delete-subscription --subscription-id <id>",
+					Short:     "Delete a subscription",
+					Long:      "Delete an existing subscription that you own",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"subscription_id": {Name: "subscription-id", Usage: "Subscription ID to delete"},
+					},
+				},
+				{
+					RpcMethod: "RenewSubscription",
+					Use:       "renew-subscription --subscription-id <id> --new-expiry <ts-or-+dur>",
+					Short:     "Renew a subscription and recharge the fee",
+					Long:      "Extend the subscription expiry up to the allowed max and pay the task fee again",
+					FlagOptions: map[string]*autocliv1.FlagOptions{
+						"subscription_id": {Name: "subscription-id", Usage: "Subscription ID to renew"},
+						"new_expiry":      {Name: "new-expiry", Usage: "Unix timestamp or +duration (e.g. +1h30m)"},
 					},
 				},
 			},

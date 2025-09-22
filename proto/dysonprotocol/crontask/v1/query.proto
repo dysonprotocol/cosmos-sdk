@@ -6,6 +6,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "dysonprotocol/crontask/v1/crontask.proto";
+import "dysonprotocol/crontask/v1/subscription.proto";
 import "gogoproto/gogo.proto";
 import "amino/amino.proto";
 
@@ -65,6 +66,30 @@ service Query {
       get : "/dysonprotocol/crontask/v1/metrics"
     };
   }
+
+  // SubscriptionByID returns a subscription by id
+  rpc SubscriptionByID(QuerySubscriptionByIDRequest)
+      returns (QuerySubscriptionByIDResponse) {
+    option (google.api.http) = {
+      get : "/dysonprotocol/crontask/v1/subscriptions/{subscription_id}"
+    };
+  }
+
+  // SubscriptionsByCreator returns subscriptions for a creator
+  rpc SubscriptionsByCreator(QuerySubscriptionsByCreatorRequest)
+      returns (QuerySubscriptionsResponse) {
+    option (google.api.http) = {
+      get : "/dysonprotocol/crontask/v1/subscriptions/creator/{creator}"
+    };
+  }
+
+  // SubscriptionsAll returns all subscriptions
+  rpc SubscriptionsAll(QuerySubscriptionsAllRequest)
+      returns (QuerySubscriptionsResponse) {
+    option (google.api.http) = {
+      get : "/dysonprotocol/crontask/v1/subscriptions"
+    };
+  }
 }
 
 // QueryTaskByIDRequest is the request type for the Query/TaskByID RPC method
@@ -119,4 +144,20 @@ message QueryMetricsResponse { Metrics metrics = 1; }
 
 message QueryAllTasksRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// Subscription queries
+message QuerySubscriptionByIDRequest { uint64 subscription_id = 1; }
+message QuerySubscriptionByIDResponse { Subscription subscription = 1; }
+
+message QuerySubscriptionsByCreatorRequest {
+  string creator = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+message QuerySubscriptionsAllRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+message QuerySubscriptionsResponse {
+  repeated Subscription subscriptions = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

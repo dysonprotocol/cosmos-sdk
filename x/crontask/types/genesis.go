@@ -22,10 +22,7 @@ func ValidateGenesis(gs *GenesisState) error {
 		return fmt.Errorf("genesis state cannot be nil")
 	}
 
-	// Validate next task ID
-	if gs.NextTaskId < 1 {
-		return fmt.Errorf("next task ID must be greater than 0")
-	}
+	// Allow NextTaskId to be 0 to indicate "unset"; keeper will default it.
 
 	// Validate params
 	if gs.Params == nil {
@@ -34,6 +31,8 @@ func ValidateGenesis(gs *GenesisState) error {
 	if err := gs.Params.Validate(); err != nil {
 		return fmt.Errorf("invalid module parameters: %w", err)
 	}
+
+	// Allow NextSubscriptionId to be 0 to indicate "unset"; keeper will default it.
 
 	// Validate tasks
 	taskIDs := make(map[uint64]bool)

@@ -705,6 +705,9 @@ func NewDysApp(
 		logger,
 	)
 
+	// Forward block events to crontask keeper for event-triggering
+	bApp.SetBlockEventsSink(app.CrontaskKeeper)
+
 	app.StorageKeeper = storagekeeper.NewKeeper(
 		runtime.NewKVStoreService(keys[storagev1.StoreKey]),
 		appCodec,
@@ -962,6 +965,10 @@ func NewDysApp(
 	}
 
 	return app
+}
+
+func (app *DysApp) TxEventHook(ctx sdk.Context, tx sdk.Tx, events []abci.Event) {
+	ctx.Logger().Info("====== TxEventHook", "events", events)
 }
 
 func (app *DysApp) setAnteHandler(txConfig client.TxConfig) {

@@ -19,9 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Msg_CreateTask_FullMethodName   = "/dysonprotocol.crontask.v1.Msg/CreateTask"
-	Msg_DeleteTask_FullMethodName   = "/dysonprotocol.crontask.v1.Msg/DeleteTask"
-	Msg_UpdateParams_FullMethodName = "/dysonprotocol.crontask.v1.Msg/UpdateParams"
+	Msg_CreateTask_FullMethodName         = "/dysonprotocol.crontask.v1.Msg/CreateTask"
+	Msg_DeleteTask_FullMethodName         = "/dysonprotocol.crontask.v1.Msg/DeleteTask"
+	Msg_UpdateParams_FullMethodName       = "/dysonprotocol.crontask.v1.Msg/UpdateParams"
+	Msg_CreateSubscription_FullMethodName = "/dysonprotocol.crontask.v1.Msg/CreateSubscription"
+	Msg_DeleteSubscription_FullMethodName = "/dysonprotocol.crontask.v1.Msg/DeleteSubscription"
+	Msg_RenewSubscription_FullMethodName  = "/dysonprotocol.crontask.v1.Msg/RenewSubscription"
 )
 
 // MsgClient is the client API for Msg service.
@@ -36,6 +39,12 @@ type MsgClient interface {
 	DeleteTask(ctx context.Context, in *MsgDeleteTask, opts ...grpc.CallOption) (*MsgDeleteTaskResponse, error)
 	// UpdateParams updates the parameters of the x/crontask module
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
+	// CreateSubscription registers a new event-triggered action
+	CreateSubscription(ctx context.Context, in *MsgCreateSubscription, opts ...grpc.CallOption) (*MsgCreateSubscriptionResponse, error)
+	// DeleteSubscription removes an existing subscription
+	DeleteSubscription(ctx context.Context, in *MsgDeleteSubscription, opts ...grpc.CallOption) (*MsgDeleteSubscriptionResponse, error)
+	// RenewSubscription extends the subscription expiry and recharges the fee
+	RenewSubscription(ctx context.Context, in *MsgRenewSubscription, opts ...grpc.CallOption) (*MsgRenewSubscriptionResponse, error)
 }
 
 type msgClient struct {
@@ -76,6 +85,36 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts 
 	return out, nil
 }
 
+func (c *msgClient) CreateSubscription(ctx context.Context, in *MsgCreateSubscription, opts ...grpc.CallOption) (*MsgCreateSubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgCreateSubscriptionResponse)
+	err := c.cc.Invoke(ctx, Msg_CreateSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) DeleteSubscription(ctx context.Context, in *MsgDeleteSubscription, opts ...grpc.CallOption) (*MsgDeleteSubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgDeleteSubscriptionResponse)
+	err := c.cc.Invoke(ctx, Msg_DeleteSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RenewSubscription(ctx context.Context, in *MsgRenewSubscription, opts ...grpc.CallOption) (*MsgRenewSubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgRenewSubscriptionResponse)
+	err := c.cc.Invoke(ctx, Msg_RenewSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility.
@@ -88,6 +127,12 @@ type MsgServer interface {
 	DeleteTask(context.Context, *MsgDeleteTask) (*MsgDeleteTaskResponse, error)
 	// UpdateParams updates the parameters of the x/crontask module
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
+	// CreateSubscription registers a new event-triggered action
+	CreateSubscription(context.Context, *MsgCreateSubscription) (*MsgCreateSubscriptionResponse, error)
+	// DeleteSubscription removes an existing subscription
+	DeleteSubscription(context.Context, *MsgDeleteSubscription) (*MsgDeleteSubscriptionResponse, error)
+	// RenewSubscription extends the subscription expiry and recharges the fee
+	RenewSubscription(context.Context, *MsgRenewSubscription) (*MsgRenewSubscriptionResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -106,6 +151,15 @@ func (UnimplementedMsgServer) DeleteTask(context.Context, *MsgDeleteTask) (*MsgD
 }
 func (UnimplementedMsgServer) UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateParams not implemented")
+}
+func (UnimplementedMsgServer) CreateSubscription(context.Context, *MsgCreateSubscription) (*MsgCreateSubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSubscription not implemented")
+}
+func (UnimplementedMsgServer) DeleteSubscription(context.Context, *MsgDeleteSubscription) (*MsgDeleteSubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubscription not implemented")
+}
+func (UnimplementedMsgServer) RenewSubscription(context.Context, *MsgRenewSubscription) (*MsgRenewSubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenewSubscription not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 func (UnimplementedMsgServer) testEmbeddedByValue()             {}
@@ -182,6 +236,60 @@ func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_CreateSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateSubscription)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_CreateSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateSubscription(ctx, req.(*MsgCreateSubscription))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_DeleteSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeleteSubscription)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DeleteSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_DeleteSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DeleteSubscription(ctx, req.(*MsgDeleteSubscription))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RenewSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRenewSubscription)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RenewSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_RenewSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RenewSubscription(ctx, req.(*MsgRenewSubscription))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -200,6 +308,18 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateParams",
 			Handler:    _Msg_UpdateParams_Handler,
+		},
+		{
+			MethodName: "CreateSubscription",
+			Handler:    _Msg_CreateSubscription_Handler,
+		},
+		{
+			MethodName: "DeleteSubscription",
+			Handler:    _Msg_DeleteSubscription_Handler,
+		},
+		{
+			MethodName: "RenewSubscription",
+			Handler:    _Msg_RenewSubscription_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

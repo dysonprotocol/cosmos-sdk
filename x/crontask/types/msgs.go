@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	gogoprotoany "github.com/cosmos/gogoproto/types/any"
 )
@@ -98,4 +99,67 @@ func (msg *MsgCreateTask) SetMessages(msgs []sdk.Msg) error {
 // GetMessages unpacks the Msgs into sdk.Msg's
 func (msg MsgCreateTask) GetMessages() ([]sdk.Msg, error) {
 	return tx.GetMsgs(msg.Msgs, "MsgCreateTask")
+}
+
+// ValidateBasic for MsgCreateSubscription validates fields
+func (m *MsgCreateSubscription) ValidateBasic() error {
+	if m.Creator == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("creator is required")
+	}
+	if m.ScriptAddress == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("script_address is required")
+	}
+	if m.Function == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("function is required")
+	}
+	if len(m.EventType) == 0 {
+		return sdkerrors.ErrInvalidRequest.Wrap("event_type is required")
+	}
+	if m.TaskGasLimit == 0 {
+		return sdkerrors.ErrInvalidRequest.Wrap("task_gas_limit must be > 0")
+	}
+	if !m.TaskGasFee.IsPositive() {
+		return sdkerrors.ErrInvalidRequest.Wrap("task_gas_fee must be positive")
+	}
+	if len(m.EventType) > 100 {
+		return sdkerrors.ErrInvalidRequest.Wrap("event_type exceeds 100 characters")
+	}
+	if len(m.Filter) > 100 {
+		return sdkerrors.ErrInvalidRequest.Wrap("filter exceeds 100 characters")
+	}
+	if len(m.ScriptAddress) > 100 {
+		return sdkerrors.ErrInvalidRequest.Wrap("script_address exceeds 100 characters")
+	}
+	if len(m.Function) > 100 {
+		return sdkerrors.ErrInvalidRequest.Wrap("function exceeds 100 characters")
+	}
+	if len(m.Args) > 100 {
+		return sdkerrors.ErrInvalidRequest.Wrap("args exceeds 100 characters")
+	}
+	if len(m.Kwargs) > 100 {
+		return sdkerrors.ErrInvalidRequest.Wrap("kwargs exceeds 100 characters")
+	}
+	return nil
+}
+
+// ValidateBasic for MsgDeleteSubscription validates fields
+func (m *MsgDeleteSubscription) ValidateBasic() error {
+	if m.Creator == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("creator is required")
+	}
+	return nil
+}
+
+// ValidateBasic for MsgRenewSubscription validates fields
+func (m *MsgRenewSubscription) ValidateBasic() error {
+	if m.Creator == "" {
+		return sdkerrors.ErrInvalidRequest.Wrap("creator is required")
+	}
+	if len(m.NewExpiry) == 0 {
+		return sdkerrors.ErrInvalidRequest.Wrap("new_expiry is required")
+	}
+	if len(m.NewExpiry) > 100 {
+		return sdkerrors.ErrInvalidRequest.Wrap("new_expiry exceeds 100 characters")
+	}
+	return nil
 }

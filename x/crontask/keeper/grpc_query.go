@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/store/prefix"
 	crontasktypes "dysonprotocol.com/x/crontask/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -97,7 +98,7 @@ func (q queryServer) TasksByStatusTimestamp(ctx context.Context, req *crontaskty
 		return nil
 	})
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errorsmod.Wrapf(err, "failed to get tasks by status timestamp")
 	}
 
 	return &crontasktypes.QueryTasksResponse{Tasks: tasks, Pagination: pageRes}, nil
@@ -126,7 +127,7 @@ func (q queryServer) TasksByStatusGasPrice(ctx context.Context, req *crontasktyp
 		return nil
 	})
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errorsmod.Wrapf(err, "failed to get tasks by status gas price")
 	}
 
 	return &crontasktypes.QueryTasksResponse{Tasks: tasks, Pagination: pageRes}, nil
@@ -154,7 +155,7 @@ func (q queryServer) TasksAll(ctx context.Context, req *crontasktypes.QueryAllTa
 		return nil
 	})
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errorsmod.Wrapf(err, "failed to get tasks all")
 	}
 
 	return &crontasktypes.QueryTasksResponse{Tasks: tasks, Pagination: pageRes}, nil
@@ -164,9 +165,59 @@ func (q queryServer) TasksAll(ctx context.Context, req *crontasktypes.QueryAllTa
 func (q queryServer) Metrics(ctx context.Context, req *crontasktypes.QueryMetricsRequest) (*crontasktypes.QueryMetricsResponse, error) {
 	metrics, err := q.k.GetMetrics(ctx)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errorsmod.Wrapf(err, "failed to get metrics")
 	}
 	return &crontasktypes.QueryMetricsResponse{Metrics: &metrics}, nil
+}
+
+// EventSubscriptionByID returns a subscription by id
+func (q queryServer) SubscriptionByID(ctx context.Context, req *crontasktypes.QuerySubscriptionByIDRequest) (*crontasktypes.QuerySubscriptionByIDResponse, error) {
+	sub, err := q.k.Subscriptions.Get(ctx, req.SubscriptionId)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "subscription not found")
+	}
+	return &crontasktypes.QuerySubscriptionByIDResponse{Subscription: &sub}, nil
+}
+
+// EventSubscriptionsByCreator returns subscriptions filtered by creator
+func (q queryServer) SubscriptionsByCreator(ctx context.Context, req *crontasktypes.QuerySubscriptionsByCreatorRequest) (*crontasktypes.QuerySubscriptionsResponse, error) {
+	// Iterate over all and filter by creator (simple implementation; can index later)
+	store := prefix.NewStore(q.k.kvStore(ctx), []byte{SubscriptionsKey[0]})
+	subs := make([]*crontasktypes.Subscription, 0)
+	pageRes, err := query.Paginate(store, req.Pagination, func(key, _ []byte) error {
+		id := binary.BigEndian.Uint64(key[len(key)-8:])
+		sub, err := q.k.Subscriptions.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+		if sub.Creator == req.Creator {
+			subs = append(subs, &sub)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, errorsmod.Wrapf(err, "failed to get subscriptions by creator")
+	}
+	return &crontasktypes.QuerySubscriptionsResponse{Subscriptions: subs, Pagination: pageRes}, nil
+}
+
+// EventSubscriptionsAll returns all subscriptions
+func (q queryServer) SubscriptionsAll(ctx context.Context, req *crontasktypes.QuerySubscriptionsAllRequest) (*crontasktypes.QuerySubscriptionsResponse, error) {
+	store := prefix.NewStore(q.k.kvStore(ctx), []byte{SubscriptionsKey[0]})
+	subs := make([]*crontasktypes.Subscription, 0)
+	pageRes, err := query.Paginate(store, req.Pagination, func(key, _ []byte) error {
+		id := binary.BigEndian.Uint64(key[len(key)-8:])
+		sub, err := q.k.Subscriptions.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+		subs = append(subs, &sub)
+		return nil
+	})
+	if err != nil {
+		return nil, errorsmod.Wrapf(err, "failed to get subscriptions all")
+	}
+	return &crontasktypes.QuerySubscriptionsResponse{Subscriptions: subs, Pagination: pageRes}, nil
 }
 
 // Params returns the module parameters
@@ -177,7 +228,7 @@ func (q queryServer) Params(ctx context.Context, req *crontasktypes.QueryParamsR
 
 	params, err := q.k.GetParams(ctx)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, errorsmod.Wrapf(err, "failed to get params")
 	}
 
 	return &crontasktypes.QueryParamsResponse{Params: &params}, nil

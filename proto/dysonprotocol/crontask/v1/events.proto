@@ -5,6 +5,7 @@ option go_package = "dysonprotocol.com/x/crontask/types";
 
 import "cosmos/base/v1beta1/coin.proto";
 import "gogoproto/gogo.proto";
+import "dysonprotocol/crontask/v1/subscription.proto";
 
 // EventTaskCreated is emitted when a new task is created
 message EventTaskCreated {
@@ -69,4 +70,22 @@ message EventCrontaskMetrics {
   // sum of task_gas_fee across all PENDING tasks at BeginBlock
   repeated cosmos.base.v1beta1.Coin pending_total_gas_fees = 13
       [ (gogoproto.nullable) = false ];
+}
+
+// Emitted when a new event subscription is created
+message EventSubscriptionCreated {
+  uint64 subscription_id = 1;
+  string creator = 2;
+}
+
+// Emitted when an event subscription is deleted
+message EventSubscriptionDeleted {
+  uint64 subscription_id = 1;
+  string creator = 2;
+}
+
+// Emitted when a subscription is triggered for an event
+message EventSubscriptionTriggered {
+  uint64 subscription_id = 1;
+  string creator = 2;
 }

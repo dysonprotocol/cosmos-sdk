@@ -24,6 +24,18 @@ service Msg {
 
   // UpdateParams updates the parameters of the x/crontask module
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+
+  // CreateSubscription registers a new event-triggered action
+  rpc CreateSubscription(MsgCreateSubscription)
+      returns (MsgCreateSubscriptionResponse);
+
+  // DeleteSubscription removes an existing subscription
+  rpc DeleteSubscription(MsgDeleteSubscription)
+      returns (MsgDeleteSubscriptionResponse);
+
+  // RenewSubscription extends the subscription expiry and recharges the fee
+  rpc RenewSubscription(MsgRenewSubscription)
+      returns (MsgRenewSubscriptionResponse);
 }
 
 // MsgCreateTask defines the message for creating a new task
@@ -95,3 +107,41 @@ message MsgUpdateParams {
 // MsgUpdateParamsResponse defines the response structure for executing a
 // MsgUpdateParams message.
 message MsgUpdateParamsResponse {}
+
+// CreateSubscription
+message MsgCreateSubscription {
+  option (cosmos.msg.v1.signer) = "creator";
+
+  string creator = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string event_type = 2;
+  string filter = 3;
+  string script_address = 4 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string function = 5;
+  string args = 6;
+  string kwargs = 7;
+  uint64 task_gas_limit = 8;
+  cosmos.base.v1beta1.Coin task_gas_fee = 9 [ (gogoproto.nullable) = false ];
+}
+
+message MsgCreateSubscriptionResponse { uint64 subscription_id = 1; }
+
+// DeleteSubscription
+message MsgDeleteSubscription {
+  option (cosmos.msg.v1.signer) = "creator";
+
+  string creator = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  uint64 subscription_id = 2;
+}
+
+message MsgDeleteSubscriptionResponse {}
+
+// RenewSubscription
+message MsgRenewSubscription {
+  option (cosmos.msg.v1.signer) = "creator";
+
+  string creator = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  uint64 subscription_id = 2;
+  string new_expiry = 3;
+}
+
+message MsgRenewSubscriptionResponse {}

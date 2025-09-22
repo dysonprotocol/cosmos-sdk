@@ -1126,6 +1126,12 @@ paths:
                     title: >-
                       Retention period for completed/failed/expired tasks
                       (seconds)
+                  max_expiry_delta:
+                    type: string
+                    format: int64
+                    title: >-
+                      Maximum allowed delta for subscription expiry renewal
+                      (default 7 days)
                 title: Params defines the parameters for the crontask module
             title: >-
               QueryParamsResponse is the response type for the Query/Params RPC
@@ -1155,6 +1161,511 @@ paths:
                       description: >-
                         Must be a valid serialized protocol buffer of the above
                         specified type.
+      tags:
+        - Query
+  /dysonprotocol/crontask/v1/subscriptions:
+    get:
+      summary: SubscriptionsAll returns all subscriptions
+      operationId: dysonprotocol.crontask.v1.QuerySubscriptionsAllRequest
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              subscriptions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subscription_id:
+                      type: string
+                      format: uint64
+                      title: unique id
+                    creator:
+                      type: string
+                      title: creator account that owns this subscription
+                    event_type:
+                      type: string
+                      title: event type to match (e.g., "transfer")
+                    filter:
+                      type: string
+                      title: GJSON filter to match events
+                    script_address:
+                      type: string
+                      title: target script address
+                    function:
+                      type: string
+                      title: function name to invoke
+                    args:
+                      type: string
+                      title: positional args as JSON list string
+                    kwargs:
+                      type: string
+                      title: keyword args as JSON dict string
+                    task_gas_limit:
+                      type: string
+                      format: uint64
+                      title: gas limit for the created crontask
+                    task_gas_fee:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                      title: >-
+                        fee for the created crontask; also charged at
+                        subscription creation/renewal
+                    status:
+                      type: string
+                      title: 'status: enabled|disabled|error|expired'
+                    status_message:
+                      type: string
+                      title: status message
+                    expiry_timestamp:
+                      type: string
+                      format: int64
+                      title: subscription expiry timestamp (unix seconds)
+                    triger_count:
+                      type: string
+                      format: uint64
+                      title: >-
+                        total number of triggers so far (field name per
+                        requirement)
+                    task_scheduled_timestamp:
+                      type: string
+                      format: int64
+                      title: Overrides for created crontasks
+                    task_expiry_timestamp:
+                      type: string
+                      format: int64
+                    task_gas_price:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        DecCoin defines a token with a denomination and a
+                        decimal amount.
+
+
+                        NOTE: The amount field is an Dec which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                  title: >-
+                    Subscription defines an event-triggered action to execute a
+                    script
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dysonprotocol/crontask/v1/subscriptions/creator/{creator}:
+    get:
+      summary: SubscriptionsByCreator returns subscriptions for a creator
+      operationId: dysonprotocol.crontask.v1.QuerySubscriptionsByCreatorRequest
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              subscriptions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subscription_id:
+                      type: string
+                      format: uint64
+                      title: unique id
+                    creator:
+                      type: string
+                      title: creator account that owns this subscription
+                    event_type:
+                      type: string
+                      title: event type to match (e.g., "transfer")
+                    filter:
+                      type: string
+                      title: GJSON filter to match events
+                    script_address:
+                      type: string
+                      title: target script address
+                    function:
+                      type: string
+                      title: function name to invoke
+                    args:
+                      type: string
+                      title: positional args as JSON list string
+                    kwargs:
+                      type: string
+                      title: keyword args as JSON dict string
+                    task_gas_limit:
+                      type: string
+                      format: uint64
+                      title: gas limit for the created crontask
+                    task_gas_fee:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                      title: >-
+                        fee for the created crontask; also charged at
+                        subscription creation/renewal
+                    status:
+                      type: string
+                      title: 'status: enabled|disabled|error|expired'
+                    status_message:
+                      type: string
+                      title: status message
+                    expiry_timestamp:
+                      type: string
+                      format: int64
+                      title: subscription expiry timestamp (unix seconds)
+                    triger_count:
+                      type: string
+                      format: uint64
+                      title: >-
+                        total number of triggers so far (field name per
+                        requirement)
+                    task_scheduled_timestamp:
+                      type: string
+                      format: int64
+                      title: Overrides for created crontasks
+                    task_expiry_timestamp:
+                      type: string
+                      format: int64
+                    task_gas_price:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        DecCoin defines a token with a denomination and a
+                        decimal amount.
+
+
+                        NOTE: The amount field is an Dec which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                  title: >-
+                    Subscription defines an event-triggered action to execute a
+                    script
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: creator
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /dysonprotocol/crontask/v1/subscriptions/{subscription_id}:
+    get:
+      summary: SubscriptionByID returns a subscription by id
+      operationId: dysonprotocol.crontask.v1.QuerySubscriptionByIDRequest
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              subscription:
+                type: object
+                properties:
+                  subscription_id:
+                    type: string
+                    format: uint64
+                    title: unique id
+                  creator:
+                    type: string
+                    title: creator account that owns this subscription
+                  event_type:
+                    type: string
+                    title: event type to match (e.g., "transfer")
+                  filter:
+                    type: string
+                    title: GJSON filter to match events
+                  script_address:
+                    type: string
+                    title: target script address
+                  function:
+                    type: string
+                    title: function name to invoke
+                  args:
+                    type: string
+                    title: positional args as JSON list string
+                  kwargs:
+                    type: string
+                    title: keyword args as JSON dict string
+                  task_gas_limit:
+                    type: string
+                    format: uint64
+                    title: gas limit for the created crontask
+                  task_gas_fee:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                    title: >-
+                      fee for the created crontask; also charged at subscription
+                      creation/renewal
+                  status:
+                    type: string
+                    title: 'status: enabled|disabled|error|expired'
+                  status_message:
+                    type: string
+                    title: status message
+                  expiry_timestamp:
+                    type: string
+                    format: int64
+                    title: subscription expiry timestamp (unix seconds)
+                  triger_count:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total number of triggers so far (field name per
+                      requirement)
+                  task_scheduled_timestamp:
+                    type: string
+                    format: int64
+                    title: Overrides for created crontasks
+                  task_expiry_timestamp:
+                    type: string
+                    format: int64
+                  task_gas_price:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      DecCoin defines a token with a denomination and a decimal
+                      amount.
+
+
+                      NOTE: The amount field is an Dec which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                title: >-
+                  Subscription defines an event-triggered action to execute a
+                  script
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: subscription_id
+          in: path
+          required: true
+          type: string
+          format: uint64
       tags:
         - Query
   /dysonprotocol/crontask/v1/tasks:
@@ -1194,11 +1705,6 @@ paths:
                       format: uint64
                       title: Maximum gas limit for the task execution
                     task_gas_price:
-                      title: >-
-                        Gas price for the task execution which is calculated
-                        automatically
-
-                        from task_gas_fee / task_gas_limit
                       type: object
                       properties:
                         denom:
@@ -1214,6 +1720,11 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
+                      title: >-
+                        Gas price for the task execution which is calculated
+                        automatically
+
+                        from task_gas_fee / task_gas_limit
                     task_gas_fee:
                       type: object
                       properties:
@@ -1418,11 +1929,6 @@ paths:
                       format: uint64
                       title: Maximum gas limit for the task execution
                     task_gas_price:
-                      title: >-
-                        Gas price for the task execution which is calculated
-                        automatically
-
-                        from task_gas_fee / task_gas_limit
                       type: object
                       properties:
                         denom:
@@ -1438,6 +1944,11 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
+                      title: >-
+                        Gas price for the task execution which is calculated
+                        automatically
+
+                        from task_gas_fee / task_gas_limit
                     task_gas_fee:
                       type: object
                       properties:
@@ -1648,11 +2159,6 @@ paths:
                       format: uint64
                       title: Maximum gas limit for the task execution
                     task_gas_price:
-                      title: >-
-                        Gas price for the task execution which is calculated
-                        automatically
-
-                        from task_gas_fee / task_gas_limit
                       type: object
                       properties:
                         denom:
@@ -1668,6 +2174,11 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
+                      title: >-
+                        Gas price for the task execution which is calculated
+                        automatically
+
+                        from task_gas_fee / task_gas_limit
                     task_gas_fee:
                       type: object
                       properties:
@@ -1880,11 +2391,6 @@ paths:
                       format: uint64
                       title: Maximum gas limit for the task execution
                     task_gas_price:
-                      title: >-
-                        Gas price for the task execution which is calculated
-                        automatically
-
-                        from task_gas_fee / task_gas_limit
                       type: object
                       properties:
                         denom:
@@ -1900,6 +2406,11 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
+                      title: >-
+                        Gas price for the task execution which is calculated
+                        automatically
+
+                        from task_gas_fee / task_gas_limit
                     task_gas_fee:
                       type: object
                       properties:
@@ -2106,11 +2617,6 @@ paths:
                     format: uint64
                     title: Maximum gas limit for the task execution
                   task_gas_price:
-                    title: >-
-                      Gas price for the task execution which is calculated
-                      automatically
-
-                      from task_gas_fee / task_gas_limit
                     type: object
                     properties:
                       denom:
@@ -2126,6 +2632,11 @@ paths:
                       custom method
 
                       signatures required by gogoproto.
+                    title: >-
+                      Gas price for the task execution which is calculated
+                      automatically
+
+                      from task_gas_fee / task_gas_limit
                   task_gas_fee:
                     type: object
                     properties:
@@ -17849,6 +18360,86 @@ paths:
           type: string
       tags:
         - Service
+  dysonprotocol.crontask.v1.MsgCreateSubscription:
+    post:
+      summary: CreateSubscription registers a new event-triggered action
+      operationId: dysonprotocol.crontask.v1.MsgCreateSubscription
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              subscription_id:
+                type: string
+                format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              event_type:
+                type: string
+              filter:
+                type: string
+              script_address:
+                type: string
+              function:
+                type: string
+              args:
+                type: string
+              kwargs:
+                type: string
+              task_gas_limit:
+                type: string
+                format: uint64
+              task_gas_fee:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                  amount:
+                    type: string
+                description: >-
+                  Coin defines a token with a denomination and an amount.
+
+
+                  NOTE: The amount field is an Int which implements the custom
+                  method
+
+                  signatures required by gogoproto.
+            title: CreateSubscription
+      tags:
+        - Msg
   dysonprotocol.crontask.v1.MsgCreateTask:
     post:
       summary: CreateTask creates a new scheduled task
@@ -17924,7 +18515,6 @@ paths:
                 format: uint64
                 title: Maximum gas limit for the task execution
               task_gas_fee:
-                title: Gas fee for the task execution
                 type: object
                 properties:
                   denom:
@@ -17939,6 +18529,7 @@ paths:
                   method
 
                   signatures required by gogoproto.
+                title: Gas fee for the task execution
               msgs:
                 type: array
                 items:
@@ -17954,6 +18545,55 @@ paths:
                         specified type.
                 title: Messages to execute as part of the task
             title: MsgCreateTask defines the message for creating a new task
+      tags:
+        - Msg
+  dysonprotocol.crontask.v1.MsgDeleteSubscription:
+    post:
+      summary: DeleteSubscription removes an existing subscription
+      operationId: dysonprotocol.crontask.v1.MsgDeleteSubscription
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              subscription_id:
+                type: string
+                format: uint64
+            title: DeleteSubscription
       tags:
         - Msg
   dysonprotocol.crontask.v1.MsgDeleteTask:
@@ -18006,6 +18646,57 @@ paths:
                 format: uint64
                 title: ID of the task to delete
             title: MsgDeleteTask defines the message for deleting a task
+      tags:
+        - Msg
+  dysonprotocol.crontask.v1.MsgRenewSubscription:
+    post:
+      summary: RenewSubscription extends the subscription expiry and recharges the fee
+      operationId: dysonprotocol.crontask.v1.MsgRenewSubscription
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+              subscription_id:
+                type: string
+                format: uint64
+              new_expiry:
+                type: string
+            title: RenewSubscription
       tags:
         - Msg
   dysonprotocol.crontask.v1.MsgUpdateParams:
@@ -18087,6 +18778,12 @@ paths:
                     title: >-
                       Retention period for completed/failed/expired tasks
                       (seconds)
+                  max_expiry_delta:
+                    type: string
+                    format: int64
+                    title: >-
+                      Maximum allowed delta for subscription expiry renewal
+                      (default 7 days)
                 title: Params defines the parameters for the crontask module
             description: >-
               ---------------------------------------------------------------------------
@@ -29539,6 +30236,10 @@ definitions:
         type: string
         format: int64
         title: Retention period for completed/failed/expired tasks (seconds)
+      max_expiry_delta:
+        type: string
+        format: int64
+        title: Maximum allowed delta for subscription expiry renewal (default 7 days)
     title: Params defines the parameters for the crontask module
   dysonprotocol.crontask.v1.QueryMetricsResponse:
     type: object
@@ -29614,8 +30315,223 @@ definitions:
             type: string
             format: int64
             title: Retention period for completed/failed/expired tasks (seconds)
+          max_expiry_delta:
+            type: string
+            format: int64
+            title: >-
+              Maximum allowed delta for subscription expiry renewal (default 7
+              days)
         title: Params defines the parameters for the crontask module
     title: QueryParamsResponse is the response type for the Query/Params RPC method
+  dysonprotocol.crontask.v1.QuerySubscriptionByIDResponse:
+    type: object
+    properties:
+      subscription:
+        type: object
+        properties:
+          subscription_id:
+            type: string
+            format: uint64
+            title: unique id
+          creator:
+            type: string
+            title: creator account that owns this subscription
+          event_type:
+            type: string
+            title: event type to match (e.g., "transfer")
+          filter:
+            type: string
+            title: GJSON filter to match events
+          script_address:
+            type: string
+            title: target script address
+          function:
+            type: string
+            title: function name to invoke
+          args:
+            type: string
+            title: positional args as JSON list string
+          kwargs:
+            type: string
+            title: keyword args as JSON dict string
+          task_gas_limit:
+            type: string
+            format: uint64
+            title: gas limit for the created crontask
+          task_gas_fee:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+            title: >-
+              fee for the created crontask; also charged at subscription
+              creation/renewal
+          status:
+            type: string
+            title: 'status: enabled|disabled|error|expired'
+          status_message:
+            type: string
+            title: status message
+          expiry_timestamp:
+            type: string
+            format: int64
+            title: subscription expiry timestamp (unix seconds)
+          triger_count:
+            type: string
+            format: uint64
+            title: total number of triggers so far (field name per requirement)
+          task_scheduled_timestamp:
+            type: string
+            format: int64
+            title: Overrides for created crontasks
+          task_expiry_timestamp:
+            type: string
+            format: int64
+          task_gas_price:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              DecCoin defines a token with a denomination and a decimal amount.
+
+
+              NOTE: The amount field is an Dec which implements the custom
+              method
+
+              signatures required by gogoproto.
+        title: Subscription defines an event-triggered action to execute a script
+  dysonprotocol.crontask.v1.QuerySubscriptionsResponse:
+    type: object
+    properties:
+      subscriptions:
+        type: array
+        items:
+          type: object
+          properties:
+            subscription_id:
+              type: string
+              format: uint64
+              title: unique id
+            creator:
+              type: string
+              title: creator account that owns this subscription
+            event_type:
+              type: string
+              title: event type to match (e.g., "transfer")
+            filter:
+              type: string
+              title: GJSON filter to match events
+            script_address:
+              type: string
+              title: target script address
+            function:
+              type: string
+              title: function name to invoke
+            args:
+              type: string
+              title: positional args as JSON list string
+            kwargs:
+              type: string
+              title: keyword args as JSON dict string
+            task_gas_limit:
+              type: string
+              format: uint64
+              title: gas limit for the created crontask
+            task_gas_fee:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+              title: >-
+                fee for the created crontask; also charged at subscription
+                creation/renewal
+            status:
+              type: string
+              title: 'status: enabled|disabled|error|expired'
+            status_message:
+              type: string
+              title: status message
+            expiry_timestamp:
+              type: string
+              format: int64
+              title: subscription expiry timestamp (unix seconds)
+            triger_count:
+              type: string
+              format: uint64
+              title: total number of triggers so far (field name per requirement)
+            task_scheduled_timestamp:
+              type: string
+              format: int64
+              title: Overrides for created crontasks
+            task_expiry_timestamp:
+              type: string
+              format: int64
+            task_gas_price:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                DecCoin defines a token with a denomination and a decimal
+                amount.
+
+
+                NOTE: The amount field is an Dec which implements the custom
+                method
+
+                signatures required by gogoproto.
+          title: Subscription defines an event-triggered action to execute a script
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
   dysonprotocol.crontask.v1.QueryTaskByIDResponse:
     type: object
     properties:
@@ -29642,9 +30558,6 @@ definitions:
             format: uint64
             title: Maximum gas limit for the task execution
           task_gas_price:
-            title: |-
-              Gas price for the task execution which is calculated automatically
-              from task_gas_fee / task_gas_limit
             type: object
             properties:
               denom:
@@ -29659,6 +30572,9 @@ definitions:
               method
 
               signatures required by gogoproto.
+            title: |-
+              Gas price for the task execution which is calculated automatically
+              from task_gas_fee / task_gas_limit
           task_gas_fee:
             type: object
             properties:
@@ -29765,11 +30681,6 @@ definitions:
               format: uint64
               title: Maximum gas limit for the task execution
             task_gas_price:
-              title: >-
-                Gas price for the task execution which is calculated
-                automatically
-
-                from task_gas_fee / task_gas_limit
               type: object
               properties:
                 denom:
@@ -29785,6 +30696,11 @@ definitions:
                 method
 
                 signatures required by gogoproto.
+              title: >-
+                Gas price for the task execution which is calculated
+                automatically
+
+                from task_gas_fee / task_gas_limit
             task_gas_fee:
               type: object
               properties:
@@ -29894,6 +30810,87 @@ definitions:
     title: |-
       QueryTasksResponse is the response type for task queries with multiple
       results
+  dysonprotocol.crontask.v1.Subscription:
+    type: object
+    properties:
+      subscription_id:
+        type: string
+        format: uint64
+        title: unique id
+      creator:
+        type: string
+        title: creator account that owns this subscription
+      event_type:
+        type: string
+        title: event type to match (e.g., "transfer")
+      filter:
+        type: string
+        title: GJSON filter to match events
+      script_address:
+        type: string
+        title: target script address
+      function:
+        type: string
+        title: function name to invoke
+      args:
+        type: string
+        title: positional args as JSON list string
+      kwargs:
+        type: string
+        title: keyword args as JSON dict string
+      task_gas_limit:
+        type: string
+        format: uint64
+        title: gas limit for the created crontask
+      task_gas_fee:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+        title: >-
+          fee for the created crontask; also charged at subscription
+          creation/renewal
+      status:
+        type: string
+        title: 'status: enabled|disabled|error|expired'
+      status_message:
+        type: string
+        title: status message
+      expiry_timestamp:
+        type: string
+        format: int64
+        title: subscription expiry timestamp (unix seconds)
+      triger_count:
+        type: string
+        format: uint64
+        title: total number of triggers so far (field name per requirement)
+      task_scheduled_timestamp:
+        type: string
+        format: int64
+        title: Overrides for created crontasks
+      task_expiry_timestamp:
+        type: string
+        format: int64
+      task_gas_price:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          DecCoin defines a token with a denomination and a decimal amount.
+
+          NOTE: The amount field is an Dec which implements the custom method
+          signatures required by gogoproto.
+    title: Subscription defines an event-triggered action to execute a script
   dysonprotocol.crontask.v1.Task:
     type: object
     properties:
@@ -29917,9 +30914,6 @@ definitions:
         format: uint64
         title: Maximum gas limit for the task execution
       task_gas_price:
-        title: |-
-          Gas price for the task execution which is calculated automatically
-          from task_gas_fee / task_gas_limit
         type: object
         properties:
           denom:
@@ -29931,6 +30925,9 @@ definitions:
 
           NOTE: The amount field is an Dec which implements the custom method
           signatures required by gogoproto.
+        title: |-
+          Gas price for the task execution which is calculated automatically
+          from task_gas_fee / task_gas_limit
       task_gas_fee:
         type: object
         properties:
@@ -47642,6 +48639,45 @@ definitions:
       index:
         type: boolean
     description: EventAttribute is a single key-value pair, associated with an event.
+  dysonprotocol.crontask.v1.MsgCreateSubscription:
+    type: object
+    properties:
+      creator:
+        type: string
+      event_type:
+        type: string
+      filter:
+        type: string
+      script_address:
+        type: string
+      function:
+        type: string
+      args:
+        type: string
+      kwargs:
+        type: string
+      task_gas_limit:
+        type: string
+        format: uint64
+      task_gas_fee:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+    title: CreateSubscription
+  dysonprotocol.crontask.v1.MsgCreateSubscriptionResponse:
+    type: object
+    properties:
+      subscription_id:
+        type: string
+        format: uint64
   dysonprotocol.crontask.v1.MsgCreateTask:
     type: object
     properties:
@@ -47671,7 +48707,6 @@ definitions:
         format: uint64
         title: Maximum gas limit for the task execution
       task_gas_fee:
-        title: Gas fee for the task execution
         type: object
         properties:
           denom:
@@ -47683,6 +48718,7 @@ definitions:
 
           NOTE: The amount field is an Int which implements the custom method
           signatures required by gogoproto.
+        title: Gas fee for the task execution
       msgs:
         type: array
         items:
@@ -47706,6 +48742,17 @@ definitions:
         format: uint64
         title: The ID of the created task
     title: MsgCreateTaskResponse defines the response for creating a new task
+  dysonprotocol.crontask.v1.MsgDeleteSubscription:
+    type: object
+    properties:
+      creator:
+        type: string
+      subscription_id:
+        type: string
+        format: uint64
+    title: DeleteSubscription
+  dysonprotocol.crontask.v1.MsgDeleteSubscriptionResponse:
+    type: object
   dysonprotocol.crontask.v1.MsgDeleteTask:
     type: object
     properties:
@@ -47720,6 +48767,19 @@ definitions:
   dysonprotocol.crontask.v1.MsgDeleteTaskResponse:
     type: object
     title: MsgDeleteTaskResponse defines the response for deleting a task
+  dysonprotocol.crontask.v1.MsgRenewSubscription:
+    type: object
+    properties:
+      creator:
+        type: string
+      subscription_id:
+        type: string
+        format: uint64
+      new_expiry:
+        type: string
+    title: RenewSubscription
+  dysonprotocol.crontask.v1.MsgRenewSubscriptionResponse:
+    type: object
   dysonprotocol.crontask.v1.MsgUpdateParams:
     type: object
     properties:
@@ -47754,6 +48814,12 @@ definitions:
             type: string
             format: int64
             title: Retention period for completed/failed/expired tasks (seconds)
+          max_expiry_delta:
+            type: string
+            format: int64
+            title: >-
+              Maximum allowed delta for subscription expiry renewal (default 7
+              days)
         title: Params defines the parameters for the crontask module
     description: >-
       ---------------------------------------------------------------------------

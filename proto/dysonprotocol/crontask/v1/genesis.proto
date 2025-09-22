@@ -15,4 +15,7 @@ message GenesisState {
 
   // Module parameters
   Params params = 3;
+
+  // The sequence for the next subscription ID
+  uint64 next_subscription_id = 4;
 }

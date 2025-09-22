@@ -27,8 +27,25 @@ func (k Keeper) InitGenesis(ctx context.Context, genState *crontasktypes.Genesis
 		return err
 	}
 
-	// Set the next task ID
-	if err := k.NextTaskID.Set(ctx, genState.NextTaskId); err != nil {
+	// Determine the next task ID. If not provided (0) or stale (<= max task id),
+	// default to max(existing tasks)+1 (or 1 if no tasks).
+	var maxTaskID uint64
+	for _, task := range genState.Tasks {
+		if task.TaskId > maxTaskID {
+			maxTaskID = task.TaskId
+		}
+	}
+	nextTaskIDToSet := genState.NextTaskId
+	if nextTaskIDToSet == 0 {
+		if maxTaskID == 0 {
+			nextTaskIDToSet = 1
+		} else {
+			nextTaskIDToSet = maxTaskID + 1
+		}
+	} else if nextTaskIDToSet <= maxTaskID {
+		nextTaskIDToSet = maxTaskID + 1
+	}
+	if err := k.NextTaskID.Set(ctx, nextTaskIDToSet); err != nil {
 		return err
 	}
 
@@ -37,6 +54,15 @@ func (k Keeper) InitGenesis(ctx context.Context, genState *crontasktypes.Genesis
 		if err := k.Tasks.Set(ctx, task.TaskId, *task); err != nil {
 			return err
 		}
+	}
+
+	// Initialize subscription ID sequence. If not provided (0), default to 1.
+	nextSubID := genState.NextSubscriptionId
+	if nextSubID == 0 {
+		nextSubID = 1
+	}
+	if err := k.NextSubscriptionID.Set(ctx, nextSubID); err != nil {
+		return err
 	}
 
 	return nil
@@ -56,6 +82,12 @@ func (k Keeper) ExportGenesis(ctx context.Context) (*crontasktypes.GenesisState,
 		return nil, err // Direct error propagation
 	}
 
+	// Get next subscription ID
+	nextSubscriptionID, err := k.NextSubscriptionID.Peek(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// Get all tasks
 	var tasks []*crontasktypes.Task
 	if err := k.Tasks.Walk(ctx, nil, func(taskID uint64, task crontasktypes.Task) (bool, error) {
@@ -67,8 +99,9 @@ func (k Keeper) ExportGenesis(ctx context.Context) (*crontasktypes.GenesisState,
 	}
 
 	return &crontasktypes.GenesisState{
-		Tasks:      tasks,
-		NextTaskId: nextTaskID,
-		Params:     &params,
+		Tasks:              tasks,
+		NextTaskId:         nextTaskID,
+		Params:             &params,
+		NextSubscriptionId: nextSubscriptionID,
 	}, nil
 }

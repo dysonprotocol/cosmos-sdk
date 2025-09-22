@@ -106,6 +106,9 @@
       {"type":"file","name":"cosmos.upgrade.v1beta1.UpgradedConsensusState.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.Metrics.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.Params.json"},
+      {"type":"file","name":"dysonprotocol.crontask.v1.SubscriptionByID.json"},
+      {"type":"file","name":"dysonprotocol.crontask.v1.SubscriptionsAll.json"},
+      {"type":"file","name":"dysonprotocol.crontask.v1.SubscriptionsByCreator.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.TaskByID.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.TasksAll.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.TasksByAddress.json"},
@@ -272,8 +275,11 @@
       {"type":"file","name":"cosmos.vesting.v1beta1.CreatePeriodicVestingAccount.json"},
       {"type":"file","name":"cosmos.vesting.v1beta1.CreatePermanentLockedAccount.json"},
       {"type":"file","name":"cosmos.vesting.v1beta1.CreateVestingAccount.json"},
+      {"type":"file","name":"dysonprotocol.crontask.v1.CreateSubscription.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.CreateTask.json"},
+      {"type":"file","name":"dysonprotocol.crontask.v1.DeleteSubscription.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.DeleteTask.json"},
+      {"type":"file","name":"dysonprotocol.crontask.v1.RenewSubscription.json"},
       {"type":"file","name":"dysonprotocol.crontask.v1.UpdateParams.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.AcceptBid.json"},
       {"type":"file","name":"dysonprotocol.nameservice.v1.BurnCoins.json"},
@@ -368,5 +374,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":3,"files":362}
+  {"type":"report","directories":3,"files":368}
 ]

@@ -1,0 +1,36 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgRenewSubscription",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgRenewSubscription": {
+                "properties": {
+                    "creator": {
+                        "type": "string"
+                    },
+                    "subscription_id": {
+                        "type": "string"
+                    },
+                    "new_expiry": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Renew Subscription",
+                "description": "RenewSubscription"
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgRenewSubscriptionResponse",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgRenewSubscriptionResponse": {
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Renew Subscription Response"
+            }
+        }
+    }
+}

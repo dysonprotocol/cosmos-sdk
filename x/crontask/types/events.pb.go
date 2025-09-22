@@ -525,6 +525,165 @@ func (m *EventCrontaskMetrics) GetPendingTotalGasFees() []types.Coin {
 	return nil
 }
 
+// Emitted when a new event subscription is created
+type EventSubscriptionCreated struct {
+	SubscriptionId uint64 `protobuf:"varint,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	Creator        string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+}
+
+func (m *EventSubscriptionCreated) Reset()         { *m = EventSubscriptionCreated{} }
+func (m *EventSubscriptionCreated) String() string { return proto.CompactTextString(m) }
+func (*EventSubscriptionCreated) ProtoMessage()    {}
+func (*EventSubscriptionCreated) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2af129a4f67b74ad, []int{8}
+}
+func (m *EventSubscriptionCreated) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EventSubscriptionCreated) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EventSubscriptionCreated.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EventSubscriptionCreated) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventSubscriptionCreated.Merge(m, src)
+}
+func (m *EventSubscriptionCreated) XXX_Size() int {
+	return m.Size()
+}
+func (m *EventSubscriptionCreated) XXX_DiscardUnknown() {
+	xxx_messageInfo_EventSubscriptionCreated.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EventSubscriptionCreated proto.InternalMessageInfo
+
+func (m *EventSubscriptionCreated) GetSubscriptionId() uint64 {
+	if m != nil {
+		return m.SubscriptionId
+	}
+	return 0
+}
+
+func (m *EventSubscriptionCreated) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+// Emitted when an event subscription is deleted
+type EventSubscriptionDeleted struct {
+	SubscriptionId uint64 `protobuf:"varint,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	Creator        string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+}
+
+func (m *EventSubscriptionDeleted) Reset()         { *m = EventSubscriptionDeleted{} }
+func (m *EventSubscriptionDeleted) String() string { return proto.CompactTextString(m) }
+func (*EventSubscriptionDeleted) ProtoMessage()    {}
+func (*EventSubscriptionDeleted) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2af129a4f67b74ad, []int{9}
+}
+func (m *EventSubscriptionDeleted) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EventSubscriptionDeleted) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EventSubscriptionDeleted.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EventSubscriptionDeleted) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventSubscriptionDeleted.Merge(m, src)
+}
+func (m *EventSubscriptionDeleted) XXX_Size() int {
+	return m.Size()
+}
+func (m *EventSubscriptionDeleted) XXX_DiscardUnknown() {
+	xxx_messageInfo_EventSubscriptionDeleted.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EventSubscriptionDeleted proto.InternalMessageInfo
+
+func (m *EventSubscriptionDeleted) GetSubscriptionId() uint64 {
+	if m != nil {
+		return m.SubscriptionId
+	}
+	return 0
+}
+
+func (m *EventSubscriptionDeleted) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+// Emitted when a subscription is triggered for an event
+type EventSubscriptionTriggered struct {
+	SubscriptionId uint64 `protobuf:"varint,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	Creator        string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+}
+
+func (m *EventSubscriptionTriggered) Reset()         { *m = EventSubscriptionTriggered{} }
+func (m *EventSubscriptionTriggered) String() string { return proto.CompactTextString(m) }
+func (*EventSubscriptionTriggered) ProtoMessage()    {}
+func (*EventSubscriptionTriggered) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2af129a4f67b74ad, []int{10}
+}
+func (m *EventSubscriptionTriggered) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EventSubscriptionTriggered) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EventSubscriptionTriggered.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EventSubscriptionTriggered) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventSubscriptionTriggered.Merge(m, src)
+}
+func (m *EventSubscriptionTriggered) XXX_Size() int {
+	return m.Size()
+}
+func (m *EventSubscriptionTriggered) XXX_DiscardUnknown() {
+	xxx_messageInfo_EventSubscriptionTriggered.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EventSubscriptionTriggered proto.InternalMessageInfo
+
+func (m *EventSubscriptionTriggered) GetSubscriptionId() uint64 {
+	if m != nil {
+		return m.SubscriptionId
+	}
+	return 0
+}
+
+func (m *EventSubscriptionTriggered) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*EventTaskCreated)(nil), "dysonprotocol.crontask.v1.EventTaskCreated")
 	proto.RegisterType((*EventTaskPending)(nil), "dysonprotocol.crontask.v1.EventTaskPending")
@@ -534,6 +693,9 @@ func init() {
 	proto.RegisterType((*EventTaskFailed)(nil), "dysonprotocol.crontask.v1.EventTaskFailed")
 	proto.RegisterType((*EventTaskPurged)(nil), "dysonprotocol.crontask.v1.EventTaskPurged")
 	proto.RegisterType((*EventCrontaskMetrics)(nil), "dysonprotocol.crontask.v1.EventCrontaskMetrics")
+	proto.RegisterType((*EventSubscriptionCreated)(nil), "dysonprotocol.crontask.v1.EventSubscriptionCreated")
+	proto.RegisterType((*EventSubscriptionDeleted)(nil), "dysonprotocol.crontask.v1.EventSubscriptionDeleted")
+	proto.RegisterType((*EventSubscriptionTriggered)(nil), "dysonprotocol.crontask.v1.EventSubscriptionTriggered")
 }
 
 func init() {
@@ -541,40 +703,44 @@ func init() {
 }
 
 var fileDescriptor_2af129a4f67b74ad = []byte{
-	// 522 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x54, 0xc1, 0x6e, 0xd3, 0x40,
-	0x10, 0x8d, 0x9b, 0xd0, 0xc2, 0x16, 0x44, 0xbb, 0x0d, 0xc5, 0x2d, 0x92, 0x89, 0x72, 0x40, 0x3e,
-	0x20, 0x5b, 0x29, 0x57, 0xb8, 0x34, 0xa4, 0x15, 0x07, 0xd4, 0xca, 0xe4, 0x54, 0x21, 0x59, 0x9b,
-	0xf5, 0x60, 0xac, 0xba, 0xde, 0xb0, 0xb3, 0x8e, 0xd2, 0xbf, 0xe0, 0x83, 0xf8, 0x80, 0x1e, 0x7b,
-	0xe4, 0x84, 0x50, 0xf2, 0x23, 0x68, 0x6d, 0x6f, 0x12, 0xe7, 0x80, 0x50, 0xb8, 0xed, 0xe4, 0xbd,
-	0x79, 0xfb, 0xe6, 0x65, 0xbc, 0xe4, 0x55, 0x74, 0x8b, 0x22, 0x1b, 0x4b, 0xa1, 0x04, 0x17, 0xa9,
-	0xcf, 0xa5, 0xc8, 0x14, 0xc3, 0x6b, 0x7f, 0xd2, 0xf3, 0x61, 0x02, 0x99, 0x42, 0xaf, 0xc0, 0xe8,
-	0x51, 0x8d, 0xe7, 0x19, 0x9e, 0x37, 0xe9, 0x1d, 0x3b, 0x5c, 0xe0, 0x8d, 0x40, 0x7f, 0xc4, 0x10,
-	0xfc, 0x49, 0x6f, 0x04, 0x8a, 0xf5, 0x7c, 0x2e, 0x92, 0xac, 0x6c, 0x3d, 0x6e, 0xc7, 0x22, 0x16,
-	0xc5, 0xd1, 0xd7, 0xa7, 0xf2, 0xd7, 0xee, 0x80, 0xec, 0x0d, 0xf4, 0x05, 0x43, 0x86, 0xd7, 0x7d,
-	0x09, 0x4c, 0x41, 0x44, 0x9f, 0x93, 0x1d, 0x2d, 0x1a, 0x26, 0x91, 0x6d, 0x75, 0x2c, 0xb7, 0x15,
-	0x6c, 0xeb, 0xf2, 0x43, 0x44, 0x6d, 0xb2, 0xc3, 0x35, 0x47, 0x48, 0x7b, 0xab, 0x63, 0xb9, 0x8f,
-	0x02, 0x53, 0xd6, 0x64, 0x2e, 0x21, 0x8b, 0x92, 0x2c, 0xfe, 0x5f, 0x99, 0xf7, 0x90, 0xc2, 0x86,
-	0x6e, 0xa6, 0x64, 0x7f, 0x21, 0x33, 0x98, 0x02, 0xcf, 0x37, 0xd3, 0xa1, 0x87, 0x64, 0x1b, 0x15,
-	0x53, 0x39, 0xda, 0xcd, 0x02, 0xa8, 0x2a, 0xdd, 0x81, 0x39, 0xe7, 0x80, 0x68, 0xb7, 0x3a, 0x96,
-	0xfb, 0x30, 0x30, 0x65, 0x6d, 0x80, 0xc1, 0x74, 0x9c, 0xc8, 0xcd, 0x06, 0xb8, 0x22, 0x4f, 0x17,
-	0x32, 0x67, 0x2c, 0x49, 0x37, 0xb3, 0xdf, 0x26, 0x0f, 0x40, 0x4a, 0x21, 0x2b, 0xf7, 0x65, 0xd1,
-	0xfd, 0xbc, 0xa2, 0x7d, 0x99, 0xcb, 0xf8, 0x6f, 0xda, 0xcb, 0x00, 0xb6, 0xd6, 0x03, 0x30, 0x77,
-	0x36, 0xeb, 0xce, 0x7f, 0x34, 0x49, 0xbb, 0x90, 0xef, 0x57, 0xab, 0xf9, 0x11, 0x94, 0x4c, 0x38,
-	0xd2, 0xd7, 0x84, 0x42, 0xf5, 0x57, 0x84, 0x4a, 0x28, 0x96, 0x86, 0x31, 0xc3, 0xea, 0xba, 0x3d,
-	0x83, 0x0c, 0x35, 0x70, 0xce, 0x90, 0x5e, 0x90, 0x83, 0x35, 0xf6, 0x17, 0x00, 0xed, 0xa2, 0xe9,
-	0xee, 0x9e, 0x1c, 0x79, 0xe5, 0xaa, 0x7b, 0x7a, 0xd5, 0xbd, 0x6a, 0xd5, 0xbd, 0xbe, 0x48, 0xb2,
-	0xd3, 0xd6, 0xdd, 0xaf, 0x97, 0x8d, 0x60, 0xbf, 0xa6, 0x77, 0x06, 0x80, 0xd4, 0x5b, 0x15, 0xd4,
-	0xb3, 0x72, 0x91, 0x67, 0xaa, 0x70, 0xdf, 0x5a, 0xe1, 0xeb, 0xaf, 0x40, 0x03, 0xda, 0xee, 0xb8,
-	0xdc, 0xe3, 0x55, 0x3a, 0x29, 0xed, 0x56, 0xc8, 0x92, 0x7d, 0x42, 0x9e, 0x19, 0x76, 0xcc, 0x30,
-	0x94, 0xf0, 0x2d, 0x07, 0x54, 0x10, 0xd9, 0xbb, 0x45, 0xc3, 0x41, 0x05, 0x9e, 0x33, 0x0c, 0x0c,
-	0x44, 0xdf, 0x91, 0x17, 0xa6, 0x47, 0xa4, 0x11, 0xa0, 0x0a, 0x91, 0x7f, 0x85, 0x28, 0x4f, 0xb5,
-	0x43, 0xb4, 0x1f, 0x77, 0x2c, 0xb7, 0x19, 0xd8, 0x15, 0xe5, 0xa2, 0x60, 0x7c, 0x32, 0x84, 0x21,
-	0xd2, 0x21, 0x39, 0x5c, 0x18, 0x34, 0x71, 0x96, 0x21, 0x3d, 0xf9, 0xb7, 0x90, 0x8c, 0x29, 0x93,
-	0xb9, 0x8e, 0xe9, 0xf4, 0xed, 0xdd, 0xcc, 0xb1, 0xee, 0x67, 0x8e, 0xf5, 0x7b, 0xe6, 0x58, 0xdf,
-	0xe7, 0x4e, 0xe3, 0x7e, 0xee, 0x34, 0x7e, 0xce, 0x9d, 0xc6, 0x55, 0x77, 0xed, 0xe5, 0x11, 0x37,
-	0xfe, 0x74, 0xf9, 0x4e, 0xa9, 0xdb, 0x31, 0xe0, 0x68, 0xbb, 0x80, 0xdf, 0xfc, 0x09, 0x00, 0x00,
-	0xff, 0xff, 0x50, 0x72, 0xb4, 0x00, 0xce, 0x04, 0x00, 0x00,
+	// 581 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xc1, 0x6e, 0xd3, 0x40,
+	0x10, 0x8d, 0x9b, 0xd0, 0xc2, 0x16, 0x68, 0xeb, 0x96, 0xe2, 0x06, 0xc9, 0x44, 0x39, 0x40, 0x0e,
+	0x95, 0xad, 0x94, 0x2b, 0x5c, 0x1a, 0xd2, 0x8a, 0x03, 0x6a, 0xe5, 0xe6, 0x54, 0x81, 0xac, 0xcd,
+	0x7a, 0x30, 0x56, 0x5d, 0x6f, 0xd8, 0x59, 0x47, 0xe9, 0x5f, 0xf0, 0x41, 0x7c, 0x40, 0x8f, 0x3d,
+	0x72, 0x42, 0x28, 0xf9, 0x11, 0xb4, 0xb6, 0x37, 0x71, 0x02, 0x54, 0x28, 0xf4, 0xe6, 0xf1, 0x7b,
+	0xf3, 0xf6, 0xed, 0xec, 0xcc, 0x90, 0x17, 0xc1, 0x15, 0xf2, 0x64, 0x20, 0xb8, 0xe4, 0x8c, 0xc7,
+	0x2e, 0x13, 0x3c, 0x91, 0x14, 0x2f, 0xdc, 0x61, 0xdb, 0x85, 0x21, 0x24, 0x12, 0x9d, 0x0c, 0x33,
+	0xf7, 0xe6, 0x78, 0x8e, 0xe6, 0x39, 0xc3, 0x76, 0xdd, 0x66, 0x1c, 0x2f, 0x39, 0xba, 0x7d, 0x8a,
+	0xe0, 0x0e, 0xdb, 0x7d, 0x90, 0xb4, 0xed, 0x32, 0x1e, 0x25, 0x79, 0x6a, 0x7d, 0x27, 0xe4, 0x21,
+	0xcf, 0x3e, 0x5d, 0xf5, 0x55, 0xfc, 0xdd, 0xff, 0xfb, 0xc1, 0x98, 0xf6, 0x91, 0x89, 0x68, 0x20,
+	0x23, 0x5e, 0x68, 0x34, 0xbb, 0x64, 0xb3, 0xab, 0xec, 0xf4, 0x28, 0x5e, 0x74, 0x04, 0x50, 0x09,
+	0x81, 0xf9, 0x94, 0xac, 0xa9, 0x0c, 0x3f, 0x0a, 0x2c, 0xa3, 0x61, 0xb4, 0x6a, 0xde, 0xaa, 0x0a,
+	0xdf, 0x05, 0xa6, 0x45, 0xd6, 0x98, 0xe2, 0x70, 0x61, 0xad, 0x34, 0x8c, 0xd6, 0x03, 0x4f, 0x87,
+	0x73, 0x32, 0xa7, 0x90, 0x04, 0x51, 0x12, 0xfe, 0xaf, 0xcc, 0x5b, 0x88, 0x61, 0x49, 0x37, 0x23,
+	0xb2, 0x35, 0x95, 0xe9, 0x8e, 0x80, 0xa5, 0xcb, 0xe9, 0x98, 0xbb, 0x64, 0x15, 0x25, 0x95, 0x29,
+	0x5a, 0xd5, 0x0c, 0x28, 0x22, 0x95, 0x81, 0x29, 0x63, 0x80, 0x68, 0xd5, 0x1a, 0x46, 0xeb, 0xbe,
+	0xa7, 0xc3, 0xb9, 0x0b, 0x74, 0x47, 0x83, 0x48, 0x2c, 0x77, 0x81, 0x73, 0xb2, 0x31, 0x95, 0x39,
+	0xa2, 0x51, 0xbc, 0x9c, 0xfd, 0x1d, 0x72, 0x0f, 0x84, 0xe0, 0xa2, 0x70, 0x9f, 0x07, 0xcd, 0x0f,
+	0x25, 0xed, 0xd3, 0x54, 0x84, 0xb7, 0x69, 0xcf, 0x0a, 0xb0, 0xb2, 0x58, 0x00, 0x7d, 0x66, 0x75,
+	0xde, 0xf9, 0xb7, 0x2a, 0xd9, 0xc9, 0xe4, 0x3b, 0x45, 0xdf, 0xbd, 0x07, 0x29, 0x22, 0x86, 0xe6,
+	0x3e, 0x31, 0xa1, 0x78, 0x0a, 0x5f, 0x72, 0x49, 0x63, 0x3f, 0xa4, 0x58, 0x1c, 0xb7, 0xa9, 0x91,
+	0x9e, 0x02, 0x8e, 0x29, 0x9a, 0x27, 0x64, 0x7b, 0x81, 0xfd, 0x09, 0x40, 0xb9, 0xa8, 0xb6, 0xd6,
+	0x0f, 0xf6, 0x9c, 0x7c, 0x30, 0x1c, 0x35, 0x18, 0x4e, 0x31, 0x18, 0x4e, 0x87, 0x47, 0xc9, 0x61,
+	0xed, 0xfa, 0xc7, 0xf3, 0x8a, 0xb7, 0x35, 0xa7, 0x77, 0x04, 0x80, 0xa6, 0x53, 0x16, 0x54, 0x77,
+	0x65, 0x3c, 0x4d, 0x64, 0xe6, 0xbe, 0x56, 0xe2, 0xab, 0x29, 0x50, 0x80, 0xb2, 0x3b, 0xc8, 0xfb,
+	0xb8, 0x4c, 0x27, 0xb9, 0xdd, 0x02, 0x99, 0xb1, 0x0f, 0xc8, 0x13, 0xcd, 0x0e, 0x29, 0xfa, 0x02,
+	0xbe, 0xa4, 0x80, 0x12, 0x02, 0x6b, 0x3d, 0x4b, 0xd8, 0x2e, 0xc0, 0x63, 0x8a, 0x9e, 0x86, 0xcc,
+	0x37, 0xe4, 0x99, 0xce, 0xe1, 0x71, 0x00, 0x28, 0x7d, 0x64, 0x9f, 0x21, 0x48, 0x63, 0xe5, 0x10,
+	0xad, 0x87, 0x0d, 0xa3, 0x55, 0xf5, 0xac, 0x82, 0x72, 0x92, 0x31, 0xce, 0x34, 0xa1, 0x87, 0x66,
+	0x8f, 0xec, 0x4e, 0x0d, 0xea, 0x72, 0xe6, 0x45, 0x7a, 0xf4, 0x6f, 0x45, 0xd2, 0xa6, 0x74, 0xcd,
+	0x55, 0x99, 0x9a, 0x1f, 0x89, 0x95, 0xbd, 0xde, 0x59, 0x69, 0x53, 0xe8, 0xb5, 0xf0, 0x92, 0x6c,
+	0x94, 0x17, 0xc8, 0xac, 0x5b, 0x1e, 0x97, 0x7f, 0xdf, 0xda, 0xd7, 0x7f, 0x92, 0xd7, 0x73, 0x7e,
+	0x07, 0xf2, 0x3e, 0xa9, 0xff, 0x26, 0xdf, 0x13, 0x51, 0x18, 0x82, 0xb8, 0x93, 0x03, 0x0e, 0x5f,
+	0x5f, 0x8f, 0x6d, 0xe3, 0x66, 0x6c, 0x1b, 0x3f, 0xc7, 0xb6, 0xf1, 0x75, 0x62, 0x57, 0x6e, 0x26,
+	0x76, 0xe5, 0xfb, 0xc4, 0xae, 0x9c, 0x37, 0x17, 0xd6, 0x38, 0xbf, 0x74, 0x47, 0xb3, 0xdd, 0x2b,
+	0xaf, 0x06, 0x80, 0xfd, 0xd5, 0x0c, 0x7e, 0xf5, 0x2b, 0x00, 0x00, 0xff, 0xff, 0x02, 0x16, 0x26,
+	0x38, 0x1b, 0x06, 0x00, 0x00,
 }
 
 func (m *EventTaskCreated) Marshal() (dAtA []byte, err error) {
@@ -929,6 +1095,111 @@ func (m *EventCrontaskMetrics) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *EventSubscriptionCreated) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EventSubscriptionCreated) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EventSubscriptionCreated) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintEvents(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.SubscriptionId != 0 {
+		i = encodeVarintEvents(dAtA, i, uint64(m.SubscriptionId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *EventSubscriptionDeleted) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EventSubscriptionDeleted) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EventSubscriptionDeleted) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintEvents(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.SubscriptionId != 0 {
+		i = encodeVarintEvents(dAtA, i, uint64(m.SubscriptionId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *EventSubscriptionTriggered) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EventSubscriptionTriggered) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EventSubscriptionTriggered) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintEvents(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.SubscriptionId != 0 {
+		i = encodeVarintEvents(dAtA, i, uint64(m.SubscriptionId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintEvents(dAtA []byte, offset int, v uint64) int {
 	offset -= sovEvents(v)
 	base := offset
@@ -1099,6 +1370,54 @@ func (m *EventCrontaskMetrics) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovEvents(uint64(l))
 		}
+	}
+	return n
+}
+
+func (m *EventSubscriptionCreated) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubscriptionId != 0 {
+		n += 1 + sovEvents(uint64(m.SubscriptionId))
+	}
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovEvents(uint64(l))
+	}
+	return n
+}
+
+func (m *EventSubscriptionDeleted) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubscriptionId != 0 {
+		n += 1 + sovEvents(uint64(m.SubscriptionId))
+	}
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovEvents(uint64(l))
+	}
+	return n
+}
+
+func (m *EventSubscriptionTriggered) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SubscriptionId != 0 {
+		n += 1 + sovEvents(uint64(m.SubscriptionId))
+	}
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovEvents(uint64(l))
 	}
 	return n
 }
@@ -2123,6 +2442,309 @@ func (m *EventCrontaskMetrics) Unmarshal(dAtA []byte) error {
 			if err := m.PendingTotalGasFees[len(m.PendingTotalGasFees)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipEvents(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthEvents
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EventSubscriptionCreated) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowEvents
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EventSubscriptionCreated: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EventSubscriptionCreated: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubscriptionId", wireType)
+			}
+			m.SubscriptionId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubscriptionId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvents
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvents
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipEvents(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthEvents
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EventSubscriptionDeleted) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowEvents
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EventSubscriptionDeleted: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EventSubscriptionDeleted: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubscriptionId", wireType)
+			}
+			m.SubscriptionId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubscriptionId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvents
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvents
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipEvents(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthEvents
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EventSubscriptionTriggered) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowEvents
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EventSubscriptionTriggered: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EventSubscriptionTriggered: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubscriptionId", wireType)
+			}
+			m.SubscriptionId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SubscriptionId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvents
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvents
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvents
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

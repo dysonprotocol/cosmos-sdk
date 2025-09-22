@@ -30,6 +30,7 @@ var (
 	_ appmodule.AppModule       = AppModule{}
 	_ appmodule.HasBeginBlocker = AppModule{}
 	_ appmodule.HasGenesis      = AppModule{}
+	_ appmodule.HasEndBlocker   = AppModule{}
 )
 
 // AppModuleBasic defines the basic application module used by the crontask module.
@@ -136,6 +137,11 @@ func (am AppModule) WeightedOperations(_ module.SimulationState) []simtypes.Weig
 // BeginBlock implements the appmodule.HasBeginBlocker interface
 func (am AppModule) BeginBlock(ctx context.Context) error {
 	return am.keeper.BeginBlocker(sdk.UnwrapSDKContext(ctx))
+}
+
+// EndBlock implements the appmodule.HasEndBlocker interface
+func (am AppModule) EndBlock(ctx context.Context) error {
+	return am.keeper.EndBlocker(sdk.UnwrapSDKContext(ctx))
 }
 
 // ValidateGenesis validates the genesis state for the crontask module.

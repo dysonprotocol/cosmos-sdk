@@ -20,6 +20,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreateTask{},
 		&MsgDeleteTask{},
 		&MsgUpdateParams{},
+		&MsgCreateSubscription{},
+		&MsgDeleteSubscription{},
+		&MsgRenewSubscription{},
 	)
 
 	// Register UnpackInterfacesMessage implementations

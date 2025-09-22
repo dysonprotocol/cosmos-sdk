@@ -12,7 +12,6 @@ import (
 	feegrant "cosmossdk.io/x/feegrant"
 	nft "dysonprotocol.com/x/nft"
 	authz "github.com/cosmos/cosmos-sdk/x/authz"
-	grouptypes "github.com/cosmos/cosmos-sdk/x/group"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govv1beta "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
@@ -37,6 +36,8 @@ import (
 	storagetypes "dysonprotocol.com/x/storage/types"
 	whaleswapv1 "dysonprotocol.com/x/whaleswap/types"
 	gogoprotoany "github.com/cosmos/gogoproto/types/any"
+
+	crontasktypes "dysonprotocol.com/x/crontask/types"
 )
 
 // RegisterLegacyAminoCodec registers all the necessary group module concrete
@@ -90,6 +91,18 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 
 		// script web service
 		&scripttypes.WebRequest{}, &scripttypes.WebResponse{},
+
+		// crontask queries
+		&crontasktypes.QueryTaskByIDRequest{}, &crontasktypes.QueryTaskByIDResponse{},
+		&crontasktypes.QueryTasksByAddressRequest{}, &crontasktypes.QueryTasksResponse{},
+		&crontasktypes.QueryTasksByStatusTimestampRequest{}, &crontasktypes.QueryTasksResponse{},
+		&crontasktypes.QueryTasksByStatusGasPriceRequest{}, &crontasktypes.QueryTasksResponse{},
+		&crontasktypes.QueryAllTasksRequest{}, &crontasktypes.QueryTasksResponse{},
+		&crontasktypes.QueryParamsRequest{}, &crontasktypes.QueryParamsResponse{},
+		&crontasktypes.QueryMetricsRequest{}, &crontasktypes.QueryMetricsResponse{},
+		&crontasktypes.QuerySubscriptionByIDRequest{}, &crontasktypes.QuerySubscriptionByIDResponse{},
+		&crontasktypes.QuerySubscriptionsByCreatorRequest{}, &crontasktypes.QuerySubscriptionsResponse{},
+		&crontasktypes.QuerySubscriptionsAllRequest{}, &crontasktypes.QuerySubscriptionsResponse{},
 
 		// nameservice
 		&nameservicetypes.QueryResolveNameRequest{}, &nameservicetypes.QueryResolveNameResponse{},
@@ -179,22 +192,6 @@ func RegisterInterfaces(registrar codectypes.InterfaceRegistry) {
 		&govv1beta.QueryDepositRequest{}, &govv1beta.QueryDepositResponse{},
 		&govv1beta.QueryDepositsRequest{}, &govv1beta.QueryDepositsResponse{},
 		&govv1beta.QueryTallyResultRequest{}, &govv1beta.QueryTallyResultResponse{},
-
-		// group
-		&grouptypes.QueryGroupInfoRequest{}, &grouptypes.QueryGroupInfoResponse{},
-		&grouptypes.QueryGroupPolicyInfoRequest{}, &grouptypes.QueryGroupPolicyInfoResponse{},
-		&grouptypes.QueryGroupMembersRequest{}, &grouptypes.QueryGroupMembersResponse{},
-		&grouptypes.QueryGroupsByAdminRequest{}, &grouptypes.QueryGroupsByAdminResponse{},
-		&grouptypes.QueryGroupPoliciesByGroupRequest{}, &grouptypes.QueryGroupPoliciesByGroupResponse{},
-		&grouptypes.QueryGroupPoliciesByAdminRequest{}, &grouptypes.QueryGroupPoliciesByAdminResponse{},
-		&grouptypes.QueryProposalRequest{}, &grouptypes.QueryProposalResponse{},
-		&grouptypes.QueryProposalsByGroupPolicyRequest{}, &grouptypes.QueryProposalsByGroupPolicyResponse{},
-		&grouptypes.QueryVoteByProposalVoterRequest{}, &grouptypes.QueryVoteByProposalVoterResponse{},
-		&grouptypes.QueryVotesByProposalRequest{}, &grouptypes.QueryVotesByProposalResponse{},
-		&grouptypes.QueryVotesByVoterRequest{}, &grouptypes.QueryVotesByVoterResponse{},
-		&grouptypes.QueryGroupsByMemberRequest{}, &grouptypes.QueryGroupsByMemberResponse{},
-		&grouptypes.QueryTallyResultRequest{}, &grouptypes.QueryTallyResultResponse{},
-		&grouptypes.QueryGroupsRequest{}, &grouptypes.QueryGroupsResponse{},
 
 		// ibc
 		&interchainaccountstypes.QueryInterchainAccountRequest{}, &interchainaccountstypes.QueryInterchainAccountResponse{},

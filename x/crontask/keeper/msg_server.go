@@ -18,6 +18,121 @@ import (
 // Ensure Keeper implements the MsgServer interface
 var _ crontasktypes.MsgServer = Keeper{}
 
+// CreateSubscription creates a new subscription, charging the task fee upfront
+func (k Keeper) CreateSubscription(ctx context.Context, msg *crontasktypes.MsgCreateSubscription) (*crontasktypes.MsgCreateSubscriptionResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+
+	// deduct anti-spam fee to fee_collector
+	fee := sdk.NewCoins(msg.TaskGasFee)
+	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
+	}
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(sdkCtx, creatorAddr, "fee_collector", fee); err != nil {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "fee deduction failed for creator %s: %v", msg.Creator, err)
+	}
+
+	id, err := k.NextSubscriptionID.Next(ctx)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to allocate next subscription_id")
+	}
+
+	sub := crontasktypes.Subscription{
+		SubscriptionId: id,
+		Creator:        msg.Creator,
+		EventType:      msg.EventType,
+		Filter:         msg.Filter,
+		ScriptAddress:  msg.ScriptAddress,
+		Function:       msg.Function,
+		Args:           msg.Args,
+		Kwargs:         msg.Kwargs,
+		TaskGasLimit:   msg.TaskGasLimit,
+		TaskGasFee:     msg.TaskGasFee,
+		Status:         "enabled",
+		TrigerCount:    0,
+	}
+	// Ensure TaskGasPrice has a valid denom to avoid panics in JSON encoding
+	sub.TaskGasPrice = sdk.NewDecCoinFromDec(msg.TaskGasFee.Denom, sdkmath.LegacyNewDec(0))
+
+	if err := k.SetSubscription(ctx, nil, sub); err != nil {
+		return nil, errorsmod.Wrapf(err, "failed to persist subscription [%d]", id)
+	}
+	if err := sdkCtx.EventManager().EmitTypedEvent(&crontasktypes.EventSubscriptionCreated{SubscriptionId: id, Creator: msg.Creator}); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to emit subscription created event")
+	}
+	return &crontasktypes.MsgCreateSubscriptionResponse{SubscriptionId: id}, nil
+}
+
+// DeleteSubscription deletes a subscription
+func (k Keeper) DeleteSubscription(ctx context.Context, msg *crontasktypes.MsgDeleteSubscription) (*crontasktypes.MsgDeleteSubscriptionResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	sub, err := k.Subscriptions.Get(ctx, msg.SubscriptionId)
+	if err != nil {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrNotFound, "subscription %d not found", msg.SubscriptionId)
+	}
+	if sub.Creator != msg.Creator {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only creator can delete subscription")
+	}
+	if err := k.Subscriptions.Remove(ctx, msg.SubscriptionId); err != nil {
+		return nil, errorsmod.Wrapf(err, "failed to delete subscription [%d]", msg.SubscriptionId)
+	}
+	if err := k.removeSubIndexes(sdkCtx, sub); err != nil {
+		return nil, errorsmod.Wrapf(err, "failed to remove indexes for subscription [%d]", msg.SubscriptionId)
+	}
+	if err := sdkCtx.EventManager().EmitTypedEvent(&crontasktypes.EventSubscriptionDeleted{SubscriptionId: msg.SubscriptionId, Creator: msg.Creator}); err != nil {
+		return nil, errorsmod.Wrap(err, "failed to emit subscription deleted event")
+	}
+	return &crontasktypes.MsgDeleteSubscriptionResponse{}, nil
+}
+
+// RenewSubscription extends expiry and recharges fee
+func (k Keeper) RenewSubscription(ctx context.Context, msg *crontasktypes.MsgRenewSubscription) (*crontasktypes.MsgRenewSubscriptionResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	sub, err := k.Subscriptions.Get(ctx, msg.SubscriptionId)
+	if err != nil {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrNotFound, "subscription %d not found", msg.SubscriptionId)
+	}
+	if sub.Creator != msg.Creator {
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only creator can renew subscription")
+	}
+	params, err := k.GetParams(ctx)
+	if err != nil {
+		return nil, err
+	}
+	base := sdkCtx.BlockTime()
+	newExpiry, err := parseTimestamp(msg.NewExpiry, base)
+	if err != nil {
+		return nil, err
+	}
+	if newExpiry.After(base.Add(time.Second * time.Duration(params.MaxExpiryDelta))) {
+		return nil, sdkerrors.ErrInvalidRequest.Wrap("new_expiry exceeds max_expiry_delta")
+	}
+	// charge fee equal to task_gas_fee
+	creatorAddr, _ := sdk.AccAddressFromBech32(sub.Creator)
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(sdkCtx, creatorAddr, "fee_collector", sdk.NewCoins(sub.TaskGasFee)); err != nil {
+		return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "fee deduction failed: %s", err)
+	}
+	sub.ExpiryTimestamp = newExpiry.Unix()
+	if sub.Status == "expired" {
+		sub.Status = "enabled"
+		sub.StatusMessage = "renewed"
+	}
+	if err := k.SetSubscription(ctx, nil, sub); err != nil {
+		return nil, err
+	}
+	return &crontasktypes.MsgRenewSubscriptionResponse{}, nil
+}
+
 // parseTimestamp parses a string that can be either a Unix timestamp or a duration offset (prefixed with "+")
 // If it's a duration, it's added to the baseTime.
 // Returns the parsed time and any error.
@@ -35,7 +150,6 @@ func parseTimestamp(timestampStr string, baseTime time.Time) (time.Time, error) 
 		}
 		return baseTime.Add(duration), nil
 	}
-
 	// Otherwise, it's a Unix timestamp
 	timestamp, err := strconv.ParseInt(timestampStr, 10, 64)
 	if err != nil {
@@ -45,7 +159,6 @@ func parseTimestamp(timestampStr string, baseTime time.Time) (time.Time, error) 
 			timestampStr,
 		)
 	}
-
 	return time.Unix(timestamp, 0).UTC(), nil
 }
 

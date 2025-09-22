@@ -3,20 +3,28 @@ package keeper
 import (
 	"context"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/store"
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
+	sdkmath "cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
+	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tidwall/gjson"
 
 	"dysonprotocol.com/x/crontask"
 	crontasktypes "dysonprotocol.com/x/crontask/types"
+	scripttypes "dysonprotocol.com/x/script/types"
 )
 
 var (
@@ -37,10 +45,17 @@ var (
 	// MetricsKey is the key for the metrics singleton
 	MetricsKey = collections.NewPrefix(6)
 
+	// Subscriptions map and sequence prefixes
+	SubscriptionsKey      = collections.NewPrefix(7)
+	NextSubscriptionIDKey = collections.NewPrefix(8)
+
 	// Manual raw KV index prefixes (single-byte for simplicity)
-	indexAddrPrefix      = []byte{0xA1}
-	indexStatusTsPrefix  = []byte{0xA2}
-	indexStatusGasPrefix = []byte{0xA3}
+	indexAddrPrefix             = []byte{0xA1}
+	indexStatusTsPrefix         = []byte{0xA2}
+	indexStatusGasPrefix        = []byte{0xA3}
+	indexSubCreatorPrefix       = []byte{0xB1}
+	indexSubStatusTypePrefix    = []byte{0xB2}
+	indexSubCreatorStatusPrefix = []byte{0xB3}
 )
 
 type Keeper struct {
@@ -67,6 +82,11 @@ type Keeper struct {
 
 	// Metrics stores the aggregate metrics singleton
 	Metrics collections.Item[crontasktypes.Metrics]
+
+	// Subscriptions is the primary collection for event subscriptions
+	Subscriptions collections.Map[uint64, crontasktypes.Subscription]
+	// NextSubscriptionID sequence
+	NextSubscriptionID collections.Sequence
 }
 
 // NewKeeper creates a new crontask Keeper instance
@@ -115,24 +135,42 @@ func NewKeeper(
 		codec.CollValue[crontasktypes.Metrics](cdc),
 	)
 
+	// Subscriptions map
+	subscriptions := collections.NewMap(
+		sb,
+		SubscriptionsKey,
+		"subscriptions",
+		collections.Uint64Key,
+		codec.CollValue[crontasktypes.Subscription](cdc),
+	)
+
+	// Next subscription id
+	nextSubID := collections.NewSequence(
+		sb,
+		NextSubscriptionIDKey,
+		"next_subscription_id",
+	)
+
 	schema, err := sb.Build()
 	if err != nil {
 		panic(err)
 	}
 
 	keeper := Keeper{
-		cdc:              cdc,
-		storeService:     storeService,
-		bankKeeper:       bankKeeper,
-		accountKeeper:    accountKeeper,
-		config:           config,
-		Tasks:            tasks,
-		NextTaskID:       nextTaskID,
-		Params:           params,
-		Metrics:          metrics,
-		Schema:           schema,
-		Logger:           logger,
-		MsgRouterService: msgRouter,
+		cdc:                cdc,
+		storeService:       storeService,
+		bankKeeper:         bankKeeper,
+		accountKeeper:      accountKeeper,
+		config:             config,
+		Tasks:              tasks,
+		NextTaskID:         nextTaskID,
+		Params:             params,
+		Metrics:            metrics,
+		Subscriptions:      subscriptions,
+		NextSubscriptionID: nextSubID,
+		Schema:             schema,
+		Logger:             logger,
+		MsgRouterService:   msgRouter,
 	}
 
 	// Add debug logging about keeper initialization
@@ -368,6 +406,73 @@ func (k Keeper) removeIndexes(ctx context.Context, t crontasktypes.Task) {
 	_ = store.Delete(gpKey)
 }
 
+// addSubIndexes indexes a subscription by status+event_type and creator+status
+func (k Keeper) addSubIndexes(ctx context.Context, s crontasktypes.Subscription) error {
+	store := k.storeService.OpenKVStore(ctx)
+	// status+event_type -> id
+	key1 := append(indexSubStatusTypePrefix, []byte(s.Status)...)
+	key1 = append(key1, '|')
+	key1 = append(key1, []byte(s.EventType)...)
+	key1 = append(key1, bigEndian(s.SubscriptionId)...)
+	if err := store.Set(key1, []byte{}); err != nil {
+		return errorsmod.Wrapf(err, "index write failed (status+type) for sub [%d]", s.SubscriptionId)
+	}
+	// creator+status -> id
+	key2 := append(indexSubCreatorStatusPrefix, []byte(s.Creator)...)
+	key2 = append(key2, '|')
+	key2 = append(key2, []byte(s.Status)...)
+	key2 = append(key2, bigEndian(s.SubscriptionId)...)
+	if err := store.Set(key2, []byte{}); err != nil {
+		return errorsmod.Wrapf(err, "index write failed (creator+status) for sub [%d]", s.SubscriptionId)
+	}
+	return nil
+}
+
+// removeSubIndexes removes subscription indexes
+func (k Keeper) removeSubIndexes(ctx context.Context, s crontasktypes.Subscription) error {
+	store := k.storeService.OpenKVStore(ctx)
+	key1 := append(indexSubStatusTypePrefix, []byte(s.Status)...)
+	key1 = append(key1, '|')
+	key1 = append(key1, []byte(s.EventType)...)
+	key1 = append(key1, bigEndian(s.SubscriptionId)...)
+	if err := store.Delete(key1); err != nil {
+		return errorsmod.Wrapf(err, "index delete failed (status+type) for sub [%d]", s.SubscriptionId)
+	}
+	key2 := append(indexSubCreatorStatusPrefix, []byte(s.Creator)...)
+	key2 = append(key2, '|')
+	key2 = append(key2, []byte(s.Status)...)
+	key2 = append(key2, bigEndian(s.SubscriptionId)...)
+	if err := store.Delete(key2); err != nil {
+		return errorsmod.Wrapf(err, "index delete failed (creator+status) for sub [%d]", s.SubscriptionId)
+	}
+	return nil
+}
+
+// SetSubscription persists the subscription and maintains all related indexes.
+// If old is provided, its index entries are removed before adding the new ones.
+func (k Keeper) SetSubscription(ctx context.Context, old *crontasktypes.Subscription, updated crontasktypes.Subscription) error {
+	// If old not provided, attempt to load previous value to clean indexes
+	if old == nil {
+		if prev, err := k.Subscriptions.Get(ctx, updated.SubscriptionId); err == nil {
+			old = &prev
+		} else if !errors.Is(err, collections.ErrNotFound) {
+			return errorsmod.Wrapf(err, "failed to read previous subscription [%d]", updated.SubscriptionId)
+		}
+	}
+	if err := k.Subscriptions.Set(ctx, updated.SubscriptionId, updated); err != nil {
+		return errorsmod.Wrapf(err, "failed to save subscription [%d]", updated.SubscriptionId)
+	}
+	if old != nil {
+		if err := k.removeSubIndexes(ctx, *old); err != nil {
+			return errorsmod.Wrapf(err, "failed to remove old indexes for subscription [%d]", updated.SubscriptionId)
+		}
+	}
+	if err := k.addSubIndexes(ctx, updated); err != nil {
+		return errorsmod.Wrapf(err, "failed to add new indexes for subscription [%d]", updated.SubscriptionId)
+	}
+	return nil
+}
+
 // kvStore returns module store adapter for iterator utils
 func (k Keeper) kvStore(ctx context.Context) storetypes.KVStore {
 	return runtime.KVStoreAdapter(k.storeService.OpenKVStore(ctx))
@@ -398,4 +503,225 @@ func (k Keeper) iterateAddress(ctx context.Context, addr string) storetypes.Iter
 	store := k.kvStore(ctx)
 	prefix := append(indexAddrPrefix, []byte(addr)...)
 	return storetypes.KVStorePrefixIterator(store, prefix)
+}
+
+// HandleBlockEvents receives all block events (begin, txs, end) aggregated
+func (k Keeper) HandleBlockEventsWithTypes(ctx sdk.Context, eventsByType map[string][]abci.Event, typesSeen []string) {
+	if len(typesSeen) == 0 {
+		return
+	}
+	k.Logger.Info("crontask sink: HandleBlockEventsWithTypes", "types", len(typesSeen), "height", ctx.BlockHeight())
+
+	now := ctx.BlockTime().Unix()
+
+	// Iterate by types, loading only (status=enabled, type) via index
+	for _, evType := range typesSeen {
+		// iterator over keys: prefix|status|type|id for status=enabled
+		store := k.kvStore(ctx)
+		stPrefix := append(indexSubStatusTypePrefix, []byte("enabled")...)
+		stPrefix = append(stPrefix, '|')
+		stPrefix = append(stPrefix, []byte(evType)...)
+		it := storetypes.KVStorePrefixIterator(store, stPrefix)
+		for ; it.Valid(); it.Next() {
+			key := it.Key()
+			if len(key) < len(stPrefix)+8 {
+				continue
+			}
+			id := binary.BigEndian.Uint64(key[len(key)-8:])
+			sub, err := k.Subscriptions.Get(ctx, id)
+			if err != nil {
+				continue
+			}
+
+			// Only handle matching event types
+			// We will loop events below, so just skip if all events in this block are of other types
+			// Quick check: if none of the block events match this subscription type, skip updates
+			// (We still evaluate per-event below.)
+
+			// Preemptively expire
+			if sub.ExpiryTimestamp > 0 && sub.ExpiryTimestamp <= now {
+				old := sub
+				sub.Status = "expired"
+				sub.StatusMessage = fmt.Sprintf("expired at [%d]", sub.ExpiryTimestamp)
+				if err := k.SetSubscription(ctx, &old, sub); err != nil {
+					k.Logger.Error("failed to mark subscription expired", "id", id, "err", err)
+				}
+				continue
+			}
+
+			// Preemptively disable if creator lacks balance for fee
+			creatorAddr, addrErr := sdk.AccAddressFromBech32(sub.Creator)
+			if addrErr != nil {
+				k.Logger.Error("invalid creator address in subscription; disabling", "id", id, "err", addrErr)
+				old := sub
+				sub.Status = "disabled"
+				sub.StatusMessage = "invalid creator address"
+				if err := k.SetSubscription(ctx, &old, sub); err != nil {
+					k.Logger.Error("failed to persist disabled subscription", "id", id, "err", err)
+					continue
+				}
+				continue
+			}
+			if !k.bankKeeper.HasBalance(ctx, creatorAddr, sub.TaskGasFee) {
+				k.Logger.Info("disabling subscription due to insufficient balance", "id", id)
+				old := sub
+				sub.Status = "disabled"
+				sub.StatusMessage = fmt.Sprintf("insufficient funds for fee [%s]", sub.TaskGasFee.String())
+				if err := k.SetSubscription(ctx, &old, sub); err != nil {
+					k.Logger.Error("failed to persist disabled subscription", "id", id, "err", err)
+					continue
+				}
+				continue
+			}
+
+			if evs, ok := eventsByType[sub.EventType]; ok && len(evs) > 0 {
+				for _, ev := range evs {
+					if !eventMatchesFilter(ev, sub.Filter) {
+						continue
+					}
+					if err := k.createTaskForSubscription(ctx, sub, ev); err != nil {
+						k.Logger.Error("failed to create task for subscription", "id", id, "err", err)
+						continue
+					}
+					sub.TrigerCount++
+				}
+			}
+			// persist updated sub if changed
+			old := sub
+			if err := k.SetSubscription(ctx, &old, sub); err != nil {
+				k.Logger.Error("failed to persist subscription update", "id", id, "err", err)
+			}
+		}
+		it.Close()
+	}
+}
+
+// eventMatchesFilter performs a basic match; placeholder to be replaced with GJSON
+func eventMatchesFilter(ev abci.Event, filter string) bool {
+	if filter == "" {
+		return true
+	}
+	// Normalize event into JSON and run GJSON filter: wrap in array and use #(filter)
+	// Build map[string]any for attributes, parsing JSON literal values when possible
+	attrs := make(map[string]any)
+	for _, a := range ev.Attributes {
+		raw := a.Value
+		var parsed any
+		if err := json.Unmarshal([]byte(raw), &parsed); err == nil {
+			attrs[a.Key] = parsed
+		} else {
+			attrs[a.Key] = raw
+		}
+	}
+	obj := map[string]any{
+		"type":       ev.Type,
+		"attributes": attrs,
+	}
+	b, err := json.Marshal(obj)
+	if err != nil {
+		return false
+	}
+	wrapped := append([]byte("["), b...)
+	wrapped = append(wrapped, ']')
+	// Accept single-quoted literals by normalizing to double quotes for GJSON
+	normalizedFilter := strings.ReplaceAll(filter, "'", "\"")
+	res := gjson.GetBytes(wrapped, "#("+normalizedFilter+")")
+	return res.Exists() && len(res.Array()) > 0
+}
+
+// createTaskForSubscription creates a scheduled crontask for the event
+func (k Keeper) createTaskForSubscription(ctx sdk.Context, sub crontasktypes.Subscription, ev abci.Event) error {
+	// Charge per-trigger fee to fee_collector
+	fee := sdk.NewCoins(sub.TaskGasFee)
+	creatorAddr, err := sdk.AccAddressFromBech32(sub.Creator)
+	if err != nil {
+		return err
+	}
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creatorAddr, "fee_collector", fee); err != nil {
+		return errorsmod.Wrapf(err, "fee deduction failed for creator [%s]", sub.Creator)
+	}
+
+	// Normalize event and merge into kwargs under key "event"
+	// Parse attribute values as JSON when possible to avoid double-quoted literals
+	attrs := make(map[string]any)
+	for _, a := range ev.Attributes {
+		raw := a.Value
+		var parsed any
+		if err := json.Unmarshal([]byte(raw), &parsed); err == nil {
+			attrs[a.Key] = parsed
+		} else {
+			ctx.Logger().Error("Error parsing attribute value as JSON", "key", a.Key, "value", raw, "error", err)
+			attrs[a.Key] = raw
+		}
+	}
+	normalized := map[string]any{
+		"type":       ev.Type,
+		"attributes": attrs,
+	}
+
+	var kwargsMap map[string]any
+	if len(sub.Kwargs) > 0 {
+		if err := json.Unmarshal([]byte(sub.Kwargs), &kwargsMap); err != nil {
+			return errorsmod.Wrapf(err, "invalid kwargs JSON for subscription [%d]", sub.SubscriptionId)
+		}
+	} else {
+		kwargsMap = make(map[string]any)
+	}
+	kwargsMap["event"] = normalized
+	mergedKwargsBytes, err := json.Marshal(kwargsMap)
+	if err != nil {
+		return errorsmod.Wrapf(err, "failed to encode merged kwargs for subscription [%d]", sub.SubscriptionId)
+	}
+
+	// Build script MsgExec Any
+	exec := &scripttypes.MsgExec{
+		ExecutorAddress: sub.Creator,
+		ScriptAddress:   sub.ScriptAddress,
+		FunctionName:    sub.Function,
+		Args:            sub.Args,
+		Kwargs:          string(mergedKwargsBytes),
+	}
+	anyExec, err := cdctypes.NewAnyWithValue(exec)
+	if err != nil {
+		return err
+	}
+
+	// Create Task
+	now := ctx.BlockTime().Unix()
+	scheduled := now
+	if sub.TaskScheduledTimestamp > 0 {
+		scheduled = sub.TaskScheduledTimestamp
+	}
+	expiry := scheduled + k.config.ExpiryLimit
+	if sub.TaskExpiryTimestamp > 0 {
+		expiry = sub.TaskExpiryTimestamp
+	}
+	taskID, err := k.GetNextTaskID(ctx)
+	if err != nil {
+		return err
+	}
+	task := crontasktypes.Task{
+		TaskId:              taskID,
+		Creator:             sub.Creator,
+		ScheduledTimestamp:  scheduled,
+		ExpiryTimestamp:     expiry,
+		TaskGasLimit:        sub.TaskGasLimit,
+		TaskGasFee:          sub.TaskGasFee,
+		TaskGasPrice:        sdk.NewDecCoinFromDec(sub.TaskGasFee.Denom, sdkmath.LegacyNewDecFromInt(sub.TaskGasFee.Amount).QuoInt64(int64(sub.TaskGasLimit))),
+		Msgs:                []*cdctypes.Any{anyExec},
+		Status:              crontasktypes.TaskStatus_SCHEDULED,
+		CreationTime:        now,
+		CreationBlockHeight: ctx.BlockHeight(),
+	}
+	if sub.TaskGasPrice.Denom != "" {
+		task.TaskGasPrice = sub.TaskGasPrice
+	}
+	if err := k.SetTask(ctx, task); err != nil {
+		return err
+	}
+	// emit triggered event
+	if err := ctx.EventManager().EmitTypedEvent(&crontasktypes.EventSubscriptionTriggered{SubscriptionId: sub.SubscriptionId, Creator: sub.Creator}); err != nil {
+		return errorsmod.Wrap(err, "failed to emit subscription triggered event")
+	}
+	return nil
 }

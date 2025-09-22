@@ -11,6 +11,39 @@
     "application/json"
   ],
   "paths": {
+    "dysonprotocol.crontask.v1.MsgCreateSubscription": {
+      "post": {
+        "summary": "CreateSubscription registers a new event-triggered action",
+        "operationId": "dysonprotocol.crontask.v1.MsgCreateSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgCreateSubscriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgCreateSubscription"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
     "dysonprotocol.crontask.v1.MsgCreateTask": {
       "post": {
         "summary": "CreateTask creates a new scheduled task",
@@ -44,6 +77,39 @@
         ]
       }
     },
+    "dysonprotocol.crontask.v1.MsgDeleteSubscription": {
+      "post": {
+        "summary": "DeleteSubscription removes an existing subscription",
+        "operationId": "dysonprotocol.crontask.v1.MsgDeleteSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgDeleteSubscriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgDeleteSubscription"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
     "dysonprotocol.crontask.v1.MsgDeleteTask": {
       "post": {
         "summary": "DeleteTask deletes a scheduled task",
@@ -69,6 +135,39 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgDeleteTask"
+            }
+          }
+        ],
+        "tags": [
+          "Msg"
+        ]
+      }
+    },
+    "dysonprotocol.crontask.v1.MsgRenewSubscription": {
+      "post": {
+        "summary": "RenewSubscription extends the subscription expiry and recharges the fee",
+        "operationId": "dysonprotocol.crontask.v1.MsgRenewSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgRenewSubscriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgRenewSubscription"
             }
           }
         ],
@@ -124,6 +223,49 @@
       },
       "description": "Coin defines a token with a denomination and an amount.\n\nNOTE: The amount field is an Int which implements the custom method\nsignatures required by gogoproto."
     },
+    "dysonprotocol.crontask.v1.MsgCreateSubscription": {
+      "type": "object",
+      "properties": {
+        "creator": {
+          "type": "string"
+        },
+        "event_type": {
+          "type": "string"
+        },
+        "filter": {
+          "type": "string"
+        },
+        "script_address": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "args": {
+          "type": "string"
+        },
+        "kwargs": {
+          "type": "string"
+        },
+        "task_gas_limit": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "task_gas_fee": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin"
+        }
+      },
+      "title": "CreateSubscription"
+    },
+    "dysonprotocol.crontask.v1.MsgCreateSubscriptionResponse": {
+      "type": "object",
+      "properties": {
+        "subscription_id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
     "dysonprotocol.crontask.v1.MsgCreateTask": {
       "type": "object",
       "properties": {
@@ -169,6 +311,22 @@
       },
       "title": "MsgCreateTaskResponse defines the response for creating a new task"
     },
+    "dysonprotocol.crontask.v1.MsgDeleteSubscription": {
+      "type": "object",
+      "properties": {
+        "creator": {
+          "type": "string"
+        },
+        "subscription_id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      },
+      "title": "DeleteSubscription"
+    },
+    "dysonprotocol.crontask.v1.MsgDeleteSubscriptionResponse": {
+      "type": "object"
+    },
     "dysonprotocol.crontask.v1.MsgDeleteTask": {
       "type": "object",
       "properties": {
@@ -187,6 +345,25 @@
     "dysonprotocol.crontask.v1.MsgDeleteTaskResponse": {
       "type": "object",
       "title": "MsgDeleteTaskResponse defines the response for deleting a task"
+    },
+    "dysonprotocol.crontask.v1.MsgRenewSubscription": {
+      "type": "object",
+      "properties": {
+        "creator": {
+          "type": "string"
+        },
+        "subscription_id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "new_expiry": {
+          "type": "string"
+        }
+      },
+      "title": "RenewSubscription"
+    },
+    "dysonprotocol.crontask.v1.MsgRenewSubscriptionResponse": {
+      "type": "object"
     },
     "dysonprotocol.crontask.v1.MsgUpdateParams": {
       "type": "object",
@@ -228,6 +405,11 @@
           "type": "string",
           "format": "int64",
           "title": "Retention period for completed/failed/expired tasks (seconds)"
+        },
+        "max_expiry_delta": {
+          "type": "string",
+          "format": "int64",
+          "title": "Maximum allowed delta for subscription expiry renewal (default 7 days)"
         }
       },
       "title": "Params defines the parameters for the crontask module"

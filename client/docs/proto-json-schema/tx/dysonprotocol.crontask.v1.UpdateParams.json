@@ -37,6 +37,10 @@
                     "clean_up_time": {
                         "type": "string",
                         "description": "Retention period for completed/failed/expired tasks (seconds)"
+                    },
+                    "max_expiry_delta": {
+                        "type": "string",
+                        "description": "Maximum allowed delta for subscription expiry renewal (default 7 days)"
                     }
                 },
                 "additionalProperties": false,

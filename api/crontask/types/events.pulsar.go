@@ -4408,6 +4408,1410 @@ func (x *fastReflection_EventCrontaskMetrics) ProtoMethods() *protoiface.Methods
 	}
 }
 
+var (
+	md_EventSubscriptionCreated                 protoreflect.MessageDescriptor
+	fd_EventSubscriptionCreated_subscription_id protoreflect.FieldDescriptor
+	fd_EventSubscriptionCreated_creator         protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_crontask_v1_events_proto_init()
+	md_EventSubscriptionCreated = File_dysonprotocol_crontask_v1_events_proto.Messages().ByName("EventSubscriptionCreated")
+	fd_EventSubscriptionCreated_subscription_id = md_EventSubscriptionCreated.Fields().ByName("subscription_id")
+	fd_EventSubscriptionCreated_creator = md_EventSubscriptionCreated.Fields().ByName("creator")
+}
+
+var _ protoreflect.Message = (*fastReflection_EventSubscriptionCreated)(nil)
+
+type fastReflection_EventSubscriptionCreated EventSubscriptionCreated
+
+func (x *EventSubscriptionCreated) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_EventSubscriptionCreated)(x)
+}
+
+func (x *EventSubscriptionCreated) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_crontask_v1_events_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_EventSubscriptionCreated_messageType fastReflection_EventSubscriptionCreated_messageType
+var _ protoreflect.MessageType = fastReflection_EventSubscriptionCreated_messageType{}
+
+type fastReflection_EventSubscriptionCreated_messageType struct{}
+
+func (x fastReflection_EventSubscriptionCreated_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_EventSubscriptionCreated)(nil)
+}
+func (x fastReflection_EventSubscriptionCreated_messageType) New() protoreflect.Message {
+	return new(fastReflection_EventSubscriptionCreated)
+}
+func (x fastReflection_EventSubscriptionCreated_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventSubscriptionCreated
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_EventSubscriptionCreated) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventSubscriptionCreated
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_EventSubscriptionCreated) Type() protoreflect.MessageType {
+	return _fastReflection_EventSubscriptionCreated_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_EventSubscriptionCreated) New() protoreflect.Message {
+	return new(fastReflection_EventSubscriptionCreated)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_EventSubscriptionCreated) Interface() protoreflect.ProtoMessage {
+	return (*EventSubscriptionCreated)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_EventSubscriptionCreated) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.SubscriptionId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.SubscriptionId)
+		if !f(fd_EventSubscriptionCreated_subscription_id, value) {
+			return
+		}
+	}
+	if x.Creator != "" {
+		value := protoreflect.ValueOfString(x.Creator)
+		if !f(fd_EventSubscriptionCreated_creator, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_EventSubscriptionCreated) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.subscription_id":
+		return x.SubscriptionId != uint64(0)
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.creator":
+		return x.Creator != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionCreated"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionCreated does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionCreated) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.subscription_id":
+		x.SubscriptionId = uint64(0)
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.creator":
+		x.Creator = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionCreated"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionCreated does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_EventSubscriptionCreated) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.subscription_id":
+		value := x.SubscriptionId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.creator":
+		value := x.Creator
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionCreated"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionCreated does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionCreated) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.subscription_id":
+		x.SubscriptionId = value.Uint()
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.creator":
+		x.Creator = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionCreated"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionCreated does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionCreated) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.subscription_id":
+		panic(fmt.Errorf("field subscription_id of message dysonprotocol.crontask.v1.EventSubscriptionCreated is not mutable"))
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.creator":
+		panic(fmt.Errorf("field creator of message dysonprotocol.crontask.v1.EventSubscriptionCreated is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionCreated"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionCreated does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_EventSubscriptionCreated) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.subscription_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.crontask.v1.EventSubscriptionCreated.creator":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionCreated"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionCreated does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_EventSubscriptionCreated) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.crontask.v1.EventSubscriptionCreated", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_EventSubscriptionCreated) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionCreated) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_EventSubscriptionCreated) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_EventSubscriptionCreated) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*EventSubscriptionCreated)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.SubscriptionId != 0 {
+			n += 1 + runtime.Sov(uint64(x.SubscriptionId))
+		}
+		l = len(x.Creator)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*EventSubscriptionCreated)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.Creator) > 0 {
+			i -= len(x.Creator)
+			copy(dAtA[i:], x.Creator)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Creator)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if x.SubscriptionId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.SubscriptionId))
+			i--
+			dAtA[i] = 0x8
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*EventSubscriptionCreated)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventSubscriptionCreated: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventSubscriptionCreated: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field SubscriptionId", wireType)
+				}
+				x.SubscriptionId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.SubscriptionId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Creator = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_EventSubscriptionDeleted                 protoreflect.MessageDescriptor
+	fd_EventSubscriptionDeleted_subscription_id protoreflect.FieldDescriptor
+	fd_EventSubscriptionDeleted_creator         protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_crontask_v1_events_proto_init()
+	md_EventSubscriptionDeleted = File_dysonprotocol_crontask_v1_events_proto.Messages().ByName("EventSubscriptionDeleted")
+	fd_EventSubscriptionDeleted_subscription_id = md_EventSubscriptionDeleted.Fields().ByName("subscription_id")
+	fd_EventSubscriptionDeleted_creator = md_EventSubscriptionDeleted.Fields().ByName("creator")
+}
+
+var _ protoreflect.Message = (*fastReflection_EventSubscriptionDeleted)(nil)
+
+type fastReflection_EventSubscriptionDeleted EventSubscriptionDeleted
+
+func (x *EventSubscriptionDeleted) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_EventSubscriptionDeleted)(x)
+}
+
+func (x *EventSubscriptionDeleted) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_crontask_v1_events_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_EventSubscriptionDeleted_messageType fastReflection_EventSubscriptionDeleted_messageType
+var _ protoreflect.MessageType = fastReflection_EventSubscriptionDeleted_messageType{}
+
+type fastReflection_EventSubscriptionDeleted_messageType struct{}
+
+func (x fastReflection_EventSubscriptionDeleted_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_EventSubscriptionDeleted)(nil)
+}
+func (x fastReflection_EventSubscriptionDeleted_messageType) New() protoreflect.Message {
+	return new(fastReflection_EventSubscriptionDeleted)
+}
+func (x fastReflection_EventSubscriptionDeleted_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventSubscriptionDeleted
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_EventSubscriptionDeleted) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventSubscriptionDeleted
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_EventSubscriptionDeleted) Type() protoreflect.MessageType {
+	return _fastReflection_EventSubscriptionDeleted_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_EventSubscriptionDeleted) New() protoreflect.Message {
+	return new(fastReflection_EventSubscriptionDeleted)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_EventSubscriptionDeleted) Interface() protoreflect.ProtoMessage {
+	return (*EventSubscriptionDeleted)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_EventSubscriptionDeleted) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.SubscriptionId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.SubscriptionId)
+		if !f(fd_EventSubscriptionDeleted_subscription_id, value) {
+			return
+		}
+	}
+	if x.Creator != "" {
+		value := protoreflect.ValueOfString(x.Creator)
+		if !f(fd_EventSubscriptionDeleted_creator, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_EventSubscriptionDeleted) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.subscription_id":
+		return x.SubscriptionId != uint64(0)
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.creator":
+		return x.Creator != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionDeleted"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionDeleted does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionDeleted) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.subscription_id":
+		x.SubscriptionId = uint64(0)
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.creator":
+		x.Creator = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionDeleted"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionDeleted does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_EventSubscriptionDeleted) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.subscription_id":
+		value := x.SubscriptionId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.creator":
+		value := x.Creator
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionDeleted"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionDeleted does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionDeleted) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.subscription_id":
+		x.SubscriptionId = value.Uint()
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.creator":
+		x.Creator = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionDeleted"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionDeleted does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionDeleted) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.subscription_id":
+		panic(fmt.Errorf("field subscription_id of message dysonprotocol.crontask.v1.EventSubscriptionDeleted is not mutable"))
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.creator":
+		panic(fmt.Errorf("field creator of message dysonprotocol.crontask.v1.EventSubscriptionDeleted is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionDeleted"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionDeleted does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_EventSubscriptionDeleted) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.subscription_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.crontask.v1.EventSubscriptionDeleted.creator":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionDeleted"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionDeleted does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_EventSubscriptionDeleted) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.crontask.v1.EventSubscriptionDeleted", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_EventSubscriptionDeleted) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionDeleted) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_EventSubscriptionDeleted) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_EventSubscriptionDeleted) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*EventSubscriptionDeleted)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.SubscriptionId != 0 {
+			n += 1 + runtime.Sov(uint64(x.SubscriptionId))
+		}
+		l = len(x.Creator)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*EventSubscriptionDeleted)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.Creator) > 0 {
+			i -= len(x.Creator)
+			copy(dAtA[i:], x.Creator)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Creator)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if x.SubscriptionId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.SubscriptionId))
+			i--
+			dAtA[i] = 0x8
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*EventSubscriptionDeleted)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventSubscriptionDeleted: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventSubscriptionDeleted: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field SubscriptionId", wireType)
+				}
+				x.SubscriptionId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.SubscriptionId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Creator = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
+	md_EventSubscriptionTriggered                 protoreflect.MessageDescriptor
+	fd_EventSubscriptionTriggered_subscription_id protoreflect.FieldDescriptor
+	fd_EventSubscriptionTriggered_creator         protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_dysonprotocol_crontask_v1_events_proto_init()
+	md_EventSubscriptionTriggered = File_dysonprotocol_crontask_v1_events_proto.Messages().ByName("EventSubscriptionTriggered")
+	fd_EventSubscriptionTriggered_subscription_id = md_EventSubscriptionTriggered.Fields().ByName("subscription_id")
+	fd_EventSubscriptionTriggered_creator = md_EventSubscriptionTriggered.Fields().ByName("creator")
+}
+
+var _ protoreflect.Message = (*fastReflection_EventSubscriptionTriggered)(nil)
+
+type fastReflection_EventSubscriptionTriggered EventSubscriptionTriggered
+
+func (x *EventSubscriptionTriggered) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_EventSubscriptionTriggered)(x)
+}
+
+func (x *EventSubscriptionTriggered) slowProtoReflect() protoreflect.Message {
+	mi := &file_dysonprotocol_crontask_v1_events_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_EventSubscriptionTriggered_messageType fastReflection_EventSubscriptionTriggered_messageType
+var _ protoreflect.MessageType = fastReflection_EventSubscriptionTriggered_messageType{}
+
+type fastReflection_EventSubscriptionTriggered_messageType struct{}
+
+func (x fastReflection_EventSubscriptionTriggered_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_EventSubscriptionTriggered)(nil)
+}
+func (x fastReflection_EventSubscriptionTriggered_messageType) New() protoreflect.Message {
+	return new(fastReflection_EventSubscriptionTriggered)
+}
+func (x fastReflection_EventSubscriptionTriggered_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventSubscriptionTriggered
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_EventSubscriptionTriggered) Descriptor() protoreflect.MessageDescriptor {
+	return md_EventSubscriptionTriggered
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_EventSubscriptionTriggered) Type() protoreflect.MessageType {
+	return _fastReflection_EventSubscriptionTriggered_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_EventSubscriptionTriggered) New() protoreflect.Message {
+	return new(fastReflection_EventSubscriptionTriggered)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_EventSubscriptionTriggered) Interface() protoreflect.ProtoMessage {
+	return (*EventSubscriptionTriggered)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_EventSubscriptionTriggered) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.SubscriptionId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.SubscriptionId)
+		if !f(fd_EventSubscriptionTriggered_subscription_id, value) {
+			return
+		}
+	}
+	if x.Creator != "" {
+		value := protoreflect.ValueOfString(x.Creator)
+		if !f(fd_EventSubscriptionTriggered_creator, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_EventSubscriptionTriggered) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.subscription_id":
+		return x.SubscriptionId != uint64(0)
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.creator":
+		return x.Creator != ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionTriggered"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionTriggered does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionTriggered) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.subscription_id":
+		x.SubscriptionId = uint64(0)
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.creator":
+		x.Creator = ""
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionTriggered"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionTriggered does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_EventSubscriptionTriggered) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.subscription_id":
+		value := x.SubscriptionId
+		return protoreflect.ValueOfUint64(value)
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.creator":
+		value := x.Creator
+		return protoreflect.ValueOfString(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionTriggered"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionTriggered does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionTriggered) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.subscription_id":
+		x.SubscriptionId = value.Uint()
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.creator":
+		x.Creator = value.Interface().(string)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionTriggered"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionTriggered does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionTriggered) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.subscription_id":
+		panic(fmt.Errorf("field subscription_id of message dysonprotocol.crontask.v1.EventSubscriptionTriggered is not mutable"))
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.creator":
+		panic(fmt.Errorf("field creator of message dysonprotocol.crontask.v1.EventSubscriptionTriggered is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionTriggered"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionTriggered does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_EventSubscriptionTriggered) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.subscription_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "dysonprotocol.crontask.v1.EventSubscriptionTriggered.creator":
+		return protoreflect.ValueOfString("")
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: dysonprotocol.crontask.v1.EventSubscriptionTriggered"))
+		}
+		panic(fmt.Errorf("message dysonprotocol.crontask.v1.EventSubscriptionTriggered does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_EventSubscriptionTriggered) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in dysonprotocol.crontask.v1.EventSubscriptionTriggered", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_EventSubscriptionTriggered) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_EventSubscriptionTriggered) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_EventSubscriptionTriggered) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_EventSubscriptionTriggered) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*EventSubscriptionTriggered)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		if x.SubscriptionId != 0 {
+			n += 1 + runtime.Sov(uint64(x.SubscriptionId))
+		}
+		l = len(x.Creator)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*EventSubscriptionTriggered)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.Creator) > 0 {
+			i -= len(x.Creator)
+			copy(dAtA[i:], x.Creator)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Creator)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if x.SubscriptionId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.SubscriptionId))
+			i--
+			dAtA[i] = 0x8
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*EventSubscriptionTriggered)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventSubscriptionTriggered: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: EventSubscriptionTriggered: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field SubscriptionId", wireType)
+				}
+				x.SubscriptionId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.SubscriptionId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Creator = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
 // Code generated by protoc-gen-go. DO NOT EDIT.
 // versions:
 // 	protoc-gen-go v1.27.0
@@ -4850,6 +6254,138 @@ func (x *EventCrontaskMetrics) GetPendingTotalGasFees() []*v1beta1.Coin {
 	return nil
 }
 
+// Emitted when a new event subscription is created
+type EventSubscriptionCreated struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SubscriptionId uint64 `protobuf:"varint,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	Creator        string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+}
+
+func (x *EventSubscriptionCreated) Reset() {
+	*x = EventSubscriptionCreated{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_crontask_v1_events_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EventSubscriptionCreated) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EventSubscriptionCreated) ProtoMessage() {}
+
+// Deprecated: Use EventSubscriptionCreated.ProtoReflect.Descriptor instead.
+func (*EventSubscriptionCreated) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_crontask_v1_events_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *EventSubscriptionCreated) GetSubscriptionId() uint64 {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return 0
+}
+
+func (x *EventSubscriptionCreated) GetCreator() string {
+	if x != nil {
+		return x.Creator
+	}
+	return ""
+}
+
+// Emitted when an event subscription is deleted
+type EventSubscriptionDeleted struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SubscriptionId uint64 `protobuf:"varint,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	Creator        string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+}
+
+func (x *EventSubscriptionDeleted) Reset() {
+	*x = EventSubscriptionDeleted{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_crontask_v1_events_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EventSubscriptionDeleted) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EventSubscriptionDeleted) ProtoMessage() {}
+
+// Deprecated: Use EventSubscriptionDeleted.ProtoReflect.Descriptor instead.
+func (*EventSubscriptionDeleted) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_crontask_v1_events_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *EventSubscriptionDeleted) GetSubscriptionId() uint64 {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return 0
+}
+
+func (x *EventSubscriptionDeleted) GetCreator() string {
+	if x != nil {
+		return x.Creator
+	}
+	return ""
+}
+
+// Emitted when a subscription is triggered for an event
+type EventSubscriptionTriggered struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SubscriptionId uint64 `protobuf:"varint,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	Creator        string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+}
+
+func (x *EventSubscriptionTriggered) Reset() {
+	*x = EventSubscriptionTriggered{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_dysonprotocol_crontask_v1_events_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *EventSubscriptionTriggered) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EventSubscriptionTriggered) ProtoMessage() {}
+
+// Deprecated: Use EventSubscriptionTriggered.ProtoReflect.Descriptor instead.
+func (*EventSubscriptionTriggered) Descriptor() ([]byte, []int) {
+	return file_dysonprotocol_crontask_v1_events_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *EventSubscriptionTriggered) GetSubscriptionId() uint64 {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return 0
+}
+
+func (x *EventSubscriptionTriggered) GetCreator() string {
+	if x != nil {
+		return x.Creator
+	}
+	return ""
+}
+
 var File_dysonprotocol_crontask_v1_events_proto protoreflect.FileDescriptor
 
 var file_dysonprotocol_crontask_v1_events_proto_rawDesc = []byte{
@@ -4860,75 +6396,96 @@ var file_dysonprotocol_crontask_v1_events_proto_rawDesc = []byte{
 	0x2e, 0x76, 0x31, 0x1a, 0x1e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2f, 0x62, 0x61, 0x73, 0x65,
 	0x2f, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2f, 0x63, 0x6f, 0x69, 0x6e, 0x2e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67,
-	0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x45, 0x0a, 0x10, 0x45, 0x76, 0x65,
-	0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x12, 0x17, 0x0a,
-	0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06,
-	0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f,
-	0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72,
-	0x22, 0x45, 0x0a, 0x10, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x50, 0x65, 0x6e,
-	0x64, 0x69, 0x6e, 0x67, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a,
-	0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
-	0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0x45, 0x0a, 0x10, 0x45, 0x76, 0x65, 0x6e, 0x74,
-	0x54, 0x61, 0x73, 0x6b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x74,
+	0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x2c, 0x64, 0x79, 0x73, 0x6f, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x63, 0x72, 0x6f, 0x6e, 0x74, 0x61, 0x73,
+	0x6b, 0x2f, 0x76, 0x31, 0x2f, 0x73, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f,
+	0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x45, 0x0a, 0x10, 0x45, 0x76, 0x65, 0x6e, 0x74,
+	0x54, 0x61, 0x73, 0x6b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x74,
 	0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61,
 	0x73, 0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0x78,
-	0x0a, 0x11, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x45, 0x78, 0x65, 0x63, 0x75,
-	0x74, 0x65, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07,
-	0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63,
-	0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18,
-	0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x45, 0x0a, 0x10, 0x45, 0x76, 0x65, 0x6e,
-	0x74, 0x54, 0x61, 0x73, 0x6b, 0x45, 0x78, 0x70, 0x69, 0x72, 0x65, 0x64, 0x12, 0x17, 0x0a, 0x07,
-	0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74,
-	0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22,
-	0x5a, 0x0a, 0x0f, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x46, 0x61, 0x69, 0x6c,
-	0x65, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0x45,
+	0x0a, 0x10, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x50, 0x65, 0x6e, 0x64, 0x69,
+	0x6e, 0x67, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63,
 	0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72,
-	0x65, 0x61, 0x74, 0x6f, 0x72, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x03,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x22, 0x5c, 0x0a, 0x0f, 0x45,
-	0x76, 0x65, 0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x50, 0x75, 0x72, 0x67, 0x65, 0x64, 0x12, 0x17,
-	0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52,
-	0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75,
-	0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12,
-	0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0xbc, 0x03, 0x0a, 0x14, 0x45, 0x76,
-	0x65, 0x6e, 0x74, 0x43, 0x72, 0x6f, 0x6e, 0x74, 0x61, 0x73, 0x6b, 0x4d, 0x65, 0x74, 0x72, 0x69,
-	0x63, 0x73, 0x12, 0x2c, 0x0a, 0x12, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x5f, 0x74,
-	0x6f, 0x74, 0x61, 0x6c, 0x5f, 0x67, 0x61, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x10,
-	0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x47, 0x61, 0x73,
-	0x12, 0x4f, 0x0a, 0x13, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x5f, 0x74, 0x6f, 0x74,
-	0x61, 0x6c, 0x5f, 0x66, 0x65, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e,
-	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65,
-	0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x11,
-	0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x46, 0x65, 0x65,
-	0x73, 0x12, 0x2e, 0x0a, 0x13, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x5f, 0x74, 0x61,
-	0x73, 0x6b, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x11,
-	0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x54, 0x61, 0x73, 0x6b, 0x43, 0x6f, 0x75, 0x6e,
-	0x74, 0x12, 0x2c, 0x0a, 0x12, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x74, 0x61, 0x73,
-	0x6b, 0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x04, 0x52, 0x10, 0x70,
-	0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x54, 0x61, 0x73, 0x6b, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12,
-	0x32, 0x0a, 0x15, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x67, 0x61, 0x73, 0x5f, 0x72,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x64, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x04, 0x52, 0x13,
-	0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x47, 0x61, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x65, 0x64, 0x12, 0x3d, 0x0a, 0x1b, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x6f,
-	0x6c, 0x64, 0x65, 0x73, 0x74, 0x5f, 0x73, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x64, 0x5f,
-	0x74, 0x73, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x03, 0x52, 0x18, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e,
-	0x67, 0x4f, 0x6c, 0x64, 0x65, 0x73, 0x74, 0x53, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x64,
-	0x54, 0x73, 0x12, 0x54, 0x0a, 0x16, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x74, 0x6f,
-	0x74, 0x61, 0x6c, 0x5f, 0x67, 0x61, 0x73, 0x5f, 0x66, 0x65, 0x65, 0x73, 0x18, 0x0d, 0x20, 0x03,
-	0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65,
-	0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x04, 0xc8,
-	0xde, 0x1f, 0x00, 0x52, 0x13, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x54, 0x6f, 0x74, 0x61,
-	0x6c, 0x47, 0x61, 0x73, 0x46, 0x65, 0x65, 0x73, 0x42, 0x24, 0x5a, 0x22, 0x64, 0x79, 0x73, 0x6f,
-	0x6e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f,
-	0x63, 0x72, 0x6f, 0x6e, 0x74, 0x61, 0x73, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0x45, 0x0a, 0x10, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x54, 0x61,
+	0x73, 0x6b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73,
+	0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x73, 0x6b,
+	0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0x78, 0x0a, 0x11,
+	0x45, 0x76, 0x65, 0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x45, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65,
+	0x64, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72,
+	0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65,
+	0x61, 0x74, 0x6f, 0x72, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18, 0x0a, 0x07,
+	0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73,
+	0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x45, 0x0a, 0x10, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x54,
+	0x61, 0x73, 0x6b, 0x45, 0x78, 0x70, 0x69, 0x72, 0x65, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x74, 0x61,
+	0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x73,
+	0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0x5a, 0x0a,
+	0x0f, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64,
+	0x12, 0x17, 0x0a, 0x07, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x04, 0x52, 0x06, 0x74, 0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72, 0x65,
+	0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65, 0x61,
+	0x74, 0x6f, 0x72, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x22, 0x5c, 0x0a, 0x0f, 0x45, 0x76, 0x65,
+	0x6e, 0x74, 0x54, 0x61, 0x73, 0x6b, 0x50, 0x75, 0x72, 0x67, 0x65, 0x64, 0x12, 0x17, 0x0a, 0x07,
+	0x74, 0x61, 0x73, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74,
+	0x61, 0x73, 0x6b, 0x49, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18, 0x0a,
+	0x07, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
+	0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0xbc, 0x03, 0x0a, 0x14, 0x45, 0x76, 0x65, 0x6e,
+	0x74, 0x43, 0x72, 0x6f, 0x6e, 0x74, 0x61, 0x73, 0x6b, 0x4d, 0x65, 0x74, 0x72, 0x69, 0x63, 0x73,
+	0x12, 0x2c, 0x0a, 0x12, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x5f, 0x74, 0x6f, 0x74,
+	0x61, 0x6c, 0x5f, 0x67, 0x61, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x10, 0x65, 0x78,
+	0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x47, 0x61, 0x73, 0x12, 0x4f,
+	0x0a, 0x13, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x5f, 0x74, 0x6f, 0x74, 0x61, 0x6c,
+	0x5f, 0x66, 0x65, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x63, 0x6f,
+	0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61,
+	0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x11, 0x65, 0x78,
+	0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x46, 0x65, 0x65, 0x73, 0x12,
+	0x2e, 0x0a, 0x13, 0x65, 0x78, 0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x5f, 0x74, 0x61, 0x73, 0x6b,
+	0x5f, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x11, 0x65, 0x78,
+	0x65, 0x63, 0x75, 0x74, 0x65, 0x64, 0x54, 0x61, 0x73, 0x6b, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12,
+	0x2c, 0x0a, 0x12, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x74, 0x61, 0x73, 0x6b, 0x5f,
+	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x04, 0x52, 0x10, 0x70, 0x65, 0x6e,
+	0x64, 0x69, 0x6e, 0x67, 0x54, 0x61, 0x73, 0x6b, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x32, 0x0a,
+	0x15, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x67, 0x61, 0x73, 0x5f, 0x72, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x65, 0x64, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x04, 0x52, 0x13, 0x70, 0x65,
+	0x6e, 0x64, 0x69, 0x6e, 0x67, 0x47, 0x61, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65,
+	0x64, 0x12, 0x3d, 0x0a, 0x1b, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x6f, 0x6c, 0x64,
+	0x65, 0x73, 0x74, 0x5f, 0x73, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x64, 0x5f, 0x74, 0x73,
+	0x18, 0x0c, 0x20, 0x01, 0x28, 0x03, 0x52, 0x18, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x4f,
+	0x6c, 0x64, 0x65, 0x73, 0x74, 0x53, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x64, 0x54, 0x73,
+	0x12, 0x54, 0x0a, 0x16, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x74, 0x6f, 0x74, 0x61,
+	0x6c, 0x5f, 0x67, 0x61, 0x73, 0x5f, 0x66, 0x65, 0x65, 0x73, 0x18, 0x0d, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x19, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x76,
+	0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x6f, 0x69, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f,
+	0x00, 0x52, 0x13, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x47,
+	0x61, 0x73, 0x46, 0x65, 0x65, 0x73, 0x22, 0x5d, 0x0a, 0x18, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x53,
+	0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x43, 0x72, 0x65, 0x61, 0x74,
+	0x65, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x73, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69,
+	0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0e, 0x73, 0x75, 0x62,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63,
+	0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72,
+	0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0x5d, 0x0a, 0x18, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x75,
+	0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x64, 0x12, 0x27, 0x0a, 0x0f, 0x73, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f,
+	0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0e, 0x73, 0x75, 0x62, 0x73,
+	0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x72,
+	0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72, 0x65,
+	0x61, 0x74, 0x6f, 0x72, 0x22, 0x5f, 0x0a, 0x1a, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x75, 0x62,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x72, 0x69, 0x67, 0x67, 0x65, 0x72,
+	0x65, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x73, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69,
+	0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0e, 0x73, 0x75, 0x62,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63,
+	0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x72,
+	0x65, 0x61, 0x74, 0x6f, 0x72, 0x42, 0x24, 0x5a, 0x22, 0x64, 0x79, 0x73, 0x6f, 0x6e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x2f, 0x63, 0x72, 0x6f,
+	0x6e, 0x74, 0x61, 0x73, 0x6b, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -4943,26 +6500,29 @@ func file_dysonprotocol_crontask_v1_events_proto_rawDescGZIP() []byte {
 	return file_dysonprotocol_crontask_v1_events_proto_rawDescData
 }
 
-var file_dysonprotocol_crontask_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_dysonprotocol_crontask_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_dysonprotocol_crontask_v1_events_proto_goTypes = []interface{}{
-	(*EventTaskCreated)(nil),     // 0: dysonprotocol.crontask.v1.EventTaskCreated
-	(*EventTaskPending)(nil),     // 1: dysonprotocol.crontask.v1.EventTaskPending
-	(*EventTaskDeleted)(nil),     // 2: dysonprotocol.crontask.v1.EventTaskDeleted
-	(*EventTaskExecuted)(nil),    // 3: dysonprotocol.crontask.v1.EventTaskExecuted
-	(*EventTaskExpired)(nil),     // 4: dysonprotocol.crontask.v1.EventTaskExpired
-	(*EventTaskFailed)(nil),      // 5: dysonprotocol.crontask.v1.EventTaskFailed
-	(*EventTaskPurged)(nil),      // 6: dysonprotocol.crontask.v1.EventTaskPurged
-	(*EventCrontaskMetrics)(nil), // 7: dysonprotocol.crontask.v1.EventCrontaskMetrics
-	(*v1beta1.Coin)(nil),         // 8: cosmos.base.v1beta1.Coin
+	(*EventTaskCreated)(nil),           // 0: dysonprotocol.crontask.v1.EventTaskCreated
+	(*EventTaskPending)(nil),           // 1: dysonprotocol.crontask.v1.EventTaskPending
+	(*EventTaskDeleted)(nil),           // 2: dysonprotocol.crontask.v1.EventTaskDeleted
+	(*EventTaskExecuted)(nil),          // 3: dysonprotocol.crontask.v1.EventTaskExecuted
+	(*EventTaskExpired)(nil),           // 4: dysonprotocol.crontask.v1.EventTaskExpired
+	(*EventTaskFailed)(nil),            // 5: dysonprotocol.crontask.v1.EventTaskFailed
+	(*EventTaskPurged)(nil),            // 6: dysonprotocol.crontask.v1.EventTaskPurged
+	(*EventCrontaskMetrics)(nil),       // 7: dysonprotocol.crontask.v1.EventCrontaskMetrics
+	(*EventSubscriptionCreated)(nil),   // 8: dysonprotocol.crontask.v1.EventSubscriptionCreated
+	(*EventSubscriptionDeleted)(nil),   // 9: dysonprotocol.crontask.v1.EventSubscriptionDeleted
+	(*EventSubscriptionTriggered)(nil), // 10: dysonprotocol.crontask.v1.EventSubscriptionTriggered
+	(*v1beta1.Coin)(nil),               // 11: cosmos.base.v1beta1.Coin
 }
 var file_dysonprotocol_crontask_v1_events_proto_depIdxs = []int32{
-	8, // 0: dysonprotocol.crontask.v1.EventCrontaskMetrics.executed_total_fees:type_name -> cosmos.base.v1beta1.Coin
-	8, // 1: dysonprotocol.crontask.v1.EventCrontaskMetrics.pending_total_gas_fees:type_name -> cosmos.base.v1beta1.Coin
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	11, // 0: dysonprotocol.crontask.v1.EventCrontaskMetrics.executed_total_fees:type_name -> cosmos.base.v1beta1.Coin
+	11, // 1: dysonprotocol.crontask.v1.EventCrontaskMetrics.pending_total_gas_fees:type_name -> cosmos.base.v1beta1.Coin
+	2,  // [2:2] is the sub-list for method output_type
+	2,  // [2:2] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_dysonprotocol_crontask_v1_events_proto_init() }
@@ -4970,6 +6530,7 @@ func file_dysonprotocol_crontask_v1_events_proto_init() {
 	if File_dysonprotocol_crontask_v1_events_proto != nil {
 		return
 	}
+	file_dysonprotocol_crontask_v1_subscription_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_dysonprotocol_crontask_v1_events_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EventTaskCreated); i {
@@ -5067,6 +6628,42 @@ func file_dysonprotocol_crontask_v1_events_proto_init() {
 				return nil
 			}
 		}
+		file_dysonprotocol_crontask_v1_events_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EventSubscriptionCreated); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_crontask_v1_events_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EventSubscriptionDeleted); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_dysonprotocol_crontask_v1_events_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*EventSubscriptionTriggered); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -5074,7 +6671,7 @@ func file_dysonprotocol_crontask_v1_events_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_dysonprotocol_crontask_v1_events_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

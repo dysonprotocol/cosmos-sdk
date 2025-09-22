@@ -1,0 +1,59 @@
+syntax = "proto3";
+package dysonprotocol.crontask.v1;
+
+option go_package = "dysonprotocol.com/x/crontask/types";
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+// Subscription defines an event-triggered action to execute a script
+message Subscription {
+  // unique id
+  uint64 subscription_id = 1;
+
+  // creator account that owns this subscription
+  string creator = 2 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // event type to match (e.g., "transfer")
+  string event_type = 3;
+
+  // GJSON filter to match events
+  string filter = 4;
+
+  // target script address
+  string script_address = 5 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // function name to invoke
+  string function = 6;
+
+  // positional args as JSON list string
+  string args = 7;
+
+  // keyword args as JSON dict string
+  string kwargs = 8;
+
+  // gas limit for the created crontask
+  uint64 task_gas_limit = 9;
+
+  // fee for the created crontask; also charged at subscription creation/renewal
+  cosmos.base.v1beta1.Coin task_gas_fee = 10 [ (gogoproto.nullable) = false ];
+
+  // status: enabled|disabled|error|expired
+  string status = 11;
+
+  // status message
+  string status_message = 12;
+
+  // subscription expiry timestamp (unix seconds)
+  int64 expiry_timestamp = 13;
+
+  // total number of triggers so far (field name per requirement)
+  uint64 triger_count = 14;
+
+  // Overrides for created crontasks
+  int64 task_scheduled_timestamp = 15;
+  int64 task_expiry_timestamp = 16;
+  cosmos.base.v1beta1.DecCoin task_gas_price = 17
+      [ (gogoproto.nullable) = false ];
+}

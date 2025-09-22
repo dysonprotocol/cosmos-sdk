@@ -1053,3 +1053,29 @@ If you want, I’ll implement:
 - the batch aggregator (inputs/outputs maps)
 - the single `MoveCoins` call and subsequent `burnLiquid`
 - removal of TAKE_FIRST/TAKE_ANY and doc tweak for TAKE_ALL behavior.
+======
+[4 tools called]
+
+- I refined validation and error messages and finished index maintenance, keeping style idiomatic for Go/Cosmos SDK.
+
+What I changed:
+- Validation (single-issue errors, specific messages)
+  - `MsgCreateSubscription.ValidateBasic` now checks one field at a time with precise messages (e.g., “script_address is required”, “event_type exceeds 100 characters”).
+  - `MsgDeleteSubscription.ValidateBasic` validates `creator` and `subscription_id` separately.
+- Errors with context
+  - Fee deductions now report creator and error cause both in create and per-trigger paths.
+  - Storage errors include the subscription id.
+  - Sequence allocation logs “allocate next subscription_id”.
+- Indexing
+  - Implemented two subscription indexes:
+    - status+event_type+id → id
+    - creator+status+id → id
+  - `addSubIndexes/removeSubIndexes` update both.
+  - Handlers call index updates on create/delete and whenever status changes during event processing.
+- Event handling
+  - Uses the status+event_type index to iterate only enabled subscriptions per type.
+  - Applies `task_scheduled_timestamp`, `task_expiry_timestamp`, and optional `task_gas_price` overrides on task creation.
+  - GJSON filter matching retained.
+
+Ready to proceed:
+- If you want, I’ll add creator+status query endpoints and a `SetSubscription` wrapper to centralize index maintenance on any keeper write, plus merging normalized event JSON into `kwargs.event`.

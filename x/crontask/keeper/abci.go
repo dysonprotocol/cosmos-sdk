@@ -625,3 +625,7 @@ func (k Keeper) removeOldTasks(ctx context.Context, currentTime int64) error {
 
 	return nil
 }
+
+func (k Keeper) EndBlocker(ctx context.Context) error {
+	return nil
+}

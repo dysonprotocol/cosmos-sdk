@@ -57,6 +57,160 @@
         ]
       }
     },
+    "/dysonprotocol/crontask/v1/subscriptions": {
+      "get": {
+        "summary": "SubscriptionsAll returns all subscriptions",
+        "operationId": "dysonprotocol.crontask.v1.QuerySubscriptionsAllRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.crontask.v1.QuerySubscriptionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/crontask/v1/subscriptions/creator/{creator}": {
+      "get": {
+        "summary": "SubscriptionsByCreator returns subscriptions for a creator",
+        "operationId": "dysonprotocol.crontask.v1.QuerySubscriptionsByCreatorRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.crontask.v1.QuerySubscriptionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "creator",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pagination.key",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "pagination.offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.limit",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          },
+          {
+            "name": "pagination.count_total",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "pagination.reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
+    "/dysonprotocol/crontask/v1/subscriptions/{subscription_id}": {
+      "get": {
+        "summary": "SubscriptionByID returns a subscription by id",
+        "operationId": "dysonprotocol.crontask.v1.QuerySubscriptionByIDRequest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dysonprotocol.crontask.v1.QuerySubscriptionByIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/grpc.gateway.runtime.Error"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "subscription_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "Query"
+        ]
+      }
+    },
     "/dysonprotocol/crontask/v1/tasks": {
       "get": {
         "summary": "TasksAll returns all tasks ordered by ID",
@@ -471,6 +625,11 @@
           "type": "string",
           "format": "int64",
           "title": "Retention period for completed/failed/expired tasks (seconds)"
+        },
+        "max_expiry_delta": {
+          "type": "string",
+          "format": "int64",
+          "title": "Maximum allowed delta for subscription expiry renewal (default 7 days)"
         }
       },
       "title": "Params defines the parameters for the crontask module"
@@ -492,6 +651,28 @@
         }
       },
       "title": "QueryParamsResponse is the response type for the Query/Params RPC method"
+    },
+    "dysonprotocol.crontask.v1.QuerySubscriptionByIDResponse": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "$ref": "#/definitions/dysonprotocol.crontask.v1.Subscription"
+        }
+      }
+    },
+    "dysonprotocol.crontask.v1.QuerySubscriptionsResponse": {
+      "type": "object",
+      "properties": {
+        "subscriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dysonprotocol.crontask.v1.Subscription"
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/cosmos.base.query.v1beta1.PageResponse"
+        }
+      }
     },
     "dysonprotocol.crontask.v1.QueryTaskByIDResponse": {
       "type": "object",
@@ -517,6 +698,84 @@
         }
       },
       "title": "QueryTasksResponse is the response type for task queries with multiple\nresults"
+    },
+    "dysonprotocol.crontask.v1.Subscription": {
+      "type": "object",
+      "properties": {
+        "subscription_id": {
+          "type": "string",
+          "format": "uint64",
+          "title": "unique id"
+        },
+        "creator": {
+          "type": "string",
+          "title": "creator account that owns this subscription"
+        },
+        "event_type": {
+          "type": "string",
+          "title": "event type to match (e.g., \"transfer\")"
+        },
+        "filter": {
+          "type": "string",
+          "title": "GJSON filter to match events"
+        },
+        "script_address": {
+          "type": "string",
+          "title": "target script address"
+        },
+        "function": {
+          "type": "string",
+          "title": "function name to invoke"
+        },
+        "args": {
+          "type": "string",
+          "title": "positional args as JSON list string"
+        },
+        "kwargs": {
+          "type": "string",
+          "title": "keyword args as JSON dict string"
+        },
+        "task_gas_limit": {
+          "type": "string",
+          "format": "uint64",
+          "title": "gas limit for the created crontask"
+        },
+        "task_gas_fee": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "title": "fee for the created crontask; also charged at subscription creation/renewal"
+        },
+        "status": {
+          "type": "string",
+          "title": "status: enabled|disabled|error|expired"
+        },
+        "status_message": {
+          "type": "string",
+          "title": "status message"
+        },
+        "expiry_timestamp": {
+          "type": "string",
+          "format": "int64",
+          "title": "subscription expiry timestamp (unix seconds)"
+        },
+        "triger_count": {
+          "type": "string",
+          "format": "uint64",
+          "title": "total number of triggers so far (field name per requirement)"
+        },
+        "task_scheduled_timestamp": {
+          "type": "string",
+          "format": "int64",
+          "title": "Overrides for created crontasks"
+        },
+        "task_expiry_timestamp": {
+          "type": "string",
+          "format": "int64"
+        },
+        "task_gas_price": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.DecCoin"
+        }
+      },
+      "title": "Subscription defines an event-triggered action to execute a script"
     },
     "dysonprotocol.crontask.v1.Task": {
       "type": "object",

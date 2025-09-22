@@ -1,0 +1,74 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgCreateSubscription",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgCreateSubscription": {
+                "properties": {
+                    "creator": {
+                        "type": "string"
+                    },
+                    "event_type": {
+                        "type": "string"
+                    },
+                    "filter": {
+                        "type": "string"
+                    },
+                    "script_address": {
+                        "type": "string"
+                    },
+                    "function": {
+                        "type": "string"
+                    },
+                    "args": {
+                        "type": "string"
+                    },
+                    "kwargs": {
+                        "type": "string"
+                    },
+                    "task_gas_limit": {
+                        "type": "string"
+                    },
+                    "task_gas_fee": {
+                        "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Create Subscription",
+                "description": "CreateSubscription"
+            },
+            "cosmos.base.v1beta1.Coin": {
+                "properties": {
+                    "denom": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Coin",
+                "description": "Coin defines a token with a denomination and an amount. NOTE: The amount field is an Int which implements the custom method signatures required by gogoproto."
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgCreateSubscriptionResponse",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgCreateSubscriptionResponse": {
+                "properties": {
+                    "subscription_id": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Create Subscription Response"
+            }
+        }
+    }
+}

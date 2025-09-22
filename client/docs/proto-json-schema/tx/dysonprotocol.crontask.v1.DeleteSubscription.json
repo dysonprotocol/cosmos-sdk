@@ -1,0 +1,33 @@
+{
+    "request": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgDeleteSubscription",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgDeleteSubscription": {
+                "properties": {
+                    "creator": {
+                        "type": "string"
+                    },
+                    "subscription_id": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Delete Subscription",
+                "description": "DeleteSubscription"
+            }
+        }
+    },
+    "response": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$ref": "#/definitions/dysonprotocol.crontask.v1.MsgDeleteSubscriptionResponse",
+        "definitions": {
+            "dysonprotocol.crontask.v1.MsgDeleteSubscriptionResponse": {
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Msg Delete Subscription Response"
+            }
+        }
+    }
+}
