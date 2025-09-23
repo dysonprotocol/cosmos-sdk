@@ -8,9 +8,6 @@
                     "creator": {
                         "type": "string"
                     },
-                    "event_type": {
-                        "type": "string"
-                    },
                     "filter": {
                         "type": "string"
                     },

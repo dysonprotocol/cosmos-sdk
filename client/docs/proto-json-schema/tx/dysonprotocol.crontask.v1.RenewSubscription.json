@@ -10,9 +10,6 @@
                     },
                     "subscription_id": {
                         "type": "string"
-                    },
-                    "new_expiry": {
-                        "type": "string"
                     }
                 },
                 "additionalProperties": false,

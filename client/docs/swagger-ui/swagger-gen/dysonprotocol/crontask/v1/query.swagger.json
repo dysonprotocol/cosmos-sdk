@@ -626,14 +626,13 @@
           "format": "int64",
           "title": "Retention period for completed/failed/expired tasks (seconds)"
         },
-        "max_subscription_time": {
+        "max_subscription_duration": {
           "type": "string",
-          "format": "int64",
-          "title": "Maximum allowed subscription time (seconds)"
+          "title": "Maximum subscription duration (default 7 days)"
         },
         "min_stake_per_subscription": {
           "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
-          "title": "Minimum stake per subscription required (default 1000 udys)"
+          "title": "Minimum stake required per active subscription"
         }
       },
       "title": "Params defines the parameters for the crontask module"
@@ -717,7 +716,7 @@
         },
         "filter": {
           "type": "string",
-          "title": "GJSON filter to match events"
+          "title": "GJSON filter to match events across the normalized block event array"
         },
         "script_address": {
           "type": "string",
@@ -755,7 +754,7 @@
         "expiry_timestamp": {
           "type": "string",
           "format": "int64",
-          "title": "subscription expiry timestamp (unix seconds)"
+          "title": "Subscription expiry timestamp (unix seconds)"
         },
         "triger_count": {
           "type": "string",

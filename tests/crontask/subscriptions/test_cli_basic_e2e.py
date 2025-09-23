@@ -64,16 +64,45 @@ def emit_payment():
     )
     assert up2.get("code", 1) == 0
 
-    # Create subscription matching event_type and simple filter (key==payment_processed)
+    # Ensure creator has sufficient delegated stake for subscriptions
+    vals = dysond("query", "staking", "validators")
+    valopers = vals.get("validators", [])
+    assert valopers, f"no validators: {vals}"
+    valoper = valopers[0].get("operator_address") or valopers[0].get("operatorAddress")
+    assert valoper, f"missing operator_address: {valopers[0]}"
+    del_tx = dysond(
+        "tx",
+        "staking",
+        "delegate",
+        valoper,
+        "2000udys",
+        "--from",
+        creator_name,
+        "--yes",
+        "--gas",
+        "auto",
+    )
+    assert del_tx.get("code", 1) == 0, f"delegate failed: {del_tx}"
+
+    # Create subscription matching simple filter (key==payment_processed)
+    # should match
+    # {
+    #   "type": "dysonprotocol.script.v1.EventScriptEvent",
+    #   "attributes": {
+    #     "address": "dys2165dfqxv6hng5pk8p4lm8jmjcg60vtrrycrmsum",
+    #     "key": "payment_processed",
+    #     "msg_index": 0,
+    #     "value": "ok"
+    #   }
+    # }
+
     # Minimal gas settings
     create_sub = dysond(
         "tx",
         "crontask",
         "create-subscription",
-        "--event-type",
-        "dysonprotocol.script.v1.EventScriptEvent",
         "--filter",
-        "attributes.key=='payment_processed'",
+        '#(attributes.key=="payment_processed")',
         "--script-address",
         creator_addr,
         "--function",
@@ -118,12 +147,13 @@ def emit_payment():
     # Wait until a task is scheduled for the subscription creator
     def _has_scheduled():
         res = dysond("query", "crontask", "tasks-by-address", "--creator", creator_addr)
-        tasks = res.get("tasks", [])
-        return any(t.get("status") == "SCHEDULED" for t in tasks)
+        assert task.get("status") != "FAILED", f"task failed: {task}"
+        assert task.get("status") != "EXPIRED", f"task expired: {task}"
+        return task.get("status") == "SCHEDULED"
 
     poll_until_condition(
         _has_scheduled,
-        timeout=10,
+        timeout=1,
         poll_interval=0.2,
         error_message="No scheduled task created for subscription",
     )
@@ -132,17 +162,19 @@ def emit_payment():
     tasks_res = dysond(
         "query", "crontask", "tasks-by-address", "--creator", creator_addr
     )
-    tasks = tasks_res.get("tasks", [])
-    assert tasks, f"no tasks found: {tasks_res}"
-    latest = sorted(tasks, key=lambda t: int(t["task_id"]))[-1]
+    task = tasks_res.get("tasks", [None])[0]
+    assert task, f"no task found: {tasks_res}"
+    assert task.get("status") != "FAILED", f"task failed: {task}"
+    assert task.get("status") != "EXPIRED", f"task expired: {task}"
+    assert task, f"no tasks found: {tasks_res}"
 
     # Verify the single MsgExec has kwargs containing event merge
     # msgs is Any; we assert it's the script exec to our address and function name
-    assert latest.get("status") in (
+    assert task.get("status") in (
         "SCHEDULED",
         "PENDING",
         "DONE",
-    ), f"unexpected status: {latest}"
+    ), f"unexpected status: {task}"
 
     # Renew the subscription by +60s (ensures fee path works and status stays enabled)
     ren = dysond(
@@ -151,8 +183,6 @@ def emit_payment():
         "renew-subscription",
         "--subscription-id",
         str(sub_id),
-        "--new-expiry",
-        "+60s",
         "--from",
         creator_name,
         "--yes",

@@ -1126,10 +1126,9 @@ paths:
                     title: >-
                       Retention period for completed/failed/expired tasks
                       (seconds)
-                  max_subscription_time:
+                  max_subscription_duration:
                     type: string
-                    format: int64
-                    title: Maximum allowed subscription time (seconds)
+                    title: Maximum subscription duration (default 7 days)
                   min_stake_per_subscription:
                     type: object
                     properties:
@@ -1145,9 +1144,7 @@ paths:
                       custom method
 
                       signatures required by gogoproto.
-                    title: >-
-                      Minimum stake per subscription required (default 1000
-                      udys)
+                    title: Minimum stake required per active subscription
                 title: Params defines the parameters for the crontask module
             title: >-
               QueryParamsResponse is the response type for the Query/Params RPC
@@ -1203,7 +1200,9 @@ paths:
                       title: creator account that owns this subscription
                     filter:
                       type: string
-                      title: GJSON filter to match events
+                      title: >-
+                        GJSON filter to match events across the normalized block
+                        event array
                     script_address:
                       type: string
                       title: target script address
@@ -1247,7 +1246,7 @@ paths:
                     expiry_timestamp:
                       type: string
                       format: int64
-                      title: subscription expiry timestamp (unix seconds)
+                      title: Subscription expiry timestamp (unix seconds)
                     triger_count:
                       type: string
                       format: uint64
@@ -1383,7 +1382,9 @@ paths:
                       title: creator account that owns this subscription
                     filter:
                       type: string
-                      title: GJSON filter to match events
+                      title: >-
+                        GJSON filter to match events across the normalized block
+                        event array
                     script_address:
                       type: string
                       title: target script address
@@ -1427,7 +1428,7 @@ paths:
                     expiry_timestamp:
                       type: string
                       format: int64
-                      title: subscription expiry timestamp (unix seconds)
+                      title: Subscription expiry timestamp (unix seconds)
                     triger_count:
                       type: string
                       format: uint64
@@ -1565,7 +1566,9 @@ paths:
                     title: creator account that owns this subscription
                   filter:
                     type: string
-                    title: GJSON filter to match events
+                    title: >-
+                      GJSON filter to match events across the normalized block
+                      event array
                   script_address:
                     type: string
                     title: target script address
@@ -1609,7 +1612,7 @@ paths:
                   expiry_timestamp:
                     type: string
                     format: int64
-                    title: subscription expiry timestamp (unix seconds)
+                    title: Subscription expiry timestamp (unix seconds)
                   triger_count:
                     type: string
                     format: uint64
@@ -18414,8 +18417,6 @@ paths:
             properties:
               creator:
                 type: string
-              event_type:
-                type: string
               filter:
                 type: string
               script_address:
@@ -18701,8 +18702,6 @@ paths:
               subscription_id:
                 type: string
                 format: uint64
-              new_expiry:
-                type: string
             title: RenewSubscription
       tags:
         - Msg
@@ -18785,10 +18784,9 @@ paths:
                     title: >-
                       Retention period for completed/failed/expired tasks
                       (seconds)
-                  max_subscription_time:
+                  max_subscription_duration:
                     type: string
-                    format: int64
-                    title: Maximum allowed subscription time (seconds)
+                    title: Maximum subscription duration (default 7 days)
                   min_stake_per_subscription:
                     type: object
                     properties:
@@ -18804,9 +18802,7 @@ paths:
                       custom method
 
                       signatures required by gogoproto.
-                    title: >-
-                      Minimum stake per subscription required (default 1000
-                      udys)
+                    title: Minimum stake required per active subscription
                 title: Params defines the parameters for the crontask module
             description: >-
               ---------------------------------------------------------------------------
@@ -30259,10 +30255,9 @@ definitions:
         type: string
         format: int64
         title: Retention period for completed/failed/expired tasks (seconds)
-      max_subscription_time:
+      max_subscription_duration:
         type: string
-        format: int64
-        title: Maximum allowed subscription time (seconds)
+        title: Maximum subscription duration (default 7 days)
       min_stake_per_subscription:
         type: object
         properties:
@@ -30275,7 +30270,7 @@ definitions:
 
           NOTE: The amount field is an Int which implements the custom method
           signatures required by gogoproto.
-        title: Minimum stake per subscription required (default 1000 udys)
+        title: Minimum stake required per active subscription
     title: Params defines the parameters for the crontask module
   dysonprotocol.crontask.v1.QueryMetricsResponse:
     type: object
@@ -30351,10 +30346,9 @@ definitions:
             type: string
             format: int64
             title: Retention period for completed/failed/expired tasks (seconds)
-          max_subscription_time:
+          max_subscription_duration:
             type: string
-            format: int64
-            title: Maximum allowed subscription time (seconds)
+            title: Maximum subscription duration (default 7 days)
           min_stake_per_subscription:
             type: object
             properties:
@@ -30370,7 +30364,7 @@ definitions:
               method
 
               signatures required by gogoproto.
-            title: Minimum stake per subscription required (default 1000 udys)
+            title: Minimum stake required per active subscription
         title: Params defines the parameters for the crontask module
     title: QueryParamsResponse is the response type for the Query/Params RPC method
   dysonprotocol.crontask.v1.QuerySubscriptionByIDResponse:
@@ -30388,7 +30382,9 @@ definitions:
             title: creator account that owns this subscription
           filter:
             type: string
-            title: GJSON filter to match events
+            title: >-
+              GJSON filter to match events across the normalized block event
+              array
           script_address:
             type: string
             title: target script address
@@ -30432,7 +30428,7 @@ definitions:
           expiry_timestamp:
             type: string
             format: int64
-            title: subscription expiry timestamp (unix seconds)
+            title: Subscription expiry timestamp (unix seconds)
           triger_count:
             type: string
             format: uint64
@@ -30477,7 +30473,9 @@ definitions:
               title: creator account that owns this subscription
             filter:
               type: string
-              title: GJSON filter to match events
+              title: >-
+                GJSON filter to match events across the normalized block event
+                array
             script_address:
               type: string
               title: target script address
@@ -30521,7 +30519,7 @@ definitions:
             expiry_timestamp:
               type: string
               format: int64
-              title: subscription expiry timestamp (unix seconds)
+              title: Subscription expiry timestamp (unix seconds)
             triger_count:
               type: string
               format: uint64
@@ -30866,7 +30864,7 @@ definitions:
         title: creator account that owns this subscription
       filter:
         type: string
-        title: GJSON filter to match events
+        title: GJSON filter to match events across the normalized block event array
       script_address:
         type: string
         title: target script address
@@ -30907,7 +30905,7 @@ definitions:
       expiry_timestamp:
         type: string
         format: int64
-        title: subscription expiry timestamp (unix seconds)
+        title: Subscription expiry timestamp (unix seconds)
       triger_count:
         type: string
         format: uint64
@@ -48685,8 +48683,6 @@ definitions:
     properties:
       creator:
         type: string
-      event_type:
-        type: string
       filter:
         type: string
       script_address:
@@ -48816,8 +48812,6 @@ definitions:
       subscription_id:
         type: string
         format: uint64
-      new_expiry:
-        type: string
     title: RenewSubscription
   dysonprotocol.crontask.v1.MsgRenewSubscriptionResponse:
     type: object
@@ -48855,10 +48849,9 @@ definitions:
             type: string
             format: int64
             title: Retention period for completed/failed/expired tasks (seconds)
-          max_subscription_time:
+          max_subscription_duration:
             type: string
-            format: int64
-            title: Maximum allowed subscription time (seconds)
+            title: Maximum subscription duration (default 7 days)
           min_stake_per_subscription:
             type: object
             properties:
@@ -48874,7 +48867,7 @@ definitions:
               method
 
               signatures required by gogoproto.
-            title: Minimum stake per subscription required (default 1000 udys)
+            title: Minimum stake required per active subscription
         title: Params defines the parameters for the crontask module
     description: >-
       ---------------------------------------------------------------------------

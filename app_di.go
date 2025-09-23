@@ -41,7 +41,8 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	consensuskeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	epochskeeper "github.com/cosmos/cosmos-sdk/x/epochs/keeper"
+
+	//epochskeeper "github.com/cosmos/cosmos-sdk/x/epochs/keeper"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	protocolpoolkeeper "github.com/cosmos/cosmos-sdk/x/protocolpool/keeper"
@@ -86,10 +87,10 @@ type DysApp struct {
 	CircuitKeeper         circuitkeeper.Keeper
 
 	// supplementary keepers
-	FeeGrantKeeper     feegrantkeeper.Keeper
-	AuthzKeeper        authzkeeper.Keeper
-	NFTKeeper          nftkeeper.Keeper
-	EpochsKeeper       epochskeeper.Keeper
+	FeeGrantKeeper feegrantkeeper.Keeper
+	AuthzKeeper    authzkeeper.Keeper
+	NFTKeeper      nftkeeper.Keeper
+	// EpochsKeeper       epochskeeper.Keeper
 	ProtocolPoolKeeper protocolpoolkeeper.Keeper
 
 	// Custom module keepers
@@ -198,7 +199,7 @@ func NewDysApp(
 		&app.FeeGrantKeeper,
 		&app.AuthzKeeper,
 		&app.NFTKeeper,
-		&app.EpochsKeeper,
+		// &app.EpochsKeeper,
 		&app.ProtocolPoolKeeper,
 		&app.NameserviceKeeper,
 		&app.ScriptKeeper,

@@ -94,9 +94,10 @@ import (
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/cosmos/cosmos-sdk/x/epochs"
-	epochskeeper "github.com/cosmos/cosmos-sdk/x/epochs/keeper"
-	epochstypes "github.com/cosmos/cosmos-sdk/x/epochs/types"
+
+	//"github.com/cosmos/cosmos-sdk/x/epochs"
+	//epochskeeper "github.com/cosmos/cosmos-sdk/x/epochs/keeper"
+	//epochstypes "github.com/cosmos/cosmos-sdk/x/epochs/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
@@ -215,10 +216,10 @@ type DysApp struct {
 	CircuitKeeper         circuitkeeper.Keeper
 
 	// supplementary keepers
-	FeeGrantKeeper     feegrantkeeper.Keeper
-	AuthzKeeper        authzkeeper.Keeper
-	NFTKeeper          nftkeeper.Keeper
-	EpochsKeeper       epochskeeper.Keeper
+	FeeGrantKeeper feegrantkeeper.Keeper
+	AuthzKeeper    authzkeeper.Keeper
+	NFTKeeper      nftkeeper.Keeper
+	//EpochsKeeper       epochskeeper.Keeper
 	ProtocolPoolKeeper protocolpoolkeeper.Keeper
 
 	// IBC keepers
@@ -343,7 +344,7 @@ func NewDysApp(
 		circuittypes.StoreKey,
 		authzkeeper.StoreKey,
 		nftkeeper.StoreKey,
-		epochstypes.StoreKey,
+		//epochstypes.StoreKey,
 		protocolpooltypes.StoreKey,
 		nameservicev1.StoreKey,
 		scriptv1.StoreKey,
@@ -659,17 +660,18 @@ func NewDysApp(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	app.EpochsKeeper = epochskeeper.NewKeeper(
-		runtime.NewKVStoreService(keys[epochstypes.StoreKey]),
-		appCodec,
-	)
+	/*
+		app.EpochsKeeper = epochskeeper.NewKeeper(
+			runtime.NewKVStoreService(keys[epochstypes.StoreKey]),
+			appCodec,
+		)
 
-	app.EpochsKeeper.SetHooks(
-		epochstypes.NewMultiEpochHooks(
-		// insert epoch hooks receivers here
-		),
-	)
-
+		app.EpochsKeeper.SetHooks(
+			epochstypes.NewMultiEpochHooks(
+			// insert epoch hooks receivers here
+			),
+		)
+	*/
 	app.NameserviceKeeper = nameservicekeeper.NewKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[nameservicev1.StoreKey]),
@@ -700,6 +702,7 @@ func NewDysApp(
 		runtime.NewKVStoreService(keys[crontaskv1.StoreKey]),
 		app.AccountKeeper,
 		app.BankKeeper,
+		app.StakingKeeper,
 		app.MsgServiceRouter(),
 		*crontaskv1.DefaultConfig(),
 		logger,
@@ -754,7 +757,7 @@ func NewDysApp(
 		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
 		circuit.NewAppModule(appCodec, app.CircuitKeeper),
-		epochs.NewAppModule(app.EpochsKeeper),
+		//epochs.NewAppModule(app.EpochsKeeper),
 		protocolpool.NewAppModule(app.ProtocolPoolKeeper, app.AccountKeeper, app.BankKeeper),
 		nameservicemodule.NewAppModule(appCodec, app.NameserviceKeeper, app.interfaceRegistry),
 		scriptmodule.NewAppModule(appCodec, app.ScriptKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
@@ -809,7 +812,7 @@ func NewDysApp(
 		icatypes.ModuleName,
 		genutiltypes.ModuleName,
 		authz.ModuleName,
-		epochstypes.ModuleName,
+		//epochstypes.ModuleName,
 		nameservicev1.ModuleName,
 		scriptv1.ModuleName,
 		storagev1.ModuleName,
@@ -857,7 +860,7 @@ func NewDysApp(
 		vestingtypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		circuittypes.ModuleName,
-		epochstypes.ModuleName,
+		//epochstypes.ModuleName,
 		protocolpooltypes.ModuleName,
 		nameservicev1.ModuleName,
 		scriptv1.ModuleName,
@@ -888,7 +891,7 @@ func NewDysApp(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		circuittypes.ModuleName,
-		epochstypes.ModuleName,
+		//epochstypes.ModuleName,
 		nameservicev1.ModuleName,
 		scriptv1.ModuleName,
 		storagev1.ModuleName,

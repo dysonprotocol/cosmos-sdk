@@ -3,6 +3,7 @@ package types
 import (
 	"context"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -16,6 +17,12 @@ type AccountKeeper interface {
 type BankKeeper interface {
 	HasBalance(ctx context.Context, addr sdk.AccAddress, amt sdk.Coin) bool
 	SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+}
+
+// StakingKeeper defines the expected interface needed to retrieve delegation information.
+type StakingKeeper interface {
+	// GetDelegatorBonded returns the total amount a delegator has bonded.
+	GetDelegatorBonded(ctx context.Context, delegator sdk.AccAddress) (sdkmath.Int, error)
 }
 
 // BranchKeeper defines the expected branch keeper for atomic execution

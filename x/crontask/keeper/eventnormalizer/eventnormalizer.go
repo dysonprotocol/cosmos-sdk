@@ -2,7 +2,6 @@ package eventnormalizer
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 )
 
@@ -29,7 +28,6 @@ type NormalizedEvent struct {
 // NormalizeEvents processes a list of events, normalizing their attributes and grouping by type.
 // Attributes are parsed recursively: quoted strings are unquoted, and JSON-like values are decoded into maps or arrays.
 func NormalizeEvent(event Event) NormalizedEvent {
-	fmt.Println("NormalizeEvent", event)
 	result := NormalizedEvent{
 		Type:       event.Type,
 		Attributes: make(map[string]any),
@@ -42,7 +40,6 @@ func NormalizeEvent(event Event) NormalizedEvent {
 	}
 	result.Attributes = attrs
 
-	fmt.Println("NormalizeEvent result", result)
 	return result
 }
 

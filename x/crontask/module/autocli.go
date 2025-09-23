@@ -152,18 +152,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				},
 				{
 					RpcMethod: "CreateSubscription",
-					Use:       "create-subscription --event-type <type> --filter <gjson> --script-address <addr> --function <name> --args <json> --kwargs <json> --task-gas-limit <limit> --task-gas-fee <fee>",
+					Use:       "create-subscription --filter <gjson> --script-address <addr> --function <name> --args <json> --kwargs <json> --task-gas-limit <limit> --task-gas-fee <fee>",
 					Short:     "Create a new event subscription",
 					Long:      "Register a new event-triggered subscription that schedules a task when matching events occur",
 					FlagOptions: map[string]*autocliv1.FlagOptions{
-						"event_type":     {Name: "event-type", Usage: "ABCI event type to match"},
 						"filter":         {Name: "filter", Usage: "GJSON filter applied to normalized event"},
 						"script_address": {Name: "script-address", Usage: "Target script address"},
 						"function":       {Name: "function", Usage: "Function name to invoke"},
 						"args":           {Name: "args", Usage: "JSON list for positional args"},
 						"kwargs":         {Name: "kwargs", Usage: "JSON object for keyword args"},
 						"task_gas_limit": {Name: "task-gas-limit", Usage: "Gas limit for created task"},
-						"task_gas_fee":   {Name: "task-gas-fee", Usage: "Fee for created task (and upfront anti-spam)"},
+						"task_gas_fee":   {Name: "task-gas-fee", Usage: "Fee for created task (e.g., 1udys)"},
 					},
 				},
 				{
@@ -177,12 +176,11 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				},
 				{
 					RpcMethod: "RenewSubscription",
-					Use:       "renew-subscription --subscription-id <id> --new-expiry <ts-or-+dur>",
+					Use:       "renew-subscription --subscription-id <id>",
 					Short:     "Renew a subscription and recharge the fee",
-					Long:      "Extend the subscription expiry up to the allowed max and pay the task fee again",
+					Long:      "Extend the subscription expiry to now + max_subscription_duration and pay the task fee again",
 					FlagOptions: map[string]*autocliv1.FlagOptions{
 						"subscription_id": {Name: "subscription-id", Usage: "Subscription ID to renew"},
-						"new_expiry":      {Name: "new-expiry", Usage: "Unix timestamp or +duration (e.g. +1h30m)"},
 					},
 				},
 			},

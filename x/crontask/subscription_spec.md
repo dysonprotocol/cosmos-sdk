@@ -264,3 +264,32 @@ Params: set default MaxSubscriptionDuration to 24h; enforce renew uses duration;
 Stake check: add StakingKeeper dep; enforce min stake across all subs on create/renew
 AutoCLI/Query: update CLI and swagger for removed fields and new params
 Tests: update subscription tests to array-based filtering; add stake enforcement tests
+==================================================
+[2 tools called]
+
+- I switched `Params.max_subscription_duration` to `google.protobuf.Duration` with `(gogoproto.stdduration)=true` and regenerated code.
+
+- Next required to build:
+  - Remove `event_type` flag wiring from CLI (`x/crontask/module/autocli.go`, and any cmd bindings) to fix the panic.
+  - On create/renew: set `subscription.expiry_timestamp = now + params.max_subscription_duration.AsDuration().Seconds()`.
+  - Re-add preemptive expiry in keeper using `expiry_timestamp <= now`.
+==================================================
+  I'll update the baseapp sink interface and abci event aggregation to pass a flat []abci.Event (no type grouping), adjust the keeper to implement HandleBlockEvents(ctx, []abci.Event), and rebuild.
+
+[9 tools called]
+
+I'll remove type-based aggregation from the vendored cosmos-sdk to pass a flat []abci.Event to the sink, update the sink interface in baseapp and options, change the keeper to implement HandleBlockEvents(ctx, []abci.Event), and rebuild to verify.
+
+[5 tools called]
+
+- Updated the vendored SDK to pass a flat event list to the sink and removed all type-grouping.
+- Adjusted sink interface:
+  - `baseapp.BaseApp.blockEventsSink` now expects `HandleBlockEvents(ctx, []abci.Event)`.
+  - Updated `SetBlockEventsSink` accordingly.
+  - `internalFinalizeBlock` aggregates begin/tx/end events into `eventsFlat` and calls `HandleBlockEvents(...)`.
+
+- Updated keeper:
+  - Renamed and refactored handler to `HandleBlockEvents(ctx, []abci.Event)`.
+  - Logic otherwise unchanged; it iterates enabled subs, applies filters over all events, creates tasks, disables sub on task error, increments `trigger_count`, persists.
+
+- Build is green.

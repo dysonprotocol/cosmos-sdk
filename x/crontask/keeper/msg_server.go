@@ -8,6 +8,7 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
+	storetypes "cosmossdk.io/store/types"
 	crontasktypes "dysonprotocol.com/x/crontask/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -26,6 +27,42 @@ func (k Keeper) CreateSubscription(ctx context.Context, msg *crontasktypes.MsgCr
 
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 
+	// Enforce minimum stake per subscription (across all subscriptions)
+	params, err := k.GetParams(ctx)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "failed to load params")
+	}
+	if params.MinStakePerSubscription.Denom != "" && params.MinStakePerSubscription.Amount.IsPositive() {
+		// Count all subscriptions for this creator (any status)
+		store := k.kvStore(ctx)
+		prefix := append(indexSubCreatorStatusPrefix, []byte(msg.Creator)...)
+		// We iterate over creator+status index keys: creator|status|id
+		it := storetypes.KVStorePrefixIterator(store, prefix)
+		var totalSubs uint64
+		for ; it.Valid(); it.Next() {
+			totalSubs++
+		}
+		it.Close()
+		if totalSubs == 0 {
+			totalSubs = 1 // include the one being created
+		} else {
+			totalSubs++ // account for this new subscription
+		}
+		// required = MinStakePerSubscription.Amount * totalSubs
+		required := params.MinStakePerSubscription.Amount.MulRaw(int64(totalSubs))
+		creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+		if err != nil {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", msg.Creator)
+		}
+		totalBonded, err := k.stakingKeeper.GetDelegatorBonded(ctx, creatorAddr)
+		if err != nil {
+			return nil, errorsmod.Wrap(err, "failed to get total bonded stake")
+		}
+		if totalBonded.LT(required) {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient delegated stake: have %s, need >= %s for %d subscriptions", totalBonded.String(), required.String(), totalSubs)
+		}
+	}
+
 	// deduct anti-spam fee to fee_collector
 	fee := sdk.NewCoins(msg.TaskGasFee)
 	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
@@ -41,20 +78,32 @@ func (k Keeper) CreateSubscription(ctx context.Context, msg *crontasktypes.MsgCr
 		return nil, errorsmod.Wrap(err, "failed to allocate next subscription_id")
 	}
 
+	// Minify and validate args/kwargs now (subscription storage should keep normalized values)
+	minArgs, err := minifyJSONArray(msg.Args)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid args JSON: must be array")
+	}
+	minKwargs, err := minifyJSONObject(msg.Kwargs)
+	if err != nil {
+		return nil, errorsmod.Wrap(err, "invalid kwargs JSON: must be object")
+	}
+
 	sub := crontasktypes.Subscription{
 		SubscriptionId: id,
 		Creator:        msg.Creator,
-		EventType:      msg.EventType,
 		Filter:         msg.Filter,
 		ScriptAddress:  msg.ScriptAddress,
 		Function:       msg.Function,
-		Args:           msg.Args,
-		Kwargs:         msg.Kwargs,
+		Args:           minArgs,
+		Kwargs:         minKwargs,
 		TaskGasLimit:   msg.TaskGasLimit,
 		TaskGasFee:     msg.TaskGasFee,
 		Status:         "enabled",
 		TrigerCount:    0,
 	}
+	// Set expiry to now + max_subscription_duration
+	sdkNow := sdkCtx.BlockTime()
+	sub.ExpiryTimestamp = sdkNow.Add(params.MaxSubscriptionDuration).Unix()
 	// Ensure TaskGasPrice has a valid denom to avoid panics in JSON encoding
 	sub.TaskGasPrice = sdk.NewDecCoinFromDec(msg.TaskGasFee.Denom, sdkmath.LegacyNewDec(0))
 
@@ -105,24 +154,45 @@ func (k Keeper) RenewSubscription(ctx context.Context, msg *crontasktypes.MsgRen
 	if sub.Creator != msg.Creator {
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "only creator can renew subscription")
 	}
+	// Enforce minimum stake per subscription (proxy via bank balance) before renewing
 	params, err := k.GetParams(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errorsmod.Wrap(err, "failed to load params")
 	}
-	base := sdkCtx.BlockTime()
-	newExpiry, err := parseTimestamp(msg.NewExpiry, base)
-	if err != nil {
-		return nil, err
+	if params.MinStakePerSubscription.Denom != "" && params.MinStakePerSubscription.Amount.IsPositive() {
+		// Count all current subscriptions for creator and multiply requirement
+		store := k.kvStore(ctx)
+		prefix := append(indexSubCreatorStatusPrefix, []byte(sub.Creator)...)
+		it := storetypes.KVStorePrefixIterator(store, prefix)
+		var totalSubs uint64
+		for ; it.Valid(); it.Next() {
+			totalSubs++
+		}
+		it.Close()
+		if totalSubs == 0 {
+			totalSubs = 1
+		}
+		required := params.MinStakePerSubscription.Amount.MulRaw(int64(totalSubs))
+		creatorAddr, err := sdk.AccAddressFromBech32(sub.Creator)
+		if err != nil {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %s", sub.Creator)
+		}
+		totalBonded, err := k.stakingKeeper.GetDelegatorBonded(ctx, creatorAddr)
+		if err != nil {
+			return nil, errorsmod.Wrap(err, "failed to get total bonded stake")
+		}
+		if totalBonded.LT(required) {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient delegated stake: have %s, need >= %s for %d subscriptions", totalBonded.String(), required.String(), totalSubs)
+		}
 	}
-	if newExpiry.After(base.Add(time.Second * time.Duration(params.MaxExpiryDelta))) {
-		return nil, sdkerrors.ErrInvalidRequest.Wrap("new_expiry exceeds max_expiry_delta")
-	}
+
+	// Renew: recharge fee and extend expiry to now + max_subscription_duration
 	// charge fee equal to task_gas_fee
 	creatorAddr, _ := sdk.AccAddressFromBech32(sub.Creator)
 	if err := k.bankKeeper.SendCoinsFromAccountToModule(sdkCtx, creatorAddr, "fee_collector", sdk.NewCoins(sub.TaskGasFee)); err != nil {
 		return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "fee deduction failed: %s", err)
 	}
-	sub.ExpiryTimestamp = newExpiry.Unix()
+	sub.ExpiryTimestamp = sdkCtx.BlockTime().Add(params.MaxSubscriptionDuration).Unix()
 	if sub.Status == "expired" {
 		sub.Status = "enabled"
 		sub.StatusMessage = "renewed"

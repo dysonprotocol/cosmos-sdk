@@ -14,6 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 )
 
 var _ depinject.OnePerModuleType = AppModule{}
@@ -37,6 +38,7 @@ type CrontaskInputs struct {
 	Cdc              codec.Codec
 	AccountKeeper    authkeeper.AccountKeeper
 	BankKeeper       crontask.BankKeeper
+	StakingKeeper    *stakingkeeper.Keeper
 	StoreService     store.KVStoreService
 	Registry         cdctypes.InterfaceRegistry
 	Logger           log.Logger
@@ -58,6 +60,7 @@ func ProvideModule(in CrontaskInputs) CrontaskOutputs {
 		in.StoreService,
 		in.AccountKeeper,
 		in.BankKeeper,
+		in.StakingKeeper,
 		in.MsgServiceRouter,
 		*crontask.DefaultConfig(),
 		in.Logger,

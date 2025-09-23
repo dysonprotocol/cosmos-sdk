@@ -129,7 +129,7 @@
                     },
                     "filter": {
                         "type": "string",
-                        "description": "GJSON filter to match events"
+                        "description": "GJSON filter to match events across the normalized block event array"
                     },
                     "script_address": {
                         "type": "string",
@@ -166,7 +166,7 @@
                     },
                     "expiry_timestamp": {
                         "type": "string",
-                        "description": "subscription expiry timestamp (unix seconds)"
+                        "description": "Subscription expiry timestamp (unix seconds)"
                     },
                     "triger_count": {
                         "type": "string",

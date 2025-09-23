@@ -2,6 +2,9 @@ package types
 
 import (
 	"fmt"
+
+	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // TaskStatus constants define the possible states of a task
@@ -27,11 +30,12 @@ func NewGenesisState() *GenesisState {
 // DefaultParams returns default parameters for the crontask module.
 func DefaultParams() Params {
 	return Params{
-		BlockGasLimit:    3000000,          // 3M gas limit per block for tasks
-		ExpiryLimit:      86400,            // 24 hours in seconds
-		MaxScheduledTime: 86400,            // 24 hours in seconds
-		CleanUpTime:      86400,            // 24 hours in seconds
-		MaxExpiryDelta:   7 * 24 * 60 * 60, // 7 days
+		BlockGasLimit:           3000000,      // 3M gas limit per block for tasks
+		ExpiryLimit:             86400,        // 24 hours in seconds
+		MaxScheduledTime:        86400,        // 24 hours in seconds
+		CleanUpTime:             86400,        // 24 hours in seconds
+		MaxSubscriptionDuration: 24 * 60 * 60, // 24 hours
+		MinStakePerSubscription: sdk.Coin{Denom: "udys", Amount: sdkmath.NewInt(1000)},
 	}
 }
 
@@ -53,8 +57,8 @@ func (p Params) Validate() error {
 		return fmt.Errorf("clean up time cannot be negative: %d", p.CleanUpTime)
 	}
 
-	if p.MaxExpiryDelta <= 0 {
-		return fmt.Errorf("max expiry delta must be positive: %d", p.MaxExpiryDelta)
+	if p.MaxSubscriptionDuration <= 0 {
+		return fmt.Errorf("max subscription duration must be positive: %d", p.MaxSubscriptionDuration)
 	}
 
 	return nil

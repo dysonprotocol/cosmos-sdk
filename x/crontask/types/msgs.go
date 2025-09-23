@@ -112,17 +112,11 @@ func (m *MsgCreateSubscription) ValidateBasic() error {
 	if m.Function == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("function is required")
 	}
-	if len(m.EventType) == 0 {
-		return sdkerrors.ErrInvalidRequest.Wrap("event_type is required")
-	}
 	if m.TaskGasLimit == 0 {
 		return sdkerrors.ErrInvalidRequest.Wrap("task_gas_limit must be > 0")
 	}
 	if !m.TaskGasFee.IsPositive() {
 		return sdkerrors.ErrInvalidRequest.Wrap("task_gas_fee must be positive")
-	}
-	if len(m.EventType) > 100 {
-		return sdkerrors.ErrInvalidRequest.Wrap("event_type exceeds 100 characters")
 	}
 	if len(m.Filter) > 100 {
 		return sdkerrors.ErrInvalidRequest.Wrap("filter exceeds 100 characters")
@@ -154,12 +148,6 @@ func (m *MsgDeleteSubscription) ValidateBasic() error {
 func (m *MsgRenewSubscription) ValidateBasic() error {
 	if m.Creator == "" {
 		return sdkerrors.ErrInvalidRequest.Wrap("creator is required")
-	}
-	if len(m.NewExpiry) == 0 {
-		return sdkerrors.ErrInvalidRequest.Wrap("new_expiry is required")
-	}
-	if len(m.NewExpiry) > 100 {
-		return sdkerrors.ErrInvalidRequest.Wrap("new_expiry exceeds 100 characters")
 	}
 	return nil
 }

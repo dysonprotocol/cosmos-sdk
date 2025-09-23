@@ -10,6 +10,7 @@ import "cosmos/bank/v1beta1/bank.proto";
 import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
 
 // Task represents a scheduled task in the crontask system
 message Task {
@@ -79,8 +80,13 @@ message Params {
   // Retention period for completed/failed/expired tasks (seconds)
   int64 clean_up_time = 4;
 
-  // Maximum allowed delta for subscription expiry renewal (default 7 days)
-  int64 max_expiry_delta = 5;
+  // Maximum subscription duration (default 7 days)
+  google.protobuf.Duration max_subscription_duration = 5
+      [ (gogoproto.stdduration) = true, (gogoproto.nullable) = false ];
+
+  // Minimum stake required per active subscription
+  cosmos.base.v1beta1.Coin min_stake_per_subscription = 6
+      [ (gogoproto.nullable) = false ];
 }
 
 // Metrics tracks aggregate statistics for crontask executions
