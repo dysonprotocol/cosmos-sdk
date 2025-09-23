@@ -1,11 +1,18 @@
+import math
 import pytest
 
 
 def _mint(dysond_bin, owner_name, denom, amount="1"):
     resp = dysond_bin(
-        "tx", "nameservice", "mint-coins",
-        "--amount", f"{amount}{denom}",
-        "--from", owner_name,
+        "tx",
+        "nameservice",
+        "mint-coins",
+        "--amount",
+        f"{amount}{denom}",
+        "--mint-fee",
+        f"{math.ceil(int(amount) * 0.01)}udys",
+        "--from",
+        owner_name,
     )
     assert resp.get("code", 1) == 0, resp.get("raw_log", "")
     return resp
@@ -13,9 +20,13 @@ def _mint(dysond_bin, owner_name, denom, amount="1"):
 
 def _burn(dysond_bin, owner_name, denom, amount="1"):
     resp = dysond_bin(
-        "tx", "nameservice", "burn-coins",
-        "--amount", f"{amount}{denom}",
-        "--from", owner_name,
+        "tx",
+        "nameservice",
+        "burn-coins",
+        "--amount",
+        f"{amount}{denom}",
+        "--from",
+        owner_name,
     )
     assert resp.get("code", 1) == 0, resp.get("raw_log", "")
     return resp
@@ -28,18 +39,23 @@ def _query_denoms_all(dysond_bin, name):
 
 def _query_denoms_prefix(dysond_bin, name, subprefix):
     out = dysond_bin(
-        "query", "nameservice", "denoms-by-name",
-        "--name", name,
-        "--subdenom-prefix", subprefix,
+        "query",
+        "nameservice",
+        "denoms-by-name",
+        "--name",
+        name,
+        "--subdenom-prefix",
+        subprefix,
     )
     return {d.get("denom") for d in out.get("denoms", [])}
 
 
-def test_denoms_by_name_basic_and_prefix(chainnet, generate_account, faucet, register_name):
+def test_denoms_by_name_basic_and_prefix(
+    chainnet, generate_account, faucet, register_name
+):
     dysond_bin = chainnet[0]
 
-    [owner_name, owner_addr] = generate_account("owner")
-    faucet(owner_addr, denom="udys", amount="10000000")
+    [owner_name, owner_addr] = generate_account("owner", faucet_amount=10000000)
 
     root = register_name(dysond_bin, owner_name, owner_addr)
 
@@ -65,7 +81,9 @@ def test_denoms_by_name_basic_and_prefix(chainnet, generate_account, faucet, reg
     assert expect_prefix.issubset(got_prefix), got_prefix
 
 
-def test_denoms_removed_when_last_supply_burned(chainnet, generate_account, faucet, register_name):
+def test_denoms_removed_when_last_supply_burned(
+    chainnet, generate_account, faucet, register_name
+):
     dysond_bin = chainnet[0]
 
     [owner_name, owner_addr] = generate_account("owner")
@@ -84,7 +102,9 @@ def test_denoms_removed_when_last_supply_burned(chainnet, generate_account, fauc
     assert doomed not in got, got
 
 
-def test_root_denom_removed_when_last_supply_burned(chainnet, generate_account, faucet, register_name):
+def test_root_denom_removed_when_last_supply_burned(
+    chainnet, generate_account, faucet, register_name
+):
     dysond_bin = chainnet[0]
 
     [owner_name, owner_addr] = generate_account("owner")
@@ -102,5 +122,3 @@ def test_root_denom_removed_when_last_supply_burned(chainnet, generate_account, 
     # After supply reaches zero, root denom should be removed from reverse index
     got = _query_denoms_all(dysond_bin, root)
     assert root not in got, got
-
-

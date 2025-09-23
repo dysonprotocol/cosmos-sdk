@@ -1,5 +1,6 @@
 import json
 from tests.utils import poll_until_condition
+import requests
 
 
 def _get_api_host(dysond_bin):
@@ -17,6 +18,26 @@ def test_rest_subscription_event_merge_and_trigger_count(
     # Accounts
     [creator_name, creator_addr] = generate_account("rest_sub")
     faucet(creator_addr, amount=1_000_000)
+
+    # Ensure sufficient delegated stake for subscriptions
+    vals = dysond("query", "staking", "validators")
+    valopers = vals.get("validators", [])
+    assert valopers, f"no validators: {vals}"
+    valoper = valopers[0].get("operator_address") or valopers[0].get("operatorAddress")
+    assert valoper, f"missing operator_address: {valopers[0]}"
+    del_tx = dysond(
+        "tx",
+        "staking",
+        "delegate",
+        valoper,
+        "2000udys",
+        "--from",
+        creator_name,
+        "--yes",
+        "--gas",
+        "auto",
+    )
+    assert del_tx.get("code", 1) == 0, f"delegate failed: {del_tx}"
 
     # Script that returns kwargs.event
     script_code = """
@@ -77,7 +98,7 @@ def emit_evt():
         "--kwargs",
         "{}",
         "--task-gas-limit",
-        "200000",
+        "1200000",
         "--task-gas-fee",
         "1udys",
         "--from",
@@ -126,3 +147,52 @@ def emit_evt():
     assert (
         int(sub.get("triger_count", "0")) >= 2
     ), f"trigger_count not incremented: {sub}"
+
+    # Verify creator-specific pagination returns at least one result and respects limit
+    creator_resp = requests.get(
+        f"{base}/dysonprotocol/crontask/v1/subscriptions/creator/{creator_addr}",
+        params={"pagination.limit": 1, "pagination.count_total": True},
+        timeout=15,
+    )
+    creator_resp.raise_for_status()
+    creator_payload = creator_resp.json()
+    creator_total = int(creator_payload["pagination"]["total"])
+    assert creator_total >= 1
+
+    # Store subscriptions in a list without using comprehensions/generators
+    creator_subs = []
+    idx = 0
+    subs_payload = creator_payload["subscriptions"]
+    while idx < len(subs_payload):
+        creator_subs.append(subs_payload[idx])
+        idx += 1
+
+    assert len(creator_subs) == 1
+
+    creator_values = []
+    idx = 0
+    while idx < len(creator_subs):
+        creator_values.append(creator_subs[idx]["creator"])
+        idx += 1
+
+    assert creator_values[0] == creator_addr
+
+    # Verify all-subscriptions endpoint returns total count and respects limit
+    all_resp = requests.get(
+        f"{base}/dysonprotocol/crontask/v1/subscriptions",
+        params={"pagination.limit": 1, "pagination.count_total": True},
+        timeout=15,
+    )
+    all_resp.raise_for_status()
+    all_payload = all_resp.json()
+    all_total = int(all_payload["pagination"]["total"])
+    assert all_total >= creator_total
+
+    all_subs = []
+    idx = 0
+    all_subs_payload = all_payload["subscriptions"]
+    while idx < len(all_subs_payload):
+        all_subs.append(all_subs_payload[idx])
+        idx += 1
+
+    assert len(all_subs) == 1

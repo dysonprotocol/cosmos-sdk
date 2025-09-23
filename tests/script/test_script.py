@@ -10,7 +10,7 @@ import string
 
 def test_update_and_query_script(chainnet, generate_account):
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account("alice")
+    [alice_name, alice_address] = generate_account("alice", faucet_amount=1)
     script_code = """
 def wsgi(environ, start_response):
     status = '200 OK'
@@ -95,7 +95,7 @@ def test_decode_bytes(chainnet):
 
 def test_exec_script(chainnet, generate_account):
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account("alice")
+    [alice_name, alice_address] = generate_account("alice", faucet_amount=1)
     function_code = """
 def add(a, b):
     return a + b
@@ -882,7 +882,7 @@ def get_script_address_from_create_result(create_result):
 def test_query_script(chainnet, generate_account):
     """Test the Query Script (Read-only) functionality"""
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account("alice")
+    [alice_name, alice_address] = generate_account("alice", faucet_amount=1)
 
     # Create a simple script for testing
     simple_script = '''
@@ -1099,7 +1099,7 @@ def test_run_repr_forbidden_script(chainnet, generate_account):
     Test that `dysond query run` correctly forbids the use of __repr__ in scripts
     """
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account("alice")
+    [alice_name, alice_address] = generate_account("alice", faucet_amount=1)
 
     script_code = """
 class MyObject:
@@ -1130,7 +1130,7 @@ MyObject()
 def test_dunder_names_forbidden(chainnet, generate_account):
     """Test that all uses of names starting with '__' are forbidden in scripts"""
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account("alice")
+    [alice_name, alice_address] = generate_account("alice", faucet_amount=1)
 
     # Test 1: Defining a function with a name starting with "__"
     print("Test 1: Testing function definition with dunder name...")
@@ -1466,7 +1466,7 @@ def test_indirect():
 def test_comprehensive_dunder_method_prevention(chainnet, generate_account):
     """Comprehensive test to ensure NO functions or methods with leading __ can be defined"""
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account("alice")
+    [alice_name, alice_address] = generate_account("alice", faucet_amount=1)
 
     # Test cases for all possible ways to define functions/methods with dunder names
     test_cases = [

@@ -428,7 +428,7 @@ def generate_account(chainnet, faucet):
 
     def _gen(
         name_prefix,
-        faucet_amount=100_000_000,
+        faucet_amount=None,
         dysond_bin=default_dysond_bin,
         return_mnemonic=False,
     ):

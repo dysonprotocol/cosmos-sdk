@@ -181,42 +181,52 @@ func (q queryServer) SubscriptionByID(ctx context.Context, req *crontasktypes.Qu
 
 // EventSubscriptionsByCreator returns subscriptions filtered by creator
 func (q queryServer) SubscriptionsByCreator(ctx context.Context, req *crontasktypes.QuerySubscriptionsByCreatorRequest) (*crontasktypes.QuerySubscriptionsResponse, error) {
-	// Iterate over all and filter by creator (simple implementation; can index later)
-	store := prefix.NewStore(q.k.kvStore(ctx), []byte{SubscriptionsKey[0]})
-	subs := make([]*crontasktypes.Subscription, 0)
-	pageRes, err := query.Paginate(store, req.Pagination, func(key, _ []byte) error {
-		id := binary.BigEndian.Uint64(key[len(key)-8:])
-		sub, err := q.k.Subscriptions.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-		if sub.Creator == req.Creator {
-			subs = append(subs, &sub)
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, errorsmod.Wrapf(err, "failed to get subscriptions by creator")
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
-	return &crontasktypes.QuerySubscriptionsResponse{Subscriptions: subs, Pagination: pageRes}, nil
+
+	// Use CollectionFilteredPaginate over the primary subscriptions collection and filter by creator.
+	subs, pageRes, err := query.CollectionFilteredPaginate(
+		ctx,
+		q.k.Subscriptions,
+		req.Pagination,
+		func(_ uint64, sub crontasktypes.Subscription) (bool, error) {
+			return sub.Creator == req.Creator, nil
+		},
+		func(_ uint64, sub crontasktypes.Subscription) (*crontasktypes.Subscription, error) {
+			copy := sub
+			return &copy, nil
+		},
+	)
+	if err != nil {
+		return nil, errorsmod.Wrapf(err, "failed to paginate subscriptions by creator")
+	}
+
+	return &crontasktypes.QuerySubscriptionsResponse{
+		Subscriptions: subs,
+		Pagination:    pageRes,
+	}, nil
 }
 
 // EventSubscriptionsAll returns all subscriptions
 func (q queryServer) SubscriptionsAll(ctx context.Context, req *crontasktypes.QuerySubscriptionsAllRequest) (*crontasktypes.QuerySubscriptionsResponse, error) {
-	store := prefix.NewStore(q.k.kvStore(ctx), []byte{SubscriptionsKey[0]})
-	subs := make([]*crontasktypes.Subscription, 0)
-	pageRes, err := query.Paginate(store, req.Pagination, func(key, _ []byte) error {
-		id := binary.BigEndian.Uint64(key[len(key)-8:])
-		sub, err := q.k.Subscriptions.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-		subs = append(subs, &sub)
-		return nil
-	})
-	if err != nil {
-		return nil, errorsmod.Wrapf(err, "failed to get subscriptions all")
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
+
+	subs, pageRes, err := query.CollectionPaginate(
+		ctx,
+		q.k.Subscriptions,
+		req.Pagination,
+		func(_ uint64, sub crontasktypes.Subscription) (*crontasktypes.Subscription, error) {
+			subCopy := sub
+			return &subCopy, nil
+		},
+	)
+	if err != nil {
+		return nil, errorsmod.Wrapf(err, "failed to paginate subscriptions")
+	}
+
 	return &crontasktypes.QuerySubscriptionsResponse{Subscriptions: subs, Pagination: pageRes}, nil
 }
 
@@ -239,4 +249,28 @@ func (k Keeper) QueryParams(ctx context.Context, req *crontasktypes.QueryParamsR
 	// Create a queryServer and delegate to it
 	q := queryServer{k: k}
 	return q.Params(ctx, req)
+}
+
+func (q queryServer) SubscriptionsByStatus(ctx context.Context, req *crontasktypes.QuerySubscriptionsByStatusRequest) (*crontasktypes.QuerySubscriptionsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	subs, pageRes, err := query.CollectionFilteredPaginate(
+		ctx,
+		q.k.Subscriptions,
+		req.Pagination,
+		func(_ uint64, sub crontasktypes.Subscription) (bool, error) {
+			return sub.Status == req.Status, nil
+		},
+		func(_ uint64, sub crontasktypes.Subscription) (*crontasktypes.Subscription, error) {
+			copy := sub
+			return &copy, nil
+		},
+	)
+	if err != nil {
+		return nil, errorsmod.Wrapf(err, "failed to paginate subscriptions by status")
+	}
+
+	return &crontasktypes.QuerySubscriptionsResponse{Subscriptions: subs, Pagination: pageRes}, nil
 }

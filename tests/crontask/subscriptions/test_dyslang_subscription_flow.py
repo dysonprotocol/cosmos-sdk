@@ -8,6 +8,26 @@ def test_dyslang_subscription_flow(chainnet, generate_account, faucet):
     [name, addr] = generate_account("dys_sub")
     faucet(addr, amount=1_000_000)
 
+    # Ensure sufficient delegated stake for subscriptions
+    vals = dysond("query", "staking", "validators")
+    valopers = vals.get("validators", [])
+    assert valopers, f"no validators: {vals}"
+    valoper = valopers[0].get("operator_address") or valopers[0].get("operatorAddress")
+    assert valoper, f"missing operator_address: {valopers[0]}"
+    del_tx = dysond(
+        "tx",
+        "staking",
+        "delegate",
+        valoper,
+        "2000udys",
+        "--from",
+        name,
+        "--yes",
+        "--gas",
+        "auto",
+    )
+    assert del_tx.get("code", 1) == 0, f"delegate failed: {del_tx}"
+
     # Emitter (keep show defined; update script to include both functions)
     emit_code = """
 from dys import emit_event
@@ -59,7 +79,7 @@ def go():
         name,
         "--yes",
     )
-    assert sub.get("code", 1) == 0
+    assert sub.get("code", 1) == 0, f"create subscription failed: {sub}"
 
     # Extract subscription_id from events and assert status is not "error"
     sub_events = [
@@ -150,4 +170,6 @@ def go():
     )
     parsed = json.loads(kwargs_str)
     event_val = parsed.get("event", {}).get("attributes", {}).get("value")
-    assert event_val == "1", f"expected event value '1', got: {event_val} in {parsed}"
+    assert (
+        isinstance(event_val, dict) and event_val.get("foo") == "bar"
+    ), f"expected event value.foo == 'bar', got: {event_val} in {parsed}"

@@ -8,10 +8,13 @@ import secrets
 
 # Helper to keep coin lists lexicographically sorted by denom
 
+
 def _sorted_coins(coins):
     return sorted(coins, key=lambda c: c["denom"])
 
+
 # Fixture-provided helper register_name will be injected via test args
+
 
 def _get_balance(dysond_bin, address, denom):
     bal_resp = dysond_bin("query", "bank", "balances", address)
@@ -29,13 +32,16 @@ def _mint_variants(dysond_bin, owner_name, root_denom):
 
 # Local mint helper leveraged by tests
 def _mint_custom_coins(dysond_bin, destination_name, denom, amount="100"):
-    """Mint <amount><denom> coins to destination_name account."""
+    """Mint <amount><denom> coins to destination_name account (includes minimal mint fee)."""
+    # Default MintFeePerCoin is 0.01udys → ceil(amount * 0.01) == 1 for typical small test amounts
     mint_resp = dysond_bin(
         "tx",
         "nameservice",
         "mint-coins",
         "--amount",
         f"{amount}{denom}",
+        "--mint-fee",
+        "1udys",
         "--from",
         destination_name,
     )
@@ -43,6 +49,7 @@ def _mint_custom_coins(dysond_bin, destination_name, denom, amount="100"):
 
 
 # ----------------------------- TESTS -----------------------------------
+
 
 def test_move_coins_success(chainnet, generate_account, faucet, register_name):
     dysond_bin = chainnet[0]
@@ -65,8 +72,12 @@ def test_move_coins_success(chainnet, generate_account, faucet, register_name):
     assert pre_rec_bal == 0, f"recipient should have 0 {denom} prior"
 
     # Prepare move inputs/outputs JSON
-    inputs = json.dumps({"address": destination_addr, "coins": [{"denom": denom, "amount": "50"}]})
-    outputs = json.dumps({"address": recipient_addr, "coins": [{"denom": denom, "amount": "50"}]})
+    inputs = json.dumps(
+        {"address": destination_addr, "coins": [{"denom": denom, "amount": "50"}]}
+    )
+    outputs = json.dumps(
+        {"address": recipient_addr, "coins": [{"denom": denom, "amount": "50"}]}
+    )
 
     tx_resp = dysond_bin(
         "tx",
@@ -89,7 +100,9 @@ def test_move_coins_success(chainnet, generate_account, faucet, register_name):
     assert post_rec_bal == 50, f"recipient balance should be 50, got {post_rec_bal}"
 
 
-def test_move_coins_non_destination_fails(chainnet, generate_account, faucet, register_name):
+def test_move_coins_non_destination_fails(
+    chainnet, generate_account, faucet, register_name
+):
     dysond_bin = chainnet[0]
 
     [destination_name, destination_addr] = generate_account("destination")
@@ -102,8 +115,12 @@ def test_move_coins_non_destination_fails(chainnet, generate_account, faucet, re
     _mint_custom_coins(dysond_bin, destination_name, denom, amount="10")
 
     # Attempt move signed by attacker
-    inputs = json.dumps({"address": destination_addr, "coins": [{"denom": denom, "amount": "5"}]})
-    outputs = json.dumps({"address": attacker_addr, "coins": [{"denom": denom, "amount": "5"}]})
+    inputs = json.dumps(
+        {"address": destination_addr, "coins": [{"denom": denom, "amount": "5"}]}
+    )
+    outputs = json.dumps(
+        {"address": attacker_addr, "coins": [{"denom": denom, "amount": "5"}]}
+    )
 
     tx_resp = dysond_bin(
         "tx",
@@ -117,10 +134,14 @@ def test_move_coins_non_destination_fails(chainnet, generate_account, faucet, re
         attacker_name,
     )
     # Expect failure (code != 0)
-    assert tx_resp["code"] != 0, "non-destination signer should not be able to move coins"
+    assert (
+        tx_resp["code"] != 0
+    ), "non-destination signer should not be able to move coins"
 
 
-def test_move_coins_module_account_fails(chainnet, generate_account, faucet, register_name):
+def test_move_coins_module_account_fails(
+    chainnet, generate_account, faucet, register_name
+):
     dysond_bin = chainnet[0]
 
     [destination_name, destination_addr] = generate_account("destination")
@@ -134,8 +155,12 @@ def test_move_coins_module_account_fails(chainnet, generate_account, faucet, reg
     dist_mod = dysond_bin("query", "auth", "module-account", "distribution")
     module_addr = dist_mod["account"]["value"]["address"]
 
-    inputs = json.dumps({"address": destination_addr, "coins": [{"denom": denom, "amount": "10"}]})
-    outputs = json.dumps({"address": module_addr, "coins": [{"denom": denom, "amount": "10"}]})
+    inputs = json.dumps(
+        {"address": destination_addr, "coins": [{"denom": denom, "amount": "10"}]}
+    )
+    outputs = json.dumps(
+        {"address": module_addr, "coins": [{"denom": denom, "amount": "10"}]}
+    )
 
     tx_resp = dysond_bin(
         "tx",
@@ -151,7 +176,9 @@ def test_move_coins_module_account_fails(chainnet, generate_account, faucet, reg
     assert tx_resp["code"] != 0, "move to module account should fail"
 
 
-def test_move_coins_multi_inputs_single_output(chainnet, generate_account, faucet, register_name):
+def test_move_coins_multi_inputs_single_output(
+    chainnet, generate_account, faucet, register_name
+):
     """Multiple inputs (different denoms) transferred to one destination."""
     dysond_bin = chainnet[0]
     [destination_name, destination_addr] = generate_account("destination_multi1")
@@ -180,30 +207,42 @@ def test_move_coins_multi_inputs_single_output(chainnet, generate_account, fauce
 
     inputs_flags = [
         "--inputs",
-        json.dumps({
-            "address": destination_addr,
-            "coins": _sorted_coins([
-                {"denom": variants[0], "amount": "30"},
-                {"denom": variants[2], "amount": "40"},
-            ]),
-        }),
+        json.dumps(
+            {
+                "address": destination_addr,
+                "coins": _sorted_coins(
+                    [
+                        {"denom": variants[0], "amount": "30"},
+                        {"denom": variants[2], "amount": "40"},
+                    ]
+                ),
+            }
+        ),
         "--inputs",
-        json.dumps({
-            "address": sender2_addr,
-            "coins": _sorted_coins([
-                {"denom": variants[1], "amount": "20"},
-            ]),
-        }),
+        json.dumps(
+            {
+                "address": sender2_addr,
+                "coins": _sorted_coins(
+                    [
+                        {"denom": variants[1], "amount": "20"},
+                    ]
+                ),
+            }
+        ),
     ]
 
-    output_obj = json.dumps({
-        "address": recipient_addr,
-        "coins": _sorted_coins([
-            {"denom": variants[0], "amount": "30"},
-            {"denom": variants[1], "amount": "20"},
-            {"denom": variants[2], "amount": "40"},
-        ]),
-    })
+    output_obj = json.dumps(
+        {
+            "address": recipient_addr,
+            "coins": _sorted_coins(
+                [
+                    {"denom": variants[0], "amount": "30"},
+                    {"denom": variants[1], "amount": "20"},
+                    {"denom": variants[2], "amount": "40"},
+                ]
+            ),
+        }
+    )
 
     tx_resp = dysond_bin(
         "tx",
@@ -218,7 +257,9 @@ def test_move_coins_multi_inputs_single_output(chainnet, generate_account, fauce
     assert tx_resp["code"] == 0, tx_resp.get("raw_log")
 
 
-def test_move_coins_single_input_multi_outputs(chainnet, generate_account, faucet, register_name):
+def test_move_coins_single_input_multi_outputs(
+    chainnet, generate_account, faucet, register_name
+):
     """Single input split across two outputs."""
     dysond_bin = chainnet[0]
     [destination_name, destination_addr] = generate_account("destination_multi2")
@@ -229,19 +270,25 @@ def test_move_coins_single_input_multi_outputs(chainnet, generate_account, fauce
     root_name = register_name(dysond_bin, destination_name, destination_addr)
     _mint_custom_coins(dysond_bin, destination_name, root_name, amount="60")
 
-    inputs_json = json.dumps({"address": destination_addr, "coins": [{"denom": root_name, "amount": "60"}]})
+    inputs_json = json.dumps(
+        {"address": destination_addr, "coins": [{"denom": root_name, "amount": "60"}]}
+    )
 
     outputs_flags = [
         "--outputs",
-        json.dumps({
-            "address": rec1_addr,
-            "coins": _sorted_coins([{"denom": root_name, "amount": "25"}]),
-        }),
+        json.dumps(
+            {
+                "address": rec1_addr,
+                "coins": _sorted_coins([{"denom": root_name, "amount": "25"}]),
+            }
+        ),
         "--outputs",
-        json.dumps({
-            "address": rec2_addr,
-            "coins": _sorted_coins([{"denom": root_name, "amount": "35"}]),
-        }),
+        json.dumps(
+            {
+                "address": rec2_addr,
+                "coins": _sorted_coins([{"denom": root_name, "amount": "35"}]),
+            }
+        ),
     ]
 
     tx_resp = dysond_bin(
@@ -257,7 +304,9 @@ def test_move_coins_single_input_multi_outputs(chainnet, generate_account, fauce
     assert tx_resp["code"] == 0, tx_resp.get("raw_log")
 
 
-def test_move_coins_total_mismatch_fails(chainnet, generate_account, faucet, register_name):
+def test_move_coins_total_mismatch_fails(
+    chainnet, generate_account, faucet, register_name
+):
     """Validate transaction fails when total inputs ≠ total outputs."""
     dysond_bin = chainnet[0]
     [destination_name, destination_addr] = generate_account("destination_mismatch")
@@ -266,8 +315,12 @@ def test_move_coins_total_mismatch_fails(chainnet, generate_account, faucet, reg
     root_name = register_name(dysond_bin, destination_name, destination_addr)
     _mint_custom_coins(dysond_bin, destination_name, root_name, amount="10")
 
-    inputs = json.dumps({"address": destination_addr, "coins": [{"denom": root_name, "amount": "10"}]})
-    outputs = json.dumps({"address": destination_addr, "coins": [{"denom": root_name, "amount": "9"}]})
+    inputs = json.dumps(
+        {"address": destination_addr, "coins": [{"denom": root_name, "amount": "10"}]}
+    )
+    outputs = json.dumps(
+        {"address": destination_addr, "coins": [{"denom": root_name, "amount": "9"}]}
+    )
 
     tx_resp = dysond_bin(
         "tx",
@@ -280,4 +333,4 @@ def test_move_coins_total_mismatch_fails(chainnet, generate_account, faucet, reg
         "--from",
         destination_name,
     )
-    assert tx_resp["code"] != 0, "tx with mismatched totals should fail" 
+    assert tx_resp["code"] != 0, "tx with mismatched totals should fail"

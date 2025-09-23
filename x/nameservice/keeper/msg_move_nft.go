@@ -40,7 +40,8 @@ func (k Keeper) MoveNft(ctx context.Context, msg *nameservicev1.MsgMoveNft) (*na
 	// Verify destination is not a module account unless the signer is the module account
 	if acc := k.accountKeeper.GetAccount(sdkCtx, toAddr); acc != nil {
 		if _, ok := acc.(sdk.ModuleAccountI); ok {
-			if fromAddr.String() != msg.NameDestination {
+			// Allow only when the signer (name_destination) is exactly the destination module account
+			if toAddr.String() != msg.NameDestination {
 				return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "to_address is a module account")
 			}
 		}

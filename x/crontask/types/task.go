@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -30,11 +31,12 @@ func NewGenesisState() *GenesisState {
 // DefaultParams returns default parameters for the crontask module.
 func DefaultParams() Params {
 	return Params{
-		BlockGasLimit:           3000000,      // 3M gas limit per block for tasks
-		ExpiryLimit:             86400,        // 24 hours in seconds
-		MaxScheduledTime:        86400,        // 24 hours in seconds
-		CleanUpTime:             86400,        // 24 hours in seconds
-		MaxSubscriptionDuration: 24 * 60 * 60, // 24 hours
+		BlockGasLimit:    3000000, // 3M gas limit per block for tasks
+		ExpiryLimit:      86400,   // 24 hours in seconds
+		MaxScheduledTime: 86400,   // 24 hours in seconds
+		CleanUpTime:      86400,   // 24 hours in seconds
+		// MaxSubscriptionDuration is a time.Duration (nanoseconds). Use 24 hours.
+		MaxSubscriptionDuration: 24 * time.Hour,
 		MinStakePerSubscription: sdk.Coin{Denom: "udys", Amount: sdkmath.NewInt(1000)},
 	}
 }

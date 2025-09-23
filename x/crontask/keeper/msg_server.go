@@ -8,7 +8,6 @@ import (
 
 	errorsmod "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
-	storetypes "cosmossdk.io/store/types"
 	crontasktypes "dysonprotocol.com/x/crontask/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -33,16 +32,16 @@ func (k Keeper) CreateSubscription(ctx context.Context, msg *crontasktypes.MsgCr
 		return nil, errorsmod.Wrap(err, "failed to load params")
 	}
 	if params.MinStakePerSubscription.Denom != "" && params.MinStakePerSubscription.Amount.IsPositive() {
-		// Count all subscriptions for this creator (any status)
-		store := k.kvStore(ctx)
-		prefix := append(indexSubCreatorStatusPrefix, []byte(msg.Creator)...)
-		// We iterate over creator+status index keys: creator|status|id
-		it := storetypes.KVStorePrefixIterator(store, prefix)
+		// Count all subscriptions for this creator (any status) via ByCreator index
+		it, err := k.Subscriptions.Indexes.ByCreator.MatchExact(ctx, msg.Creator)
+		if err != nil {
+			return nil, errorsmod.Wrapf(err, "failed to iterate subscriptions by creator: %s", msg.Creator)
+		}
 		var totalSubs uint64
 		for ; it.Valid(); it.Next() {
 			totalSubs++
 		}
-		it.Close()
+		_ = it.Close()
 		if totalSubs == 0 {
 			totalSubs = 1 // include the one being created
 		} else {
@@ -59,7 +58,7 @@ func (k Keeper) CreateSubscription(ctx context.Context, msg *crontasktypes.MsgCr
 			return nil, errorsmod.Wrap(err, "failed to get total bonded stake")
 		}
 		if totalBonded.LT(required) {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient delegated stake: have %s, need >= %s for %d subscriptions", totalBonded.String(), required.String(), totalSubs)
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient delegated stake: have %s udys, need >= %s udysfor %d subscriptions", totalBonded.String(), required.String(), totalSubs)
 		}
 	}
 
@@ -107,7 +106,7 @@ func (k Keeper) CreateSubscription(ctx context.Context, msg *crontasktypes.MsgCr
 	// Ensure TaskGasPrice has a valid denom to avoid panics in JSON encoding
 	sub.TaskGasPrice = sdk.NewDecCoinFromDec(msg.TaskGasFee.Denom, sdkmath.LegacyNewDec(0))
 
-	if err := k.SetSubscription(ctx, nil, sub); err != nil {
+	if err := k.Subscriptions.Set(ctx, sub.SubscriptionId, sub); err != nil {
 		return nil, errorsmod.Wrapf(err, "failed to persist subscription [%d]", id)
 	}
 	if err := sdkCtx.EventManager().EmitTypedEvent(&crontasktypes.EventSubscriptionCreated{SubscriptionId: id, Creator: msg.Creator}); err != nil {
@@ -132,9 +131,7 @@ func (k Keeper) DeleteSubscription(ctx context.Context, msg *crontasktypes.MsgDe
 	if err := k.Subscriptions.Remove(ctx, msg.SubscriptionId); err != nil {
 		return nil, errorsmod.Wrapf(err, "failed to delete subscription [%d]", msg.SubscriptionId)
 	}
-	if err := k.removeSubIndexes(sdkCtx, sub); err != nil {
-		return nil, errorsmod.Wrapf(err, "failed to remove indexes for subscription [%d]", msg.SubscriptionId)
-	}
+	// No manual index cleanup required with IndexedMap; indexes are maintained automatically
 	if err := sdkCtx.EventManager().EmitTypedEvent(&crontasktypes.EventSubscriptionDeleted{SubscriptionId: msg.SubscriptionId, Creator: msg.Creator}); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to emit subscription deleted event")
 	}
@@ -160,15 +157,16 @@ func (k Keeper) RenewSubscription(ctx context.Context, msg *crontasktypes.MsgRen
 		return nil, errorsmod.Wrap(err, "failed to load params")
 	}
 	if params.MinStakePerSubscription.Denom != "" && params.MinStakePerSubscription.Amount.IsPositive() {
-		// Count all current subscriptions for creator and multiply requirement
-		store := k.kvStore(ctx)
-		prefix := append(indexSubCreatorStatusPrefix, []byte(sub.Creator)...)
-		it := storetypes.KVStorePrefixIterator(store, prefix)
+		// Count all current subscriptions for creator and multiply requirement via ByCreator index
+		it, err := k.Subscriptions.Indexes.ByCreator.MatchExact(ctx, sub.Creator)
+		if err != nil {
+			return nil, errorsmod.Wrapf(err, "failed to iterate subscriptions by creator: %s", sub.Creator)
+		}
 		var totalSubs uint64
 		for ; it.Valid(); it.Next() {
 			totalSubs++
 		}
-		it.Close()
+		_ = it.Close()
 		if totalSubs == 0 {
 			totalSubs = 1
 		}
@@ -182,7 +180,7 @@ func (k Keeper) RenewSubscription(ctx context.Context, msg *crontasktypes.MsgRen
 			return nil, errorsmod.Wrap(err, "failed to get total bonded stake")
 		}
 		if totalBonded.LT(required) {
-			return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient delegated stake: have %s, need >= %s for %d subscriptions", totalBonded.String(), required.String(), totalSubs)
+			return nil, errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, "insufficient delegated stake: have %s udys, need >= %s udys for %d subscriptions", totalBonded.String(), required.String(), totalSubs)
 		}
 	}
 
@@ -197,7 +195,7 @@ func (k Keeper) RenewSubscription(ctx context.Context, msg *crontasktypes.MsgRen
 		sub.Status = "enabled"
 		sub.StatusMessage = "renewed"
 	}
-	if err := k.SetSubscription(ctx, nil, sub); err != nil {
+	if err := k.Subscriptions.Set(ctx, sub.SubscriptionId, sub); err != nil {
 		return nil, err
 	}
 	return &crontasktypes.MsgRenewSubscriptionResponse{}, nil

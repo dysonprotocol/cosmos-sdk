@@ -5,37 +5,41 @@ import random
 import string
 
 
-
 def test_storage_set_get(chainnet, generate_account, faucet):
     """Test setting and retrieving a storage value."""
     dysond = chainnet[0]
-    
+
     # Create Alice account and fund it
-    [alice_name, alice_addr] = generate_account('alice')
+    [alice_name, alice_addr] = generate_account("alice")
     faucet(alice_addr)
-    
+
     # Set a storage value for testing with unique suffix
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     test_key = f"test_key_{suffix}"
     test_value = "test_value"
-    
+
     # Set the storage value using Alice's account
-    tx_result = dysond("tx", "storage", "set",
-        "--from", alice_name,
-        "--index", test_key,
-        "--data", test_value)
-    
+    tx_result = dysond(
+        "tx",
+        "storage",
+        "set",
+        "--from",
+        alice_name,
+        "--index",
+        test_key,
+        "--data",
+        test_value,
+    )
+
     # Verify the transaction was successful
     assert tx_result["code"] == 0, f"Transaction failed: {tx_result['raw_log']}"
-    
+
     # Query the storage value
-    get_result = dysond("query", "storage", "get",
-        alice_addr,
-        "--index", test_key)
-    
+    get_result = dysond("query", "storage", "get", alice_addr, "--index", test_key)
+
     # Print the result for inspection
     print(f"Storage get result: {json.dumps(get_result, indent=2)}")
-    
+
     # Check that entry exists and contains expected data
     assert "entry" in get_result, f"Expected 'entry' field in result: {get_result}"
     entry = get_result["entry"]
@@ -47,40 +51,44 @@ def test_storage_set_get(chainnet, generate_account, faucet):
 def test_storage_list(chainnet, generate_account, faucet):
     """Test listing storage values with a prefix."""
     dysond = chainnet[0]
-    
+
     # Create Alice account and fund it
-    [alice_name, alice_addr] = generate_account('alice')
+    [alice_name, alice_addr] = generate_account("alice")
     faucet(alice_addr)
-    
+
     # Set multiple storage values with a common prefix
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     prefix = f"list_test_{suffix}_"
-    values = {
-        f"{prefix}1": "value1",
-        f"{prefix}2": "value2",
-        f"{prefix}3": "value3"
-    }
-    
+    values = {f"{prefix}1": "value1", f"{prefix}2": "value2", f"{prefix}3": "value3"}
+
     # Set each value in storage
     for key, value in values.items():
-        dysond("tx", "storage", "set",
-            "--from", alice_name,
-            "--index", key,
-            "--data", value)
-    
+        dysond(
+            "tx",
+            "storage",
+            "set",
+            "--from",
+            alice_name,
+            "--index",
+            key,
+            "--data",
+            value,
+        )
+
     # List all keys with the given prefix
-    list_result = dysond("query", "storage", "list",
-        alice_addr,
-        "--index-prefix", prefix,
-        "-o", "json")
-    
+    list_result = dysond(
+        "query", "storage", "list", alice_addr, "--index-prefix", prefix, "-o", "json"
+    )
+
     # Print the result for inspection
     print(f"Storage list result: {json.dumps(list_result, indent=2)}")
-    
+
     # Check entries field exists and extract storage items
-    assert "entries" in list_result, f"Expected 'entries' field in result: {list_result}"
+    assert (
+        "entries" in list_result
+    ), f"Expected 'entries' field in result: {list_result}"
     storage_items = list_result["entries"]
-    
+
     # Extract the values
     found_items = {}
     for item in storage_items:
@@ -88,12 +96,14 @@ def test_storage_list(chainnet, generate_account, faucet):
         assert "index" in item, f"Expected 'index' field in item: {item}"
         assert "data" in item, f"Expected 'data' field in item: {item}"
         found_items[item["index"]] = item["data"]
-    
+
     # Check that all our values were found
     for key, value in values.items():
         assert key in found_items, f"Key {key} not found in storage list"
-        assert found_items[key] == value, f"Value mismatch for key {key}: expected {value}, got {found_items[key]}"
-    
+        assert (
+            found_items[key] == value
+        ), f"Value mismatch for key {key}: expected {value}, got {found_items[key]}"
+
     # Verify the count
     assert len(storage_items) >= len(values), "Not all values were listed"
 
@@ -101,141 +111,187 @@ def test_storage_list(chainnet, generate_account, faucet):
 def test_storage_delete(chainnet, generate_account, faucet):
     """Test deleting storage values."""
     dysond = chainnet[0]
-    
+
     # Create Alice account and fund it
-    [alice_name, alice_addr] = generate_account('alice')
+    [alice_name, alice_addr] = generate_account("alice")
     faucet(alice_addr)
-    
+
     # First set a storage value
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     test_key = f"delete_test_key_{suffix}"
     test_value = "delete_test_value"
-    
+
     # Set the storage value
-    dysond("tx", "storage", "set",
-        "--from", alice_name,
-        "--index", test_key,
-        "--data", test_value)
-    
+    dysond(
+        "tx",
+        "storage",
+        "set",
+        "--from",
+        alice_name,
+        "--index",
+        test_key,
+        "--data",
+        test_value,
+    )
+
     # Verify it was set correctly
-    get_result = dysond("query", "storage", "get",
-        alice_addr,
-        "--index", test_key)
-    
-    assert get_result["entry"]["data"] == test_value, f"Value not set correctly for deletion test: expected {test_value}, got {get_result['entry']['data']}"
-    
+    get_result = dysond("query", "storage", "get", alice_addr, "--index", test_key)
+
+    assert (
+        get_result["entry"]["data"] == test_value
+    ), f"Value not set correctly for deletion test: expected {test_value}, got {get_result['entry']['data']}"
+
     # Delete the storage value
-    delete_result = dysond("tx", "storage", "delete",
-        "--from", alice_name,
-        "--indexes", test_key)
-    
+    delete_result = dysond(
+        "tx", "storage", "delete", "--from", alice_name, "--indexes", test_key
+    )
+
     # Verify the deletion was successful
-    assert delete_result["code"] == 0, f"Delete transaction failed: {delete_result['raw_log']}"
-    
+    assert (
+        delete_result["code"] == 0
+    ), f"Delete transaction failed: {delete_result['raw_log']}"
+
     # Query the deleted value - should return error message for deleted entries
-    get_result = dysond("query", "storage", "get",
-        alice_addr,
-        "--index", test_key)
-    
+    get_result = dysond("query", "storage", "get", alice_addr, "--index", test_key)
+
     # When a storage entry doesn't exist, the query returns an error string
-    assert isinstance(get_result, str), f"Expected string error message for deleted entry, got: {type(get_result)}"
-    assert "doesn't exist" in get_result, f"Expected 'doesn't exist' error, got: {get_result}"
+    assert isinstance(
+        get_result, str
+    ), f"Expected string error message for deleted entry, got: {type(get_result)}"
+    assert (
+        "doesn't exist" in get_result
+    ), f"Expected 'doesn't exist' error, got: {get_result}"
 
 
 def test_storage_multi_user(chainnet, generate_account, faucet):
     """Test storage with multiple users and access control."""
     dysond = chainnet[0]
-    
+
     # Create accounts for Alice and Bob
-    [alice_name, alice_addr] = generate_account('alice')
-    [bob_name, bob_addr] = generate_account('bob')
-    
+    [alice_name, alice_addr] = generate_account("alice")
+    [bob_name, bob_addr] = generate_account("bob")
+
     # Fund both accounts for transactions
     faucet(alice_addr)
     faucet(bob_addr)
-    
+
     # Create unique test keys for each user
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     alice_key = f"alice_storage_key_{suffix}"
     bob_key = f"bob_storage_key_{suffix}"
     alice_value = "alice_value"
     bob_value = "bob_value"
-    
+
     # Alice sets her storage value
-    alice_set_result = dysond("tx", "storage", "set",
-        "--from", alice_name,
-        "--index", alice_key,
-        "--data", alice_value)
-    assert alice_set_result["code"] == 0, f"Alice failed to set storage: {alice_set_result['raw_log']}"
-    
+    alice_set_result = dysond(
+        "tx",
+        "storage",
+        "set",
+        "--from",
+        alice_name,
+        "--index",
+        alice_key,
+        "--data",
+        alice_value,
+    )
+    assert (
+        alice_set_result["code"] == 0
+    ), f"Alice failed to set storage: {alice_set_result['raw_log']}"
+
     # Bob sets his storage value
-    bob_set_result = dysond("tx", "storage", "set",
-        "--from", bob_name,
-        "--index", bob_key,
-        "--data", bob_value)
-    assert bob_set_result["code"] == 0, f"Bob failed to set storage: {bob_set_result['raw_log']}"
-    
+    bob_set_result = dysond(
+        "tx",
+        "storage",
+        "set",
+        "--from",
+        bob_name,
+        "--index",
+        bob_key,
+        "--data",
+        bob_value,
+    )
+    assert (
+        bob_set_result["code"] == 0
+    ), f"Bob failed to set storage: {bob_set_result['raw_log']}"
+
     # Verify Alice's value is retrievable
-    alice_result = dysond("query", "storage", "get",
-        alice_addr,
-        "--index", alice_key)
-    
-    assert alice_result["entry"]["data"] == alice_value, f"Alice's value not set correctly: expected {alice_value}, got {alice_result['entry']['data']}"
-    assert alice_result["entry"]["owner"] == alice_addr, f"Alice's owner not correct: expected {alice_addr}, got {alice_result['entry']['owner']}"
-    assert alice_result["entry"]["index"] == alice_key, f"Alice's index not correct: expected {alice_key}, got {alice_result['entry']['index']}"
-    
+    alice_result = dysond("query", "storage", "get", alice_addr, "--index", alice_key)
+
+    assert (
+        alice_result["entry"]["data"] == alice_value
+    ), f"Alice's value not set correctly: expected {alice_value}, got {alice_result['entry']['data']}"
+    assert (
+        alice_result["entry"]["owner"] == alice_addr
+    ), f"Alice's owner not correct: expected {alice_addr}, got {alice_result['entry']['owner']}"
+    assert (
+        alice_result["entry"]["index"] == alice_key
+    ), f"Alice's index not correct: expected {alice_key}, got {alice_result['entry']['index']}"
+
     # Verify Bob's value is retrievable
-    bob_result = dysond("query", "storage", "get",
-        bob_addr,
-        "--index", bob_key)
-    
-    assert bob_result["entry"]["data"] == bob_value, f"Bob's value not set correctly: expected {bob_value}, got {bob_result['entry']['data']}"
-    assert bob_result["entry"]["owner"] == bob_addr, f"Bob's owner not correct: expected {bob_addr}, got {bob_result['entry']['owner']}"
-    assert bob_result["entry"]["index"] == bob_key, f"Bob's index not correct: expected {bob_key}, got {bob_result['entry']['index']}"
-    
+    bob_result = dysond("query", "storage", "get", bob_addr, "--index", bob_key)
+
+    assert (
+        bob_result["entry"]["data"] == bob_value
+    ), f"Bob's value not set correctly: expected {bob_value}, got {bob_result['entry']['data']}"
+    assert (
+        bob_result["entry"]["owner"] == bob_addr
+    ), f"Bob's owner not correct: expected {bob_addr}, got {bob_result['entry']['owner']}"
+    assert (
+        bob_result["entry"]["index"] == bob_key
+    ), f"Bob's index not correct: expected {bob_key}, got {bob_result['entry']['index']}"
+
     # Verify that Alice cannot delete Bob's value - should fail with error code
-    delete_result = dysond("tx", "storage", "delete",
-        "--from", alice_name,
-        "--indexes", bob_key)
-    
-    assert delete_result["code"] != 0, f"Alice should not be able to delete Bob's storage, but transaction succeeded: {delete_result}"
-    assert "no entries were deleted" in delete_result["raw_log"], f"Expected 'no entries were deleted' error, got: {delete_result['raw_log']}"
+    delete_result = dysond(
+        "tx", "storage", "delete", "--from", alice_name, "--indexes", bob_key
+    )
+
+    assert (
+        delete_result["code"] != 0
+    ), f"Alice should not be able to delete Bob's storage, but transaction succeeded: {delete_result}"
+    assert (
+        "no entries were deleted" in delete_result["raw_log"]
+    ), f"Expected 'no entries were deleted' error, got: {delete_result['raw_log']}"
 
 
 def test_storage_binary_data(chainnet, generate_account, faucet):
     """Test storing and retrieving binary data."""
     dysond = chainnet[0]
-    
+
     # Create Alice account and fund it
-    [alice_name, alice_addr] = generate_account('alice')
+    [alice_name, alice_addr] = generate_account("alice")
     faucet(alice_addr)
-    
+
     # Create binary data (base64 encoded)
-    binary_data = base64.b64encode(b"Binary test data").decode('utf-8')
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    binary_data = base64.b64encode(b"Binary test data").decode("utf-8")
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     test_key = f"binary_data_key_{suffix}"
-    
+
     # Set the binary data
-    dysond("tx", "storage", "set",
-        "--from", alice_name,
-        "--index", test_key,
-        "--data", binary_data)
-    
+    dysond(
+        "tx",
+        "storage",
+        "set",
+        "--from",
+        alice_name,
+        "--index",
+        test_key,
+        "--data",
+        binary_data,
+    )
+
     # Retrieve the binary data
-    get_result = dysond("query", "storage", "get",
-        alice_addr,
-        "--index", test_key)
-    
+    get_result = dysond("query", "storage", "get", alice_addr, "--index", test_key)
+
     # Print result for inspection
     print(f"Binary data result: {json.dumps(get_result, indent=2)}")
-    
+
     # Get the value from entry
     assert "entry" in get_result, f"Expected 'entry' field in result: {get_result}"
     value = get_result["entry"]["data"]
-    
+
     # Verify the data
     assert value == binary_data, "Binary data not retrieved correctly"
-    
+
     # Verify we can decode it back
     decoded = base64.b64decode(value)
     assert decoded == b"Binary test data", "Binary data corrupted in storage"
@@ -246,24 +302,13 @@ def test_storage_extract_and_filter(chainnet, generate_account, faucet):
     dysond = chainnet[0]
 
     # Create user and fund
-    [user_name, user_addr] = generate_account('extractor')
+    [user_name, user_addr] = generate_account("extractor")
     faucet(user_addr)
 
     # Prepare JSON payloads
-    json_entry_1 = {
-        "title": "First Post",
-        "category": "blog",
-        "meta": {"views": 10}
-    }
-    json_entry_2 = {
-        "title": "Second Post",
-        "category": "blog",
-        "meta": {"views": 20}
-    }
-    json_entry_3 = {
-        "title": "Draft Note",
-        "meta": {"views": 0}
-    }
+    json_entry_1 = {"title": "First Post", "category": "blog", "meta": {"views": 10}}
+    json_entry_2 = {"title": "Second Post", "category": "blog", "meta": {"views": 20}}
+    json_entry_3 = {"title": "Draft Note", "meta": {"views": 0}}
 
     # Helper to set entry
     def set_json(index: str, data: dict):
@@ -340,133 +385,200 @@ def test_storage_extract_and_filter(chainnet, generate_account, faucet):
 def test_storage_pagination_offset_bug(chainnet, generate_account, faucet):
     """Test offset-based pagination bug where offset > 0 returns wrong entries."""
     dysond = chainnet[0]
-    
+
     # Create account and fund it
-    [user_name, user_addr] = generate_account('pagination_test', faucet_amount=1_000_000)
+    [user_name, user_addr] = generate_account(
+        "pagination_test", faucet_amount=1_000_000
+    )
     faucet(user_addr)
-    
+
     # Create test data with entries that will be sorted in a predictable order
     # Using reverse alphabetical order so we can test offset behavior
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     prefix = f"pagination_test_{suffix}/"
-    
+
     # Create 4 entries with predictable sort order (reverse alphabetical)
     test_data = {
-        f"{prefix}entry_d": {"id": 4, "value": "fourth"},   # Will be first when reverse sorted
-        f"{prefix}entry_c": {"id": 3, "value": "third"},    # Will be second
-        f"{prefix}entry_b": {"id": 2, "value": "second"},   # Will be third  
-        f"{prefix}entry_a": {"id": 1, "value": "first"},    # Will be fourth
+        f"{prefix}entry_d": {
+            "id": 4,
+            "value": "fourth",
+        },  # Will be first when reverse sorted
+        f"{prefix}entry_c": {"id": 3, "value": "third"},  # Will be second
+        f"{prefix}entry_b": {"id": 2, "value": "second"},  # Will be third
+        f"{prefix}entry_a": {"id": 1, "value": "first"},  # Will be fourth
     }
-    
+
     # Set all the test data
     for key, value in test_data.items():
-        dysond("tx", "storage", "set",
-            "--from", user_name,
-            "--index", key,
-            "--data", json.dumps(value))
-    
+        dysond(
+            "tx",
+            "storage",
+            "set",
+            "--from",
+            user_name,
+            "--index",
+            key,
+            "--data",
+            json.dumps(value),
+        )
+
     print(f"Created test data with prefix: {prefix}")
     print(f"Test data: {test_data}")
-    
+
     # First, get all entries to confirm the order
-    all_entries_result = dysond("query", "storage", "list",
+    all_entries_result = dysond(
+        "query",
+        "storage",
+        "list",
         user_addr,
-        "--index-prefix", prefix,
-        "--limit", "10",
+        "--index-prefix",
+        prefix,
+        "--limit",
+        "10",
         "--reverse",
-        "-o", "json")
-    
+        "-o",
+        "json",
+    )
+
     print(f"All entries (reverse order): {json.dumps(all_entries_result, indent=2)}")
     all_entries = all_entries_result.get("entries", [])
     assert len(all_entries) == 4, f"Expected 4 entries, got {len(all_entries)}"
-    
+
     # Now test offset-based pagination with limit=1 and reverse=true
     # This should return different entries for each offset
-    
+
     # Offset 0 should return entry_d (id=4)
-    offset_0_result = dysond("query", "storage", "list",
+    offset_0_result = dysond(
+        "query",
+        "storage",
+        "list",
         user_addr,
-        "--index-prefix", prefix,
-        "--offset", "0",
-        "--limit", "1", 
+        "--index-prefix",
+        prefix,
+        "--offset",
+        "0",
+        "--limit",
+        "1",
         "--reverse",
-        "-o", "json")
-    
+        "-o",
+        "json",
+    )
+
     print(f"Offset 0 result: {json.dumps(offset_0_result, indent=2)}")
     offset_0_entries = offset_0_result.get("entries", [])
-    assert len(offset_0_entries) == 1, f"Expected 1 entry for offset 0, got {len(offset_0_entries)}"
+    assert (
+        len(offset_0_entries) == 1
+    ), f"Expected 1 entry for offset 0, got {len(offset_0_entries)}"
     offset_0_data = json.loads(offset_0_entries[0]["data"])
     print(f"Offset 0 returned ID: {offset_0_data['id']}")
-    
+
     # Offset 1 should return entry_c (id=3) - THIS IS WHERE THE BUG OCCURS
-    offset_1_result = dysond("query", "storage", "list",
+    offset_1_result = dysond(
+        "query",
+        "storage",
+        "list",
         user_addr,
-        "--index-prefix", prefix,
-        "--offset", "1",
-        "--limit", "1",
-        "--reverse", 
-        "-o", "json")
-    
+        "--index-prefix",
+        prefix,
+        "--offset",
+        "1",
+        "--limit",
+        "1",
+        "--reverse",
+        "-o",
+        "json",
+    )
+
     print(f"Offset 1 result: {json.dumps(offset_1_result, indent=2)}")
     offset_1_entries = offset_1_result.get("entries", [])
-    assert len(offset_1_entries) == 1, f"Expected 1 entry for offset 1, got {len(offset_1_entries)}"
+    assert (
+        len(offset_1_entries) == 1
+    ), f"Expected 1 entry for offset 1, got {len(offset_1_entries)}"
     offset_1_data = json.loads(offset_1_entries[0]["data"])
     print(f"Offset 1 returned ID: {offset_1_data['id']} (should be 3, not 4)")
-    
+
     # Offset 2 should return entry_b (id=2)
-    offset_2_result = dysond("query", "storage", "list",
+    offset_2_result = dysond(
+        "query",
+        "storage",
+        "list",
         user_addr,
-        "--index-prefix", prefix,
-        "--offset", "2",
-        "--limit", "1",
+        "--index-prefix",
+        prefix,
+        "--offset",
+        "2",
+        "--limit",
+        "1",
         "--reverse",
-        "-o", "json")
-    
+        "-o",
+        "json",
+    )
+
     print(f"Offset 2 result: {json.dumps(offset_2_result, indent=2)}")
     offset_2_entries = offset_2_result.get("entries", [])
-    assert len(offset_2_entries) == 1, f"Expected 1 entry for offset 2, got {len(offset_2_entries)}"
+    assert (
+        len(offset_2_entries) == 1
+    ), f"Expected 1 entry for offset 2, got {len(offset_2_entries)}"
     offset_2_data = json.loads(offset_2_entries[0]["data"])
     print(f"Offset 2 returned ID: {offset_2_data['id']} (should be 2, not 4)")
-    
+
     # Offset 3 should return entry_a (id=1)
-    offset_3_result = dysond("query", "storage", "list",
+    offset_3_result = dysond(
+        "query",
+        "storage",
+        "list",
         user_addr,
-        "--index-prefix", prefix,
-        "--offset", "3",
-        "--limit", "1",
+        "--index-prefix",
+        prefix,
+        "--offset",
+        "3",
+        "--limit",
+        "1",
         "--reverse",
-        "-o", "json")
-    
+        "-o",
+        "json",
+    )
+
     print(f"Offset 3 result: {json.dumps(offset_3_result, indent=2)}")
     offset_3_entries = offset_3_result.get("entries", [])
-    assert len(offset_3_entries) == 1, f"Expected 1 entry for offset 3, got {len(offset_3_entries)}"
+    assert (
+        len(offset_3_entries) == 1
+    ), f"Expected 1 entry for offset 3, got {len(offset_3_entries)}"
     offset_3_data = json.loads(offset_3_entries[0]["data"])
     print(f"Offset 3 returned ID: {offset_3_data['id']} (should be 1, not 4)")
-    
+
     # The bug: offset 1, 2, 3 all return the same entry as offset 0
     # Expected behavior: each offset should return a different entry
     # offset 0 -> id 4, offset 1 -> id 3, offset 2 -> id 2, offset 3 -> id 1
-    
+
     # BUG ASSERTION: These assertions will FAIL due to the pagination bug
     # All offsets incorrectly return the first entry (id=4)
     expected_ids = [4, 3, 2, 1]  # Expected IDs for offsets 0, 1, 2, 3
     actual_ids = [
-        offset_0_data['id'],
-        offset_1_data['id'], 
-        offset_2_data['id'],
-        offset_3_data['id']
+        offset_0_data["id"],
+        offset_1_data["id"],
+        offset_2_data["id"],
+        offset_3_data["id"],
     ]
-    
+
     print(f"Expected IDs: {expected_ids}")
     print(f"Actual IDs:   {actual_ids}")
-    
+
     # These assertions should pass for correct pagination behavior
     # But will fail due to the offset pagination bug
-    assert offset_0_data['id'] == 4, f"Offset 0 should return ID 4, got {offset_0_data['id']}"
-    assert offset_1_data['id'] == 3, f"BUG: Offset 1 should return ID 3, got {offset_1_data['id']}"
-    assert offset_2_data['id'] == 2, f"BUG: Offset 2 should return ID 2, got {offset_2_data['id']}"
-    assert offset_3_data['id'] == 1, f"BUG: Offset 3 should return ID 1, got {offset_3_data['id']}"
-    
+    assert (
+        offset_0_data["id"] == 4
+    ), f"Offset 0 should return ID 4, got {offset_0_data['id']}"
+    assert (
+        offset_1_data["id"] == 3
+    ), f"BUG: Offset 1 should return ID 3, got {offset_1_data['id']}"
+    assert (
+        offset_2_data["id"] == 2
+    ), f"BUG: Offset 2 should return ID 2, got {offset_2_data['id']}"
+    assert (
+        offset_3_data["id"] == 1
+    ), f"BUG: Offset 3 should return ID 1, got {offset_3_data['id']}"
+
     # If we reach here, pagination is working correctly
     print("✅ Offset-based pagination is working correctly!")
 
@@ -474,33 +586,46 @@ def test_storage_pagination_offset_bug(chainnet, generate_account, faucet):
 def test_storage_pagination_script_bug(chainnet, generate_account, faucet):
     """Test offset-based pagination bug via script execution (JSON→protobuf conversion)."""
     dysond = chainnet[0]
-    
+
     # Create account and fund it
-    [user_name, user_addr] = generate_account('script_pagination_test')
+    [user_name, user_addr] = generate_account("script_pagination_test")
     faucet(user_addr)
-    
+
     # Create test data with predictable sort order
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     prefix = f"script_pagination_test_{suffix}/"
-    
+
     # Create 5 entries with predictable reverse alphabetical sort order
     test_data = {
-        f"{prefix}entry_e": {"id": 5, "value": "fifth"},    # Will be first when reverse sorted
-        f"{prefix}entry_d": {"id": 4, "value": "fourth"},   # Will be second when reverse sorted
-        f"{prefix}entry_c": {"id": 3, "value": "third"},    # Will be third
-        f"{prefix}entry_b": {"id": 2, "value": "second"},   # Will be fourth  
-        f"{prefix}entry_a": {"id": 1, "value": "first"},    # Will be fifth
+        f"{prefix}entry_e": {
+            "id": 5,
+            "value": "fifth",
+        },  # Will be first when reverse sorted
+        f"{prefix}entry_d": {
+            "id": 4,
+            "value": "fourth",
+        },  # Will be second when reverse sorted
+        f"{prefix}entry_c": {"id": 3, "value": "third"},  # Will be third
+        f"{prefix}entry_b": {"id": 2, "value": "second"},  # Will be fourth
+        f"{prefix}entry_a": {"id": 1, "value": "first"},  # Will be fifth
     }
-    
+
     # Set all the test data
     for key, value in test_data.items():
-        dysond("tx", "storage", "set",
-            "--from", user_name,
-            "--index", key,
-            "--data", json.dumps(value))
-    
+        dysond(
+            "tx",
+            "storage",
+            "set",
+            "--from",
+            user_name,
+            "--index",
+            key,
+            "--data",
+            json.dumps(value),
+        )
+
     print(f"Created test data with prefix: {prefix}")
-    
+
     # Simple script that tests one offset to understand the bug
     script_code = f'''
 import json
@@ -554,57 +679,79 @@ def verify_offset_1():
 '''
 
     print(f"\nTesting offset 0 via script execution...")
-    
+
     # Test offset 0
-    result_0 = dysond("query", "script", "run",
-        "--executor-address", user_addr,
-        "--script-address", user_addr,
-        "--function-name", "verify_offset_0",
-        "--args", "[]",
-        "--extra-code", script_code)
-    
+    result_0 = dysond(
+        "query",
+        "script",
+        "run",
+        "--executor-address",
+        user_addr,
+        "--script-address",
+        user_addr,
+        "--function-name",
+        "verify_offset_0",
+        "--args",
+        "[]",
+        "--extra-code",
+        script_code,
+    )
+
     print(f"Offset 0 raw result: {json.dumps(result_0, indent=2)}")
-    
+
     print(f"\nTesting offset 1 via script execution...")
-    
+
     # Test offset 1
-    result_1 = dysond("query", "script", "run",
-        "--executor-address", user_addr,
-        "--script-address", user_addr,
-        "--function-name", "verify_offset_1",
-        "--args", "[]",
-        "--extra-code", script_code)
-    
+    result_1 = dysond(
+        "query",
+        "script",
+        "run",
+        "--executor-address",
+        user_addr,
+        "--script-address",
+        user_addr,
+        "--function-name",
+        "verify_offset_1",
+        "--args",
+        "[]",
+        "--extra-code",
+        script_code,
+    )
+
     print(f"Offset 1 raw result: {json.dumps(result_1, indent=2)}")
-    
+
     # Extract and compare results manually
     result_0_data = json.loads(result_0["result"])
     result_0_parsed = result_0_data["result"]
-    
+
     result_1_data = json.loads(result_1["result"])
     result_1_parsed = result_1_data["result"]
-    
+
     print(f"\nComparison:")
     print(f"  Offset 0: ID {result_0_parsed['id']} from {result_0_parsed['index']}")
     print(f"  Offset 1: ID {result_1_parsed['id']} from {result_1_parsed['index']}")
-    
+
     # Check for the bug pattern
-    offset_0_id = result_0_parsed['id']
-    offset_1_id = result_1_parsed['id']
-    
+    offset_0_id = result_0_parsed["id"]
+    offset_1_id = result_1_parsed["id"]
+
     # With 5 entries in reverse alphabetical order: e(5), d(4), c(3), b(2), a(1)
     expected_offset_0_id = 5  # entry_e should be first
     expected_offset_1_id = 4  # entry_d should be second
-    
-    print(f"\nExpected: offset 0 → ID {expected_offset_0_id}, offset 1 → ID {expected_offset_1_id}")
+
+    print(
+        f"\nExpected: offset 0 → ID {expected_offset_0_id}, offset 1 → ID {expected_offset_1_id}"
+    )
     print(f"Actual:   offset 0 → ID {offset_0_id}, offset 1 → ID {offset_1_id}")
-    
+
     bug_detected = offset_0_id == offset_1_id
     print(f"\nBug pattern (both return same ID): {bug_detected}")
-    
+
     # Assertions
-    assert offset_0_id == expected_offset_0_id, f"Offset 0 should return ID {expected_offset_0_id}, got {offset_0_id}"
-    
+    assert (
+        offset_0_id == expected_offset_0_id
+    ), f"Offset 0 should return ID {expected_offset_0_id}, got {offset_0_id}"
+
     # This assertion will fail if the bug is present
     print(f"\nChecking if bug is present...")
     print(f"Offset 1 returned ID {offset_1_id}, expected ID {expected_offset_1_id}")
@@ -615,20 +762,41 @@ def test_storage_invalid_extract_and_filter(chainnet, generate_account, faucet):
     """Ensure invalid extract path raises error and unmatched filter returns empty list."""
     dysond = chainnet[0]
 
-    [u_name, u_addr] = generate_account('neg')
+    [u_name, u_addr] = generate_account("neg")
     faucet(u_addr)
 
     entry = {"foo": {"bar": 1}}
-    dysond("tx", "storage", "set", "--from", u_name, "--index", "neg/1", "--data", json.dumps(entry))
+    dysond(
+        "tx",
+        "storage",
+        "set",
+        "--from",
+        u_name,
+        "--index",
+        "neg/1",
+        "--data",
+        json.dumps(entry),
+    )
 
     # Attempt to extract missing path -> expect string error (gRPC NotFound propagated to CLI)
-    res = dysond("query", "storage", "get", u_addr, "--index", "neg/1", "--extract", "foo.baz")
+    res = dysond(
+        "query", "storage", "get", u_addr, "--index", "neg/1", "--extract", "foo.baz"
+    )
     assert isinstance(res, str), "Expected error string when extract path missing"
     assert "not found" in res.lower(), f"Unexpected error message: {res}"
 
     # Filter that matches nothing should return 0 entries
     list_res = dysond(
-        "query", "storage", "list", u_addr, "--index-prefix", "neg/", "--filter", "nonexistent", "-o", "json"
+        "query",
+        "storage",
+        "list",
+        u_addr,
+        "--index-prefix",
+        "neg/",
+        "--filter",
+        "nonexistent",
+        "-o",
+        "json",
     )
     entries = list_res.get("entries", [])
     assert entries == [] or len(entries) == 0, f"Expected empty list, got {entries}"
@@ -636,16 +804,33 @@ def test_storage_invalid_extract_and_filter(chainnet, generate_account, faucet):
 
 def test_storage_extract_filter_too_long(chainnet, generate_account, faucet):
     dysond = chainnet[0]
-    [name, addr] = generate_account('toolong')
+    [name, addr] = generate_account("toolong")
     faucet(addr)
 
-    long_path = 'a' * 101
-    dysond("tx", "storage", "set", "--from", name, "--index", "toolong/1", "--data", "{}")
+    long_path = "a" * 101
+    dysond(
+        "tx", "storage", "set", "--from", name, "--index", "toolong/1", "--data", "{}"
+    )
 
-    res = dysond("query", "storage", "get", addr, "--index", "toolong/1", "--extract", long_path)
-    assert isinstance(res, str) and "too long" in res.lower(), f"Expected length error, got {res}"
+    res = dysond(
+        "query", "storage", "get", addr, "--index", "toolong/1", "--extract", long_path
+    )
+    assert (
+        isinstance(res, str) and "too long" in res.lower()
+    ), f"Expected length error, got {res}"
 
-    list_res = dysond("query", "storage", "list", addr, "--index-prefix", "toolong/", "--filter", long_path, "-o", "json")
+    list_res = dysond(
+        "query",
+        "storage",
+        "list",
+        addr,
+        "--index-prefix",
+        "toolong/",
+        "--filter",
+        long_path,
+        "-o",
+        "json",
+    )
     # For list, CLI likely surfaces error string instead of json when InvalidArgument
     assert isinstance(list_res, str), "Expected error string for too long filter"
     assert "too long" in list_res.lower(), f"Expected length error, got {list_res}"
@@ -654,71 +839,90 @@ def test_storage_extract_filter_too_long(chainnet, generate_account, faucet):
 def test_storage_delete_by_prefix_and_filter(chainnet, generate_account, faucet):
     """Test deleting storage values by specific indexes."""
     dysond = chainnet[0]
-    
+
     # Create account and fund it
-    [user_name, user_addr] = generate_account('deleter')
+    [user_name, user_addr] = generate_account("deleter")
     faucet(user_addr)
-    
+
     # Create test data with a common prefix
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     prefix = f"delete_test_{suffix}/"
-    
+
     # Set up test data with JSON values
     test_data = {
         f"{prefix}user1": {"name": "Alice", "age": 25, "active": True},
         f"{prefix}user2": {"name": "Bob", "age": 30, "active": False},
         f"{prefix}user3": {"name": "Charlie", "age": 35, "active": True},
-        f"{prefix}admin1": {"name": "Admin", "role": "admin", "active": True}
+        f"{prefix}admin1": {"name": "Admin", "role": "admin", "active": True},
     }
-    
+
     # Set all the test data
     for key, value in test_data.items():
-        dysond("tx", "storage", "set",
-            "--from", user_name,
-            "--index", key,
-            "--data", json.dumps(value))
-    
+        dysond(
+            "tx",
+            "storage",
+            "set",
+            "--from",
+            user_name,
+            "--index",
+            key,
+            "--data",
+            json.dumps(value),
+        )
+
     # Test: Delete specific user entries by specifying exact indexes
     user_indexes = [f"{prefix}user1", f"{prefix}user2", f"{prefix}user3"]
-    delete_result = dysond("tx", "storage", "delete",
-        "--from", user_name,
-        "--indexes", ",".join(user_indexes))
-    
-    assert delete_result["code"] == 0, f"Delete by indexes failed: {delete_result['raw_log']}"
-    
+    delete_result = dysond(
+        "tx",
+        "storage",
+        "delete",
+        "--from",
+        user_name,
+        "--indexes",
+        ",".join(user_indexes),
+    )
+
+    assert (
+        delete_result["code"] == 0
+    ), f"Delete by indexes failed: {delete_result['raw_log']}"
+
     # Verify user entries are deleted
     for user_key in user_indexes:
-        get_result = dysond("query", "storage", "get",
-            user_addr,
-            "--index", user_key)
-        assert isinstance(get_result, str), f"Entry {user_key} should be deleted but still exists"
-        assert "doesn't exist" in get_result, f"Entry {user_key} should show 'doesn't exist' error"
-    
+        get_result = dysond("query", "storage", "get", user_addr, "--index", user_key)
+        assert isinstance(
+            get_result, str
+        ), f"Entry {user_key} should be deleted but still exists"
+        assert (
+            "doesn't exist" in get_result
+        ), f"Entry {user_key} should show 'doesn't exist' error"
+
     # Verify admin entry still exists
     admin_key = f"{prefix}admin1"
-    admin_result = dysond("query", "storage", "get",
-        user_addr,
-        "--index", admin_key)
-    assert admin_result["entry"]["data"] == json.dumps(test_data[admin_key]), \
-        f"Admin entry should still exist"
+    admin_result = dysond("query", "storage", "get", user_addr, "--index", admin_key)
+    assert admin_result["entry"]["data"] == json.dumps(
+        test_data[admin_key]
+    ), f"Admin entry should still exist"
 
 
 def test_storage_delete_empty_prefix(chainnet, generate_account, faucet):
     """Test that delete fails when no indexes are provided."""
     dysond = chainnet[0]
-    
-    [user_name, user_addr] = generate_account('no_indexes')
+
+    [user_name, user_addr] = generate_account("no_indexes")
     faucet(user_addr)
-    
+
     # Try to delete without specifying any indexes
-    delete_result = dysond("tx", "storage", "delete",
-        "--from", user_name,
-        "--offline")  # Use offline mode to get string error instead of exception
-    
+    delete_result = dysond(
+        "tx", "storage", "delete", "--from", user_name, "--offline"
+    )  # Use offline mode to get string error instead of exception
+
     # This should fail with an error at the CLI level
-    assert isinstance(delete_result, str), "Expected CLI error string for missing indexes"
-    assert "indexes" in delete_result.lower() or "must specify" in delete_result, \
-        f"Expected validation error for missing indexes, got: {delete_result}"
+    assert isinstance(
+        delete_result, str
+    ), "Expected CLI error string for missing indexes"
+    assert (
+        "indexes" in delete_result.lower() or "must specify" in delete_result
+    ), f"Expected validation error for missing indexes, got: {delete_result}"
 
 
 def test_storage_pagination_comprehensive(chainnet, generate_account, faucet):
@@ -727,15 +931,19 @@ def test_storage_pagination_comprehensive(chainnet, generate_account, faucet):
     import json
     import random
     import string
-    
+
     # Generate test account and fund it
-    [user_name, user_addr] = generate_account('comprehensive_test', faucet_amount=1_000_000)
-    
+    [user_name, user_addr] = generate_account(
+        "comprehensive_test", faucet_amount=1_000_000
+    )
+
     # Generate unique test prefix
-    test_prefix = "pagination_test_" + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-    
+    test_prefix = "pagination_test_" + "".join(
+        random.choices(string.ascii_lowercase + string.digits, k=8)
+    )
+
     print(f"Testing comprehensive pagination with prefix: {test_prefix}")
-    
+
     # Script that creates 10 storage entries and tests pagination
     script_code = f'''
 import json
@@ -822,77 +1030,105 @@ def run_comprehensive_test():
         "total_tests": len(test_results)
     }}
 '''
-    
+
     # Execute the comprehensive test
     print("Executing comprehensive pagination test...")
-    result = dysond("query", "script", "run",
-        "--executor-address", user_addr,
-        "--script-address", user_addr,
-        "--function-name", "run_comprehensive_test",
-        "--args", "[]",
-        "--output", "json",
-        "--extra-code", script_code)
-    
+    result = dysond(
+        "query",
+        "script",
+        "run",
+        "--executor-address",
+        user_addr,
+        "--script-address",
+        user_addr,
+        "--function-name",
+        "run_comprehensive_test",
+        "--args",
+        "[]",
+        "--output",
+        "json",
+        "--extra-code",
+        script_code,
+    )
+
     print(f"Script execution result type: {type(result)}")
     print(f"Script execution raw result: {result}")
-    
+
     # Assert expected type and parse the script result
     assert isinstance(result, dict), f"Expected dict but got {type(result)}: {result}"
     assert "result" in result, f"Missing 'result' key in: {result}"
-    
+
     result_data = json.loads(result["result"])
-    assert isinstance(result_data, dict), f"Expected dict from JSON parse but got {type(result_data)}: {result_data}"
-    assert "result" in result_data, f"Missing 'result' key in parsed data: {result_data}"
-    
+    assert isinstance(
+        result_data, dict
+    ), f"Expected dict from JSON parse but got {type(result_data)}: {result_data}"
+    assert (
+        "result" in result_data
+    ), f"Missing 'result' key in parsed data: {result_data}"
+
     script_result = result_data["result"]
-    
+
     print(f"Script returned {len(script_result['test_results'])} test cases")
-    
+
     # Analyze results for mismatches
-    mismatches = [test_case for test_case in script_result["test_results"] if not test_case["matches"]]
+    mismatches = [
+        test_case
+        for test_case in script_result["test_results"]
+        if not test_case["matches"]
+    ]
     total_tests = len(script_result["test_results"])
-    
+
     # Print all mismatches
     for test_case in mismatches:
         print(f"MISMATCH: limit={test_case['limit']}, offset={test_case['offset']}")
         print(f"  Expected: {test_case['expected_indices']}")
         print(f"  Actual:   {test_case['actual_indices']}")
-    
+
     print(f"\nSummary: {len(mismatches)} mismatches out of {total_tests} test cases")
-    
+
     # Analyze mismatch patterns for the hypothesis
     for mismatch in mismatches:
         limit = mismatch["limit"]
         offset = mismatch["offset"]
         total = mismatch["total_available"]
-        
+
         # Check if this matches the hypothesis
-        is_evenly_divisible = (total % limit == 0)
-        is_boundary_case = (offset % limit == 0)
-        
-        print(f"  limit={limit}, offset={offset}: evenly_divisible={is_evenly_divisible}, boundary={is_boundary_case}")
-    
+        is_evenly_divisible = total % limit == 0
+        is_boundary_case = offset % limit == 0
+
+        print(
+            f"  limit={limit}, offset={offset}: evenly_divisible={is_evenly_divisible}, boundary={is_boundary_case}"
+        )
+
     # The test should pass - we're gathering data, not testing for failure
     assert total_tests > 0, "No test cases were executed"
-    
+
     # Print final analysis
     mismatch_count = len(mismatches)
-    print(f"Found {mismatch_count} mismatches - " + 
-          ("this may indicate the pagination bug" if mismatch_count > 0 else "pagination appears to be working correctly")) 
+    print(
+        f"Found {mismatch_count} mismatches - "
+        + (
+            "this may indicate the pagination bug"
+            if mismatch_count > 0
+            else "pagination appears to be working correctly"
+        )
+    )
 
 
 def test_storage_pagination_nuance_reproduction(chainnet, generate_account, faucet):
     """Test to reproduce the exact pagination scenario from nuance script with rating-like data."""
     dysond = chainnet[0]
-    
-    # Create account and fund it  
-    [user_name, user_addr] = generate_account('nuance_repro', faucet_amount=50_000_000)  # 50 DYS instead of 100
-    
+
+    # Create account and fund it
+    [user_name, user_addr] = generate_account(
+        "nuance_repro", faucet_amount=50_000_000
+    )  # 50 DYS instead of 100
+
     # Create test data that mimics the nuance rating structure
     # Using the exact prefix pattern from nuance script
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     prefix = f"tags/testtag/hot/"
-    
+
     # Create entries that mimic the rating entries with float values like in the debug output
     test_data = {
         f"{prefix}121.79422/post/4": {"post_id": "4", "hot_rating": 121.79422},
@@ -900,99 +1136,134 @@ def test_storage_pagination_nuance_reproduction(chainnet, generate_account, fauc
         f"{prefix}121.28339/post/3": {"post_id": "3", "hot_rating": 121.28339},
         f"{prefix}121.28337/post/1": {"post_id": "1", "hot_rating": 121.28337},
     }
-    
+
     print(f"Creating nuance-like test data with prefix: {prefix}")
-    
+
     # Set all the test data
     for key, value in test_data.items():
-        dysond("tx", "storage", "set",
-            "--from", user_name,
-            "--index", key,
-            "--data", json.dumps(value))
-    
+        dysond(
+            "tx",
+            "storage",
+            "set",
+            "--from",
+            user_name,
+            "--index",
+            key,
+            "--data",
+            json.dumps(value),
+        )
+
     print(f"Created {len(test_data)} entries")
-    
+
     # Get all entries in reverse order (like nuance script does)
-    all_entries_result = dysond("query", "storage", "list",
+    all_entries_result = dysond(
+        "query",
+        "storage",
+        "list",
         user_addr,
-        "--index-prefix", prefix,
+        "--index-prefix",
+        prefix,
         "--reverse",
-        "-o", "json")
-    
+        "-o",
+        "json",
+    )
+
     print(f"All entries (reverse order): {json.dumps(all_entries_result, indent=2)}")
     all_entries = all_entries_result.get("entries", [])
     assert len(all_entries) == 4, f"Expected 4 entries, got {len(all_entries)}"
-    
+
     # Extract expected post IDs from all entries
     expected_post_ids = []
     for entry in all_entries:
         entry_data = json.loads(entry["data"])
         expected_post_ids.append(entry_data["post_id"])
-    
+
     print(f"Expected post ID sequence (reverse order): {expected_post_ids}")
-    
+
     # Now test offset-based pagination like nuance script does
     # Test hot_index 0, 1, 2, 3 (which should map to offset 0, 1, 2, 3)
-    
+
     pagination_results = []
     for hot_index in range(4):
-        offset_result = dysond("query", "storage", "list",
+        offset_result = dysond(
+            "query",
+            "storage",
+            "list",
             user_addr,
-            "--index-prefix", prefix,
-            "--offset", str(hot_index),
-            "--limit", "1",
+            "--index-prefix",
+            prefix,
+            "--offset",
+            str(hot_index),
+            "--limit",
+            "1",
             "--reverse",
-            "-o", "json")
-        
+            "-o",
+            "json",
+        )
+
         print(f"Offset {hot_index} result: {json.dumps(offset_result, indent=2)}")
-        
+
         offset_entries = offset_result.get("entries", [])
-        assert len(offset_entries) == 1, f"Expected 1 entry for offset {hot_index}, got {len(offset_entries)}"
-        
+        assert (
+            len(offset_entries) == 1
+        ), f"Expected 1 entry for offset {hot_index}, got {len(offset_entries)}"
+
         entry_data = json.loads(offset_entries[0]["data"])
         actual_post_id = entry_data["post_id"]
         expected_post_id = expected_post_ids[hot_index]
-        
-        pagination_results.append({
-            "hot_index": hot_index,
-            "expected_post_id": expected_post_id,
-            "actual_post_id": actual_post_id,
-            "matches": actual_post_id == expected_post_id
-        })
-        
-        print(f"hot_index {hot_index}: expected post_id {expected_post_id}, got post_id {actual_post_id}")
-    
+
+        pagination_results.append(
+            {
+                "hot_index": hot_index,
+                "expected_post_id": expected_post_id,
+                "actual_post_id": actual_post_id,
+                "matches": actual_post_id == expected_post_id,
+            }
+        )
+
+        print(
+            f"hot_index {hot_index}: expected post_id {expected_post_id}, got post_id {actual_post_id}"
+        )
+
     # Analyze results
     mismatches = [r for r in pagination_results if not r["matches"]]
-    
+
     print(f"\nPagination Results:")
     for result in pagination_results:
         status = "✅" if result["matches"] else "❌"
-        print(f"  {status} hot_index {result['hot_index']}: expected {result['expected_post_id']}, got {result['actual_post_id']}")
-    
-    print(f"\nSummary: {len(mismatches)} mismatches out of {len(pagination_results)} tests")
-    
+        print(
+            f"  {status} hot_index {result['hot_index']}: expected {result['expected_post_id']}, got {result['actual_post_id']}"
+        )
+
+    print(
+        f"\nSummary: {len(mismatches)} mismatches out of {len(pagination_results)} tests"
+    )
+
     # Report on the findings
     mismatch_count = len(mismatches)
     print(f"Found {mismatch_count} mismatches - expected 0 for working pagination")
-    
+
     # All should match for correct behavior
     for result in pagination_results:
-        assert result["matches"], f"BUG: hot_index {result['hot_index']} should return post_id {result['expected_post_id']}, got {result['actual_post_id']}"
-    
-    print("✅ Storage-level pagination test passed - bug is not in storage layer") 
+        assert result[
+            "matches"
+        ], f"BUG: hot_index {result['hot_index']} should return post_id {result['expected_post_id']}, got {result['actual_post_id']}"
+
+    print("✅ Storage-level pagination test passed - bug is not in storage layer")
 
 
 def test_storage_pagination_script_query_bug(chainnet, generate_account, faucet):
     """Test to reproduce the pagination bug via script execution using _query() like nuance script."""
     dysond = chainnet[0]
-    
-    # Create account and fund it  
-    [user_name, user_addr] = generate_account('script_query_bug', faucet_amount=5_000_000)  # 5 DYS
-    
+
+    # Create account and fund it
+    [user_name, user_addr] = generate_account(
+        "script_query_bug", faucet_amount=5_000_000
+    )  # 5 DYS
+
     # Create test data that exactly matches nuance script structure
     prefix = "tags/testtag/hot/"
-    
+
     # Script that creates the test data and tests pagination via _query
     setup_and_test_script = f'''
 import json
@@ -1098,74 +1369,100 @@ def run_full_test():
         "test": test_result
     }}
 '''
-    
+
     print("Testing pagination bug via script execution with _query()...")
-    
+
     # Execute the script that reproduces the nuance pagination pattern
-    result = dysond("query", "script", "run",
-        "--executor-address", user_addr,
-        "--script-address", user_addr,
-        "--function-name", "run_full_test",
-        "--args", "[]",
-        "--output", "json",
-        "--extra-code", setup_and_test_script)
-    
+    result = dysond(
+        "query",
+        "script",
+        "run",
+        "--executor-address",
+        user_addr,
+        "--script-address",
+        user_addr,
+        "--function-name",
+        "run_full_test",
+        "--args",
+        "[]",
+        "--output",
+        "json",
+        "--extra-code",
+        setup_and_test_script,
+    )
+
     print(f"Script execution result: {result}")
-    
+
     # Parse the script result
     assert isinstance(result, dict), f"Expected dict but got {type(result)}: {result}"
     assert "result" in result, f"Missing 'result' key in: {result}"
-    
+
     result_data = json.loads(result["result"])
-    assert isinstance(result_data, dict), f"Expected dict from JSON parse: {result_data}"
-    assert "result" in result_data, f"Missing 'result' key in parsed data: {result_data}"
-    
+    assert isinstance(
+        result_data, dict
+    ), f"Expected dict from JSON parse: {result_data}"
+    assert (
+        "result" in result_data
+    ), f"Missing 'result' key in parsed data: {result_data}"
+
     script_result = result_data["result"]
     test_data = script_result["test"]
-    
+
     print(f"Expected post ID order: {test_data['expected_order']}")
-    
+
     # Analyze pagination results from script execution
     pagination_results = test_data["pagination_results"]
     mismatches = [r for r in pagination_results if not r["matches"]]
-    
+
     print(f"\nPagination Results via Script _query():")
     for result_item in pagination_results:
         status = "✅" if result_item["matches"] else "❌"
-        print(f"  {status} offset {result_item['offset']}: expected {result_item['expected_post_id']}, got {result_item['actual_post_id']}")
+        print(
+            f"  {status} offset {result_item['offset']}: expected {result_item['expected_post_id']}, got {result_item['actual_post_id']}"
+        )
         print(f"      entry_index: {result_item['entry_index']}")
-    
-    print(f"\nSummary: {len(mismatches)} mismatches out of {len(pagination_results)} tests")
-    
+
+    print(
+        f"\nSummary: {len(mismatches)} mismatches out of {len(pagination_results)} tests"
+    )
+
     # This test should FAIL if the bug is reproduced via script execution
     # vs the direct CLI calls that work correctly
     mismatch_count = len(mismatches)
-    print(f"Bug reproduction status: {'SUCCESS - bug reproduced!' if mismatch_count > 0 else 'FAILED - no bug found'}")
-    
+    print(
+        f"Bug reproduction status: {'SUCCESS - bug reproduced!' if mismatch_count > 0 else 'FAILED - no bug found'}"
+    )
+
     # If we have mismatches, the bug is reproduced in script execution
     # Comment out the assertion below to see the actual bug pattern
     # assert mismatch_count == 0, f"BUG REPRODUCED: {mismatch_count} pagination mismatches in script execution"
-    
+
     # Let the test pass so we can see the pattern
-    print(f"✅ Test completed - found {mismatch_count} mismatches (expected if bug is in script execution layer)")
-    
+    print(
+        f"✅ Test completed - found {mismatch_count} mismatches (expected if bug is in script execution layer)"
+    )
+
     return {
         "mismatches": mismatches,
         "total_tests": len(pagination_results),
-        "expected_order": test_data['expected_order']
-    } 
+        "expected_order": test_data["expected_order"],
+    }
 
 
-def test_storage_pagination_exact_nuance_replication(chainnet, generate_account, faucet):
+def test_storage_pagination_exact_nuance_replication(
+    chainnet, generate_account, faucet
+):
     """Test to reproduce the exact pagination bug by replicating nuance _list_data function behavior."""
     dysond = chainnet[0]
-    
-    # Create account and fund it  
-    [user_name, user_addr] = generate_account('exact_nuance_repro', faucet_amount=1_000_000)  # 1 DYS
-    
+
+    # Create account and fund it
+    [user_name, user_addr] = generate_account(
+        "exact_nuance_repro", faucet_amount=1_000_000
+    )  # 1 DYS
+
     # Create test data that exactly matches nuance script structure
     prefix = "tags/testtag/hot/"
-    
+
     # Script that replicates the exact _list_data function from nuance
     exact_nuance_script = f'''
 import json
@@ -1289,71 +1586,91 @@ def run_exact_nuance_test():
         "test": test_result
     }}
 '''
-    
+
     print("Testing pagination bug using EXACT nuance _list_data replica...")
-    
+
     # Execute the script that reproduces the exact nuance behavior
-    result = dysond("query", "script", "run",
-        "--executor-address", user_addr,
-        "--script-address", user_addr,
-        "--function-name", "run_exact_nuance_test",
-        "--args", "[]",
-        "--output", "json",
-        "--extra-code", exact_nuance_script)
-    
+    result = dysond(
+        "query",
+        "script",
+        "run",
+        "--executor-address",
+        user_addr,
+        "--script-address",
+        user_addr,
+        "--function-name",
+        "run_exact_nuance_test",
+        "--args",
+        "[]",
+        "--output",
+        "json",
+        "--extra-code",
+        exact_nuance_script,
+    )
+
     print(f"Script execution result keys: {result.keys()}")
-    
+
     # Parse the script result
     assert isinstance(result, dict), f"Expected dict but got {type(result)}: {result}"
     assert "result" in result, f"Missing 'result' key in: {result}"
-    
+
     result_data = json.loads(result["result"])
-    assert isinstance(result_data, dict), f"Expected dict from JSON parse: {result_data}"
-    assert "result" in result_data, f"Missing 'result' key in parsed data: {result_data}"
-    
+    assert isinstance(
+        result_data, dict
+    ), f"Expected dict from JSON parse: {result_data}"
+    assert (
+        "result" in result_data
+    ), f"Missing 'result' key in parsed data: {result_data}"
+
     script_result = result_data["result"]
     test_data = script_result["test"]
-    
+
     print(f"Expected post ID order: {test_data['expected_order']}")
-    
+
     # Analyze pagination results from exact nuance replication
     pagination_results = test_data["pagination_results"]
     mismatches = [r for r in pagination_results if not r["matches"]]
-    
+
     print(f"\nPagination Results via EXACT Nuance _list_data Replica:")
     for result_item in pagination_results:
         status = "✅" if result_item["matches"] else "❌"
-        print(f"  {status} hot_index {result_item['hot_index']}: expected {result_item['expected_post_id']}, got {result_item['actual_post_id']}")
+        print(
+            f"  {status} hot_index {result_item['hot_index']}: expected {result_item['expected_post_id']}, got {result_item['actual_post_id']}"
+        )
         print(f"      entry_index: {result_item['entry_index']}")
-    
-    print(f"\nSummary: {len(mismatches)} mismatches out of {len(pagination_results)} tests")
-    
+
+    print(
+        f"\nSummary: {len(mismatches)} mismatches out of {len(pagination_results)} tests"
+    )
+
     # This test should reveal if the bug is in the **kwargs handling or query construction
     mismatch_count = len(mismatches)
-    print(f"Bug reproduction status: {'SUCCESS - exact nuance bug reproduced!' if mismatch_count > 0 else 'FAILED - no bug found in exact replica'}")
-    
+    print(
+        f"Bug reproduction status: {'SUCCESS - exact nuance bug reproduced!' if mismatch_count > 0 else 'FAILED - no bug found in exact replica'}"
+    )
+
     # Return the test results for further analysis
     return {
         "mismatches": mismatches,
         "total_tests": len(pagination_results),
-        "expected_order": test_data['expected_order'],
-        "script_execution_successful": True
-    } 
+        "expected_order": test_data["expected_order"],
+        "script_execution_successful": True,
+    }
 
-    
+
 def test_storage_pagination_nuance_key_format(chainnet, generate_account, faucet):
     """Test pagination with exact nuance key formatting to reproduce bug."""
     dysond = chainnet[0]
-    
+
     # Create account and fund it
-    [user_name, user_addr] = generate_account('nuance_key_repro')
+    [user_name, user_addr] = generate_account("nuance_key_repro")
     faucet(user_addr)
-    
+
     # Create test data with exact nuance key format:
     # {prefix}{padded_score:012.05f}/{padded_id:015d}
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     prefix = f"rate/tags/testtag_{suffix}/hot/"
-    
+
     # Scores similar to the failing run (positive, 5 decimals)
     test_data = {
         f"{prefix}000283.06579/000000000000004": {"id": 4, "hot_rating": 283.06579},
@@ -1361,76 +1678,108 @@ def test_storage_pagination_nuance_key_format(chainnet, generate_account, faucet
         f"{prefix}000282.55495/000000000000003": {"id": 3, "hot_rating": 282.55495},
         f"{prefix}000282.55494/000000000000001": {"id": 1, "hot_rating": 282.55494},
     }
-    
+
     # Set all the test data
     for key, value in test_data.items():
-        dysond("tx", "storage", "set",
-            "--from", user_name,
-            "--index", key,
-            "--data", json.dumps(value))
-    
+        dysond(
+            "tx",
+            "storage",
+            "set",
+            "--from",
+            user_name,
+            "--index",
+            key,
+            "--data",
+            json.dumps(value),
+        )
+
     print(f"Created nuance-formatted test data with prefix: {prefix}")
-    
+
     # Get all entries in reverse order (should be post4,2,3,1)
-    all_entries_result = dysond("query", "storage", "list",
+    all_entries_result = dysond(
+        "query",
+        "storage",
+        "list",
         user_addr,
-        "--index-prefix", prefix,
+        "--index-prefix",
+        prefix,
         "--reverse",
-        "-o", "json")
-    
+        "-o",
+        "json",
+    )
+
     print(f"All entries (reverse order): {json.dumps(all_entries_result, indent=2)}")
     all_entries = all_entries_result.get("entries", [])
     assert len(all_entries) == 4
-    
+
     # Extract expected IDs in reverse order
     expected_ids = [json.loads(entry["data"])["id"] for entry in all_entries]
     print(f"Expected ID sequence (reverse): {expected_ids}")
-    
+
     # Test offsets 0-3 with limit=1, reverse=true
     for offset, expected_id in enumerate(expected_ids):
-        offset_result = dysond("query", "storage", "list",
+        offset_result = dysond(
+            "query",
+            "storage",
+            "list",
             user_addr,
-            "--index-prefix", prefix,
-            "--offset", str(offset),
-            "--limit", "1",
+            "--index-prefix",
+            prefix,
+            "--offset",
+            str(offset),
+            "--limit",
+            "1",
             "--reverse",
-            "-o", "json")
-        
+            "-o",
+            "json",
+        )
+
         print(f"Offset {offset} result: {json.dumps(offset_result, indent=2)}")
-        
+
         offset_entries = offset_result.get("entries", [])
         assert len(offset_entries) == 1
-        
+
         entry_data = json.loads(offset_entries[0]["data"])
         actual_id = entry_data["id"]
-        
-        assert actual_id == expected_id, f"Offset {offset}: expected {expected_id}, got {actual_id}"
+
+        assert (
+            actual_id == expected_id
+        ), f"Offset {offset}: expected {expected_id}, got {actual_id}"
         print(f"Offset {offset}: expected ID {expected_id}, got ID {actual_id}")
-    
+
     print("\n✅ Pagination works correctly - no bug reproduced in this setup")
 
 
-def test_storage_pagination_nuance_key_format_via_script(chainnet, generate_account, faucet):
+def test_storage_pagination_nuance_key_format_via_script(
+    chainnet, generate_account, faucet
+):
     """Test pagination via script _query with exact nuance key formatting to reproduce bug."""
     dysond = chainnet[0]
-    
+
     # Create account and fund it
-    [user_name, user_addr] = generate_account('nuance_script_repro')
+    [user_name, user_addr] = generate_account("nuance_script_repro")
     faucet(user_addr)
-    
+
     # Deploy a dummy script to own the storage
     dummy_script = 'def dummy(): return "ok"'
-    result = dysond("tx", "script", "update",
-        "--code", dummy_script,
-        "--from", user_name,
-        "--gas", "auto")
+    result = dysond(
+        "tx",
+        "script",
+        "update",
+        "--code",
+        dummy_script,
+        "--from",
+        user_name,
+        "--gas",
+        "auto",
+    )
 
     script_addr = user_addr
-    
+
     print(f"Deployed dummy script at: {script_addr}")
-    
+
     # Script that sets test data and tests pagination
-    script_code = f'''
+    script_code = f"""
 import json
 from dys import _query, _msg
 
@@ -1471,54 +1820,74 @@ def list_data(offset):
 def run_tests():
     set_test_data()  # Set data first
     return [list_data(o) for o in range(4)]
-'''
-    
+"""
+
     # Execute the script
-    exec_result = dysond("query", "script", "run",
-        "--executor-address", user_addr,
-        "--script-address", script_addr,
-        "--function-name", "run_tests",
-        "--args", "[]",
-        "--extra-code", script_code,
-        "-o", "json")
-    
+    exec_result = dysond(
+        "query",
+        "script",
+        "run",
+        "--executor-address",
+        user_addr,
+        "--script-address",
+        script_addr,
+        "--function-name",
+        "run_tests",
+        "--args",
+        "[]",
+        "--extra-code",
+        script_code,
+        "-o",
+        "json",
+    )
+
     print(f"Script execution result: {json.dumps(exec_result, indent=2)}")
-    
+
     # Parse results
     result_data = json.loads(exec_result["result"])
     actual_ids = result_data["result"]
-    
+
     # Expected IDs: [4,2,3,1]
     expected_ids = [4, 2, 3, 1]
-    
+
     print("\nPagination Results via Script:")
     print(f"Actual IDs: {actual_ids}")
-    
-    assert actual_ids == expected_ids, f"Pagination mismatch: expected {expected_ids}, got {actual_ids}"
-    
+
+    assert (
+        actual_ids == expected_ids
+    ), f"Pagination mismatch: expected {expected_ids}, got {actual_ids}"
+
     print("\n✅ All offsets match expected - no bug reproduced in this setup")
 
 
-def test_storage_pagination_nuance_key_format_via_tx_script(chainnet, generate_account, faucet):
+def test_storage_pagination_nuance_key_format_via_tx_script(
+    chainnet, generate_account, faucet
+):
     """Test pagination via _query in tx script exec with nuance key format to reproduce bug."""
     dysond = chainnet[0]
-    
+
     # Create account and fund it
-    [user_name, user_addr] = generate_account('nuance_tx_repro')
-    faucet(user_addr)
-    
+    [user_name, user_addr] = generate_account("nuance_tx_repro", faucet_amount=100)
+
     # Deploy a dummy script to own the storage
     dummy_script = 'def dummy(): return "ok"'
-    result = dysond("tx", "script", "update",
-        "--code", dummy_script,
-        "--from", user_name,
-        "--gas", "auto")
+    result = dysond(
+        "tx",
+        "script",
+        "update",
+        "--code",
+        dummy_script,
+        "--from",
+        user_name,
+        "--gas",
+        "auto",
+    )
     script_addr = user_addr
-    
+
     print(f"Deployed dummy script at: {script_addr}")
-    
+
     # Script that sets test data and tests pagination in tx context
-    script_code = f'''
+    script_code = f"""
 import json
 from dys import _query, _msg
 
@@ -1559,63 +1928,76 @@ def list_data(offset):
 def run_tests():
     set_test_data()
     return json.dumps([list_data(o) for o in range(4)])
-'''
-    
+"""
+
     # Execute as TX
-    exec_result = dysond("tx", "script", "exec",
-        "--script-address", script_addr,
-        "--function-name", "run_tests",
-        "--args", "[]",
-        "--extra-code", script_code,
-        "--from", user_name,
-        "--gas", "auto",
-        "-y")
-    
+    exec_result = dysond(
+        "tx",
+        "script",
+        "exec",
+        "--script-address",
+        script_addr,
+        "--function-name",
+        "run_tests",
+        "--args",
+        "[]",
+        "--extra-code",
+        script_code,
+        "--from",
+        user_name,
+        "--gas",
+        "auto",
+        "-y",
+    )
+
     assert exec_result["code"] == 0
-    
+
     # Query tx details
     tx_details = dysond("query", "tx", exec_result["txhash"], "-o", "json")
-    
+
     # Find EventExecScript and extract response
     events = tx_details["events"]
-    exec_event = next(e for e in events if e["type"] == "dysonprotocol.script.v1.EventExecScript")
+    exec_event = next(
+        e for e in events if e["type"] == "dysonprotocol.script.v1.EventExecScript"
+    )
     response_attr = next(a for a in exec_event["attributes"] if a["key"] == "response")
     response = json.loads(response_attr["value"])
-    
+
     # Parse the result string - it's now json.dumps([list]) from script
     result_str = response["result"]
     inner_result = json.loads(result_str)
     actual_ids = json.loads(inner_result["result"])
-    
+
     # Expected IDs: [4,2,3,1]
     expected_ids = [4, 2, 3, 1]
-    
+
     print("\nPagination Results via TX Script:")
     print(f"Actual IDs: {repr(actual_ids)}")
     print(f"Expected IDs: {repr(expected_ids)}")
-    
+
     mismatches = sum(1 for a, e in zip(actual_ids, expected_ids) if a != e)
     for a, e in zip(actual_ids, expected_ids):
         print(f"Actual: {a}, Expected: {e}")
-    
+
     print(f"Summary: {mismatches} mismatches out of 4")
-    
-    assert mismatches == 0, f"Expected pagination to work correctly, but found {mismatches} mismatches"
+
+    assert (
+        mismatches == 0
+    ), f"Expected pagination to work correctly, but found {mismatches} mismatches"
     print("✅ Pagination works correctly in tx script context")
 
 
 def test_storage_pagination_next_key(chainnet, generate_account, faucet):
     """Test next key pagination works correctly for both forward and reverse directions."""
     dysond = chainnet[0]
-    
+
     # Create account and fund it
-    [user_name, user_addr] = generate_account('nextkey_pagination')
-    faucet(user_addr)
-    
+    [user_name, user_addr] = generate_account("nextkey_pagination", faucet_amount=100)
+
     # Create test data with predictable sort order
-    suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
     prefix = f"nextkey_test_{suffix}/"
-    
+
     # Create 6 entries with predictable alphabetical sort order
     test_data = {
         f"{prefix}item_a": {"id": "a", "value": "first"},
@@ -1625,137 +2007,198 @@ def test_storage_pagination_next_key(chainnet, generate_account, faucet):
         f"{prefix}item_e": {"id": "e", "value": "fifth"},
         f"{prefix}item_f": {"id": "f", "value": "sixth"},
     }
-    
+
     # Set all test data
     for key, value in test_data.items():
-        dysond("tx", "storage", "set",
-            "--from", user_name,
-            "--index", key,
-            "--data", json.dumps(value))
-    
+        dysond(
+            "tx",
+            "storage",
+            "set",
+            "--from",
+            user_name,
+            "--index",
+            key,
+            "--data",
+            json.dumps(value),
+        )
+
     print(f"Created test data with prefix: {prefix}")
-    
+
     # First, get all entries to verify they're stored correctly
-    all_entries_result = dysond("query", "storage", "list", user_addr, "--index-prefix", prefix, "-o", "json")
+    all_entries_result = dysond(
+        "query", "storage", "list", user_addr, "--index-prefix", prefix, "-o", "json"
+    )
     all_entries = all_entries_result.get("entries", [])
     assert len(all_entries) == 6, f"Should have 6 total entries, got {len(all_entries)}"
-    
+
     all_ids = [json.loads(entry["data"])["id"] for entry in all_entries]
     print(f"All entries (forward): {all_ids}")
-    
+
     # Test pagination using offset approach (reliable method)
     print("\n=== Testing Forward Offset-Based Pagination ===")
     forward_collected_ids = []
     page_size = 2
-    
+
     # Collect entries using offset pagination (3 pages of 2 items each)
     for page_num in range(3):
         offset = page_num * page_size
-        page_result = dysond("query", "storage", "list", user_addr, 
-                           "--index-prefix", prefix, 
-                           "--limit", str(page_size),
-                           "--offset", str(offset),
-                           "-o", "json")
-        
+        page_result = dysond(
+            "query",
+            "storage",
+            "list",
+            user_addr,
+            "--index-prefix",
+            prefix,
+            "--limit",
+            str(page_size),
+            "--offset",
+            str(offset),
+            "-o",
+            "json",
+        )
+
         page_entries = page_result.get("entries", [])
-        print(f"Forward page {page_num + 1} (offset {offset}): {len(page_entries)} entries")
-        
+        print(
+            f"Forward page {page_num + 1} (offset {offset}): {len(page_entries)} entries"
+        )
+
         # Extract IDs from this page
         page_ids = [json.loads(entry["data"])["id"] for entry in page_entries]
         forward_collected_ids.extend(page_ids)
-        
+
         # Print page details
         for entry in page_entries:
             entry_data = json.loads(entry["data"])
             print(f"  Entry: {entry['index']} -> ID {entry_data['id']}")
-    
+
     print(f"Forward offset pagination collected IDs: {forward_collected_ids}")
     expected_forward = ["a", "b", "c", "d", "e", "f"]
-    assert forward_collected_ids == expected_forward, f"Forward pagination: expected {expected_forward}, got {forward_collected_ids}"
-    
+    assert (
+        forward_collected_ids == expected_forward
+    ), f"Forward pagination: expected {expected_forward}, got {forward_collected_ids}"
+
     # Test reverse pagination using offset approach
     print("\n=== Testing Reverse Offset-Based Pagination ===")
     reverse_collected_ids = []
-    
+
     # Collect entries using reverse offset pagination (3 pages of 2 items each)
     for page_num in range(3):
         offset = page_num * page_size
-        page_result = dysond("query", "storage", "list", user_addr,
-                           "--index-prefix", prefix,
-                           "--limit", str(page_size),
-                           "--offset", str(offset),
-                           "--reverse",
-                           "-o", "json")
-        
+        page_result = dysond(
+            "query",
+            "storage",
+            "list",
+            user_addr,
+            "--index-prefix",
+            prefix,
+            "--limit",
+            str(page_size),
+            "--offset",
+            str(offset),
+            "--reverse",
+            "-o",
+            "json",
+        )
+
         page_entries = page_result.get("entries", [])
-        print(f"Reverse page {page_num + 1} (offset {offset}): {len(page_entries)} entries")
-        
+        print(
+            f"Reverse page {page_num + 1} (offset {offset}): {len(page_entries)} entries"
+        )
+
         # Extract IDs from this page
         page_ids = [json.loads(entry["data"])["id"] for entry in page_entries]
         reverse_collected_ids.extend(page_ids)
-        
+
         # Print page details
         for entry in page_entries:
             entry_data = json.loads(entry["data"])
             print(f"  Entry: {entry['index']} -> ID {entry_data['id']}")
-    
+
     print(f"Reverse offset pagination collected IDs: {reverse_collected_ids}")
     expected_reverse = ["f", "e", "d", "c", "b", "a"]
-    assert reverse_collected_ids == expected_reverse, f"Reverse pagination: expected {expected_reverse}, got {reverse_collected_ids}"
-    
+    assert (
+        reverse_collected_ids == expected_reverse
+    ), f"Reverse pagination: expected {expected_reverse}, got {reverse_collected_ids}"
+
     # Test page-key pagination (proper usage)
     print("\n=== Testing Page-Key Pagination ===")
-    
+
     # First, get the first page and extract the next_key
-    first_page_result = dysond("query", "storage", "list", user_addr,
-                             "--index-prefix", prefix,
-                             "--limit", "2",
-                             "-o", "json")
-    
+    first_page_result = dysond(
+        "query",
+        "storage",
+        "list",
+        user_addr,
+        "--index-prefix",
+        prefix,
+        "--limit",
+        "2",
+        "-o",
+        "json",
+    )
+
     first_page_entries = first_page_result.get("entries", [])
     first_page_ids = [json.loads(entry["data"])["id"] for entry in first_page_entries]
     print(f"First page: {first_page_ids}")
-    
+
     # Get the next_key for pagination
     pagination_info = first_page_result.get("pagination", {})
     next_key = pagination_info.get("next_key")
     assert next_key, f"Expected next_key in pagination response, got: {pagination_info}"
-    
+
     print(f"Using next_key for second page: {next_key}")
     # Use the next_key to get the second page
-    second_page_result = dysond("query", "storage", "list", user_addr,
-                              "--index-prefix", prefix,
-                              "--limit", "2",
-                              "--page-key", next_key,
-                              "-o", "json")
-    
+    second_page_result = dysond(
+        "query",
+        "storage",
+        "list",
+        user_addr,
+        "--index-prefix",
+        prefix,
+        "--limit",
+        "2",
+        "--page-key",
+        next_key,
+        "-o",
+        "json",
+    )
+
     second_page_entries = second_page_result.get("entries", [])
     second_page_ids = [json.loads(entry["data"])["id"] for entry in second_page_entries]
     print(f"Second page using page-key: {second_page_ids}")
-    
+
     # Verify the total collection matches expected order
     total_pagekey_ids = first_page_ids + second_page_ids
     print(f"Total page-key pagination: {total_pagekey_ids}")
-    assert total_pagekey_ids == expected_forward[:4], f"Page-key pagination mismatch: expected {expected_forward[:4]}, got {total_pagekey_ids}"
-    
+    assert (
+        total_pagekey_ids == expected_forward[:4]
+    ), f"Page-key pagination mismatch: expected {expected_forward[:4]}, got {total_pagekey_ids}"
+
     # Verify completeness and uniqueness for offset-based tests
-    assert len(set(forward_collected_ids)) == 6, f"Forward pagination contained duplicates: {forward_collected_ids}"
-    assert len(set(reverse_collected_ids)) == 6, f"Reverse pagination contained duplicates: {reverse_collected_ids}"
-    assert set(forward_collected_ids) == set(reverse_collected_ids), "Forward and reverse should contain same items"
-    
-    print("\n✅ Offset-based pagination works correctly in both forward and reverse directions")
+    assert (
+        len(set(forward_collected_ids)) == 6
+    ), f"Forward pagination contained duplicates: {forward_collected_ids}"
+    assert (
+        len(set(reverse_collected_ids)) == 6
+    ), f"Reverse pagination contained duplicates: {reverse_collected_ids}"
+    assert set(forward_collected_ids) == set(
+        reverse_collected_ids
+    ), "Forward and reverse should contain same items"
+
+    print(
+        "\n✅ Offset-based pagination works correctly in both forward and reverse directions"
+    )
 
 
 def test_storage_pagination_next_key_script(chainnet, generate_account, faucet):
     """Test pagination via script execution using _query with both offset and key methods."""
     dysond = chainnet[0]
-    
+
     # Create account and fund it
-    [user_name, user_addr] = generate_account('nextkey_script')
-    faucet(user_addr)
-    
+    [user_name, user_addr] = generate_account("nextkey_script", faucet_amount=100)
+
     prefix = f"script_nextkey_test/"
-    
+
     # Script that tests both offset and key-based pagination
     script_code = f'''
 import json
@@ -1865,58 +2308,81 @@ def run_pagination_test():
         "expected_reverse": ["gamma", "delta", "beta", "alpha"]
     }}
 '''
-    
+
     # Execute the script
-    result = dysond("query", "script", "run",
-        "--executor-address", user_addr,
-        "--script-address", user_addr,
-        "--function-name", "run_pagination_test",
-        "--args", "[]",
-        "--output", "json",
-        "--extra-code", script_code)
-    
+    result = dysond(
+        "query",
+        "script",
+        "run",
+        "--executor-address",
+        user_addr,
+        "--script-address",
+        user_addr,
+        "--function-name",
+        "run_pagination_test",
+        "--args",
+        "[]",
+        "--output",
+        "json",
+        "--extra-code",
+        script_code,
+    )
+
     print(f"Script execution completed")
     print(f"Script result type: {type(result)}")
-    print(f"Script result keys: {list(result.keys()) if isinstance(result, dict) else 'Not a dict'}")
-    
+    print(
+        f"Script result keys: {list(result.keys()) if isinstance(result, dict) else 'Not a dict'}"
+    )
+
     # Parse the result with better error handling
     assert isinstance(result, dict), f"Expected dict but got {type(result)}: {result}"
     assert "result" in result, f"Missing 'result' key in: {result}"
-    
+
     result_content = result["result"]
     print(f"Result content type: {type(result_content)}")
     print(f"Result content: {result_content}")
-    
+
     # Handle case where result might be None or empty
     assert result_content is not None, f"Script result is None: {result}"
     assert result_content != "", f"Script result is empty: {result}"
-    
+
     result_data = json.loads(result_content)
-    assert isinstance(result_data, dict), f"Expected dict from JSON parse: {result_data}"
-    assert "result" in result_data, f"Missing 'result' key in parsed data: {result_data}"
-    
+    assert isinstance(
+        result_data, dict
+    ), f"Expected dict from JSON parse: {result_data}"
+    assert (
+        "result" in result_data
+    ), f"Missing 'result' key in parsed data: {result_data}"
+
     script_result = result_data["result"]
-    
+
     # Verify offset-based pagination
     forward_offset_ids = script_result["forward_offset_ids"]
     reverse_offset_ids = script_result["reverse_offset_ids"]
     expected_forward = script_result["expected_forward"]
     expected_reverse = script_result["expected_reverse"]
-    
-    assert forward_offset_ids == expected_forward, f"Script forward offset pagination: expected {expected_forward}, got {forward_offset_ids}"
-    assert reverse_offset_ids == expected_reverse, f"Script reverse offset pagination: expected {expected_reverse}, got {reverse_offset_ids}"
-    
+
+    assert (
+        forward_offset_ids == expected_forward
+    ), f"Script forward offset pagination: expected {expected_forward}, got {forward_offset_ids}"
+    assert (
+        reverse_offset_ids == expected_reverse
+    ), f"Script reverse offset pagination: expected {expected_reverse}, got {reverse_offset_ids}"
+
     # Show key-based pagination results (may or may not work)
     forward_key_ids = script_result["forward_key_ids"]
     reverse_key_ids = script_result["reverse_key_ids"]
-    
-    print(f"Offset-based - Forward: {forward_offset_ids}, Reverse: {reverse_offset_ids}")
+
+    print(
+        f"Offset-based - Forward: {forward_offset_ids}, Reverse: {reverse_offset_ids}"
+    )
     print(f"Key-based - Forward: {forward_key_ids}, Reverse: {reverse_key_ids}")
-    
+
     # Key-based pagination might have different behavior, so we just report it
     key_forward_works = forward_key_ids == expected_forward
     key_reverse_works = reverse_key_ids == expected_reverse
-    print(f"Key-based pagination: Forward works: {key_forward_works}, Reverse works: {key_reverse_works}")
-    
-    print("✅ Offset-based pagination works correctly via script execution")
+    print(
+        f"Key-based pagination: Forward works: {key_forward_works}, Reverse works: {key_reverse_works}"
+    )
 
+    print("✅ Offset-based pagination works correctly via script execution")

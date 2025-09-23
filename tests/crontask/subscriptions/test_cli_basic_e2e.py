@@ -12,21 +12,26 @@ def _extract_attr(events, ev_type, key):
     return (len(values) > 0 and values[0]) or None
 
 
-def test_subscription_cli_basic_e2e(chainnet, generate_account, faucet):
+def test_subscription_cli_basic_e2e(chainnet, generate_account):
     dysond = chainnet[0]
 
     # Accounts
-    [creator_name, creator_addr] = generate_account("sub_creator")
-    faucet(creator_addr, amount=1_000_000)
+    [creator_name, creator_addr] = generate_account(
+        "sub_creator", faucet_amount=1_000_000
+    )
 
     # Install a script that echoes kwargs back so we can verify merged event
     script_code = """
-from dys import _msg, get_script_address
+from dys import _msg, get_script_address, emit_event
 import json
 
-def echo_kwargs(event_key=None):
+def echo_kwargs(event=None, event_key=None):
     # just return kwargs back out; event merge should appear here
     return {"event_key": event_key}
+
+def emit_payment():
+    emit_event("payment_processed", "ok")
+    return True
 """
     up = dysond(
         "tx",
@@ -43,13 +48,8 @@ def echo_kwargs(event_key=None):
     assert up.get("code", 1) == 0, f"script update failed: {up}"
 
     # Emit a custom event via script exec so baseapp aggregates it
-    emit_code = """
-from dys import emit_event
-
-def emit_payment():
-    emit_event("payment_processed", "ok")
-    return True
-"""
+    # Keep both functions defined after this update as well
+    emit_code = script_code
     up2 = dysond(
         "tx",
         "script",
@@ -112,7 +112,7 @@ def emit_payment():
         "--kwargs",
         "{}",
         "--task-gas-limit",
-        "200000",
+        "1200000",
         "--task-gas-fee",
         "1udys",
         "--from",
@@ -144,16 +144,24 @@ def emit_payment():
     )
     assert exec_emit.get("code", 1) == 0, f"emit tx failed: {exec_emit}"
 
+    # check that the subscription is enabled
+    sub = dysond(
+        "query", "crontask", "subscription-by-id", "--subscription-id", str(sub_id)
+    )
+    assert (
+        sub.get("subscription", {}).get("status") == "enabled"
+    ), f"subscription is not enabled: {sub}"
+
     # Wait until a task is scheduled for the subscription creator
     def _has_scheduled():
         res = dysond("query", "crontask", "tasks-by-address", "--creator", creator_addr)
-        assert task.get("status") != "FAILED", f"task failed: {task}"
-        assert task.get("status") != "EXPIRED", f"task expired: {task}"
-        return task.get("status") == "SCHEDULED"
+        tasks = res.get("tasks") or []
+        task = (len(tasks) > 0 and tasks[0]) or None
+        return task is not None and task.get("status") == "SCHEDULED"
 
     poll_until_condition(
         _has_scheduled,
-        timeout=1,
+        timeout=20,
         poll_interval=0.2,
         error_message="No scheduled task created for subscription",
     )

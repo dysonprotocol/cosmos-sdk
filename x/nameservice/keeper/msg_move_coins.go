@@ -21,7 +21,10 @@ func (k Keeper) MoveCoins(ctx context.Context, msg *nameservicev1.MsgMoveCoins) 
 		if addr, err := sdk.AccAddressFromBech32(in.Address); err == nil {
 			if acc := k.accountKeeper.GetAccount(sdk.UnwrapSDKContext(ctx), addr); acc != nil {
 				if _, ok := acc.(sdk.ModuleAccountI); ok {
-					return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "input address is a module account")
+					// Allow module input only if signer (name_destination) equals that module address
+					if addr.String() != msg.NameDestination {
+						return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "input address is a module account")
+					}
 				}
 			}
 		} else {
@@ -44,7 +47,10 @@ func (k Keeper) MoveCoins(ctx context.Context, msg *nameservicev1.MsgMoveCoins) 
 		if addr, err := sdk.AccAddressFromBech32(out.Address); err == nil {
 			if acc := k.accountKeeper.GetAccount(sdk.UnwrapSDKContext(ctx), addr); acc != nil {
 				if _, ok := acc.(sdk.ModuleAccountI); ok {
-					return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "output address is a module account")
+					// Allow module output only if signer (name_destination) equals that module address
+					if addr.String() != msg.NameDestination {
+						return nil, cosmossdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "output address is a module account")
+					}
 				}
 			}
 		} else {
