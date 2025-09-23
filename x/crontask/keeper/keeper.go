@@ -23,6 +23,7 @@ import (
 	"github.com/tidwall/gjson"
 
 	"dysonprotocol.com/x/crontask"
+	eventnorm "dysonprotocol.com/x/crontask/keeper/eventnormalizer"
 	crontasktypes "dysonprotocol.com/x/crontask/types"
 	scripttypes "dysonprotocol.com/x/script/types"
 )
@@ -237,22 +238,19 @@ func (k Keeper) RemoveTask(ctx context.Context, id uint64) error {
 
 // SetParams sets the crontask module parameters
 func (k Keeper) SetParams(ctx context.Context, params crontasktypes.Params) error {
-	fmt.Printf("SetParams called with: BlockGasLimit=%d, ExpiryLimit=%d, MaxScheduledTime=%d\n",
-		params.BlockGasLimit, params.ExpiryLimit, params.MaxScheduledTime)
 
 	// Validate parameters before attempting to set them
 	if err := params.Validate(); err != nil {
-		fmt.Printf("SetParams validation error: %v\n", err)
+		k.Logger.Error("SetParams validation error", "error", err)
 		return fmt.Errorf("invalid parameters: %w", err)
 	}
 
 	err := k.Params.Set(ctx, params)
 	if err != nil {
-		fmt.Printf("SetParams error when setting params: %v\n", err)
+		k.Logger.Error("SetParams error when setting params", "error", err)
 		return err
 	}
 
-	fmt.Printf("SetParams completed successfully\n")
 	return nil
 }
 
@@ -601,23 +599,13 @@ func eventMatchesFilter(ev abci.Event, filter string) bool {
 	if filter == "" {
 		return true
 	}
-	// Normalize event into JSON and run GJSON filter: wrap in array and use #(filter)
-	// Build map[string]any for attributes, parsing JSON literal values when possible
-	attrs := make(map[string]any)
+	// Normalize event via eventnormalizer then run GJSON filter on the normalized object
+	attrs := make([]eventnorm.Attribute, 0, len(ev.Attributes))
 	for _, a := range ev.Attributes {
-		raw := a.Value
-		var parsed any
-		if err := json.Unmarshal([]byte(raw), &parsed); err == nil {
-			attrs[a.Key] = parsed
-		} else {
-			attrs[a.Key] = raw
-		}
+		attrs = append(attrs, eventnorm.Attribute{Key: a.Key, Value: a.Value, Index: a.Index})
 	}
-	obj := map[string]any{
-		"type":       ev.Type,
-		"attributes": attrs,
-	}
-	b, err := json.Marshal(obj)
+	normalizedEvent := eventnorm.NormalizeEvent(eventnorm.Event{Type: ev.Type, Attributes: attrs})
+	b, err := json.Marshal(normalizedEvent)
 	if err != nil {
 		return false
 	}
@@ -641,23 +629,12 @@ func (k Keeper) createTaskForSubscription(ctx sdk.Context, sub crontasktypes.Sub
 		return errorsmod.Wrapf(err, "fee deduction failed for creator [%s]", sub.Creator)
 	}
 
-	// Normalize event and merge into kwargs under key "event"
-	// Parse attribute values as JSON when possible to avoid double-quoted literals
-	attrs := make(map[string]any)
+	// Normalize event and merge into kwargs under key "event" using eventnormalizer
+	attrsIn := make([]eventnorm.Attribute, 0, len(ev.Attributes))
 	for _, a := range ev.Attributes {
-		raw := a.Value
-		var parsed any
-		if err := json.Unmarshal([]byte(raw), &parsed); err == nil {
-			attrs[a.Key] = parsed
-		} else {
-			ctx.Logger().Error("Error parsing attribute value as JSON", "key", a.Key, "value", raw, "error", err)
-			attrs[a.Key] = raw
-		}
+		attrsIn = append(attrsIn, eventnorm.Attribute{Key: a.Key, Value: a.Value, Index: a.Index})
 	}
-	normalized := map[string]any{
-		"type":       ev.Type,
-		"attributes": attrs,
-	}
+	normalizedEvent := eventnorm.NormalizeEvent(eventnorm.Event{Type: ev.Type, Attributes: attrsIn})
 
 	var kwargsMap map[string]any
 	if len(sub.Kwargs) > 0 {
@@ -667,7 +644,7 @@ func (k Keeper) createTaskForSubscription(ctx sdk.Context, sub crontasktypes.Sub
 	} else {
 		kwargsMap = make(map[string]any)
 	}
-	kwargsMap["event"] = normalized
+	kwargsMap["event"] = normalizedEvent
 	mergedKwargsBytes, err := json.Marshal(kwargsMap)
 	if err != nil {
 		return errorsmod.Wrapf(err, "failed to encode merged kwargs for subscription [%d]", sub.SubscriptionId)

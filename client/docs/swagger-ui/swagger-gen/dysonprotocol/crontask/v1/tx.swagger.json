@@ -406,10 +406,14 @@
           "format": "int64",
           "title": "Retention period for completed/failed/expired tasks (seconds)"
         },
-        "max_expiry_delta": {
+        "max_subscription_time": {
           "type": "string",
           "format": "int64",
-          "title": "Maximum allowed delta for subscription expiry renewal (default 7 days)"
+          "title": "Maximum allowed subscription time (seconds)"
+        },
+        "min_stake_per_subscription": {
+          "$ref": "#/definitions/cosmos.base.v1beta1.Coin",
+          "title": "Minimum stake per subscription required (default 1000 udys)"
         }
       },
       "title": "Params defines the parameters for the crontask module"

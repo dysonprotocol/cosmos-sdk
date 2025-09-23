@@ -252,3 +252,15 @@ What I changed:
 
 Next:
 - Add REST and dyslang tests scaffolding; extend checks to assert `kwargs.event` contents and `trigger_count`.
+==================================================
+Proto: remove Subscription.event_type; rename expiry_timestamp->max_subscription_duration; add Params.min_stake_per_subscription; drop MsgRenewSubscription.new_expiry
+Run make proto-gen install and fix generated code references
+Keeper: remove status+event_type indexes; keep creator+status; add status-only index for enabled
+Keeper: aggregate all block events into []NormalizedEvent and JSON-encode once per block
+Keeper: for each enabled subscription, apply GJSON filter to JSON array; for each match create crontask with matched event
+Keeper: normalize args/kwargs JSON (minify) when creating subscription; validate lengths
+Keeper/Task: normalize args/kwargs in SetTask; validate JSON and minify
+Params: set default MaxSubscriptionDuration to 24h; enforce renew uses duration; remove input expiry
+Stake check: add StakingKeeper dep; enforce min stake across all subs on create/renew
+AutoCLI/Query: update CLI and swagger for removed fields and new params
+Tests: update subscription tests to array-based filtering; add stake enforcement tests

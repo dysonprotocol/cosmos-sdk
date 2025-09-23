@@ -69,10 +69,6 @@
                         "type": "string",
                         "description": "creator account that owns this subscription"
                     },
-                    "event_type": {
-                        "type": "string",
-                        "description": "event type to match (e.g., \"transfer\")"
-                    },
                     "filter": {
                         "type": "string",
                         "description": "GJSON filter to match events"

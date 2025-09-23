@@ -11,14 +11,15 @@ def test_dyslang_subscription_flow(chainnet, generate_account, faucet):
     # Emitter (keep show defined; update script to include both functions)
     emit_code = """
 from dys import emit_event
+import json
 
 def show(event=None):
-    v = event and event.get("attributes", {}).get("value")
     print(f"event: {event}")
+    v = event and event.get("attributes", {}).get("value")
     return {"value": v}
 
 def go():
-    emit_event("alpha", "1")
+    emit_event("alpha", json.dumps({"foo": "bar"}))
     return True
 """
     up2 = dysond(
@@ -43,7 +44,7 @@ def go():
         "--event-type",
         "dysonprotocol.script.v1.EventScriptEvent",
         "--filter",
-        'attributes.key=="alpha"',
+        "attributes.value.foo=='bar'",
         "--script-address",
         addr,
         "--function",

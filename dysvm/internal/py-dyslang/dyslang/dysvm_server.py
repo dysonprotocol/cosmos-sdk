@@ -538,9 +538,14 @@ def build_sandbox(
     sandbox.scope.dicts[0]["help"] = safe_help
 
     @allow_dys_func
-    def emit_event(key, value):
+    def emit_event(key: str, value: str) -> typing.Any:
         """
-        Emits an event to the blockchain
+        Emits an event to the blockchain.
+
+        :param key: the key of the event (string)
+        :param value: the value of the event (string)
+
+        :returns: the response from the chain
         """
         if not isinstance(value, str):
             raise ValueError("emit_event value must be a string")

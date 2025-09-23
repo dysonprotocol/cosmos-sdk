@@ -1126,12 +1126,28 @@ paths:
                     title: >-
                       Retention period for completed/failed/expired tasks
                       (seconds)
-                  max_expiry_delta:
+                  max_subscription_time:
                     type: string
                     format: int64
+                    title: Maximum allowed subscription time (seconds)
+                  min_stake_per_subscription:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
                     title: >-
-                      Maximum allowed delta for subscription expiry renewal
-                      (default 7 days)
+                      Minimum stake per subscription required (default 1000
+                      udys)
                 title: Params defines the parameters for the crontask module
             title: >-
               QueryParamsResponse is the response type for the Query/Params RPC
@@ -1185,9 +1201,6 @@ paths:
                     creator:
                       type: string
                       title: creator account that owns this subscription
-                    event_type:
-                      type: string
-                      title: event type to match (e.g., "transfer")
                     filter:
                       type: string
                       title: GJSON filter to match events
@@ -1368,9 +1381,6 @@ paths:
                     creator:
                       type: string
                       title: creator account that owns this subscription
-                    event_type:
-                      type: string
-                      title: event type to match (e.g., "transfer")
                     filter:
                       type: string
                       title: GJSON filter to match events
@@ -1553,9 +1563,6 @@ paths:
                   creator:
                     type: string
                     title: creator account that owns this subscription
-                  event_type:
-                    type: string
-                    title: event type to match (e.g., "transfer")
                   filter:
                     type: string
                     title: GJSON filter to match events
@@ -18778,12 +18785,28 @@ paths:
                     title: >-
                       Retention period for completed/failed/expired tasks
                       (seconds)
-                  max_expiry_delta:
+                  max_subscription_time:
                     type: string
                     format: int64
+                    title: Maximum allowed subscription time (seconds)
+                  min_stake_per_subscription:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
                     title: >-
-                      Maximum allowed delta for subscription expiry renewal
-                      (default 7 days)
+                      Minimum stake per subscription required (default 1000
+                      udys)
                 title: Params defines the parameters for the crontask module
             description: >-
               ---------------------------------------------------------------------------
@@ -30236,10 +30259,23 @@ definitions:
         type: string
         format: int64
         title: Retention period for completed/failed/expired tasks (seconds)
-      max_expiry_delta:
+      max_subscription_time:
         type: string
         format: int64
-        title: Maximum allowed delta for subscription expiry renewal (default 7 days)
+        title: Maximum allowed subscription time (seconds)
+      min_stake_per_subscription:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+        title: Minimum stake per subscription required (default 1000 udys)
     title: Params defines the parameters for the crontask module
   dysonprotocol.crontask.v1.QueryMetricsResponse:
     type: object
@@ -30315,12 +30351,26 @@ definitions:
             type: string
             format: int64
             title: Retention period for completed/failed/expired tasks (seconds)
-          max_expiry_delta:
+          max_subscription_time:
             type: string
             format: int64
-            title: >-
-              Maximum allowed delta for subscription expiry renewal (default 7
-              days)
+            title: Maximum allowed subscription time (seconds)
+          min_stake_per_subscription:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+            title: Minimum stake per subscription required (default 1000 udys)
         title: Params defines the parameters for the crontask module
     title: QueryParamsResponse is the response type for the Query/Params RPC method
   dysonprotocol.crontask.v1.QuerySubscriptionByIDResponse:
@@ -30336,9 +30386,6 @@ definitions:
           creator:
             type: string
             title: creator account that owns this subscription
-          event_type:
-            type: string
-            title: event type to match (e.g., "transfer")
           filter:
             type: string
             title: GJSON filter to match events
@@ -30428,9 +30475,6 @@ definitions:
             creator:
               type: string
               title: creator account that owns this subscription
-            event_type:
-              type: string
-              title: event type to match (e.g., "transfer")
             filter:
               type: string
               title: GJSON filter to match events
@@ -30820,9 +30864,6 @@ definitions:
       creator:
         type: string
         title: creator account that owns this subscription
-      event_type:
-        type: string
-        title: event type to match (e.g., "transfer")
       filter:
         type: string
         title: GJSON filter to match events
@@ -48814,12 +48855,26 @@ definitions:
             type: string
             format: int64
             title: Retention period for completed/failed/expired tasks (seconds)
-          max_expiry_delta:
+          max_subscription_time:
             type: string
             format: int64
-            title: >-
-              Maximum allowed delta for subscription expiry renewal (default 7
-              days)
+            title: Maximum allowed subscription time (seconds)
+          min_stake_per_subscription:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+            title: Minimum stake per subscription required (default 1000 udys)
         title: Params defines the parameters for the crontask module
     description: >-
       ---------------------------------------------------------------------------
