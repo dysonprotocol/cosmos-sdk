@@ -1,3 +1,4 @@
+import decimal
 import pytest
 import json
 import time
@@ -85,7 +86,12 @@ def test_query_tasks_by_status_timestamp(chainnet, generate_account):
     created_task_ids = {int(task_id1), int(task_id2)}
 
     tasks_result = dysond_bin(
-        "query", "crontask", "tasks-by-status-timestamp", "--status", "SCHEDULED"
+        "query",
+        "crontask",
+        "tasks-by-status-timestamp",
+        "--status",
+        "SCHEDULED",
+        "--page-reverse",
     )
     assert "tasks" in tasks_result, "Tasks response does not contain 'tasks' field"
     tasks = tasks_result["tasks"]
@@ -127,7 +133,7 @@ def test_query_tasks_by_status_timestamp(chainnet, generate_account):
 
 def test_query_tasks_by_status_gas_price(chainnet, generate_account):
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account("alice")
+    [alice_name, alice_address] = generate_account("alice", faucet_amount=1)
 
     # Create tasks and track their IDs
     task_id1 = create_task_for_test_with_gas_price(
@@ -139,7 +145,11 @@ def test_query_tasks_by_status_gas_price(chainnet, generate_account):
     created_task_ids = {int(task_id1), int(task_id2)}
 
     tasks_result = dysond_bin(
-        "query", "crontask", "tasks-by-status-gas-price", "--status", "SCHEDULED"
+        "query",
+        "crontask",
+        "tasks-by-status-gas-price",
+        "--status",
+        "SCHEDULED",
     )
     assert "tasks" in tasks_result, "Tasks response does not contain 'tasks' field"
     tasks = tasks_result["tasks"]
@@ -157,11 +167,14 @@ def test_query_tasks_by_status_gas_price(chainnet, generate_account):
         ), f"Status mismatch: {task['status']} != SCHEDULED"
 
     # Check gas price ordering for all tasks
-    gas_prices = [int(task["task_gas_price"]["amount"]) for task in tasks]
-    # Use a separate assertion that works for all cases
+
+    gas_prices = [
+        decimal.Decimal(task["task_gas_price"].strip("udys")) for task in tasks
+    ]
+    # Default order is descending by gas price
     assert all(
-        gas_prices[i] <= gas_prices[i + 1] for i in range(max(0, len(gas_prices) - 1))
-    ), "Tasks not ordered by gas price ascending"
+        gas_prices[i] >= gas_prices[i + 1] for i in range(max(0, len(gas_prices) - 1))
+    ), f"Tasks not ordered by gas price descending: {tasks}"
 
     # Find positions of our tasks
     task_positions = [(i, int(task["task_id"])) for i, task in enumerate(tasks)]
@@ -172,17 +185,17 @@ def test_query_tasks_by_status_gas_price(chainnet, generate_account):
     assert len(task1_positions) == 1, f"Task1 should appear exactly once"
     assert len(task2_positions) == 1, f"Task2 should appear exactly once"
 
-    # task1 should appear before task2 since it has lower gas price
+    # With default DESC order, higher gas price (task2) should appear before lower (task1)
     assert (
-        task1_positions[0] < task2_positions[0]
-    ), "Task1 should appear before task2 in gas price order"
+        task2_positions[0] < task1_positions[0]
+    ), "Task2 should appear before task1 in gas price order (DESC)"
 
     print(f"Found {len(tasks)} tasks with status SCHEDULED, including our 2 tasks")
 
 
 def test_delete_task(chainnet, generate_account):
     dysond_bin = chainnet[0]
-    [alice_name, alice_address] = generate_account("alice")
+    [alice_name, alice_address] = generate_account("alice", faucet_amount=1)
     task_id = create_task_for_test(dysond_bin, alice_name, alice_address)
     delete_result = dysond_bin(
         "tx",
@@ -483,7 +496,7 @@ def create_task_for_test_with_timestamp(
 def test_query_tasks_by_status_timestamp_desc(chainnet, generate_account):
     """Default (descending) ordering of scheduled tasks by timestamp."""
     dysond_bin = chainnet[0]
-    [name, addr] = generate_account("ts_desc")
+    [name, addr] = generate_account("ts_desc", faucet_amount=1)
 
     # Create three tasks with staggered future times so they remain SCHEDULED
     # Track their IDs and timestamps
@@ -500,7 +513,6 @@ def test_query_tasks_by_status_timestamp_desc(chainnet, generate_account):
         "tasks-by-status-timestamp",
         "--status",
         "SCHEDULED",
-        "--page-reverse",
         "--page-limit",
         "1000",
     )
@@ -526,7 +538,7 @@ def test_query_tasks_by_status_timestamp_desc(chainnet, generate_account):
 def test_query_tasks_by_status_timestamp_pagination(chainnet, generate_account):
     """Verify offset/limit pagination on timestamp index (ascending)."""
     dysond_bin = chainnet[0]
-    [name, addr] = generate_account("ts_page")
+    [name, addr] = generate_account("ts_page", faucet_amount=1)
 
     # Create tasks and track their IDs
     created_task_ids = []
@@ -545,6 +557,7 @@ def test_query_tasks_by_status_timestamp_pagination(chainnet, generate_account):
         "SCHEDULED",
         "--page-limit",
         "1000",
+        "--page-reverse",
     )
 
     # Verify our tasks are present
@@ -565,6 +578,7 @@ def test_query_tasks_by_status_timestamp_pagination(chainnet, generate_account):
         "2",
         "--page-offset",
         "0",
+        "--page-reverse",
     )
     page1 = dysond_bin(
         "query",
@@ -576,6 +590,7 @@ def test_query_tasks_by_status_timestamp_pagination(chainnet, generate_account):
         "2",
         "--page-offset",
         "2",
+        "--page-reverse",
     )
 
     # Ensure JSON decoded properly
@@ -591,7 +606,9 @@ def test_query_tasks_by_status_timestamp_pagination(chainnet, generate_account):
     # Check that pagination works correctly (no overlap)
     ids1 = {t["task_id"] for t in page0_tasks}
     ids2 = {t["task_id"] for t in page1_tasks}
-    assert ids1.isdisjoint(ids2), "Pagination pages should not overlap"
+    assert ids1.isdisjoint(
+        ids2
+    ), f"Pagination pages should not overlap: {ids1} | {ids2}"
 
     # Verify timestamps are in ascending order within page0 (when it has multiple tasks)
     page0_timestamps = [int(t["scheduled_timestamp"]) for t in page0_tasks]
@@ -619,7 +636,7 @@ def test_query_tasks_by_status_timestamp_pagination(chainnet, generate_account):
 def test_query_tasks_by_status_gas_price_desc(chainnet, generate_account):
     """Default (descending) ordering of scheduled tasks by gas price."""
     dysond_bin = chainnet[0]
-    [name, addr] = generate_account("gp_desc")
+    [name, addr] = generate_account("gp_desc", faucet_amount=1)
 
     # Create tasks and track their IDs with their gas prices
     created_tasks_info = []
@@ -675,7 +692,7 @@ def test_query_tasks_by_status_gas_price_desc(chainnet, generate_account):
 def test_query_tasks_by_status_gas_price_pagination(chainnet, generate_account):
     """Check pagination slice on gas-price index (ascending)."""
     dysond_bin = chainnet[0]
-    [name, addr] = generate_account("gp_page")
+    [name, addr] = generate_account("gp_page", faucet_amount=1)
 
     # Create tasks and track their IDs
     created_task_ids = []
@@ -723,6 +740,7 @@ def test_query_tasks_by_status_gas_price_pagination(chainnet, generate_account):
         "0",
         "--page-limit",
         "2",
+        "--page-reverse",
     )
 
     # Page 1: offset=2, limit=2
@@ -736,6 +754,7 @@ def test_query_tasks_by_status_gas_price_pagination(chainnet, generate_account):
         "2",
         "--page-limit",
         "2",
+        "--page-reverse",
     )
 
     # Verify basic pagination mechanics
@@ -756,13 +775,17 @@ def test_query_tasks_by_status_gas_price_pagination(chainnet, generate_account):
     assert ids0.isdisjoint(ids1), "Pagination pages should not overlap"
 
     # Verify gas prices are in ascending order within each page
-    page0_prices = [int(t["task_gas_price"]["amount"]) for t in page0_tasks]
+    page0_prices = [
+        decimal.Decimal(t["task_gas_price"].strip("udys")) for t in page0_tasks
+    ]
     assert all(
         page0_prices[i] <= page0_prices[i + 1]
         for i in range(max(0, len(page0_prices) - 1))
     ), f"Page0 gas prices should be in ascending order"
 
-    page1_prices = [int(t["task_gas_price"]["amount"]) for t in page1_tasks]
+    page1_prices = [
+        decimal.Decimal(t["task_gas_price"].strip("udys")) for t in page1_tasks
+    ]
     assert all(
         page1_prices[i] <= page1_prices[i + 1]
         for i in range(max(0, len(page1_prices) - 1))

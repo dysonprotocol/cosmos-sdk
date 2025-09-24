@@ -54,54 +54,19 @@ with tempfile.NamedTemporaryFile(suffix='.py', delete=True) as tmp:
     
     tx = ! dysond tx script update --code-path $path \
         --from alice \
+        --gas 2000000 \
         -y | dysond query wait-tx -o json
     
-json.loads('\n'.join(tx))
+res = json.loads('\n'.join(tx))
+assert res.get("code", 1) == 0, f"script update failed: {res}"
+
 ```
-
-
-
-
-    {'height': '732',
-     'txhash': 'F4D2AF516026D64B7E43490E378B1EFD7A8689866554D97E54493B39596A47C6',
-     'codespace': '',
-     'code': 0,
-     'data': '12360A302F6479736F6E70726F746F636F6C2E7363726970742E76312E4D7367557064617465536372697074526573706F6E736512020802',
-     'raw_log': '',
-     'logs': [],
-     'info': '',
-     'gas_wanted': '200000',
-     'gas_used': '56241',
-     'tx': None,
-     'timestamp': '',
-     'events': [{'type': 'tx',
-       'attributes': [{'key': 'acc_seq',
-         'value': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/186',
-         'index': True}]},
-      {'type': 'tx',
-       'attributes': [{'key': 'signature',
-         'value': 'zZlPwdrT6QhVzOcK2wRhn2O9GMJXEXrzWsoiCk8Oujki/7FKdj7HgI1n49TLqHewsiulfGvI3dU785Die88/CA==',
-         'index': True}]},
-      {'type': 'message',
-       'attributes': [{'key': 'action',
-         'value': '/dysonprotocol.script.v1.MsgUpdateScript',
-         'index': True},
-        {'key': 'sender',
-         'value': 'dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej',
-         'index': True},
-        {'key': 'module', 'value': 'script', 'index': True},
-        {'key': 'msg_index', 'value': '0', 'index': True}]},
-      {'type': 'dysonprotocol.script.v1.EventUpdateScript',
-       'attributes': [{'key': 'version', 'value': '"2"', 'index': True},
-        {'key': 'msg_index', 'value': '0', 'index': True}]}]}
-
-
 
 ## Access Script via Web Interface
 Dyson Protocol allows scripts to be accessed as web applications through the WSGI interface. Let's access our script directly using its address. This demonstrates how Dyson Protocol enables decentralized web hosting without traditional servers.
 
 We'll use the script address to construct a URL that points to our deployed application. The format is:
-`http://<script_address>.example.com`
+`http://<script_address>.host.tld`
 
 For local development, we'll use localhost:8000 as our domain suffix.
 
@@ -126,7 +91,7 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     * IPv6: ::1
     * IPv4: 127.0.0.1
     *   Trying [::1]:2317...
-    * connect to ::1 port 2317 from ::1 port 54023 failed: Connection refused
+    * connect to ::1 port 2317 from ::1 port 58988 failed: Connection refused
     *   Trying 127.0.0.1:2317...
     * Connected to dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost (127.0.0.1) port 2317
     > GET /hi HTTP/1.1
@@ -138,9 +103,9 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Thu, 14 Aug 2025 06:28:17 GMT
+    < Date: Wed, 24 Sep 2025 15:15:36 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1755152898
+    < X-Server-Time: 1758726937
     < 
     { [82 bytes data]
     * Connection #0 to host dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost left intact
@@ -168,7 +133,7 @@ print(f"✓ Script query successful for address: {address}")
 
 ```
 
-    {"script":{"address":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","version":"2","code":"def add(a, b):\n    print(f\"Adding {a} and {b}\")\n    return {\"a\": a, \"b\": b, \"add_result\": a + b}\n\n\ndef wsgi(environ, start_response):\n    status = \"200 OK\"\n    headers = [(\"Content-type\", \"text/html\")]\n    start_response(status, headers)\n    return [\n        b\"\"\"\n\u003chtml\u003e\n    \u003cbody\u003e\n        \u003ch1\u003eHello from Dyson Protocol!\u003c/h1\u003e\n    \u003c/body\u003e\n\u003c/html\u003e\"\"\"\n    ]\n\n","update_height":"732"}}
+    {"script":{"address":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","version":"2","code":"def add(a, b):\n    print(f\"Adding {a} and {b}\")\n    return {\"a\": a, \"b\": b, \"add_result\": a + b}\n\n\ndef wsgi(environ, start_response):\n    status = \"200 OK\"\n    headers = [(\"Content-type\", \"text/html\")]\n    start_response(status, headers)\n    return [\n        b\"\"\"\n\u003chtml\u003e\n    \u003cbody\u003e\n        \u003ch1\u003eHello from Dyson Protocol!\u003c/h1\u003e\n    \u003c/body\u003e\n\u003c/html\u003e\"\"\"\n    ]\n","update_height":"479"}}
     ✓ Script query successful for address: dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej
 
 
@@ -190,31 +155,16 @@ and observe how the function processes these values and returns the calculated s
 ```
 
     {
-      "code": 0,
-      "script_result": {
-        "result": {
-          "cumsize": 2515,
-          "exception": null,
-          "gas_limit": 200000,
-          "nodes_called": 28,
-          "result": {
-            "a": 5,
-            "add_result": 12,
-            "b": 7
-          },
-          "script_gas_consumed": 32701,
-          "stdout": "Adding 5 and 7\n"
-        },
-        "attached_message_results": []
-      },
-      "raw_log": "",
+      "code": 11,
+      "script_result": null,
+      "raw_log": "out of gas in location: script exec base cost; gasWanted: 200000, gasUsed: 1032642: out of gas",
       "events": [
         {
           "type": "tx",
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/187",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/68",
               "index": true
             }
           ]
@@ -224,72 +174,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "signature",
-              "value": "bML6bJQ9DdrpsXcPMYfzjMhnN+oIia0Vs87IEskFuWQgvIezPVIWjvuppbLkyhqSTuY83CPKCLkHizK5855jgQ==",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "message",
-          "attributes": [
-            {
-              "key": "action",
-              "value": "/dysonprotocol.script.v1.MsgExec",
-              "index": true
-            },
-            {
-              "key": "sender",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
-              "index": true
-            },
-            {
-              "key": "module",
-              "value": "script",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "dysonprotocol.script.v1.EventExecScript",
-          "attributes": [
-            {
-              "key": "executor_address",
-              "value": "\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"",
-              "index": true
-            },
-            {
-              "key": "function_name",
-              "value": "\"add\"",
-              "index": true
-            },
-            {
-              "key": "request",
-              "value": "{\"executor_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_address\":\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\",\"script_name\":\"\",\"extra_code\":\"\",\"function_name\":\"add\",\"args\":\"[5, 7]\",\"kwargs\":\"\",\"attached_messages\":[]}",
-              "index": true
-            },
-            {
-              "key": "response",
-              "value": "{\"result\":\"{\\\"cumsize\\\":2515,\\\"exception\\\":null,\\\"gas_limit\\\":200000,\\\"nodes_called\\\":28,\\\"result\\\":{\\\"a\\\":5,\\\"add_result\\\":12,\\\"b\\\":7},\\\"script_gas_consumed\\\":32701,\\\"stdout\\\":\\\"Adding 5 and 7\\\\n\\\"}\",\"attached_message_results\":[]}",
-              "index": true
-            },
-            {
-              "key": "script_address",
-              "value": "\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"",
-              "index": true
-            },
-            {
-              "key": "script_name",
-              "value": "\"\"",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
+              "value": "PITdAHuicyGWIRj6yG/HWVBcEK2syczhfdCQpib9UXAF/Af8LL0D6OwimfHREv/2jiZW/ngdIOJtuS3S1Bca8g==",
               "index": true
             }
           ]
@@ -322,12 +207,12 @@ In this step, we'll convert the previously encoded binary data back into its ori
 
 
 ```python
-! dysond query script decode-bytes --bytes "CgxkeXMxZXhhbXBsZTESDGR5czFleGFtcGxlMhoKCgNkeXMSAzEwMA=="  --type-url "/cosmos.bank.v1beta1.MsgSend" -o json | jq
+! dysond query script decode-bytes --bytes "CgxkeXMxZXhhbXBsZTESDGR5czFleGFtcGxlMhoKCgNkeXMSAzEwMA=="  --type-url "/cosmos.bank.v1beta1.MsgSend" -o json
 ```
 
-    [1;39m{
-      [0m[1;34m"json"[0m[1;39m: [0m[0;32m"{\"@type\":\"/cosmos.bank.v1beta1.MsgSend\",\"from_address\":\"dys1example1\",\"to_address\":\"dys1example2\",\"amount\":[{\"denom\":\"dys\",\"amount\":\"100\"}]}"[0m[1;39m
-    [1;39m}[0m
+    {
+      "json": "{\"@type\":\"/cosmos.bank.v1beta1.MsgSend\",\"from_address\":\"dys1example1\",\"to_address\":\"dys1example2\",\"amount\":[{\"denom\":\"dys\",\"amount\":\"100\"}]}"
+    }
 
 
 ## Commit Name Registration
@@ -345,104 +230,32 @@ def random_string(length=10):
 name = f"alice-{random_string(5)}.dys"
 salt = random_string(10)
 
-[hex_hash] = ! dysond query nameservice compute-hash \
+output = ! dysond query nameservice compute-hash \
     --name "$name" \
     --salt "$salt" \
     --committer "$address" \
-    -o json | jq '.hex_hash' -r
+    -o json
+
+import json
+hex_hash = json.loads('\n'.join(output)).get('hex_hash', '')
 
 print(f"Name: {name}")
 print(f"Salt: {salt}")
 print(f"Hex Hash: {hex_hash}")
 ```
 
-    Name: alice-bywg7.dys
-    Salt: 91xzz9kft9
-    Hex Hash: 5dc65b4733a58968675b756777b92c6e304f8e46122795a3d9424970bc6a39da
+    Name: alice-eib97.dys
+    Salt: m4hb7bye5b
+    Hex Hash: 3ee73852d44ca62b95ebc2f3d2ad1520f5a5acce977d2883038607df22c09aa0
 
 
 
 ```python
 valuation = '100udys'
-! dysond tx nameservice commit --commitment "$hex_hash" --valuation "$valuation" --from alice -y | dysond query wait-tx -o json | jq -M
+! dysond tx nameservice commit --commitment "$hex_hash" --valuation "$valuation" --from alice -y | dysond query wait-tx -o json
 ```
 
-    {
-      "height": "737",
-      "txhash": "9A87B8B5588CCDCCF8371612C83095FFB04D8C7437F2516380A254BB84D02353",
-      "codespace": "",
-      "code": 0,
-      "data": "12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D7367436F6D6D6974526573706F6E7365",
-      "raw_log": "",
-      "logs": [],
-      "info": "",
-      "gas_wanted": "200000",
-      "gas_used": "42425",
-      "tx": null,
-      "timestamp": "",
-      "events": [
-        {
-          "type": "tx",
-          "attributes": [
-            {
-              "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/188",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "tx",
-          "attributes": [
-            {
-              "key": "signature",
-              "value": "05FpB6nNtzYcIXH/lRMmQr1AuOYD5TcFcqslb6EWipNR10+HChOnHHR2L+6tfFzykHYcg27eiCgH7eagIPP85g==",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "message",
-          "attributes": [
-            {
-              "key": "action",
-              "value": "/dysonprotocol.nameservice.v1.MsgCommit",
-              "index": true
-            },
-            {
-              "key": "sender",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
-              "index": true
-            },
-            {
-              "key": "module",
-              "value": "nameservice",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "dysonprotocol.nameservice.v1.EventCommitmentCreated",
-          "attributes": [
-            {
-              "key": "hexhash",
-              "value": "\"5dc65b4733a58968675b756777b92c6e304f8e46122795a3d9424970bc6a39da\"",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        }
-      ]
-    }
+    {"height":"484","txhash":"0BAC40EEB56B213BD6F473EEE3E00E3BDD2A3AA7ED66A7C2AA5DB974A8DB310D","codespace":"","code":0,"data":"12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D7367436F6D6D6974526573706F6E7365","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"42370","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/69","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"stU7JLswHbTz6SJ/cbihtBtfa1ct2ieR3/yzn544FsZUTSaBJCijnltCPnIq4ftGdNj1V0DgfNjmHulgugmxVA==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.nameservice.v1.MsgCommit","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"module","value":"nameservice","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nameservice.v1.EventCommitmentCreated","attributes":[{"key":"hexhash","value":"\"3ee73852d44ca62b95ebc2f3d2ad1520f5a5acce977d2883038607df22c09aa0\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}
 
 
 ## Reveal Name Registration
@@ -454,195 +267,10 @@ Reveal the name to complete registration.
     --name "$name" \
     --salt "$salt" \
     --from alice \
-    -y | dysond query wait-tx -o json | jq -M
+    -y | dysond query wait-tx -o json
 ```
 
-    {
-      "height": "738",
-      "txhash": "E51F5883BAE3430972836A5B9C27283AF869679C1023204550F912BD0159A262",
-      "codespace": "",
-      "code": 0,
-      "data": "12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D736752657665616C526573706F6E7365",
-      "raw_log": "",
-      "logs": [],
-      "info": "",
-      "gas_wanted": "200000",
-      "gas_used": "87039",
-      "tx": null,
-      "timestamp": "",
-      "events": [
-        {
-          "type": "tx",
-          "attributes": [
-            {
-              "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/189",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "tx",
-          "attributes": [
-            {
-              "key": "signature",
-              "value": "LYWP17nkboe3WKArh2B1sBedhERPVMjb2iuaI0WDW188YxqRlqrgR1KGVOZq/6hYUrcLOs/uMkLaKrfrTl+myg==",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "message",
-          "attributes": [
-            {
-              "key": "action",
-              "value": "/dysonprotocol.nameservice.v1.MsgReveal",
-              "index": true
-            },
-            {
-              "key": "sender",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
-              "index": true
-            },
-            {
-              "key": "module",
-              "value": "nameservice",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "coin_spent",
-          "attributes": [
-            {
-              "key": "spender",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
-              "index": true
-            },
-            {
-              "key": "amount",
-              "value": "1udys",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "coin_received",
-          "attributes": [
-            {
-              "key": "receiver",
-              "value": "dys21jv65s3grqf6v6jl3dp4t6c9t9rk99cd8d0l2ev",
-              "index": true
-            },
-            {
-              "key": "amount",
-              "value": "1udys",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "transfer",
-          "attributes": [
-            {
-              "key": "recipient",
-              "value": "dys21jv65s3grqf6v6jl3dp4t6c9t9rk99cd8d0l2ev",
-              "index": true
-            },
-            {
-              "key": "sender",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
-              "index": true
-            },
-            {
-              "key": "amount",
-              "value": "1udys",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "message",
-          "attributes": [
-            {
-              "key": "sender",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "dysonprotocol.nft.v1beta1.EventMint",
-          "attributes": [
-            {
-              "key": "class_id",
-              "value": "\"nameservice.dys\"",
-              "index": true
-            },
-            {
-              "key": "id",
-              "value": "\"alice-bywg7.dys\"",
-              "index": true
-            },
-            {
-              "key": "owner",
-              "value": "\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        },
-        {
-          "type": "dysonprotocol.nameservice.v1.EventNameRegistered",
-          "attributes": [
-            {
-              "key": "fee",
-              "value": "[{\"denom\":\"udys\",\"amount\":\"1\"}]",
-              "index": true
-            },
-            {
-              "key": "name",
-              "value": "\"alice-bywg7.dys\"",
-              "index": true
-            },
-            {
-              "key": "msg_index",
-              "value": "0",
-              "index": true
-            }
-          ]
-        }
-      ]
-    }
+    {"height":"486","txhash":"170ED545CAD435F041CA9DC65DBEFAE66AEBB0C45C14D6528C2D1C2E3312C25A","codespace":"","code":0,"data":"12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D736752657665616C526573706F6E7365","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"86849","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/70","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"bGDJbLsfyorQCofuV2unofmgzuyLLjgyaeYsrXN59bU6/JSn04rFgb5iRRfdYBKNpsa1dGdS19TEEWdNHmbKWQ==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.nameservice.v1.MsgReveal","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"module","value":"nameservice","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"coin_spent","attributes":[{"key":"spender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"amount","value":"1udys","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"coin_received","attributes":[{"key":"receiver","value":"dys21jv65s3grqf6v6jl3dp4t6c9t9rk99cd8d0l2ev","index":true},{"key":"amount","value":"1udys","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"transfer","attributes":[{"key":"recipient","value":"dys21jv65s3grqf6v6jl3dp4t6c9t9rk99cd8d0l2ev","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"amount","value":"1udys","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"message","attributes":[{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nft.v1beta1.EventMint","attributes":[{"key":"class_id","value":"\"nameservice.dys\"","index":true},{"key":"id","value":"\"alice-eib97.dys\"","index":true},{"key":"owner","value":"\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nameservice.v1.EventNameRegistered","attributes":[{"key":"fee","value":"[{\"denom\":\"udys\",\"amount\":\"1\"}]","index":true},{"key":"name","value":"\"alice-eib97.dys\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}
 
 
 ## Set Destination for Name
@@ -655,24 +283,10 @@ Set the destination of the registered name to Alice's address.
     --destination "$address" \
     --from alice \
     -y \
-    -o json | jq -M
+    -o json
 ```
 
-    {
-      "height": "0",
-      "txhash": "32EA74BCA351E4869C21F5BB03B02EC3F912831A1A837CCD7B0EF2E1EAFE8FB8",
-      "codespace": "",
-      "code": 0,
-      "data": "",
-      "raw_log": "",
-      "logs": [],
-      "info": "",
-      "gas_wanted": "0",
-      "gas_used": "0",
-      "tx": null,
-      "timestamp": "",
-      "events": []
-    }
+    {"height":"0","txhash":"F90565F0E4C4CE1363D047BF27BACB105B547F0BFA6EE2B09358E2063A6A9392","codespace":"","code":0,"data":"","raw_log":"","logs":[],"info":"","gas_wanted":"0","gas_used":"0","tx":null,"timestamp":"","events":[]}
 
 
 ## Access Script via Name
@@ -683,7 +297,7 @@ Access the script via the registered name to demonstrate decentralized web hosti
 [output] = ! dysond config get app api.address
 port = output.split(":")[-1].strip("\"")
 
-dwapp_url = f"http://{name}.localhost:{port}"
+dwapp_url = f"http://{name.strip(".dys")}.localhost:{port}"
 
 print(f"Accessing your DWapp at '{dwapp_url}'")
 output = ! curl -s "$dwapp_url/hi" -v
@@ -692,18 +306,18 @@ print(output)
 assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Protocol!' in output, got: " + output
 ```
 
-    Accessing your DWapp at 'http://alice-bywg7.dys.localhost:2317'
+    Accessing your DWapp at 'http://alice-eib97.localhost:2317'
 
 
-    * Host alice-bywg7.dys.localhost:2317 was resolved.
+    * Host alice-eib97.localhost:2317 was resolved.
     * IPv6: ::1
     * IPv4: 127.0.0.1
     *   Trying [::1]:2317...
-    * connect to ::1 port 2317 from ::1 port 56538 failed: Connection refused
+    * connect to ::1 port 2317 from ::1 port 57164 failed: Connection refused
     *   Trying 127.0.0.1:2317...
-    * Connected to alice-bywg7.dys.localhost (127.0.0.1) port 2317
+    * Connected to alice-eib97.localhost (127.0.0.1) port 2317
     > GET /hi HTTP/1.1
-    > Host: alice-bywg7.dys.localhost:2317
+    > Host: alice-eib97.localhost:2317
     > User-Agent: curl/8.7.1
     > Accept: */*
     > 
@@ -711,12 +325,12 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Thu, 14 Aug 2025 06:28:22 GMT
+    < Date: Wed, 24 Sep 2025 15:15:40 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1755152904
+    < X-Server-Time: 1758726941
     < 
     { [82 bytes data]
-    * Connection #0 to host alice-bywg7.dys.localhost left intact
+    * Connection #0 to host alice-eib97.localhost left intact
     
     <html>
         <body>

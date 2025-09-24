@@ -22,7 +22,7 @@ import warnings
 from typing import List, Tuple, Iterable
 from textwrap import dedent
 
-NUM_CHAINS = 1
+NUM_CHAINS = 2
 NUM_NODES = 1
 
 # Global constants
@@ -428,7 +428,7 @@ def generate_account(chainnet, faucet):
 
     def _gen(
         name_prefix,
-        faucet_amount=None,
+        faucet_amount=1,
         dysond_bin=default_dysond_bin,
         return_mnemonic=False,
     ):
@@ -546,7 +546,7 @@ def ibc_setup(
 
     # Create a unique IBC account for this worker to avoid sequence conflicts
     ibc_name, ibc_address, ibc_mnemonic = generate_account(
-        f"ibc_{worker_id}", return_mnemonic=True
+        f"ibc_{worker_id}", return_mnemonic=True, faucet_amount=100_000_000
     )
     print(
         f"Created unique IBC account for worker {worker_id}: {ibc_name} ({ibc_address})"
@@ -593,6 +593,8 @@ def ibc_setup(
             ibc_mnemonic,
         ],
         preexec_fn=os.setsid,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
     )
 
     # Poll until IBC setup is complete
@@ -613,7 +615,9 @@ def ibc_setup(
     # Check if IBC setup was successful
     if ibc_proc.returncode != 0:
         # Get the process output to understand what went wrong
-        _, stderr = ibc_proc.communicate()
+        stdout, stderr = ibc_proc.communicate()
+        print(f"IBC setup failed with exit code {ibc_proc.returncode}")
+        print(f"STDOUT: {stdout.decode('utf-8')}\nSTDERR: {stderr.decode('utf-8')}")
         raise Exception(f"IBC setup failed with exit code {ibc_proc.returncode}")
 
     yield chainnet
@@ -716,6 +720,19 @@ def update_crontask_params(chainnet):
     # Build new params JSON – keep everything else unchanged
     new_params = dict(current)
     new_params["clean_up_time"] = "2"
+
+    # Normalize google.protobuf.Duration to JSON format (e.g. "86400s")
+    dur_val = new_params.get("max_subscription_duration")
+    if isinstance(dur_val, str):
+        import re
+
+        m = re.fullmatch(r"(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?", dur_val)
+        if m:
+            h = int(m.group(1) or 0)
+            mm = int(m.group(2) or 0)
+            ss = int(m.group(3) or 0)
+            total = h * 3600 + mm * 60 + ss
+            new_params["max_subscription_duration"] = f"{total}s"
 
     # Resolve alice bech32 address for authority field
     alice_info = dysond("keys", "show", "alice")

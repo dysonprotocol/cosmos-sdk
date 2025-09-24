@@ -272,7 +272,9 @@ def ibc_callback(topic, ref_id, *args, **kwargs):
         **kwargs: Keyword arguments response data
     """
     try:
-        print(f"IBC callback received for topic: {topic}, args: {args}, kwargs: {kwargs}")
+        print(
+            f"IBC callback received for topic: {topic}, args: {args}, kwargs: {kwargs}"
+        )
 
         target_address = kwargs.get("target_address", "unknown")
 
@@ -438,8 +440,8 @@ def withdraw(
             "timeout_timestamp": "9999999999999999999",  # Far future timestamp
             "memo": "",
         }
-        
-        ref_id  = f"withdrawal_{get_block_info()['height']}"
+
+        ref_id = f"withdrawal_{get_block_info()['height']}"
 
         # Send the ICA transaction
         tx_result = _msg(
