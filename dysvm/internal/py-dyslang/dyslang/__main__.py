@@ -115,6 +115,6 @@ if __name__ == "__main__":
             host=host,
             port=port,
             log_level="info",
-            timeout_keep_alive=15,
+            timeout_keep_alive=30,
             workers=1,
         )

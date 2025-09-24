@@ -45,7 +45,10 @@ func getServer() *PythonServer {
 		serverInst = &PythonServer{
 			client: &http.Client{Timeout: 10 * time.Second},
 		}
-		_ = serverInst.ensureStarted(context.Background())
+		err := serverInst.ensureStarted(context.Background())
+		if err != nil {
+			fmt.Printf("failed to ensure dyslang server is started: %s\n", err)
+		}
 	})
 	return serverInst
 }
