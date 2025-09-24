@@ -1,7 +1,10 @@
 import json
 import tempfile
 
-def create_signed_tx(dysond_bin, signer_name, signer_addr, chain_id, sequence, tx_data_str):
+
+def create_signed_tx(
+    dysond_bin, signer_name, signer_addr, chain_id, sequence, tx_data_str
+):
     """
     Creates and signs a Tew transaction offline.
     """
@@ -67,12 +70,14 @@ def create_signed_tx(dysond_bin, signer_name, signer_addr, chain_id, sequence, t
             content = f.read().strip()
             if not content:
                 raise Exception("Signing produced empty output file")
-            
+
             # Parse the JSON content
             try:
                 return json.loads(content)
             except json.JSONDecodeError as e:
-                raise Exception(f"Failed to parse signed tx JSON: {e}. Content: {content[:200]}")
+                raise Exception(
+                    f"Failed to parse signed tx JSON: {e}. Content: {content[:200]}"
+                )
 
 
 def create_signed_block(dysond_bin, signer_name, sequence, block_data):
@@ -137,12 +142,14 @@ def create_signed_block(dysond_bin, signer_name, sequence, block_data):
             content = f.read().strip()
             if not content:
                 raise Exception("Signing produced empty output file")
-            
+
             # Parse the JSON content
             try:
                 return json.loads(content)
             except json.JSONDecodeError as e:
-                raise Exception(f"Failed to parse signed block JSON: {e}. Content: {content[:200]}")
+                raise Exception(
+                    f"Failed to parse signed block JSON: {e}. Content: {content[:200]}"
+                )
 
 
 def run_build_next_block(dysond_bin, script_addr, signed_block, prev_meta, prev_hash):
@@ -182,70 +189,88 @@ def run_build_next_block(dysond_bin, script_addr, signed_block, prev_meta, prev_
     return result_data["result"]
 
 
-def initialize_test_l1_l2(dysond_bin, l1_operator_name, l1_operator_addr, instance_id="test", chain_id=None):
+def initialize_test_l1_l2(
+    dysond_bin, l1_operator_name, l1_operator_addr, instance_id="test", chain_id=None
+):
     """
     Initialize L1 and optionally L2 genesis for tests.
-    
+
     Args:
         dysond_bin: The dysond binary function
         l1_operator_name: Name of the L1 operator account
         l1_operator_addr: Address of the L1 operator account
         instance_id: Instance ID for the L1/L2 pair (default: "test")
         chain_id: Chain ID for L2 (default: "tew-{instance_id}")
-        
+
     Returns:
         dict: L1 state data that was initialized
     """
     # Initialize L1
     init_result = dysond_bin(
-        "tx", "script", "exec",
-        "--script-address", l1_operator_addr,
-        "--function-name", "initialize_l1",
-        "--args", json.dumps([instance_id]),
-        "--from", l1_operator_name,
-        "--gas", "auto",
-        "--gas-adjustment", "1.5"
+        "tx",
+        "script",
+        "exec",
+        "--script-address",
+        l1_operator_addr,
+        "--function-name",
+        "initialize_l1",
+        "--args",
+        json.dumps([instance_id]),
+        "--from",
+        l1_operator_name,
+        "--gas",
+        "10000000",
     )
     assert init_result.get("code", 1) == 0, f"Failed to initialize L1: {init_result}"
-    
+
     # Query the L1 state to return it
     storage_result = dysond_bin(
-        "query", "storage", "get",
-        l1_operator_addr,
-        "--index", f"tew/{instance_id}/l1"
+        "query", "storage", "get", l1_operator_addr, "--index", f"tew/{instance_id}/l1"
     )
-    
-    assert isinstance(storage_result, dict), f"L1 storage query failed: {storage_result}"
+
+    assert isinstance(
+        storage_result, dict
+    ), f"L1 storage query failed: {storage_result}"
     assert "entry" in storage_result, f"L1 storage missing entry: {storage_result}"
-    
+
     l1_data = json.loads(storage_result["entry"]["data"])
-    
+
     # Optionally initialize L2 genesis if chain_id is provided
     if chain_id:
         init_l2_result = dysond_bin(
-            "tx", "script", "exec",
-            "--script-address", l1_operator_addr,
-            "--function-name", "initialize_l2_genesis",
-            "--args", json.dumps([instance_id, chain_id, l1_operator_addr]),
-            "--from", l1_operator_name,
-            "--gas", "auto",
-            "--gas-adjustment", "1.5"
+            "tx",
+            "script",
+            "exec",
+            "--script-address",
+            l1_operator_addr,
+            "--function-name",
+            "initialize_l2_genesis",
+            "--args",
+            json.dumps([instance_id, chain_id, l1_operator_addr]),
+            "--from",
+            l1_operator_name,
+            "--gas",
+            "10000000",
         )
-        assert init_l2_result.get("code", 1) == 0, f"Failed to initialize L2 genesis: {init_l2_result}"
-    
+        assert (
+            init_l2_result.get("code", 1) == 0
+        ), f"Failed to initialize L2 genesis: {init_l2_result}"
+
     return l1_data
 
 
-def create_l2_genesis_block_with_l1(l1_operator_addr, l1_data, instance_id="test", l2_state_override=None):
+def create_l2_genesis_block_with_l1(
+    l1_operator_addr, l1_data, instance_id="test", l2_state_override=None
+):
     """
     Create an L2 genesis block that properly references L1 state.
-    
+
     Args:
         l1_operator_addr: Address of the L1 operator/authority
         l1_data: The L1 state data (from storage or initialization)
         instance_id: Instance ID for the L1/L2 pair
         l2_state_override: Optional L2 state to use instead of default
-        
+
     Returns:
         dict: Genesis block data
     """
@@ -256,11 +281,11 @@ def create_l2_genesis_block_with_l1(l1_operator_addr, l1_data, instance_id="test
             "outgoing_queue": {},
             "response_queue": {},
             "current_height": 0,
-            "processed_messages": {}
+            "processed_messages": {},
         }
     else:
         l2_state = l2_state_override
-    
+
     genesis_block_data = {
         "prev_signed_tew_block_hash": "genesis",
         "metadata": {
@@ -270,24 +295,28 @@ def create_l2_genesis_block_with_l1(l1_operator_addr, l1_data, instance_id="test
             "current_authority": l1_operator_addr,
             "next_authority": l1_operator_addr,
             "total_tx_count": 0,
-            "instance_id": instance_id
+            "instance_id": instance_id,
         },
         "pre_state": {
-            "accounts_by_number": {"0": {"address": l1_operator_addr, "account_number": 0, "sequence": 0}},
+            "accounts_by_number": {
+                "0": {"address": l1_operator_addr, "account_number": 0, "sequence": 0}
+            },
             "account_numbers_by_address": {l1_operator_addr: 0},
             "next_account_number": 1,
             "l1_queue_state": l1_data,  # Use the actual L1 state
-            "l2_queue_state": l2_state
+            "l2_queue_state": l2_state,
         },
         "signed_txs": [],
         "tx_results": [],
         "post_state": {
-            "accounts_by_number": {"0": {"address": l1_operator_addr, "account_number": 0, "sequence": 0}},
+            "accounts_by_number": {
+                "0": {"address": l1_operator_addr, "account_number": 0, "sequence": 0}
+            },
             "account_numbers_by_address": {l1_operator_addr: 0},
             "next_account_number": 1,
             "l1_queue_state": l1_data,  # Use the actual L1 state
-            "l2_queue_state": l2_state
-        }
+            "l2_queue_state": l2_state,
+        },
     }
-    
-    return genesis_block_data 
+
+    return genesis_block_data

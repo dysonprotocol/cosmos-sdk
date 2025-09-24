@@ -13,16 +13,16 @@ import pytest
 def test_queue_chain_design_validation(chainnet, generate_account, faucet):
     """Test 11-1: Validate the queue_chain integration design with real blockchain."""
     dysond_bin = chainnet[0]
-    
+
     # Create account for testing
     test_name, test_addr = generate_account("queuechain", faucet_amount=1000000)
     print(f"Created test account: {test_name} -> {test_addr}")
-    
+
     # For task 11-1, we're validating that we can:
     # 1. Deploy a script that could contain both queue and chain logic
     # 2. Define the expected state structure
     # 3. Test the proposed callback interface
-    
+
     # Create a minimal test script that validates our design
     test_script = '''
 """Test script to validate queue_chain design concepts."""
@@ -101,12 +101,12 @@ def validate_wrapper_pattern():
         "validated_message": result
     }
 '''
-    
+
     # Upload the test script
     print("Uploading design validation script...")
     update_result = dysond_bin(
         "tx",
-        "script", 
+        "script",
         "update",
         "--code",
         test_script,
@@ -116,12 +116,12 @@ def validate_wrapper_pattern():
         "test",
         "--yes",
         "--gas",
-        "auto",
-        "--gas-adjustment",
-        "1.5",
+        "50000000",
     )
-    assert update_result.get("code", 1) == 0, f"Failed to update script: {update_result}"
-    
+    assert (
+        update_result.get("code", 1) == 0
+    ), f"Failed to update script: {update_result}"
+
     # Test 1: Validate queue state structure
     print("\nTest 1: Validating queue state structure...")
     exec_result = dysond_bin(
@@ -140,18 +140,22 @@ def validate_wrapper_pattern():
         "test",
         "--yes",
         "--gas",
-        "300000",
+        "5000000",
     )
-    
-    assert exec_result.get("code", 1) == 0, f"Queue state validation failed: {exec_result}"
-    
+
+    assert (
+        exec_result.get("code", 1) == 0
+    ), f"Queue state validation failed: {exec_result}"
+
     # Extract result
     events_by_type = {
         event.get("type"): event for event in exec_result.get("events", [])
     }
     exec_event = events_by_type.get("dysonprotocol.script.v1.EventExecScript")
-    assert exec_event, f"No EventExecScript found. Events: {list(events_by_type.keys())}"
-    
+    assert (
+        exec_event
+    ), f"No EventExecScript found. Events: {list(events_by_type.keys())}"
+
     attrs_by_key = {
         attr.get("key"): attr.get("value") for attr in exec_event.get("attributes", [])
     }
@@ -159,13 +163,13 @@ def validate_wrapper_pattern():
     response_data = json.loads(response_json)
     result_data = json.loads(response_data.get("result", "{}"))
     result = result_data.get("result")
-    
+
     print(f"Queue state validation result: {json.dumps(result, indent=2)}")
     assert result["valid"] == True
     assert result["has_l1_queue"] == True
     assert result["has_l2_queue"] == True
     assert result["serializable"] == True
-    
+
     # Test 2: Validate callback interface
     print("\nTest 2: Validating callback interface...")
     exec_result = dysond_bin(
@@ -184,11 +188,13 @@ def validate_wrapper_pattern():
         "test",
         "--yes",
         "--gas",
-        "200000",
+        "5000000",
     )
-    
-    assert exec_result.get("code", 1) == 0, f"Callback interface validation failed: {exec_result}"
-    
+
+    assert (
+        exec_result.get("code", 1) == 0
+    ), f"Callback interface validation failed: {exec_result}"
+
     # Extract result
     events_by_type = {
         event.get("type"): event for event in exec_result.get("events", [])
@@ -201,12 +207,12 @@ def validate_wrapper_pattern():
     response_data = json.loads(response_json)
     result_data = json.loads(response_data.get("result", "{}"))
     result = result_data.get("result")
-    
+
     print(f"Callback interface result: {json.dumps(result, indent=2)}")
     assert result["callback_count"] == 5  # Including new queue callbacks
     assert "on_queue_message" in result["required_callbacks"]
     assert "on_queue_response" in result["required_callbacks"]
-    
+
     # Test 3: Validate wrapper function pattern
     print("\nTest 3: Validating wrapper function pattern...")
     exec_result = dysond_bin(
@@ -215,7 +221,7 @@ def validate_wrapper_pattern():
         "exec",
         "--script-address",
         test_addr,
-        "--function-name", 
+        "--function-name",
         "validate_wrapper_pattern",
         "--args",
         json.dumps([]),
@@ -225,11 +231,13 @@ def validate_wrapper_pattern():
         "test",
         "--yes",
         "--gas",
-        "200000",
+        "5000000",
     )
-    
-    assert exec_result.get("code", 1) == 0, f"Wrapper pattern validation failed: {exec_result}"
-    
+
+    assert (
+        exec_result.get("code", 1) == 0
+    ), f"Wrapper pattern validation failed: {exec_result}"
+
     # Extract result
     events_by_type = {
         event.get("type"): event for event in exec_result.get("events", [])
@@ -242,12 +250,12 @@ def validate_wrapper_pattern():
     response_data = json.loads(response_json)
     result_data = json.loads(response_data.get("result", "{}"))
     result = result_data.get("result")
-    
+
     print(f"Wrapper pattern result: {json.dumps(result, indent=2)}")
     assert result["wrapper_works"] == True
     assert result["validated_message"]["type"] == "greeting"
     assert result["validated_message"]["content"] == "good morning"
-    
+
     print("\n✓ Task 11-1 Design Validation Complete!")
     print("  - QueueStateDict structure is valid and serializable")
     print("  - Callback interface supports queue operations")

@@ -12,12 +12,12 @@ from .dysvm_server import build_sandbox
 
 
 def main(port, script_name, script_json, block_info_json, http_request):
-    #print("DYSWSGI")
-    #print("PORT", port)
-    #print("SCRIPT_NAME", script_name)
-    #print("SCRIPT", script_json)
-    #print("BLOCK INFO", block_info_json)
-    #print("HTTP REQUEST", http_request)
+    # print("DYSWSGI")
+    # print("PORT", port)
+    # print("SCRIPT_NAME", script_name)
+    # print("SCRIPT", script_json)
+    # print("BLOCK INFO", block_info_json)
+    # print("HTTP REQUEST", http_request)
 
     class BetterServerHandler(ServerHandler):
         def error_output(self, environ, start_response):
@@ -30,7 +30,6 @@ def main(port, script_name, script_json, block_info_json, http_request):
                 b"Logs:\n",
                 buf.getvalue().encode(),
             ]
-
 
     class SimpleWSGIRequestHandler(WSGIRequestHandler):
         def finish(self):
@@ -65,7 +64,6 @@ def main(port, script_name, script_json, block_info_json, http_request):
             handler.request_handler = self  # backpointer for logging
             handler.run(self.server.get_app())
 
-
     class SimpleWSGIServer(WSGIServer):
         def setup(self):
             super().setup()
@@ -91,8 +89,6 @@ def main(port, script_name, script_json, block_info_json, http_request):
         def close_request(self, request):
             pass
 
-
-
     script = json.loads(script_json)
     block_info = json.loads(block_info_json)
 
@@ -107,7 +103,7 @@ def main(port, script_name, script_json, block_info_json, http_request):
                     port=port,
                 )
                 sandbox.consume_gas()
-                sandbox.eval( script["code"])
+                sandbox.eval(script["code"])
                 app = None
                 if sandbox and (app := sandbox.scope.get("wsgi", None)):
                     s = SimpleWSGIServer("0.0.0.0", SimpleWSGIRequestHandler)
@@ -118,7 +114,10 @@ def main(port, script_name, script_json, block_info_json, http_request):
                     wsgiout = output.getvalue()
                     print("WSGI OUT", wsgiout)
                 elif app is None:
-                    wsgiout = (dedent(f"""
+                    wsgiout = (
+                        (
+                            dedent(
+                                f"""
                     HTTP/1.1 404
                     content-type: text/plain
                     
@@ -135,27 +134,40 @@ def main(port, script_name, script_json, block_info_json, http_request):
                     ```
 
                     Logs:
-                    """)
-                    + (buf.getvalue() or "<empty>")
-                    ).strip().encode()
+                    """
+                            )
+                            + (buf.getvalue() or "<empty>")
+                        )
+                        .strip()
+                        .encode()
+                    )
                 else:
                     wsgiout = f"""HTTP/1.1 500\ncontent-type: text/plain\n\nLogs:\n{buf.getvalue()}""".encode()
             except SyntaxError as e:
-                wsgiout = dedent(f"""
+                wsgiout = (
+                    dedent(
+                        f"""
                         HTTP/1.1 500
                         content-type: text/plain
                         
                         SyntaxError: {e}
-                        """).strip().encode()
+                        """
+                    )
+                    .strip()
+                    .encode()
+                )
             except Exception as e:
                 import traceback
+
                 lineno = getattr(e, "lineno", None)
                 col_offset = getattr(e, "col_offset", None)
                 end_lineno = getattr(e, "end_lineno", None)
-                end_col_offset   = getattr(e, "end_col_offset", None)
+                end_col_offset = getattr(e, "end_col_offset", None)
                 col = getattr(e, "col", None)
                 code_extract = ast.get_source_segment(script["code"], e.node)
-                wsgiout = dedent(f"""
+                wsgiout = (
+                    dedent(
+                        f"""
                         HTTP/1.1 500
                         content-type: text/plain
                         
@@ -167,10 +179,13 @@ def main(port, script_name, script_json, block_info_json, http_request):
                         ```
 
                         Logs:
-                        {buf.getvalue()}""").strip().encode()
+                        {buf.getvalue()}"""
+                    )
+                    .strip()
+                    .encode()
+                )
                 print("dyswsgi Execpetion:", traceback.format_exc())
             out = buf.getvalue()
-
 
     sys.stderr.write(out)
     print(base64.b64encode(wsgiout).decode(), end="")

@@ -167,7 +167,7 @@ func (k Keeper) ExecScript(ctx context.Context, msg *scripttypes.MsgExec) (*scri
 
 		execResp, err := k.execScript(cacheCtx, &scriptContext)
 		if err != nil {
-			k.Logger(sdkCtx).Error("failed to execute script", "error", err)
+			k.Logger(sdkCtx).Error("failed to execute script", "error", err, "execResp", execResp)
 			return err
 		}
 

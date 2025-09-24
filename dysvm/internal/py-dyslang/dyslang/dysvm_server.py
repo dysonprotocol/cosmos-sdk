@@ -35,6 +35,14 @@ class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, decimal.Decimal):
             return str(obj)
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        if isinstance(obj, datetime.date):
+            return obj.isoformat()
+        if isinstance(obj, datetime.time):
+            return obj.isoformat()
+        if isinstance(obj, datetime.timedelta):
+            return str(obj)
         return super(DecimalEncoder, self).default(obj)
 
 
@@ -818,6 +826,8 @@ def eval_script(
     attached_msg_results = attached_msg_results or []
     block_info = block_info or {}
 
+    if "Time" not in block_info:
+        raise Exception("Time not in block_info: %s" % block_info)
     with freeze_time(block_info["Time"]):
         with io.StringIO() as buf, redirect_stdout(buf):
             try:
@@ -862,6 +872,10 @@ def eval_script(
                             assert isinstance(args, list), "args must be a list"
                             kwargs = json.loads(msg["kwargs"] or "{}")
                             assert isinstance(kwargs, dict), "kwargs must be a dict"
+                            if not callable(scope[msg["function_name"]]):
+                                raise Exception(
+                                    f"function not callable: {msg['function_name']}"
+                                )
                             result = scope[msg["function_name"]](*args, **kwargs)
                             if msg["function_name"].startswith("test_"):
                                 result = sorted(
@@ -875,7 +889,9 @@ def eval_script(
                                 f"function not public: {msg['function_name']}"
                             )
                     else:
-                        raise Exception(f"function not defined: {msg['function_name']}")
+                        raise Exception(
+                            f"function not defined [{msg['function_name']}] available functions: {public_scope_all}"
+                        )
                 # consume final gas
                 sandbox.consume_gas()
             except dyslang.DysRuntimeError as e:

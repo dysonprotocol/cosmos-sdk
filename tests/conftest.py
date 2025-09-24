@@ -170,7 +170,7 @@ def make_run_command(dysond_bin, node_home):
                 stdout = "None"
                 stderr = "None"
                 if "--timeout" not in args:
-                    commands += ["--timeout", "1000s"]
+                    commands += ["--timeout", "100s"]
                 for i in range(20, 0, -1):
                     out = subprocess.run(commands, capture_output=True, text=True)
                     stdout = out.stdout
@@ -213,13 +213,11 @@ def make_run_command(dysond_bin, node_home):
                     tx_response = json.loads(original_out.stdout)
                     if tx_response.get("code") == 0:
                         # Use longer timeout for script update transactions as they may take more time
-                        timeout = "1000ms"
+
                         wait_tx_response = run_command(
                             "query",
                             "wait-tx",
                             tx_response["txhash"],
-                            "--timeout",
-                            timeout,
                         )
                         return wait_tx_response
                     else:
@@ -343,7 +341,7 @@ def chainnet(worker_id, test_base_dir, test_config_path):
             "--config-file",
             str(config_path),
             "--block-speed",
-            "300ms",
+            "600ms",
             "--no-blocks-timeout",
             "3",
             "--logs",
@@ -546,7 +544,7 @@ def ibc_setup(
 
     # Create a unique IBC account for this worker to avoid sequence conflicts
     ibc_name, ibc_address, ibc_mnemonic = generate_account(
-        f"ibc_{worker_id}", return_mnemonic=True, faucet_amount=100_000_000
+        f"ibc_{worker_id}", return_mnemonic=True, faucet_amount=1000_000_000
     )
     print(
         f"Created unique IBC account for worker {worker_id}: {ibc_name} ({ibc_address})"

@@ -64,74 +64,29 @@ if __name__ == "__main__":
 
     elif sys.argv[1] == "extract_function_schema":
         import json
-        from .dysvm_server import build_sandbox, DecimalEncoder
-        from .dysvm_server import get_module_dict  # for completeness
-        from function_schema.core import get_function_schema
+        from .dysvm_server import DecimalEncoder
+        from .extract_schema import extract_function_schema
 
-        # Args: script_json, block_info_json, port
+        # Args: script_json, block_info_json, port, executor_address, script_name
         script = json.loads(sys.argv[2])
         block_info = json.loads(sys.argv[3])
         port = int(sys.argv[4]) if len(sys.argv) > 4 else 0
+        executor_address = sys.argv[5]
+        script_name = sys.argv[6]
 
-        # Minimal message context
-        msg = {
-            "executor_address": sys.argv[5],
-            "function_name": "",
-            "args": "[]",
-            "kwargs": "{}",
-            "extra_code": "",
-            "attached_messages": [],
-            "script_name": sys.argv[6],
-        }
-
-        # Build sandbox and evaluate the script code to populate scope
-        sandbox = build_sandbox(
-            msg=msg,
-            script=script,
-            attached_msg_results=[],
-            block_info=block_info,
-            port=port,
-        )
-        # Evaluate script code only
-        sandbox.consume_gas()
         try:
-            sandbox.eval(script.get("code", ""))
-            sandbox.consume_gas()
+            result = extract_function_schema(
+                script=script,
+                block_info=block_info,
+                executor_address=executor_address,
+                script_name=script_name,
+                rpc_port=port,
+            )
         except Exception as e:
             print(
                 f"Error evaluating script: {e} line={getattr(e, 'lineno', None)} col={getattr(e, 'col_offset', None)}"
             )
             sys.exit(1)
-
-        scope = sandbox.scope
-        public_scope_all = scope.get(
-            "__all__",
-            [
-                k
-                for k, v in scope.items()
-                if getattr(v, "__module__", None) == "script"
-                and not k.startswith("_")
-                and k not in ["wsgi"]
-            ],
-        )
-
-        result = []
-        for name in public_scope_all:
-            obj = scope.get(name)
-            if (
-                isinstance(obj, types.FunctionType)
-                and getattr(obj, "__module__", None) == "script"
-            ):
-                try:
-                    result.append(
-                        {
-                            "function_name": name,
-                            "schema": get_function_schema(obj, "openai"),
-                        }
-                    )
-                except Exception as e:
-                    # If schema extraction fails for a function, include error string
-                    result.append({"function_name": name, "error": str(e)})
 
         print(
             json.dumps(result, separators=(",", ":"), cls=DecimalEncoder),
@@ -160,6 +115,6 @@ if __name__ == "__main__":
             host=host,
             port=port,
             log_level="info",
-            timeout_keep_alive=5,
+            timeout_keep_alive=15,
             workers=1,
         )

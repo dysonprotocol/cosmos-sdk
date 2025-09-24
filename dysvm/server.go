@@ -43,7 +43,7 @@ var (
 func getServer() *PythonServer {
 	serverOnce.Do(func() {
 		serverInst = &PythonServer{
-			client: &http.Client{Timeout: 5 * time.Second},
+			client: &http.Client{Timeout: 10 * time.Second},
 		}
 		_ = serverInst.ensureStarted(context.Background())
 	})
@@ -57,12 +57,21 @@ func (s *PythonServer) ensureStarted(ctx context.Context) error {
 	fmt.Println("ensuring dyslang server is started")
 	if s.baseURL != "" {
 		// Health check
-		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, s.baseURL+"/health", nil)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, s.baseURL+"/health", nil)
+		if err != nil {
+			return errorsmod.Wrapf(err, "failed to create health check request")
+		}
 		resp, err := s.client.Do(req)
-		if err == nil && resp.StatusCode == 200 {
+		if err == nil && resp != nil && resp.StatusCode == 200 {
 			_ = resp.Body.Close()
 			return nil
 		}
+		if resp != nil {
+			_ = resp.Body.Close()
+		}
+		// Existing server unhealthy; reset and start a new one below
+		s.baseURL = ""
+
 	}
 
 	// Start embedded python with dyslang serve
@@ -83,7 +92,7 @@ func (s *PythonServer) ensureStarted(ctx context.Context) error {
 
 	// Always bind localhost and request ephemeral port 0; parse actual port from uvicorn output
 	host := "127.0.0.1"
-	cmd, err := ep.PythonCmd("-m", "dyslang", "serve", host, "0")
+	cmd, err := ep.PythonCmd("-u", "-m", "dyslang", "serve", host, "0")
 	if err != nil {
 		return errorsmod.Wrapf(err, "failed to start dyslang server")
 	}
@@ -123,13 +132,17 @@ GOT_PORT:
 	// Wait for health
 	deadline = time.Now().Add(5 * time.Second)
 	for time.Now().Before(deadline) {
-		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, s.baseURL+"/health", nil)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, s.baseURL+"/health", nil)
+		if err != nil {
+			return errorsmod.Wrapf(err, "failed to create health check request")
+		}
 		resp, err := s.client.Do(req)
-		if err == nil {
+		if err == nil && resp != nil && resp.StatusCode == 200 {
 			_ = resp.Body.Close()
-			if resp.StatusCode == 200 {
-				return nil
-			}
+			return nil
+		}
+		if resp != nil {
+			_ = resp.Body.Close()
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
@@ -171,10 +184,10 @@ func (s *PythonServer) request(ctx context.Context, path string, payload any) (j
 				exc = m
 			}
 			wrapper, _ := json.Marshal(map[string]any{"exception": exc})
-			return nil, fmt.Errorf(string(wrapper))
+			return nil, fmt.Errorf("%s", string(wrapper))
 		}
 		b, _ := json.Marshal(map[string]any{"exception": pr.Error})
-		return nil, fmt.Errorf(string(b))
+		return nil, fmt.Errorf("%s", string(b))
 	}
 	return pr.Result, nil
 }
@@ -233,7 +246,7 @@ func (s *PythonServer) Benchmark(iterations int, details bool) (string, error) {
 	}
 	var out string
 	if err := json.Unmarshal(res, &out); err != nil {
-		return string(res), nil
+		return string(res), err
 	}
 	return out, nil
 }
@@ -244,12 +257,16 @@ func (s *PythonServer) DysFormat(code string) (string, error) {
 	res, err := s.request(ctx, "/dys_format", map[string]any{
 		"code": code,
 	})
+	// original code
+	//fmt.Printf("dys format original code: %s\n", code)
+	//fmt.Printf("dys format response: %s\n", string(res))
 	if err != nil {
+		fmt.Printf("dys format error: %s\n", err)
 		return "", errorsmod.Wrapf(err, "failed to dys format")
 	}
 	var out string
 	if err := json.Unmarshal(res, &out); err != nil {
-		return string(res), nil
+		return string(res), err
 	}
 	return out, nil
 }

@@ -322,7 +322,7 @@ def apply_genesis_overrides(
     evidence_params["max_bytes"] = "204800"  # 200KB
     block_params = consensus_params.setdefault("block", {})
     block_params["max_bytes"] = "3145728"  # 3MB
-    block_params["max_gas"] = "3000000"  # 10T gas
+    block_params["max_gas"] = "6000000"  # 10T gas
 
 
 def generate_ports(port_offset: int, chainnet_offset: int) -> dict:
@@ -443,7 +443,7 @@ trusted_node = true
 account_prefix = "dys2"
 key_name = "{key_name}"
 store_prefix = "ibc"
-gas_price = {{ price = 0.001, denom = "{denom}" }}
+gas_price = {{ price = 0.000, denom = "{denom}" }}
 gas_multiplier = 1.2
 default_gas = 1000000
 max_gas = 10000000

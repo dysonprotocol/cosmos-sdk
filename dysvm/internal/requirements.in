@@ -9,3 +9,4 @@ black==25.1.0
 orjson >= 3.10,<4
 uvicorn
 h11
+fastapi

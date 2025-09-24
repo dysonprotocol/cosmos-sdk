@@ -583,7 +583,7 @@ func NewDysApp(
 		icaControllerStack,
 		app.IBCKeeper.ChannelKeeper,
 		&app.ScriptKeeper, // ScriptKeeper implements ContractKeeper interface
-		5000000,           // Max callback gas (adjust as needed)
+		50000000,          // Max callback gas (adjust as needed)
 	)
 
 	// RecvPacket, message that originates from core IBC and goes down to app, the flow is:

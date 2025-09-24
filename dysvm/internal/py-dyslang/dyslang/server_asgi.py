@@ -1,38 +1,14 @@
 import json
 import sys
+from textwrap import dedent
 import traceback
 from typing import Any, Dict, Callable
+from fastapi import FastAPI
 
 from .dysvm_server import (
     eval_script,
     DecimalEncoder,
-    build_sandbox,
 )
-
-
-async def _read_json_body(receive: Callable) -> Dict[str, Any]:
-    event = await receive()
-    body = event.get("body", b"") or b""
-    if isinstance(body, str):
-        body = body.encode()
-    if not body:
-        return {}
-    try:
-        return json.loads(body)
-    except Exception:
-        return {}
-
-
-def _json_response(payload: Dict[str, Any]) -> Dict[str, Any]:
-    body = json.dumps(payload, separators=(",", ":"))
-    return {
-        "type": "http.response.start",
-        "status": 200,
-        "headers": [[b"content-type", b"application/json"]],
-    }, {
-        "type": "http.response.body",
-        "body": body.encode("utf-8"),
-    }
 
 
 def _ok(result: Any) -> Dict[str, Any]:
@@ -87,9 +63,11 @@ async def _handle_exec_script(payload: Dict[str, Any]) -> Dict[str, Any]:
         )
         # If the script raised an exception, return ok=false to preserve legacy semantics
         if response.get("exception") is not None:
+            print(f"##### _handle_exec_script <exception>{response}</exception>")
             return {"ok": False, "error": response}
         return _ok(json.dumps(response, separators=(",", ":"), cls=DecimalEncoder))
     except Exception as e:
+        print(f"##### _handle_exec_script <error>{e}</error>")
         return _err_from_exc(e)
 
 
@@ -110,18 +88,27 @@ async def _handle_dys_format(payload: Dict[str, Any]) -> Dict[str, Any]:
     from . import DysEval
 
     code = payload.get("code", "")
+    print(f"##### _handle_dys_format <len_code>{len(code)}</len_code>")
     try:
         DysEval().validate(code)
+        print("is valid")
         formatted = black.format_str(code, mode=black.Mode())
+        print(
+            f"##### _handle_dys_format <len_formatted>{len(formatted)}</len_formatted>"
+        )
+        if not formatted:
+            print("not formatted")
+            raise Exception("Failed to format code: %s" % code)
+
         return _ok(formatted)
     except Exception as e:
+        print(f"##### _handle_dys_format <error>{e}</error>")
         return _err_from_exc(e)
 
 
 async def _handle_extract_function_schema(payload: Dict[str, Any]) -> Dict[str, Any]:
-    import types
     import json as _json
-    from function_schema.core import get_function_schema
+    from .extract_schema import extract_function_schema
 
     script = _json.loads(payload.get("script_json", "{}"))
     block_info = _json.loads(payload.get("block_info_json", "{}"))
@@ -129,56 +116,13 @@ async def _handle_extract_function_schema(payload: Dict[str, Any]) -> Dict[str, 
     executor_address = payload.get("executor_address", "")
     script_name = payload.get("script_name", "")
     try:
-        sandbox = build_sandbox(
-            msg={
-                "executor_address": executor_address,
-                "function_name": "",
-                "args": "[]",
-                "kwargs": "{}",
-                "extra_code": "",
-                "attached_messages": [],
-                "script_name": script_name,
-            },
+        result = extract_function_schema(
             script=script,
-            attached_msg_results=[],
             block_info=block_info,
-            port=rpc_port,
+            executor_address=executor_address,
+            script_name=script_name,
+            rpc_port=rpc_port,
         )
-        sandbox.consume_gas()
-        try:
-            sandbox.eval(script.get("code", ""))
-            sandbox.consume_gas()
-        except Exception as e:
-            return _err_from_exc(e)
-
-        scope = sandbox.scope
-        public_scope_all = scope.get(
-            "__all__",
-            [
-                k
-                for k, v in scope.items()
-                if getattr(v, "__module__", None) == "script"
-                and not k.startswith("_")
-                and k not in ["wsgi"]
-            ],
-        )
-        result = []
-        for name in public_scope_all:
-            obj = scope.get(name)
-            if (
-                isinstance(obj, types.FunctionType)
-                and getattr(obj, "__module__", None) == "script"
-            ):
-                try:
-                    result.append(
-                        {
-                            "function_name": name,
-                            "schema": get_function_schema(obj, "openai"),
-                        }
-                    )
-                except Exception as e:
-                    result.append({"function_name": name, "error": str(e)})
-
         return _ok(json.dumps(result, separators=(",", ":"), cls=DecimalEncoder))
     except Exception as e:
         return _err_from_exc(e)
@@ -207,49 +151,40 @@ async def _handle_run_wsgi(payload: Dict[str, Any]) -> Dict[str, Any]:
         return _err_from_exc(e)
 
 
-async def app(scope: Dict[str, Any], receive: Callable, send: Callable) -> None:
-    if scope["type"] != "http":
-        start, body = _json_response(
-            {"ok": False, "error": {"class": "TypeError", "msg": "Unsupported scope"}}
-        )
-        await send(start)
-        await send(body)
-        return
+app = FastAPI()
 
-    method = scope.get("method", "GET")
-    path = scope.get("path", "/")
 
-    if method == "GET" and path == "/health":
-        start, body = _json_response({"ok": True, "version": sys.version})
-        await send(start)
-        await send(body)
-        return
+@app.get("/health")
+async def get_health() -> Dict[str, Any]:
+    print(f"##### get_health")
+    return {"ok": True, "version": sys.version}
 
-    if method == "POST":
-        payload = await _read_json_body(receive)
-        if path == "/exec_script":
-            res = await _handle_exec_script(payload)
-        elif path == "/run_benchmark":
-            res = await _handle_run_benchmark(payload)
-        elif path == "/dys_format":
-            res = await _handle_dys_format(payload)
-        elif path == "/extract_function_schema":
-            res = await _handle_extract_function_schema(payload)
-        elif path == "/run_wsgi":
-            res = await _handle_run_wsgi(payload)
-        else:
-            res = {
-                "ok": False,
-                "error": {"class": "NotFound", "msg": f"Unknown path: {path}"},
-            }
 
-        start, body = _json_response(res)
-        await send(start)
-        await send(body)
-        return
+@app.post("/exec_script")
+async def post_exec_script(payload: Dict[str, Any]) -> Dict[str, Any]:
+    print(f"##### post_exec_script")
+    return await _handle_exec_script(payload)
 
-    start, body = _json_response(
-        {"ok": False, "error": {"class": "NotFound", "msg": "Unsupported route"}}
-    )
-    await send(start)
-    await send(body)
+
+@app.post("/run_benchmark")
+async def post_run_benchmark(payload: Dict[str, Any]) -> Dict[str, Any]:
+    print(f"##### post_run_benchmark")
+    return await _handle_run_benchmark(payload)
+
+
+@app.post("/dys_format")
+async def post_dys_format(payload: Dict[str, Any]) -> Dict[str, Any]:
+    print(f"##### post_dys_format")
+    return await _handle_dys_format(payload)
+
+
+@app.post("/extract_function_schema")
+async def post_extract_function_schema(payload: Dict[str, Any]) -> Dict[str, Any]:
+    print(f"##### post_extract_function_schema")
+    return await _handle_extract_function_schema(payload)
+
+
+@app.post("/run_wsgi")
+async def post_run_wsgi(payload: Dict[str, Any]) -> Dict[str, Any]:
+    print(f"##### post_run_wsgi")
+    return await _handle_run_wsgi(payload)

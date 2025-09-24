@@ -91,7 +91,7 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     * IPv6: ::1
     * IPv4: 127.0.0.1
     *   Trying [::1]:2317...
-    * connect to ::1 port 2317 from ::1 port 58988 failed: Connection refused
+    * connect to ::1 port 2317 from ::1 port 56287 failed: Connection refused
     *   Trying 127.0.0.1:2317...
     * Connected to dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost (127.0.0.1) port 2317
     > GET /hi HTTP/1.1
@@ -103,9 +103,9 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Wed, 24 Sep 2025 15:15:36 GMT
+    < Date: Wed, 24 Sep 2025 22:34:25 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1758726937
+    < X-Server-Time: 1758753265
     < 
     { [82 bytes data]
     * Connection #0 to host dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej.localhost left intact
@@ -133,7 +133,7 @@ print(f"✓ Script query successful for address: {address}")
 
 ```
 
-    {"script":{"address":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","version":"2","code":"def add(a, b):\n    print(f\"Adding {a} and {b}\")\n    return {\"a\": a, \"b\": b, \"add_result\": a + b}\n\n\ndef wsgi(environ, start_response):\n    status = \"200 OK\"\n    headers = [(\"Content-type\", \"text/html\")]\n    start_response(status, headers)\n    return [\n        b\"\"\"\n\u003chtml\u003e\n    \u003cbody\u003e\n        \u003ch1\u003eHello from Dyson Protocol!\u003c/h1\u003e\n    \u003c/body\u003e\n\u003c/html\u003e\"\"\"\n    ]\n","update_height":"479"}}
+    {"script":{"address":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","version":"2","code":"def add(a, b):\n    print(f\"Adding {a} and {b}\")\n    return {\"a\": a, \"b\": b, \"add_result\": a + b}\n\n\ndef wsgi(environ, start_response):\n    status = \"200 OK\"\n    headers = [(\"Content-type\", \"text/html\")]\n    start_response(status, headers)\n    return [\n        b\"\"\"\n\u003chtml\u003e\n    \u003cbody\u003e\n        \u003ch1\u003eHello from Dyson Protocol!\u003c/h1\u003e\n    \u003c/body\u003e\n\u003c/html\u003e\"\"\"\n    ]\n","update_height":"529"}}
     ✓ Script query successful for address: dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej
 
 
@@ -164,7 +164,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "acc_seq",
-              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/68",
+              "value": "dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/93",
               "index": true
             }
           ]
@@ -174,7 +174,7 @@ and observe how the function processes these values and returns the calculated s
           "attributes": [
             {
               "key": "signature",
-              "value": "PITdAHuicyGWIRj6yG/HWVBcEK2syczhfdCQpib9UXAF/Af8LL0D6OwimfHREv/2jiZW/ngdIOJtuS3S1Bca8g==",
+              "value": "8KCtRLLyAC34MXYBp5cXxfTMK4dqWMEsFATZTAje+6JKueyakczjgNHD55mfr65hbK0uSuKyIiOowN5NXW225A==",
               "index": true
             }
           ]
@@ -244,9 +244,9 @@ print(f"Salt: {salt}")
 print(f"Hex Hash: {hex_hash}")
 ```
 
-    Name: alice-eib97.dys
-    Salt: m4hb7bye5b
-    Hex Hash: 3ee73852d44ca62b95ebc2f3d2ad1520f5a5acce977d2883038607df22c09aa0
+    Name: alice-t6nbn.dys
+    Salt: 0qb0a75nqm
+    Hex Hash: a1c7440cf9cf6fdd4d33e3faf2cacfcd6572c7664f3ea5f1d2607da351a2fa50
 
 
 
@@ -255,7 +255,7 @@ valuation = '100udys'
 ! dysond tx nameservice commit --commitment "$hex_hash" --valuation "$valuation" --from alice -y | dysond query wait-tx -o json
 ```
 
-    {"height":"484","txhash":"0BAC40EEB56B213BD6F473EEE3E00E3BDD2A3AA7ED66A7C2AA5DB974A8DB310D","codespace":"","code":0,"data":"12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D7367436F6D6D6974526573706F6E7365","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"42370","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/69","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"stU7JLswHbTz6SJ/cbihtBtfa1ct2ieR3/yzn544FsZUTSaBJCijnltCPnIq4ftGdNj1V0DgfNjmHulgugmxVA==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.nameservice.v1.MsgCommit","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"module","value":"nameservice","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nameservice.v1.EventCommitmentCreated","attributes":[{"key":"hexhash","value":"\"3ee73852d44ca62b95ebc2f3d2ad1520f5a5acce977d2883038607df22c09aa0\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}
+    {"height":"532","txhash":"A9CFFE35B40E27A29C999F1050EC067C93DA1DD2C54FB2F495DAA963960CC674","codespace":"","code":0,"data":"12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D7367436F6D6D6974526573706F6E7365","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"42370","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/94","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"hMkDmFfSpPBl7bXmGAVzh0UiKUkRvrOF1eQOzIKd3RZ1oL99ahi40fmXah7uH3v0sW6/HgFFpO2M/nIkB8rLmQ==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.nameservice.v1.MsgCommit","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"module","value":"nameservice","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nameservice.v1.EventCommitmentCreated","attributes":[{"key":"hexhash","value":"\"a1c7440cf9cf6fdd4d33e3faf2cacfcd6572c7664f3ea5f1d2607da351a2fa50\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}
 
 
 ## Reveal Name Registration
@@ -270,7 +270,7 @@ Reveal the name to complete registration.
     -y | dysond query wait-tx -o json
 ```
 
-    {"height":"486","txhash":"170ED545CAD435F041CA9DC65DBEFAE66AEBB0C45C14D6528C2D1C2E3312C25A","codespace":"","code":0,"data":"12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D736752657665616C526573706F6E7365","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"86849","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/70","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"bGDJbLsfyorQCofuV2unofmgzuyLLjgyaeYsrXN59bU6/JSn04rFgb5iRRfdYBKNpsa1dGdS19TEEWdNHmbKWQ==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.nameservice.v1.MsgReveal","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"module","value":"nameservice","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"coin_spent","attributes":[{"key":"spender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"amount","value":"1udys","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"coin_received","attributes":[{"key":"receiver","value":"dys21jv65s3grqf6v6jl3dp4t6c9t9rk99cd8d0l2ev","index":true},{"key":"amount","value":"1udys","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"transfer","attributes":[{"key":"recipient","value":"dys21jv65s3grqf6v6jl3dp4t6c9t9rk99cd8d0l2ev","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"amount","value":"1udys","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"message","attributes":[{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nft.v1beta1.EventMint","attributes":[{"key":"class_id","value":"\"nameservice.dys\"","index":true},{"key":"id","value":"\"alice-eib97.dys\"","index":true},{"key":"owner","value":"\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nameservice.v1.EventNameRegistered","attributes":[{"key":"fee","value":"[{\"denom\":\"udys\",\"amount\":\"1\"}]","index":true},{"key":"name","value":"\"alice-eib97.dys\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}
+    {"height":"533","txhash":"13E04E18E34B8F47FEEF4441177C6F6DC80B5104024E1E3E8349CEF012334712","codespace":"","code":0,"data":"12310A2F2F6479736F6E70726F746F636F6C2E6E616D65736572766963652E76312E4D736752657665616C526573706F6E7365","raw_log":"","logs":[],"info":"","gas_wanted":"200000","gas_used":"86849","tx":null,"timestamp":"","events":[{"type":"tx","attributes":[{"key":"acc_seq","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej/95","index":true}]},{"type":"tx","attributes":[{"key":"signature","value":"KwUGIigHA/mxhGkE1GEG2Q6DxwECvPqjBD9NZz1uT/MPXrdDUee1Fv4vAWLBazvWoha9M7Y0l37D9FiC3lh5RA==","index":true}]},{"type":"message","attributes":[{"key":"action","value":"/dysonprotocol.nameservice.v1.MsgReveal","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"module","value":"nameservice","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"coin_spent","attributes":[{"key":"spender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"amount","value":"1udys","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"coin_received","attributes":[{"key":"receiver","value":"dys21jv65s3grqf6v6jl3dp4t6c9t9rk99cd8d0l2ev","index":true},{"key":"amount","value":"1udys","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"transfer","attributes":[{"key":"recipient","value":"dys21jv65s3grqf6v6jl3dp4t6c9t9rk99cd8d0l2ev","index":true},{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"amount","value":"1udys","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"message","attributes":[{"key":"sender","value":"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nft.v1beta1.EventMint","attributes":[{"key":"class_id","value":"\"nameservice.dys\"","index":true},{"key":"id","value":"\"alice-t6nbn.dys\"","index":true},{"key":"owner","value":"\"dys21tvhkv3gqr90jpycaky02xa5ukhaxllu3jlwnej\"","index":true},{"key":"msg_index","value":"0","index":true}]},{"type":"dysonprotocol.nameservice.v1.EventNameRegistered","attributes":[{"key":"fee","value":"[{\"denom\":\"udys\",\"amount\":\"1\"}]","index":true},{"key":"name","value":"\"alice-t6nbn.dys\"","index":true},{"key":"msg_index","value":"0","index":true}]}]}
 
 
 ## Set Destination for Name
@@ -286,7 +286,7 @@ Set the destination of the registered name to Alice's address.
     -o json
 ```
 
-    {"height":"0","txhash":"F90565F0E4C4CE1363D047BF27BACB105B547F0BFA6EE2B09358E2063A6A9392","codespace":"","code":0,"data":"","raw_log":"","logs":[],"info":"","gas_wanted":"0","gas_used":"0","tx":null,"timestamp":"","events":[]}
+    {"height":"0","txhash":"1C6962457FDCB4C8CDE7DDDCEC0B9DFE931E5D69CA033650E054276C5AF6524D","codespace":"","code":0,"data":"","raw_log":"","logs":[],"info":"","gas_wanted":"0","gas_used":"0","tx":null,"timestamp":"","events":[]}
 
 
 ## Access Script via Name
@@ -306,18 +306,18 @@ print(output)
 assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Protocol!' in output, got: " + output
 ```
 
-    Accessing your DWapp at 'http://alice-eib97.localhost:2317'
+    Accessing your DWapp at 'http://alice-t6nbn.localhost:2317'
 
 
-    * Host alice-eib97.localhost:2317 was resolved.
+    * Host alice-t6nbn.localhost:2317 was resolved.
     * IPv6: ::1
     * IPv4: 127.0.0.1
     *   Trying [::1]:2317...
-    * connect to ::1 port 2317 from ::1 port 57164 failed: Connection refused
+    * connect to ::1 port 2317 from ::1 port 49921 failed: Connection refused
     *   Trying 127.0.0.1:2317...
-    * Connected to alice-eib97.localhost (127.0.0.1) port 2317
+    * Connected to alice-t6nbn.localhost (127.0.0.1) port 2317
     > GET /hi HTTP/1.1
-    > Host: alice-eib97.localhost:2317
+    > Host: alice-t6nbn.localhost:2317
     > User-Agent: curl/8.7.1
     > Accept: */*
     > 
@@ -325,12 +325,12 @@ assert "Hello from Dyson Protocol!" in output, "Expected 'Hello from Dyson Proto
     < HTTP/1.1 200 OK
     < Content-Length: 82
     < Content-Type: text/html
-    < Date: Wed, 24 Sep 2025 15:15:40 GMT
+    < Date: Wed, 24 Sep 2025 22:34:27 GMT
     < Server: WSGIServer/0.2 CPython/3.12.11
-    < X-Server-Time: 1758726941
+    < X-Server-Time: 1758753268
     < 
     { [82 bytes data]
-    * Connection #0 to host alice-eib97.localhost left intact
+    * Connection #0 to host alice-t6nbn.localhost left intact
     
     <html>
         <body>
