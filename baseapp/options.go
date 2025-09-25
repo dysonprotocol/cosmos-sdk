@@ -13,6 +13,7 @@ import (
 	snapshottypes "cosmossdk.io/store/snapshots/types"
 	storetypes "cosmossdk.io/store/types"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/baseapp/oe"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -241,6 +242,16 @@ func (app *BaseApp) SetPostHandler(ph sdk.PostHandler) {
 	}
 
 	app.postHandler = ph
+}
+
+// SetBlockEventsSink sets the sink for block lifecycle events.
+func (app *BaseApp) SetBlockEventsSink(sink interface {
+	HandleBlockEvents(ctx sdk.Context, events []abci.Event)
+}) {
+	if app.sealed {
+		panic("SetBlockEventsSink() on sealed BaseApp")
+	}
+	app.blockEventsSink = sink
 }
 
 func (app *BaseApp) SetAddrPeerFilter(pf sdk.PeerFilter) {

@@ -778,6 +778,14 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 		return nil, err
 	}
 
+	// Aggregate all events into a flat slice
+	eventsFlat := make([]abci.Event, 0, 32)
+	if len(beginBlock.Events) > 0 {
+		for _, ev := range beginBlock.Events {
+			eventsFlat = append(eventsFlat, ev)
+		}
+	}
+
 	// First check for an abort signal after beginBlock, as it's the first place
 	// we spend any significant amount of time.
 	select {
@@ -817,6 +825,11 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 			)
 		}
 
+		// Aggregate DeliverTx events
+		if response != nil && len(response.Events) > 0 {
+			eventsFlat = append(eventsFlat, response.Events...)
+		}
+
 		// check after every tx if we should abort
 		select {
 		case <-ctx.Done():
@@ -835,6 +848,21 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 	endBlock, err := app.endBlock(app.finalizeBlockState.Context())
 	if err != nil {
 		return nil, err
+	}
+
+	// Log EndBlock events for verification
+	if len(endBlock.Events) > 0 {
+		for _, ev := range endBlock.Events {
+			app.logger.Info("EndBlock event", "type", ev.Type, "attrs", ev.Attributes)
+		}
+	}
+
+	// Aggregate EndBlock events and forward once
+	if len(endBlock.Events) > 0 {
+		eventsFlat = append(eventsFlat, endBlock.Events...)
+	}
+	if app.blockEventsSink != nil && len(eventsFlat) > 0 {
+		app.blockEventsSink.HandleBlockEvents(app.finalizeBlockState.Context(), eventsFlat)
 	}
 
 	// check after endBlock if we should abort, to avoid propagating the result

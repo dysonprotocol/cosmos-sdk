@@ -97,6 +97,11 @@ type BaseApp struct {
 	fauxMerkleMode bool           // if true, IAVL MountStores uses MountStoresDB for simulation speed.
 	sigverifyTx    bool           // in the simulation test, since the account does not have a private key, we have to ignore the tx sigverify.
 
+	// BlockEventsSink receives all block events after FinalizeBlock aggregation
+	blockEventsSink interface {
+		HandleBlockEvents(ctx sdk.Context, events []abci.Event)
+	}
+
 	// manages snapshots, i.e. dumps of app state at certain intervals
 	snapshotManager *snapshots.Manager
 
