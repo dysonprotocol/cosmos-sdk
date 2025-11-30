@@ -25,12 +25,21 @@ type MessageRouter interface {
 	HandlerByTypeURL(typeURL string) MsgServiceHandler
 }
 
+// MsgHandlerInterceptor is called before and after each message handler execution.
+type MsgHandlerInterceptor interface {
+	// Pre is called before the handler. Return error to abort execution.
+	Pre(ctx sdk.Context, msg sdk.Msg) error
+	// Post is called after the handler with the result (may be nil) and error.
+	Post(ctx sdk.Context, msg sdk.Msg, result *sdk.Result, err error)
+}
+
 // MsgServiceRouter routes fully-qualified Msg service methods to their handler.
 type MsgServiceRouter struct {
 	interfaceRegistry codectypes.InterfaceRegistry
 	routes            map[string]MsgServiceHandler
 	hybridHandlers    map[string]func(ctx context.Context, req, resp protoiface.MessageV1) error
 	circuitBreaker    CircuitBreaker
+	interceptor       MsgHandlerInterceptor
 }
 
 var _ gogogrpc.Server = &MsgServiceRouter{}
@@ -47,18 +56,43 @@ func (msr *MsgServiceRouter) SetCircuit(cb CircuitBreaker) {
 	msr.circuitBreaker = cb
 }
 
+// SetInterceptor sets the message handler interceptor for pre/post execution hooks.
+func (msr *MsgServiceRouter) SetInterceptor(interceptor MsgHandlerInterceptor) {
+	msr.interceptor = interceptor
+}
+
 // MsgServiceHandler defines a function type which handles Msg service message.
 type MsgServiceHandler = func(ctx sdk.Context, req sdk.Msg) (*sdk.Result, error)
 
 // Handler returns the MsgServiceHandler for a given msg or nil if not found.
 func (msr *MsgServiceRouter) Handler(msg sdk.Msg) MsgServiceHandler {
-	return msr.routes[sdk.MsgTypeURL(msg)]
+	handler := msr.routes[sdk.MsgTypeURL(msg)]
+	return msr.wrapWithInterceptor(handler)
 }
 
 // HandlerByTypeURL returns the MsgServiceHandler for a given query route path or nil
 // if not found.
 func (msr *MsgServiceRouter) HandlerByTypeURL(typeURL string) MsgServiceHandler {
-	return msr.routes[typeURL]
+	handler := msr.routes[typeURL]
+	return msr.wrapWithInterceptor(handler)
+}
+
+// wrapWithInterceptor wraps a handler with the interceptor if one is set.
+func (msr *MsgServiceRouter) wrapWithInterceptor(handler MsgServiceHandler) MsgServiceHandler {
+	if handler == nil || msr.interceptor == nil {
+		return handler
+	}
+	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
+		// Pre-execution hook
+		if err := msr.interceptor.Pre(ctx, msg); err != nil {
+			return nil, err
+		}
+		// Execute handler
+		result, err := handler(ctx, msg)
+		// Post-execution hook (always called)
+		msr.interceptor.Post(ctx, msg, result, err)
+		return result, err
+	}
 }
 
 // RegisterService implements the gRPC Server.RegisterService method. sd is a gRPC
